@@ -11,6 +11,13 @@ backend:
 
 publish_mode: simple
 
+# What Jennifer sees instead of "Sveltia CMS" branding
+app_title: Jennifer Schumacher
+logo:
+  src: /favicon.svg
+  show_in_header: true
+site_url: https://jennifer-schumacher.vercel.app
+
 media_folder: public/assets
 public_folder: /assets
 
