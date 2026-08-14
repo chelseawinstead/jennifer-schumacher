@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #ffffff; font-family: 'Jost', system-ui, sans-serif; }
+  a { color: inherit; text-decoration: none; }
+  .ph { position: relative; background: repeating-linear-gradient(135deg,#eceae4 0 13px,#f4f2ec 13px 26px); overflow: hidden; }
+  .ph > .phl { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: .16em; color: #a29e93; text-transform: uppercase; padding: 16px; }
+  .phd { background: repeating-linear-gradient(135deg,#0a2033 0 13px,#0d2740 13px 26px); }
+  .phd > .phl { color: #6d86a0; }
+  .navlink:hover { color: #002349 !important; }
+
+  /* __mobile__ */
+  .mnav-toggle, .burger { display: none; }
+  @media (max-width: 820px) {
+    nav { flex-wrap: nowrap !important; justify-content: space-between !important; align-items: center !important; gap: 12px !important; padding: 14px 20px !important; }
+    nav > a:first-child span:first-child { font-size: 17px !important; letter-spacing: .12em !important; }
+    nav > a:first-child span:last-child { font-size: 8px !important; }
+    .burger { display: flex !important; flex-direction: column; justify-content: center; gap: 5px; cursor: pointer; padding: 6px; }
+    .burger span { display: block; width: 26px; height: 2px; background: #14181d; }
+    nav > div:last-child { display: none !important; }
+    .navmenu { display: none !important; position: absolute; top: 100%; left: 0; right: 0; background: #fff; flex-direction: column !important; gap: 0 !important; padding: 6px 0 !important; border-bottom: 1px solid #ececec; box-shadow: 0 24px 40px -22px rgba(0,20,45,.35); white-space: normal !important; }
+    .mnav-toggle:checked ~ .navmenu { display: flex !important; }
+    .navmenu a { padding: 15px 24px !important; border-bottom: 1px solid #f4f3ee !important; border-left: none !important; font-size: 14px !important; letter-spacing: .14em !important; }
+    section, header, footer { padding-left: 22px !important; padding-right: 22px !important; }
+    section, header { padding-top: 48px !important; padding-bottom: 48px !important; }
+    [style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+    [style*="repeat(5,1fr)"], [style*="repeat(5, 1fr)"] { grid-template-columns: repeat(2,1fr) !important; }
+    [style*="1.4fr 1fr 1fr 1.1fr"] { grid-template-columns: 1fr 1fr !important; }
+    [style*="grid-template-rows"] { grid-template-rows: auto !important; }
+    [style*="grid-auto-rows"] { grid-auto-rows: 200px !important; }
+    aside { position: static !important; top: auto !important; }
+    h1 { line-height: 1.12 !important; }
+    [style*="font-size: 88px"],[style*="font-size: 84px"],[style*="font-size: 76px"],[style*="font-size: 74px"],[style*="font-size: 70px"],[style*="font-size: 68px"],[style*="font-size: 66px"] { font-size: 36px !important; }
+    [style*="font-size: 60px"],[style*="font-size: 54px"],[style*="font-size: 52px"],[style*="font-size: 50px"],[style*="font-size: 48px"],[style*="font-size: 46px"],[style*="font-size: 44px"] { font-size: 29px !important; }
+    [style*="font-size: 42px"],[style*="font-size: 40px"],[style*="font-size: 38px"],[style*="font-size: 36px"] { font-size: 26px !important; }
+    [style*="font-size: 34px"],[style*="font-size: 32px"] { font-size: 24px !important; }
+    [style*="font-size: 30px"],[style*="font-size: 27px"] { font-size: 22px !important; }
+    [style*="min-height: 620px"],[style*="min-height: 640px"],[style*="min-height: 560px"],[style*="min-height: 520px"],[style*="min-height: 480px"],[style*="min-height: 470px"],[style*="min-height: 460px"],[style*="min-height: 420px"] { min-height: 260px !important; }
+  }
+  @media (max-width: 820px) {
+    .m-funfacts { grid-template-columns: 1fr 1fr !important; gap: 26px 16px !important; }
+    .m-teamrow { gap: 20px !important; flex-wrap: nowrap !important; }
+    .m-teamrow > div[style*="text-align: center"] > div:first-child { font-size: 20px !important; }
+    .m-teamrow > div[style*="text-align: center"] > div:last-child { font-size: 9.5px !important; letter-spacing: .12em !important; }
+  }
+
+  /* __mobile2__ */
+  @media (max-width: 820px) {
+    .m-hero{position:relative!important;display:block!important;min-height:88vh;}
+    .m-hero>div:last-child{position:absolute!important;inset:0;z-index:0;min-height:0!important;}
+    .m-hero>div:last-child img{object-position:center 10% !important;}
+    .m-hero>div:first-child{position:absolute!important;z-index:1;left:0;right:0;bottom:0;padding:100px 24px 44px!important;background:linear-gradient(180deg,rgba(0,20,45,0) 0%,rgba(0,20,45,.5) 48%,rgba(0,20,45,.9) 100%);}
+    .m-hero span{color:#fff!important;}
+    .m-hero h1{color:#fff!important;}
+    .m-hero h1 em{color:#e4ecf5!important;}
+    .m-hero p{color:rgba(255,255,255,.9)!important;max-width:none!important;}
+    a[style*="padding: 16px 30px"],a[style*="padding: 17px 34px"],a[style*="padding: 16px 34px"],a[style*="padding: 15px 32px"],a[style*="padding: 18px 36px"],a[style*="padding: 16px 32px"],a[style*="padding: 17px 32px"],a[style*="padding: 16px;"]{padding:13px 18px!important;font-size:11px!important;letter-spacing:.1em!important;}
+    [style*="display: flex; gap: 16px"]{flex-wrap:wrap!important;}
+  }
+</style>
+</helmet>
+
+<div style="max-width: 1440px; margin: 0 auto; background: #ffffff;">
+
+  <!-- NAV -->
+  <nav style="display: flex; align-items: center; justify-content: space-between; gap: 40px; padding: 22px 48px; border-bottom: 1px solid #ececec; position: sticky; top: 0; background: rgba(255,255,255,.94); backdrop-filter: blur(8px); z-index: 20;">
+    <a href="index.html" style="display: flex; flex-direction: column; gap: 3px;">
+      <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px; letter-spacing: .18em; color: #14181d; font-weight: 500;">JENNIFER SCHUMACHER</span>
+      <span style="font-size: 9.5px; letter-spacing: .3em; color: #9a968d; text-transform: uppercase;">Russ Lyon Sotheby's International Realty</span>
+    </a>
+    <input type="checkbox" id="mnav" class="mnav-toggle">
+    <label for="mnav" class="burger" aria-label="Menu"><span></span><span></span><span></span></label>
+    <div class="navmenu" style="display: flex; gap: 26px; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #3a3f45; white-space: nowrap;">
+      <a href="index.html" class="navlink">Home</a>
+      <a href="about.html" class="navlink" style="color: #002349; border-bottom: 1px solid #002349; padding-bottom: 3px;">About</a>
+      <a href="buy.html" class="navlink">Buy</a>
+      <a href="sell.html" class="navlink">Sell</a>
+      <a href="listings.html" class="navlink">Listings</a>
+      <a href="journal.html" class="navlink">Journal</a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <a href="tel:14803222593" style="font-size: 13px; letter-spacing: .1em; color: #14181d; white-space: nowrap;">(480) 322&#8209;2593</a>
+      <a href="tel:14803222593" style="border: 1px solid #002349; color: #002349; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; padding: 10px 20px;">Contact</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="m-hero" style="display: grid; grid-template-columns: 1.02fr .98fr; align-items: stretch;">
+    <div style="padding: 100px 64px; display: flex; flex-direction: column; justify-content: center;">
+      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349; margin-bottom: 28px;">About Jennifer</span>
+      <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 76px; line-height: 1.02; letter-spacing: -.01em; color: #14181d; margin: 0 0 28px;">People hire<br><em style="font-style: italic; color: #002349;">people.</em></h1>
+      <p style="font-size: 18px; line-height: 1.75; color: #55585c; max-width: 470px; margin: 0; font-weight: 300;">Real estate is rarely about square footage. It's about trust, timing, and having someone in your corner who treats your goals as her own. That's the whole job — and it's the part I love most.</p>
+    </div>
+    <div style="min-height: 640px;"><img src="assets/jennifer-mug.jpg" alt="Jennifer Schumacher" style="width: 100%; height: 100%; object-fit: cover; object-position: center 18%; display: block;"></div>
+  </header>
+
+  <!-- WHY REAL ESTATE -->
+  <section style="padding: 100px 64px; background: #f6f5f2; display: grid; grid-template-columns: .8fr 1.2fr; gap: 72px;">
+    <div>
+      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #9a968d;">Why real estate</span>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 40px; line-height: 1.12; color: #14181d; margin: 18px 0 0;">A career built on serving people well.</h2>
+    </div>
+    <div>
+      <p style="font-size: 17px; line-height: 1.85; color: #55585c; font-weight: 300; margin: 0 0 22px;">Raised in North Dakota, I developed a relentless work ethic, a heart for people, and a drive for excellence. Over twenty years in sales &amp; marketing taught me how to position, market, and sell at the highest level — but it was the relationships that made me fall in love with the work.</p>
+      <p style="font-size: 17px; line-height: 1.85; color: #55585c; font-weight: 300; margin: 0;">My commitment goes beyond transactions. I create experiences that exceed expectations — listening, advising, and fiercely advocating for your best interests every step of the way. My goal is simple: to make your real estate experience seamless, stress-free, and successful.</p>
+    </div>
+  </section>
+
+  <!-- ARIZONA EXPERTISE -->
+  <section style="position: relative; color: #fff;">
+    <img src="assets/scottsdale-aerial.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;">
+    <div style="position: absolute; inset: 0; background: rgba(0,20,45,.8);"></div>
+    <div style="position: relative; padding: 120px 64px; text-align: center;">
+      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #9db4cb;">Where she works</span>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 48px; line-height: 1.12; margin: 18px auto 20px; max-width: 900px;">Deep roots across the Valley</h2>
+      <p style="font-size: 17px; line-height: 1.8; color: #d3dde7; font-weight: 300; max-width: 740px; margin: 0 auto 56px;">From Scottsdale and Paradise Valley to Phoenix, Gilbert, and the East Valley, I know where value lives, how each community trades, and what it takes to win in a competitive market.</p>
+      <div style="display: grid; grid-template-columns: repeat(6,1fr); max-width: 1120px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,.22);">
+        <div style="padding: 22px 10px 0;"><div style="font-family: 'Cormorant Garamond', serif; font-size: 21px;">Scottsdale</div></div>
+        <div style="padding: 22px 10px 0; border-left: 1px solid rgba(255,255,255,.16);"><div style="font-family: 'Cormorant Garamond', serif; font-size: 21px;">Paradise Valley</div></div>
+        <div style="padding: 22px 10px 0; border-left: 1px solid rgba(255,255,255,.16);"><div style="font-family: 'Cormorant Garamond', serif; font-size: 21px;">Phoenix</div></div>
+        <div style="padding: 22px 10px 0; border-left: 1px solid rgba(255,255,255,.16);"><div style="font-family: 'Cormorant Garamond', serif; font-size: 21px;">Arcadia</div></div>
+        <div style="padding: 22px 10px 0; border-left: 1px solid rgba(255,255,255,.16);"><div style="font-family: 'Cormorant Garamond', serif; font-size: 21px;">Gilbert</div></div>
+        <div style="padding: 22px 10px 0; border-left: 1px solid rgba(255,255,255,.16);"><div style="font-family: 'Cormorant Garamond', serif; font-size: 21px;">East Valley</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section style="padding: 110px 64px; text-align: center;">
+    <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">My philosophy</span>
+    <p style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 44px; line-height: 1.4; font-style: italic; color: #24272b; max-width: 1000px; margin: 26px auto 0;">"You deserve nothing less than the best. Attention to detail, transparent communication, and powerful negotiation aren't extras — they're the standard."</p>
+  </section>
+
+  <!-- AWARDS -->
+  <section style="background: #002349; color: #fff; padding: 78px 64px; display: grid; grid-template-columns: repeat(3,1fr); gap: 40px;">
+    <div style="text-align: center;"><div style="font-family: 'Cormorant Garamond', serif; font-size: 52px; line-height: 1;">Top 1%</div><div style="font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: #9db4cb; margin-top: 14px;">REALTOR® in Arizona</div></div>
+    <div style="text-align: center; border-left: 1px solid rgba(255,255,255,.14);"><div style="font-family: 'Cormorant Garamond', serif; font-size: 52px; line-height: 1;">20+ Years</div><div style="font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: #9db4cb; margin-top: 14px;">Sales &amp; marketing mastery</div></div>
+    <div style="text-align: center; border-left: 1px solid rgba(255,255,255,.14);"><div style="font-family: 'Cormorant Garamond', serif; font-size: 52px; line-height: 1;">Top 50</div><div style="font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: #9db4cb; margin-top: 14px;">Scottsdale Real Producers · 2025</div></div>
+  </section>
+
+  <!-- FUN FACTS -->
+  <section style="padding: 100px 64px;">
+    <div style="text-align: center; margin-bottom: 60px;">
+      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">Off the clock</span>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 46px; color: #14181d; margin: 16px 0 0;">A few things about me</h2>
+    </div>
+    <div class="m-funfacts" style="display: grid; grid-template-columns: repeat(4,1fr); gap: 32px;">
+      <div style="text-align: center;"><div style="aspect-ratio: 3/4; overflow: hidden; margin-bottom: 22px;"><img src="assets/bts-gym.jpg" alt="Fitness" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;"></div><div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #002349; margin-bottom: 8px;">Fitness</div><p style="font-size: 14px; line-height: 1.7; color: #6b6b66; font-weight: 300; margin: 0;">A passion that fuels my energy and mindset every single day.</p></div>
+      <div style="text-align: center;"><div style="aspect-ratio: 3/4; overflow: hidden; margin-bottom: 22px;"><img src="assets/bts-hike.jpg" alt="Adventure" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;"></div><div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #002349; margin-bottom: 8px;">Adventure</div><p style="font-size: 14px; line-height: 1.7; color: #6b6b66; font-weight: 300; margin: 0;">Always chasing the next challenge — on and off the trail.</p></div>
+      <div style="text-align: center;"><div style="aspect-ratio: 3/4; overflow: hidden; margin-bottom: 22px;"><img src="assets/bts-lunch.jpg" alt="Travel" style="width:100%;height:100%;object-fit:cover;object-position:center 40%;display:block;"></div><div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #002349; margin-bottom: 8px;">Travel</div><p style="font-size: 14px; line-height: 1.7; color: #6b6b66; font-weight: 300; margin: 0;">Global travel keeps my perspective wide and my ideas fresh.</p></div>
+      <div style="text-align: center;"><div style="aspect-ratio: 3/4; overflow: hidden; margin-bottom: 22px;"><img src="assets/bts-family.jpg" alt="Family" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;"></div><div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #002349; margin-bottom: 8px;">Family</div><p style="font-size: 14px; line-height: 1.7; color: #6b6b66; font-weight: 300; margin: 0;">My foundation — the reason behind the drive for excellence.</p></div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section style="padding: 96px 64px; background: #f6f5f2;">
+    <div style="text-align: center; margin-bottom: 56px;">
+      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">The team</span>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 46px; color: #14181d; margin: 16px 0 12px;">Jennifer &amp; Natalie</h2>
+      <p style="font-size: 16px; line-height: 1.7; color: #6b6b66; font-weight: 300; max-width: 560px; margin: 0 auto;">Clients repeatedly praise "Jennifer and her team" — the partnership that makes every transaction feel effortless.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: .85fr 1.15fr; gap: 48px; align-items: stretch; max-width: 1200px; margin: 0 auto;">
+      <div style="min-height: 560px;"><img src="assets/jennifer-natalie.jpg" alt="Jennifer Schumacher and Natalie Congleton" style="width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;"></div>
+      <div style="display: flex; flex-direction: column; gap: 24px; justify-content: center;">
+        <div style="background: #fff; padding: 34px 36px;">
+          <div style="display: flex; gap: 18px; align-items: center; margin-bottom: 18px;">
+            <div style="width: 62px; height: 62px; flex: none; overflow: hidden; border-radius: 999px;"><img src="assets/jennifer-mug.jpg" alt="Jennifer Schumacher" style="width: 100%; height: 100%; object-fit: cover; object-position: center 15%; display: block;"></div>
+            <div><div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #14181d;">Jennifer Schumacher</div><div style="font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d; margin-top: 4px;">Global Real Estate Advisor · Top 1% Arizona</div></div>
+          </div>
+          <p style="font-size: 15px; line-height: 1.75; color: #6b6b66; font-weight: 300; margin: 0;">Team lead with 20+ years in sales &amp; marketing and a 2025 Top 50 Scottsdale Real Producers honor — known for attention to detail, transparent communication, and powerful negotiation.</p>
+        </div>
+        <div style="background: #fff; padding: 34px 36px;">
+          <div style="display: flex; gap: 18px; align-items: center; margin-bottom: 18px;">
+            <div style="width: 62px; height: 62px; flex: none; overflow: hidden; border-radius: 999px;"><img src="assets/natalie-headshot.jpg" alt="Natalie Congleton" style="width: 100%; height: 100%; object-fit: cover; object-position: center 22%; display: block;"></div>
+            <div><div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #14181d;">Natalie Congleton</div><div style="font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d; margin-top: 4px;">Buyer's Specialist · President's Club 2025</div></div>
+          </div>
+          <p style="font-size: 15px; line-height: 1.75; color: #6b6b66; font-weight: 300; margin: 0 0 14px;">Drawing from a multi-generational family background in real estate, Natalie's mission is to give every client a luxury experience — whether you're a first-time homebuyer or an experienced investor — specializing in Scottsdale, Paradise Valley, the East Valley, and greater Phoenix.</p>
+          <p style="font-size: 15px; line-height: 1.75; color: #6b6b66; font-weight: 300; margin: 0;">Born in Tucson and raised in Denver, she has deep Arizona roots and a strong connection to the Phoenix area she proudly calls home — supporting you from start to finish for a seamless, rewarding journey.</p>
+        </div>
+      </div>
+    </div>
+    <div class="m-teamrow" style="display: flex; justify-content: center; gap: 56px; margin: 48px auto 0; padding-top: 38px; border-top: 1px solid #e0ded7; flex-wrap: wrap; max-width: 1200px;">
+      <div style="text-align: center;">
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #14181d;">Ashly</div>
+        <div style="font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d; margin-top: 6px;">Operations Manager</div>
+      </div>
+      <div style="width: 1px; background: #e0ded7;"></div>
+      <div style="text-align: center;">
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #14181d;">Beth</div>
+        <div style="font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d; margin-top: 6px;">Transaction Coordinator</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="contact" style="display: grid; grid-template-columns: 1fr 1fr;">
+    <div style="background: #002349; color: #fff; padding: 92px 64px; display: flex; flex-direction: column; justify-content: center;">
+      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #9db4cb; margin-bottom: 24px;">Let's talk</span>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 50px; line-height: 1.1; margin: 0 0 24px;">The best conversations start with hello.</h2>
+      <p style="font-size: 16px; line-height: 1.7; color: #c6d3df; font-weight: 300; max-width: 420px; margin: 0 0 36px;">If we're the right fit, you'll feel it in the first ten minutes. Reach out any time.</p>
+      <div style="display: flex; gap: 16px;">
+        <a href="tel:14803222593" style="background: #fff; color: #002349; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 30px;">Call (480) 322&#8209;2593</a>
+        <a href="sms:14803222593" style="border: 1px solid rgba(255,255,255,.4); color: #fff; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 30px;">Text Jennifer</a>
+      </div>
+    </div>
+    <div style="min-height: 460px; overflow:hidden;"><img src="assets/home-pool-twilight.jpg" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;"></div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="background: #0b1620; color: #8ca0b3; padding: 72px 64px 40px;">
+    <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.1fr; gap: 40px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,.1);">
+      <div>
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 22px; letter-spacing: .2em; color: #fff; margin-bottom: 14px;">JENNIFER SCHUMACHER</div>
+        <p style="font-size: 14px; line-height: 1.7; font-weight: 300; margin: 0; max-width: 300px;">Luxury real estate across Scottsdale, Phoenix, and the greater Valley. Seamless, stress-free, and successful — because you deserve nothing less than the best.</p>
+      </div>
+      <div>
+        <div style="font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: #5f7488; margin-bottom: 18px;">Explore</div>
+        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; font-weight: 300;">
+          <a href="index.html" class="navlink">Home</a>
+          <a href="about.html" class="navlink">About</a>
+          <a href="buy.html" class="navlink">Buy a Home</a>
+          <a href="sell.html" class="navlink">Sell Your Home</a>
+          <a href="listings.html" class="navlink">Featured Listings</a>
+          <a href="journal.html" class="navlink">The Journal</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: #5f7488; margin-bottom: 18px;">Contact</div>
+        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; font-weight: 300;">
+          <a href="tel:14803222593">(480) 322-2593</a>
+          <a href="mailto:jennifer@schumacherliving.com">jennifer@schumacherliving.com</a>
+          <span>6900 E. Camelback Rd., Suite 110<br>Scottsdale, AZ 85251</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: #5f7488; margin-bottom: 18px;">Brokerage</div>
+        <p style="font-size: 14px; line-height: 1.7; font-weight: 300; margin: 0;">Russ Lyon Sotheby's International Realty. Each office is independently owned and operated.</p>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 26px; font-size: 12px; letter-spacing: .1em; color: #5f7488;">
+      <span>© 2026 Jennifer Schumacher. All rights reserved.</span>
+      <span>AZ License #SA000000 · Equal Housing Opportunity</span>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+</body>
+</html>

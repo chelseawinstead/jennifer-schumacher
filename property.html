@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #ffffff; font-family: 'Jost', system-ui, sans-serif; }
+  a { color: inherit; text-decoration: none; }
+  .ph { position: relative; background: repeating-linear-gradient(135deg,#eceae4 0 13px,#f4f2ec 13px 26px); overflow: hidden; }
+  .ph > .phl { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: .16em; color: #a29e93; text-transform: uppercase; padding: 16px; }
+  .phd { background: repeating-linear-gradient(135deg,#0a2033 0 13px,#0d2740 13px 26px); }
+  .phd > .phl { color: #6d86a0; }
+  .navlink:hover { color: #002349 !important; }
+  .field { width: 100%; border: none; border-bottom: 1px solid #d8d5cd; background: transparent; padding: 12px 0; font-family: 'Jost', sans-serif; font-size: 15px; color: #14181d; }
+  .field:focus { outline: none; border-bottom-color: #002349; }
+
+  /* __mobile__ */
+  .mnav-toggle, .burger { display: none; }
+  @media (max-width: 820px) {
+    nav { flex-wrap: nowrap !important; justify-content: space-between !important; align-items: center !important; gap: 12px !important; padding: 14px 20px !important; }
+    nav > a:first-child span:first-child { font-size: 17px !important; letter-spacing: .12em !important; }
+    nav > a:first-child span:last-child { font-size: 8px !important; }
+    .burger { display: flex !important; flex-direction: column; justify-content: center; gap: 5px; cursor: pointer; padding: 6px; }
+    .burger span { display: block; width: 26px; height: 2px; background: #14181d; }
+    nav > div:last-child { display: none !important; }
+    .navmenu { display: none !important; position: absolute; top: 100%; left: 0; right: 0; background: #fff; flex-direction: column !important; gap: 0 !important; padding: 6px 0 !important; border-bottom: 1px solid #ececec; box-shadow: 0 24px 40px -22px rgba(0,20,45,.35); white-space: normal !important; }
+    .mnav-toggle:checked ~ .navmenu { display: flex !important; }
+    .navmenu a { padding: 15px 24px !important; border-bottom: 1px solid #f4f3ee !important; border-left: none !important; font-size: 14px !important; letter-spacing: .14em !important; }
+    section, header, footer { padding-left: 22px !important; padding-right: 22px !important; }
+    section, header { padding-top: 48px !important; padding-bottom: 48px !important; }
+    [style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+    [style*="repeat(5,1fr)"], [style*="repeat(5, 1fr)"] { grid-template-columns: repeat(2,1fr) !important; }
+    [style*="1.4fr 1fr 1fr 1.1fr"] { grid-template-columns: 1fr 1fr !important; }
+    [style*="grid-template-rows"] { grid-template-rows: auto !important; }
+    [style*="grid-auto-rows"] { grid-auto-rows: 200px !important; }
+    aside { position: static !important; top: auto !important; }
+    h1 { line-height: 1.12 !important; }
+    [style*="font-size: 88px"],[style*="font-size: 84px"],[style*="font-size: 76px"],[style*="font-size: 74px"],[style*="font-size: 70px"],[style*="font-size: 68px"],[style*="font-size: 66px"] { font-size: 36px !important; }
+    [style*="font-size: 60px"],[style*="font-size: 54px"],[style*="font-size: 52px"],[style*="font-size: 50px"],[style*="font-size: 48px"],[style*="font-size: 46px"],[style*="font-size: 44px"] { font-size: 29px !important; }
+    [style*="font-size: 42px"],[style*="font-size: 40px"],[style*="font-size: 38px"],[style*="font-size: 36px"] { font-size: 26px !important; }
+    [style*="font-size: 34px"],[style*="font-size: 32px"] { font-size: 24px !important; }
+    [style*="font-size: 30px"],[style*="font-size: 27px"] { font-size: 22px !important; }
+    [style*="min-height: 620px"],[style*="min-height: 640px"],[style*="min-height: 560px"],[style*="min-height: 520px"],[style*="min-height: 480px"],[style*="min-height: 470px"],[style*="min-height: 460px"],[style*="min-height: 420px"] { min-height: 260px !important; }
+  }
+
+  /* __mobile2__ */
+  @media (max-width: 820px) {
+    [style*="grid-template-columns: 2fr 1fr 1fr"]{display:block!important;}
+    [style*="grid-template-columns: 2fr 1fr 1fr"]>*{display:none!important;}
+    [style*="grid-template-columns: 2fr 1fr 1fr"]>*:first-child{display:block!important;height:300px!important;}
+    [style*="repeat(5,1fr)"]>div{border-left:none!important;padding-left:0!important;}
+    [style*="repeat(5,1fr)"]{gap:22px 16px!important;}
+    a[style*="padding: 16px 30px"],a[style*="padding: 17px 34px"],a[style*="padding: 16px 34px"],a[style*="padding: 15px 32px"],a[style*="padding: 18px 36px"],a[style*="padding: 16px 32px"],a[style*="padding: 17px 32px"],a[style*="padding: 16px;"]{padding:13px 18px!important;font-size:11px!important;letter-spacing:.1em!important;}
+    [style*="display: flex; gap: 16px"]{flex-wrap:wrap!important;}
+  }
+
+  /* __specfix__ */
+  @media (max-width: 820px) {
+    [style*="repeat(5, 1fr)"] > div { border-left: none !important; padding-left: 0 !important; }
+    [style*="repeat(5, 1fr)"] { gap: 22px 16px !important; }
+  }
+
+  /* __specfix2__ */
+  @media (max-width: 820px) {
+    [style*="repeat(5, 1fr)"] { padding-top: 28px !important; padding-bottom: 28px !important; row-gap: 20px !important; }
+    [style*="repeat(5, 1fr)"] > div { text-align: left; }
+  }
+</style>
+</helmet>
+
+<div style="max-width: 1440px; margin: 0 auto; background: #ffffff;">
+
+  <!-- NAV -->
+  <nav style="display: flex; align-items: center; justify-content: space-between; gap: 40px; padding: 22px 48px; border-bottom: 1px solid #ececec; position: sticky; top: 0; background: rgba(255,255,255,.94); backdrop-filter: blur(8px); z-index: 20;">
+    <a href="index.html" style="display: flex; flex-direction: column; gap: 3px;">
+      <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px; letter-spacing: .18em; color: #14181d; font-weight: 500;">JENNIFER SCHUMACHER</span>
+      <span style="font-size: 9.5px; letter-spacing: .3em; color: #9a968d; text-transform: uppercase;">Russ Lyon Sotheby's International Realty</span>
+    </a>
+    <input type="checkbox" id="mnav" class="mnav-toggle">
+    <label for="mnav" class="burger" aria-label="Menu"><span></span><span></span><span></span></label>
+    <div class="navmenu" style="display: flex; gap: 26px; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #3a3f45; white-space: nowrap;">
+      <a href="index.html" class="navlink">Home</a>
+      <a href="about.html" class="navlink">About</a>
+      <a href="buy.html" class="navlink">Buy</a>
+      <a href="sell.html" class="navlink">Sell</a>
+      <a href="listings.html" class="navlink" style="color: #002349; border-bottom: 1px solid #002349; padding-bottom: 3px;">Listings</a>
+      <a href="journal.html" class="navlink">Journal</a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <a href="tel:14803222593" style="font-size: 13px; letter-spacing: .1em; color: #14181d; white-space: nowrap;">(480) 322&#8209;2593</a>
+      <a href="tel:14803222593" style="border: 1px solid #002349; color: #002349; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; padding: 10px 20px;">Contact</a>
+    </div>
+  </nav>
+
+  <!-- BREADCRUMB -->
+  <div style="padding: 22px 64px 0; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #9a968d;">
+    <a href="listings.html" class="navlink">← Back to listings</a> &nbsp;·&nbsp; Silverleaf, Scottsdale
+  </div>
+
+  <!-- GALLERY -->
+  <section style="padding: 24px 64px 0;">
+    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 246px 246px; gap: 12px;">
+      <div style="grid-row: span 2; grid-column: 1; overflow:hidden;"><img src="assets/home-greatroom.jpg" alt="" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+      <div style="overflow:hidden;"><img src="assets/home-kitchen.jpg" alt="" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+      <div style="overflow:hidden;"><img src="assets/home-bath.jpg" alt="" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+      <div style="overflow:hidden;"><img src="assets/home-livingroom.jpg" alt="" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+      <div style="position:relative; overflow:hidden;"><img src="assets/home-pool-twilight.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"><div style="position: absolute; inset: 0; background: rgba(0,20,45,.5); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; letter-spacing: .18em; text-transform: uppercase;">View all 28 photos</div></div>
+    </div>
+  </section>
+
+  <!-- HEADER -->
+  <section style="padding: 40px 64px 30px; display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 24px; border-bottom: 1px solid #ececec;">
+    <div>
+      <div style="display: inline-block; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: #002349; border: 1px solid #002349; padding: 5px 12px; margin-bottom: 18px;">Just Listed</div>
+      <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 44px; line-height: 1.1; color: #14181d; margin: 0 0 8px;">10236 E Serenity Way</h1>
+      <div style="font-size: 16px; color: #6b6b66; font-weight: 300;">Silverleaf · DC Ranch, Scottsdale, AZ 85255</div>
+    </div>
+    <div style="text-align: right;">
+      <div style="font-family: 'Cormorant Garamond', serif; font-size: 46px; color: #002349; line-height: 1;">$3,750,000</div>
+      <div style="font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #9a968d; margin-top: 10px;">$605 / sf</div>
+    </div>
+  </section>
+
+  <!-- SPEC STRIP -->
+  <section style="padding: 30px 64px; display: grid; grid-template-columns: repeat(5,1fr); border-bottom: 1px solid #ececec;">
+    <div><div style="font-family: 'Cormorant Garamond', serif; font-size: 34px; color: #14181d;">5</div><div style="font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d;">Bedrooms</div></div>
+    <div style="border-left: 1px solid #ececec; padding-left: 24px;"><div style="font-family: 'Cormorant Garamond', serif; font-size: 34px; color: #14181d;">6</div><div style="font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d;">Bathrooms</div></div>
+    <div style="border-left: 1px solid #ececec; padding-left: 24px;"><div style="font-family: 'Cormorant Garamond', serif; font-size: 34px; color: #14181d;">6,200</div><div style="font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d;">Sq Ft</div></div>
+    <div style="border-left: 1px solid #ececec; padding-left: 24px;"><div style="font-family: 'Cormorant Garamond', serif; font-size: 34px; color: #14181d;">0.82</div><div style="font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d;">Acre Lot</div></div>
+    <div style="border-left: 1px solid #ececec; padding-left: 24px;"><div style="font-family: 'Cormorant Garamond', serif; font-size: 34px; color: #14181d;">2021</div><div style="font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d;">Year Built</div></div>
+  </section>
+
+  <!-- BODY: description + agent card -->
+  <section style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 64px; padding: 64px;">
+    <div>
+      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">About this home</span>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 36px; line-height: 1.15; color: #14181d; margin: 16px 0 22px;">Contemporary desert luxury, gated in Silverleaf.</h2>
+      <p style="font-size: 16px; line-height: 1.85; color: #55585c; font-weight: 300; margin: 0 0 20px;">Set behind the guarded gates of Silverleaf, this soft-contemporary estate blends warm stone, walls of glass, and seamless indoor-outdoor living. Floor-to-ceiling sliders open the great room to a resort backyard with a negative-edge pool framed by uninterrupted McDowell Mountain views.</p>
+      <p style="font-size: 16px; line-height: 1.85; color: #55585c; font-weight: 300; margin: 0 0 40px;">The chef's kitchen features dual islands, integrated appliances, and a temperature-controlled wine room. A private primary wing, detached casita, and oversized four-car garage complete an offering built for effortless entertaining.</p>
+
+      <div style="border-top: 1px solid #ececec; padding-top: 36px;">
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 26px; color: #14181d; margin: 0 0 22px;">Features</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px 40px;">
+          <div style="display: flex; gap: 12px; font-size: 15px; color: #55585c; font-weight: 300;"><span style="color: #002349;">—</span> Negative-edge pool &amp; spa</div>
+          <div style="display: flex; gap: 12px; font-size: 15px; color: #55585c; font-weight: 300;"><span style="color: #002349;">—</span> Detached guest casita</div>
+          <div style="display: flex; gap: 12px; font-size: 15px; color: #55585c; font-weight: 300;"><span style="color: #002349;">—</span> Temperature-controlled wine room</div>
+          <div style="display: flex; gap: 12px; font-size: 15px; color: #55585c; font-weight: 300;"><span style="color: #002349;">—</span> Dual-island chef's kitchen</div>
+          <div style="display: flex; gap: 12px; font-size: 15px; color: #55585c; font-weight: 300;"><span style="color: #002349;">—</span> McDowell Mountain views</div>
+          <div style="display: flex; gap: 12px; font-size: 15px; color: #55585c; font-weight: 300;"><span style="color: #002349;">—</span> Oversized 4-car garage</div>
+          <div style="display: flex; gap: 12px; font-size: 15px; color: #55585c; font-weight: 300;"><span style="color: #002349;">—</span> Smart-home automation</div>
+          <div style="display: flex; gap: 12px; font-size: 15px; color: #55585c; font-weight: 300;"><span style="color: #002349;">—</span> Guard-gated community</div>
+        </div>
+      </div>
+
+      <div style="border-top: 1px solid #ececec; margin-top: 40px; padding-top: 36px;">
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 26px; color: #14181d; margin: 0 0 20px;">Property details</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr;">
+          <div style="display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #f0efe9; margin-right: 40px;"><span style="color: #9a968d; font-size: 14px; letter-spacing: .04em;">Property type</span><span style="color: #14181d; font-size: 14px;">Single-family</span></div>
+          <div style="display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #f0efe9;"><span style="color: #9a968d; font-size: 14px; letter-spacing: .04em;">MLS #</span><span style="color: #14181d; font-size: 14px;">6XXXXXX</span></div>
+          <div style="display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #f0efe9; margin-right: 40px;"><span style="color: #9a968d; font-size: 14px; letter-spacing: .04em;">Garage</span><span style="color: #14181d; font-size: 14px;">4 spaces</span></div>
+          <div style="display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #f0efe9;"><span style="color: #9a968d; font-size: 14px; letter-spacing: .04em;">HOA</span><span style="color: #14181d; font-size: 14px;">$XXX / mo</span></div>
+          <div style="display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #f0efe9; margin-right: 40px;"><span style="color: #9a968d; font-size: 14px; letter-spacing: .04em;">Pool</span><span style="color: #14181d; font-size: 14px;">Private</span></div>
+          <div style="display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #f0efe9;"><span style="color: #9a968d; font-size: 14px; letter-spacing: .04em;">Status</span><span style="color: #14181d; font-size: 14px;">Active</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENT CARD -->
+    <aside style="align-self: start; position: sticky; top: 110px;">
+      <div style="border: 1px solid #e6e4df; background: #fbfaf8;">
+        <div style="padding: 30px; display: flex; gap: 18px; align-items: center; border-bottom: 1px solid #eceae4;">
+          <div style="width: 74px; height: 74px; flex: none; overflow: hidden; border-radius: 999px;"><img src="assets/jennifer-portrait.png" alt="Jennifer Schumacher" style="width: 100%; height: 100%; object-fit: cover; object-position: center 15%; display: block;"></div>
+          <div>
+            <div style="font-family: 'Cormorant Garamond', serif; font-size: 24px; color: #14181d;">Jennifer Schumacher</div>
+            <div style="font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d; margin-top: 4px;">Top 1% REALTOR® · Scottsdale</div>
+          </div>
+        </div>
+        <div style="padding: 30px;">
+          <div style="font-family: 'Cormorant Garamond', serif; font-size: 24px; color: #14181d; margin-bottom: 6px;">Schedule a private showing</div>
+          <p style="font-size: 14px; line-height: 1.6; color: #6b6b66; font-weight: 300; margin: 0 0 24px;">Tour this home in person or request a private video walkthrough.</p>
+          <div style="display: flex; flex-direction: column; gap: 18px;">
+            <input class="field" type="text" placeholder="Name">
+            <input class="field" type="email" placeholder="Email">
+            <input class="field" type="tel" placeholder="Phone">
+            <textarea class="field" rows="2" placeholder="I'd like to see this home."></textarea>
+          </div>
+          <a href="tel:14803222593" style="display: block; text-align: center; background: #002349; color: #fff; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px; margin-top: 26px;">Request a showing</a>
+          <div style="display: flex; gap: 14px; margin-top: 14px;">
+            <a href="tel:14803222593" style="flex: 1; text-align: center; border: 1px solid #cdccc6; color: #14181d; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; padding: 13px;">Call</a>
+            <a href="sms:14803222593" style="flex: 1; text-align: center; border: 1px solid #cdccc6; color: #14181d; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; padding: 13px;">Text</a>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- VIDEO -->
+  <section style="position: relative; color: #fff;">
+    <div class="ph phd" style="position: absolute; inset: 0;"></div>
+    <div style="position: absolute; inset: 0; background: rgba(0,20,45,.66);"></div>
+    <div style="position: relative; padding: 100px 64px; text-align: center;">
+      <div style="width: 78px; height: 78px; border: 1px solid rgba(255,255,255,.6); border-radius: 999px; display: flex; align-items: center; justify-content: center; margin: 0 auto 26px;"><span style="border-left: 16px solid #fff; border-top: 10px solid transparent; border-bottom: 10px solid transparent; margin-left: 5px;"></span></div>
+      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #9db4cb;">Property film</span>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 42px; line-height: 1.1; margin: 16px auto 0; max-width: 640px;">Take the cinematic walkthrough</h2>
+    </div>
+  </section>
+
+  <!-- MAP / NEIGHBORHOOD -->
+  <section style="display: grid; grid-template-columns: 1fr 1fr; align-items: stretch;">
+    <div style="padding: 90px 64px; display: flex; flex-direction: column; justify-content: center;">
+      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349; margin-bottom: 20px;">The neighborhood</span>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 38px; line-height: 1.14; color: #14181d; margin: 0 0 18px;">Silverleaf, DC Ranch</h2>
+      <p style="font-size: 16px; line-height: 1.8; color: #55585c; font-weight: 300; margin: 0;">One of North Scottsdale's most coveted addresses — guard-gated, walkable to the Silverleaf Club, and minutes from world-class golf, dining, and the McDowell Sonoran Preserve.</p>
+    </div>
+    <div class="ph" style="min-height: 420px;"><span class="phl">Map / location embed</span></div>
+  </section>
+
+  <!-- SIMILAR -->
+  <section style="padding: 90px 64px; border-top: 1px solid #ececec;">
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 40px;">
+      <div>
+        <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">You may also like</span>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 40px; color: #14181d; margin: 14px 0 0;">Similar homes</h2>
+      </div>
+      <a href="listings.html" style="font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #6b6b66;">All listings →</a>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3,1fr); gap: 28px;">
+      <a href="property.html" style="display: block;"><div style="aspect-ratio: 4/3; overflow:hidden;"><img src="assets/home-exterior-sunset.jpg" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;"></div><div style="padding: 20px 4px;"><div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #14181d;">$2,450,000</div><div style="font-size: 14px; color: #6b6b66; margin: 6px 0 0;">Scottsdale · 4 Bed · 4.5 Bath</div></div></a>
+      <a href="property.html" style="display: block;"><div style="aspect-ratio: 4/3; overflow:hidden;"><img src="assets/home-pool-twilight.jpg" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;"></div><div style="padding: 20px 4px;"><div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #14181d;">$1,895,000</div><div style="font-size: 14px; color: #6b6b66; margin: 6px 0 0;">Paradise Valley · 3 Bed · 3.5 Bath</div></div></a>
+      <a href="property.html" style="display: block;"><div style="aspect-ratio: 4/3; overflow:hidden;"><img src="assets/home-kitchen.jpg" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;"></div><div style="padding: 20px 4px;"><div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #14181d;">$4,200,000</div><div style="font-size: 14px; color: #6b6b66; margin: 6px 0 0;">Silverleaf · 5 Bed · 5.5 Bath</div></div></a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="background: #0b1620; color: #8ca0b3; padding: 72px 64px 40px;">
+    <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.1fr; gap: 40px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,.1);">
+      <div>
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 22px; letter-spacing: .2em; color: #fff; margin-bottom: 14px;">JENNIFER SCHUMACHER</div>
+        <p style="font-size: 14px; line-height: 1.7; font-weight: 300; margin: 0; max-width: 300px;">Luxury real estate across Scottsdale, Phoenix, and the greater Valley. Seamless, stress-free, and successful — because you deserve nothing less than the best.</p>
+      </div>
+      <div>
+        <div style="font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: #5f7488; margin-bottom: 18px;">Explore</div>
+        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; font-weight: 300;">
+          <a href="index.html" class="navlink">Home</a>
+          <a href="about.html" class="navlink">About</a>
+          <a href="buy.html" class="navlink">Buy a Home</a>
+          <a href="sell.html" class="navlink">Sell Your Home</a>
+          <a href="listings.html" class="navlink">Featured Listings</a>
+          <a href="journal.html" class="navlink">The Journal</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: #5f7488; margin-bottom: 18px;">Contact</div>
+        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; font-weight: 300;">
+          <a href="tel:14803222593">(480) 322-2593</a>
+          <a href="mailto:jennifer@schumacherliving.com">jennifer@schumacherliving.com</a>
+          <span>6900 E. Camelback Rd., Suite 110<br>Scottsdale, AZ 85251</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: #5f7488; margin-bottom: 18px;">Brokerage</div>
+        <p style="font-size: 14px; line-height: 1.7; font-weight: 300; margin: 0;">Russ Lyon Sotheby's International Realty. Each office is independently owned and operated.</p>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 26px; font-size: 12px; letter-spacing: .1em; color: #5f7488;">
+      <span>© 2026 Jennifer Schumacher. All rights reserved.</span>
+      <span>AZ License #SA000000 · Equal Housing Opportunity</span>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+</body>
+</html>
