@@ -41,7 +41,9 @@
       '#jsLiveToggle{margin-left:auto}',
       '#jsLive iframe{flex:1;width:100%;border:0;background:#fff}',
       '#jsLiveNote{font-size:11px;color:#9db4cb;padding:0 12px 0 0}',
-      '@media(max-width:1100px){#jsLive{display:none}}',
+      // narrow windows: keep the panel, just make it slimmer
+      '@media(max-width:1100px){#jsLive{width:56vw;min-width:0}}',
+      '@media(max-width:720px){#jsLive{width:82vw}}',
     ].join('');
     document.head.appendChild(s);
   }
