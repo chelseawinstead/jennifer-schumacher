@@ -17,13 +17,19 @@
   function css() {
     var s = document.createElement('style');
     s.textContent = [
-      '#jsLiveBtn{position:fixed;right:18px;bottom:18px;z-index:2147483000;',
-      'display:flex;align-items:center;gap:10px;background:#002349;color:#fff;',
-      'border:none;border-radius:999px;padding:13px 20px;cursor:pointer;',
-      "font-family:'Jost',system-ui,sans-serif;font-size:12px;letter-spacing:.14em;",
-      'text-transform:uppercase;box-shadow:0 10px 26px -10px rgba(0,20,45,.55)}',
-      '#jsLiveBtn:hover{background:#013a70}',
-      '#jsLiveBtn span.dot{width:7px;height:7px;border-radius:50%;background:#7fd48b;display:block}',
+      // compact circle by default so it barely touches the form; expands on hover
+      '#jsLiveBtn{position:fixed;right:16px;bottom:16px;z-index:2147483000;',
+      'display:flex;align-items:center;gap:0;background:#002349;color:#fff;',
+      'border:none;border-radius:999px;padding:0;width:44px;height:44px;',
+      'justify-content:center;cursor:pointer;overflow:hidden;opacity:.82;',
+      "font-family:'Jost',system-ui,sans-serif;font-size:11px;letter-spacing:.14em;",
+      'text-transform:uppercase;box-shadow:0 8px 22px -10px rgba(0,20,45,.55);',
+      'transition:width .16s ease,opacity .16s ease,padding .16s ease;white-space:nowrap}',
+      '#jsLiveBtn:hover{width:auto;padding:0 18px 0 14px;gap:9px;opacity:1;background:#013a70}',
+      '#jsLiveBtn span.txt{max-width:0;overflow:hidden;transition:max-width .16s ease}',
+      '#jsLiveBtn:hover span.txt{max-width:260px}',
+      '#jsLiveBtn span.dot{width:9px;height:9px;border-radius:50%;background:#7fd48b;',
+      'display:block;flex:none}',
       '#jsLiveBtn span.dot.off{background:#9db4cb}',
     ].join('');
     document.head.appendChild(s);
@@ -73,8 +79,10 @@
     var dot = document.createElement('span');
     dot.className = 'dot off';
     label = document.createElement('span');
+    label.className = 'txt';
     btn.appendChild(dot);
     btn.appendChild(label);
+    btn.title = 'Open the live site in its own window';
     btn.addEventListener('click', function () {
       if (isOpen()) { try { win.focus(); } catch (e) {} go(current, true); }
       else openWin();
