@@ -1,0 +1,132 @@
+# ---------------------------------------------------------------------------
+# ABOUT PAGE CONTENT
+# Every word and photo on the About page lives here.
+# Layout and styling live in src/pages/about.astro — not here.
+# ---------------------------------------------------------------------------
+
+seo:
+  title: About Jennifer Schumacher — Scottsdale REALTOR®
+  description: >-
+    Twenty years in sales and marketing, Top 1% Arizona REALTOR®, and a
+    partnership approach to buying and selling across Scottsdale, Paradise
+    Valley, Phoenix and the East Valley.
+  social_image: /assets/jennifer-mug.jpg
+
+hero:
+  kicker: About Jennifer
+  headline_line1: People hire
+  headline_emphasis: people.
+  body: >-
+    Real estate is rarely about square footage. It's about trust, timing, and
+    having someone in your corner who treats your goals as her own. That's the
+    whole job — and it's the part I love most.
+  image: /assets/jennifer-mug.jpg
+  image_alt: Jennifer Schumacher
+
+why:
+  kicker: Why real estate
+  heading: A career built on serving people well.
+  paragraphs:
+    - >-
+      Raised in North Dakota, I developed a relentless work ethic, a heart for
+      people, and a drive for excellence. Over twenty years in sales & marketing
+      taught me how to position, market, and sell at the highest level — but it
+      was the relationships that made me fall in love with the work.
+    - >-
+      My commitment goes beyond transactions. I create experiences that exceed
+      expectations — listening, advising, and fiercely advocating for your best
+      interests every step of the way. My goal is simple: to make your real
+      estate experience seamless, stress-free, and successful.
+
+areas:
+  background_image: /assets/scottsdale-aerial.jpg
+  kicker: Where she works
+  heading: Deep roots across the Valley
+  body: >-
+    From Scottsdale and Paradise Valley to Phoenix, Gilbert, and the East
+    Valley, I know where value lives, how each community trades, and what it
+    takes to win in a competitive market.
+  names:
+    - Scottsdale
+    - Paradise Valley
+    - Phoenix
+    - Arcadia
+    - Gilbert
+    - East Valley
+
+philosophy:
+  kicker: My philosophy
+  quote: >-
+    "You deserve nothing less than the best. Attention to detail, transparent
+    communication, and powerful negotiation aren't extras — they're the
+    standard."
+
+awards:
+  - value: Top 1%
+    label: REALTOR® in Arizona
+  - value: 20+ Years
+    label: Sales & marketing mastery
+  - value: Top 50
+    label: Scottsdale Real Producers · 2025
+
+fun_facts:
+  kicker: Off the clock
+  heading: A few things about me
+  items:
+    - image: /assets/bts-gym.jpg
+      title: Fitness
+      body: A passion that fuels my energy and mindset every single day.
+    - image: /assets/bts-hike.jpg
+      title: Adventure
+      body: Always chasing the next challenge — on and off the trail.
+    - image: /assets/bts-lunch.jpg
+      title: Travel
+      body: Global travel keeps my perspective wide and my ideas fresh.
+    - image: /assets/bts-family.jpg
+      title: Family
+      body: My foundation — the reason behind the drive for excellence.
+
+team:
+  kicker: The team
+  heading: Jennifer & Natalie
+  intro: >-
+    Clients repeatedly praise "Jennifer and her team" — the partnership that
+    makes every transaction feel effortless.
+  photo: /assets/jennifer-natalie.jpg
+  photo_alt: Jennifer Schumacher and Natalie Congleton
+  members:
+    - headshot: /assets/jennifer-mug.jpg
+      name: Jennifer Schumacher
+      role: Global Real Estate Advisor · Top 1% Arizona
+      paragraphs:
+        - >-
+          Team lead with 20+ years in sales & marketing and a 2025 Top 50
+          Scottsdale Real Producers honor — known for attention to detail,
+          transparent communication, and powerful negotiation.
+    - headshot: /assets/natalie-headshot.jpg
+      name: Natalie Congleton
+      role: Buyer's Specialist · President's Club 2025
+      paragraphs:
+        - >-
+          Drawing from a multi-generational family background in real estate,
+          Natalie's mission is to give every client a luxury experience —
+          whether you're a first-time homebuyer or an experienced investor —
+          specializing in Scottsdale, Paradise Valley, the East Valley, and
+          greater Phoenix.
+        - >-
+          Born in Tucson and raised in Denver, she has deep Arizona roots and a
+          strong connection to the Phoenix area she proudly calls home —
+          supporting you from start to finish for a seamless, rewarding journey.
+  support:
+    - name: Ashly
+      role: Operations Manager
+    - name: Beth
+      role: Transaction Coordinator
+
+cta:
+  kicker: Let's talk
+  heading: The best conversations start with hello.
+  body: >-
+    If we're the right fit, you'll feel it in the first ten minutes. Reach out
+    any time.
+  image: /assets/home-pool-twilight.jpg

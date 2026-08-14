@@ -191,6 +191,136 @@ collections:
               - { name: body, label: Paragraph, widget: text }
 
       # -----------------------------------------------------------------------
+      - name: about
+        label: About page
+        file: src/data/about.yaml
+        description: Jennifer's story, the areas she covers, the team, and the off-the-clock photos.
+        fields:
+          - name: seo
+            label: Search & social
+            widget: object
+            collapsed: true
+            fields:
+              - { name: title, label: Page title, widget: string, hint: "Shows in the browser tab and in Google results. Under 60 characters." }
+              - { name: description, label: Search description, widget: text, hint: "The grey summary under your link in Google. Under 160 characters." }
+              - { name: social_image, label: Social preview image, widget: image, hint: "Shown when this page is texted or posted to social." }
+
+          - name: hero
+            label: Top of the page
+            widget: object
+            fields:
+              - { name: kicker, label: Small line above the headline, widget: string }
+              - { name: headline_line1, label: Headline — first line, widget: string }
+              - { name: headline_emphasis, label: Headline — italic word, widget: string, hint: "Shows in italic navy. Currently \"people.\"" }
+              - { name: body, label: Intro paragraph, widget: text }
+              - { name: image, label: Your photo, widget: image, hint: "Portrait orientation, beside the headline." }
+              - { name: image_alt, label: Photo description, widget: string }
+
+          - name: why
+            label: "Why real estate"
+            widget: object
+            collapsed: true
+            fields:
+              - { name: kicker, label: Small line above, widget: string }
+              - { name: heading, label: Section heading, widget: string }
+              - name: paragraphs
+                label: Paragraphs
+                widget: list
+                field: { name: text, label: Paragraph, widget: text }
+                hint: Your story, in your own words. Add or remove paragraphs freely.
+
+          - name: areas
+            label: Areas you cover
+            widget: object
+            collapsed: true
+            fields:
+              - { name: background_image, label: Background photo, widget: image, hint: "Full-width photo behind this section, darkened automatically." }
+              - { name: kicker, label: Small line above, widget: string }
+              - { name: heading, label: Section heading, widget: string }
+              - { name: body, label: Paragraph, widget: text }
+              - name: names
+                label: Community names
+                widget: list
+                field: { name: name, label: Community, widget: string }
+                hint: Shown as a row across the bottom. Six fits neatly; more will get tight.
+
+          - name: philosophy
+            label: Philosophy quote
+            widget: object
+            collapsed: true
+            fields:
+              - { name: kicker, label: Small line above, widget: string }
+              - { name: quote, label: Quote, widget: text, hint: "Large italic quote. Include the quotation marks." }
+
+          - name: awards
+            label: Awards band
+            widget: list
+            collapsed: true
+            summary: "{{fields.value}} — {{fields.label}}"
+            hint: The navy strip. Three fits the layout.
+            fields:
+              - { name: value, label: Big text, widget: string }
+              - { name: label, label: Caption underneath, widget: string }
+
+          - name: fun_facts
+            label: "Off the clock"
+            widget: object
+            collapsed: true
+            fields:
+              - { name: kicker, label: Small line above, widget: string }
+              - { name: heading, label: Section heading, widget: string }
+              - name: items
+                label: Cards
+                widget: list
+                summary: "{{fields.title}}"
+                hint: Four fits the row. Portrait photos work best.
+                fields:
+                  - { name: image, label: Photo, widget: image }
+                  - { name: title, label: Title, widget: string }
+                  - { name: body, label: Short description, widget: text }
+
+          - name: team
+            label: The team
+            widget: object
+            collapsed: true
+            fields:
+              - { name: kicker, label: Small line above, widget: string }
+              - { name: heading, label: Section heading, widget: string }
+              - { name: intro, label: Intro paragraph, widget: text }
+              - { name: photo, label: Team photo, widget: image }
+              - { name: photo_alt, label: Team photo description, widget: string }
+              - name: members
+                label: Team member cards
+                widget: list
+                summary: "{{fields.name}} — {{fields.role}}"
+                fields:
+                  - { name: headshot, label: Headshot, widget: image, hint: "Shown as a small circle. Face centred works best." }
+                  - { name: name, label: Name, widget: string }
+                  - { name: role, label: Title / credentials, widget: string }
+                  - name: paragraphs
+                    label: Bio paragraphs
+                    widget: list
+                    field: { name: text, label: Paragraph, widget: text }
+              - name: support
+                label: Support team (name + role only)
+                widget: list
+                summary: "{{fields.name}} — {{fields.role}}"
+                hint: The smaller row underneath. No photos.
+                fields:
+                  - { name: name, label: Name, widget: string }
+                  - { name: role, label: Role, widget: string }
+
+          - name: cta
+            label: Bottom contact block
+            widget: object
+            collapsed: true
+            fields:
+              - { name: kicker, label: Small line above, widget: string }
+              - { name: heading, label: Headline, widget: string }
+              - { name: body, label: Paragraph, widget: text }
+              - { name: image, label: Photo, widget: image }
+
+      # -----------------------------------------------------------------------
       - name: site
         label: Contact & footer details
         file: src/data/site.yaml

@@ -1,0 +1,152 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../data/site.yaml';
+import about from '../data/about.yaml';
+
+const { seo, hero, why, areas, philosophy, awards, fun_facts, team, cta } = about;
+const SERIF = "'Cormorant Garamond', serif";
+---
+<Base title={seo.title} description={seo.description} image={seo.social_image} active="About">
+
+  <!-- HERO -->
+  <header class="m-hero" style="display: grid; grid-template-columns: 1.02fr .98fr; align-items: stretch;">
+    <div style="padding: 100px 64px; display: flex; flex-direction: column; justify-content: center;">
+      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349; margin-bottom: 28px;">{hero.kicker}</span>
+      <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 76px; line-height: 1.02; letter-spacing: -.01em; color: #14181d; margin: 0 0 28px;">{hero.headline_line1}<br><em style="font-style: italic; color: #002349;">{hero.headline_emphasis}</em></h1>
+      <p style="font-size: 18px; line-height: 1.75; color: #55585c; max-width: 470px; margin: 0; font-weight: 300;">{hero.body}</p>
+    </div>
+    <div style="min-height: 640px;">
+      <img src={hero.image} alt={hero.image_alt} style="width: 100%; height: 100%; object-fit: cover; object-position: center 18%; display: block;">
+    </div>
+  </header>
+
+  <!-- WHY REAL ESTATE -->
+  <section style="padding: 100px 64px; background: #f6f5f2; display: grid; grid-template-columns: .8fr 1.2fr; gap: 72px;">
+    <div>
+      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #9a968d;">{why.kicker}</span>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 40px; line-height: 1.12; color: #14181d; margin: 18px 0 0;">{why.heading}</h2>
+    </div>
+    <div>
+      {why.paragraphs.map((p, i) => (
+        <p style={`font-size: 17px; line-height: 1.85; color: #55585c; font-weight: 300; margin: 0 0 ${i === why.paragraphs.length - 1 ? '0' : '22px'};`}>{p}</p>
+      ))}
+    </div>
+  </section>
+
+  <!-- ARIZONA EXPERTISE -->
+  <section style="position: relative; color: #fff;">
+    <img src={areas.background_image} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;">
+    <div style="position: absolute; inset: 0; background: rgba(0,20,45,.8);"></div>
+    <div style="position: relative; padding: 120px 64px; text-align: center;">
+      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #9db4cb;">{areas.kicker}</span>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 48px; line-height: 1.12; margin: 18px auto 20px; max-width: 900px;">{areas.heading}</h2>
+      <p style="font-size: 17px; line-height: 1.8; color: #d3dde7; font-weight: 300; max-width: 740px; margin: 0 auto 56px;">{areas.body}</p>
+      <div style={`display: grid; grid-template-columns: repeat(${areas.names.length},1fr); max-width: 1120px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,.22);`}>
+        {areas.names.map((n, i) => (
+          <div style={i === 0
+            ? 'padding: 22px 10px 0;'
+            : 'padding: 22px 10px 0; border-left: 1px solid rgba(255,255,255,.16);'}>
+            <div style="font-family: 'Cormorant Garamond', serif; font-size: 21px;">{n}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section style="padding: 110px 64px; text-align: center;">
+    <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">{philosophy.kicker}</span>
+    <p style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 44px; line-height: 1.4; font-style: italic; color: #24272b; max-width: 1000px; margin: 26px auto 0;">{philosophy.quote}</p>
+  </section>
+
+  <!-- AWARDS -->
+  <section style={`background: #002349; color: #fff; padding: 78px 64px; display: grid; grid-template-columns: repeat(${awards.length},1fr); gap: 40px;`}>
+    {awards.map((a, i) => (
+      <div style={i === 0
+        ? 'text-align: center;'
+        : 'text-align: center; border-left: 1px solid rgba(255,255,255,.14);'}>
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 52px; line-height: 1;">{a.value}</div>
+        <div style="font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: #9db4cb; margin-top: 14px;">{a.label}</div>
+      </div>
+    ))}
+  </section>
+
+  <!-- FUN FACTS -->
+  <section style="padding: 100px 64px;">
+    <div style="text-align: center; margin-bottom: 60px;">
+      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">{fun_facts.kicker}</span>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 46px; color: #14181d; margin: 16px 0 0;">{fun_facts.heading}</h2>
+    </div>
+    <div class="m-funfacts" style={`display: grid; grid-template-columns: repeat(${fun_facts.items.length},1fr); gap: 32px;`}>
+      {fun_facts.items.map((f) => (
+        <div style="text-align: center;">
+          <div style="aspect-ratio: 3/4; overflow: hidden; margin-bottom: 22px;">
+            <img src={f.image} alt={f.title} style="width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;">
+          </div>
+          <div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #002349; margin-bottom: 8px;">{f.title}</div>
+          <p style="font-size: 14px; line-height: 1.7; color: #6b6b66; font-weight: 300; margin: 0;">{f.body}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section style="padding: 96px 64px; background: #f6f5f2;">
+    <div style="text-align: center; margin-bottom: 56px;">
+      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">{team.kicker}</span>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 46px; color: #14181d; margin: 16px 0 12px;">{team.heading}</h2>
+      <p style="font-size: 16px; line-height: 1.7; color: #6b6b66; font-weight: 300; max-width: 560px; margin: 0 auto;">{team.intro}</p>
+    </div>
+    <div style="display: grid; grid-template-columns: .85fr 1.15fr; gap: 48px; align-items: stretch; max-width: 1200px; margin: 0 auto;">
+      <div style="min-height: 560px;">
+        <img src={team.photo} alt={team.photo_alt} style="width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;">
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 24px; justify-content: center;">
+        {team.members.map((m) => (
+          <div style="background: #fff; padding: 34px 36px;">
+            <div style="display: flex; gap: 18px; align-items: center; margin-bottom: 18px;">
+              <div style="width: 62px; height: 62px; flex: none; overflow: hidden; border-radius: 999px;">
+                <img src={m.headshot} alt={m.name} style="width: 100%; height: 100%; object-fit: cover; object-position: center 18%; display: block;">
+              </div>
+              <div>
+                <div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #14181d;">{m.name}</div>
+                <div style="font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d; margin-top: 4px;">{m.role}</div>
+              </div>
+            </div>
+            {m.paragraphs.map((p, i) => (
+              <p style={`font-size: 15px; line-height: 1.75; color: #6b6b66; font-weight: 300; margin: 0 0 ${i === m.paragraphs.length - 1 ? '0' : '14px'};`}>{p}</p>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+    <div class="m-teamrow" style="display: flex; justify-content: center; gap: 56px; margin: 48px auto 0; padding-top: 38px; border-top: 1px solid #e0ded7; flex-wrap: wrap; max-width: 1200px;">
+      {team.support.map((s, i) => (
+        <>
+          {i > 0 && <div style="width: 1px; background: #e0ded7;"></div>}
+          <div style="text-align: center;">
+            <div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #14181d;">{s.name}</div>
+            <div style="font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d; margin-top: 6px;">{s.role}</div>
+          </div>
+        </>
+      ))}
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="contact" style="display: grid; grid-template-columns: 1fr 1fr;">
+    <div style="background: #002349; color: #fff; padding: 92px 64px; display: flex; flex-direction: column; justify-content: center;">
+      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #9db4cb; margin-bottom: 24px;">{cta.kicker}</span>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 50px; line-height: 1.1; margin: 0 0 24px;">{cta.heading}</h2>
+      <p style="font-size: 16px; line-height: 1.7; color: #c6d3df; font-weight: 300; max-width: 420px; margin: 0 0 36px;">{cta.body}</p>
+      <div style="display: flex; gap: 16px;">
+        <a href={`tel:${site.phone_link}`} style="background: #fff; color: #002349; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 30px;">Call <span set:html={site.phone_display}></span></a>
+        <a href={`sms:${site.phone_link}`} style="border: 1px solid rgba(255,255,255,.4); color: #fff; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 30px;">Text Jennifer</a>
+      </div>
+    </div>
+    <div style="min-height: 460px; overflow:hidden;">
+      <img src={cta.image} alt="" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+    </div>
+  </section>
+
+</Base>
