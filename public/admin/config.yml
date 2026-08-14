@@ -18,6 +18,8 @@ collections:
   # ===========================================================================
   - name: pages
     label: Pages
+    editor:
+      preview: false   # replaced by the docked live-site panel in preview.js
     files:
       # -----------------------------------------------------------------------
       - name: home
