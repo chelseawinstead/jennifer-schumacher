@@ -1,5 +1,6 @@
 ---
-import '../styles/global.css';
+// Served from public/styles/site.css (not bundled) so the CMS preview pane can
+// load the exact same stylesheet the live site uses — keeps the two in sync.
 import site from '../data/site.yaml';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
@@ -31,6 +32,7 @@ const social = new URL(image, Astro.site);
   <meta name="twitter:image" content={social}>
 
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles/site.css">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
