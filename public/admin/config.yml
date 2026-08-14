@@ -5,9 +5,9 @@
 backend:
   name: github
   repo: chelseawinstead/jennifer-schumacher
-  branch: main
+  branch: astro-conversion
   # OAuth client (free Cloudflare Worker) — set once, then never touched:
-  # base_url: https://YOUR-WORKER.workers.dev
+  base_url: https://sveltia-cms-auth.chelsearwinstead.workers.dev
 
 publish_mode: simple
 
