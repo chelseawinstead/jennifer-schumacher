@@ -1,0 +1,232 @@
+# -----------------------------------------------------------------------------
+# Sveltia CMS — what Jennifer sees at /admin
+# Every `hint` below appears as grey helper text under the field in her editor.
+# -----------------------------------------------------------------------------
+backend:
+  name: github
+  repo: chelseawinstead/jennifer-schumacher
+  branch: main
+  # OAuth client (free Cloudflare Worker) — set once, then never touched:
+  # base_url: https://YOUR-WORKER.workers.dev
+
+publish_mode: simple
+
+media_folder: public/assets
+public_folder: /assets
+
+collections:
+  # ===========================================================================
+  - name: pages
+    label: Pages
+    files:
+      # -----------------------------------------------------------------------
+      - name: home
+        label: Home page
+        file: src/data/home.yaml
+        description: Everything on the homepage — headline, photos, listings, reviews.
+        fields:
+          - name: seo
+            label: Search & social
+            widget: object
+            collapsed: true
+            fields:
+              - name: title
+                label: Page title
+                widget: string
+                hint: Shows in the browser tab and as the headline in Google results. Aim for under 60 characters.
+              - name: description
+                label: Search description
+                widget: text
+                hint: The grey summary under your link in Google. One or two sentences, under 160 characters.
+              - name: social_image
+                label: Social preview image
+                widget: image
+                hint: The picture that appears when your site is texted or posted to Facebook or Instagram. Landscape works best.
+
+          - name: hero
+            label: Top of the page
+            widget: object
+            fields:
+              - { name: kicker, label: Small line above the headline, widget: string }
+              - { name: headline_line1, label: Headline — first line, widget: string }
+              - name: headline_emphasis
+                label: Headline — italic word
+                widget: string
+                hint: This part shows in italic navy. Currently "elevated."
+              - { name: body, label: Intro paragraph, widget: text }
+              - name: image
+                label: Your photo
+                widget: image
+                hint: Portrait orientation. This is the large photo beside the headline.
+              - { name: image_alt, label: Photo description, widget: string, hint: "Describes the photo for screen readers and Google. e.g. 'Jennifer Schumacher'" }
+
+          - name: why
+            label: "Why work with Jennifer"
+            widget: object
+            collapsed: true
+            fields:
+              - { name: kicker, label: Small line above, widget: string }
+              - { name: heading, label: Section heading, widget: string }
+              - name: items
+                label: Reasons
+                widget: list
+                summary: "{{fields.number}} — {{fields.title}}"
+                fields:
+                  - { name: number, label: Number, widget: string }
+                  - { name: title, label: Title, widget: string }
+                  - { name: body, label: Description, widget: text }
+
+          - name: stats
+            label: Numbers band
+            widget: list
+            collapsed: true
+            summary: "{{fields.value}} — {{fields.label}}"
+            hint: The navy strip of statistics. Keep to four.
+            fields:
+              - { name: value, label: Big number, widget: string }
+              - { name: label, label: Caption underneath, widget: string }
+
+          - name: communities
+            label: Featured communities
+            widget: object
+            collapsed: true
+            fields:
+              - { name: kicker, label: Small line above, widget: string }
+              - { name: heading, label: Section heading, widget: string }
+              - { name: link_label, label: Link text, widget: string }
+              - { name: link_href, label: Link goes to, widget: string }
+              - name: featured
+                label: Large tile
+                widget: object
+                fields:
+                  - name: image
+                    label: Photo
+                    widget: image
+                    required: false
+                    hint: "⚠️ Empty right now — the tile shows a grey striped placeholder until you add a photo."
+                  - { name: placeholder, label: Placeholder caption, widget: string, required: false }
+                  - { name: badge, label: Badge text, widget: string }
+                  - { name: name, label: Community name, widget: string }
+                  - { name: blurb, label: Short description, widget: text }
+                  - { name: cta, label: Link text, widget: string }
+                  - { name: href, label: Link goes to, widget: string }
+              - name: others
+                label: Smaller tiles
+                widget: list
+                summary: "{{fields.name}}"
+                fields:
+                  - name: image
+                    label: Photo
+                    widget: image
+                    required: false
+                    hint: "⚠️ Empty right now — shows a grey striped placeholder until you add a photo."
+                  - { name: placeholder, label: Placeholder caption, widget: string, required: false }
+                  - { name: name, label: Community name, widget: string }
+                  - { name: sub, label: Small caption, widget: string }
+                  - { name: href, label: Link goes to, widget: string }
+                  - { name: span, label: Double width?, widget: boolean, default: false }
+
+          - name: listings
+            label: Featured listings
+            widget: object
+            collapsed: true
+            fields:
+              - { name: kicker, label: Small line above, widget: string }
+              - { name: heading, label: Section heading, widget: string }
+              - { name: link_label, label: Link text, widget: string }
+              - { name: link_href, label: Link goes to, widget: string }
+              - name: items
+                label: Properties
+                widget: list
+                summary: "{{fields.price}} — {{fields.address}}, {{fields.city}}"
+                fields:
+                  - { name: price, label: Price, widget: string }
+                  - name: address
+                    label: Street address
+                    widget: string
+                    pattern: ['^(?!Address line$).+', 'Replace the placeholder with the real street address.']
+                    hint: "⚠️ Currently says “Address line” — a placeholder. Enter the real street address."
+                  - { name: city, label: City & state, widget: string }
+                  - { name: specs, label: Beds · Baths · Sq ft, widget: string }
+                  - { name: image, label: Photo, widget: image }
+                  - { name: href, label: Links to, widget: string }
+
+          - name: testimonials
+            label: Reviews
+            widget: object
+            collapsed: true
+            fields:
+              - { name: kicker, label: Small line above, widget: string }
+              - { name: heading, label: Section heading, widget: string }
+              - { name: rating_line, label: Rating line, widget: string }
+              - { name: reviews_url, label: Google reviews link, widget: string }
+              - { name: reviews_cta, label: Button text, widget: string }
+              - name: items
+                label: Quotes
+                widget: list
+                summary: "{{fields.author}}"
+                fields:
+                  - { name: quote, label: Quote, widget: text }
+                  - { name: author, label: Client name, widget: string }
+
+          - name: affiliations
+            label: Affiliations & recognition
+            widget: object
+            collapsed: true
+            fields:
+              - { name: label, label: Small line above, widget: string }
+              - { name: serif, label: Brand names (serif), widget: list, field: { name: item, label: Name, widget: string } }
+              - { name: plain, label: Awards (small caps), widget: list, field: { name: item, label: Award, widget: string } }
+
+          - name: cta
+            label: Bottom contact block
+            widget: object
+            collapsed: true
+            fields:
+              - { name: image, label: Photo, widget: image }
+              - { name: kicker, label: Small line above, widget: string }
+              - { name: heading, label: Headline, widget: string }
+              - { name: body, label: Paragraph, widget: text }
+
+      # -----------------------------------------------------------------------
+      - name: site
+        label: Contact & footer details
+        file: src/data/site.yaml
+        description: Appears in the header and footer of EVERY page. Change once, updates everywhere.
+        fields:
+          - { name: name, label: Full name, widget: string }
+          - { name: brokerage, label: Brokerage, widget: string }
+          - { name: brokerage_disclosure, label: Brokerage disclosure, widget: text }
+          - { name: phone_display, label: Phone (as shown), widget: string }
+          - name: phone_link
+            label: Phone (digits only)
+            widget: string
+            pattern: ['^[0-9]{11}$', 'Digits only, including the leading 1. Example: 14803222593']
+            hint: Used for the tap-to-call and tap-to-text links. Digits only, no spaces or dashes.
+          - { name: email, label: Email, widget: string }
+          - { name: address_line1, label: Office address, widget: string }
+          - { name: address_line2, label: City, state, ZIP, widget: string }
+          - name: license_number
+            label: Arizona license number
+            widget: string
+            pattern: ['^(?!SA000000$)[A-Za-z]{2}[0-9]{6,}$', 'SA000000 is placeholder text — enter the real ADRE license number.']
+            hint: "⚠️ REQUIRED BEFORE LAUNCH. Currently shows the placeholder SA000000. Arizona advertising rules require the real ADRE number on the site."
+          - { name: footer_blurb, label: Footer paragraph, widget: text }
+          - { name: copyright_year, label: Copyright year, widget: string }
+          - name: nav
+            label: Main menu
+            widget: list
+            collapsed: true
+            summary: "{{fields.label}}"
+            hint: Drag to reorder the menu across the top of the site.
+            fields:
+              - { name: label, label: Menu text, widget: string }
+              - { name: href, label: Goes to, widget: string }
+          - name: footer_nav
+            label: Footer menu
+            widget: list
+            collapsed: true
+            summary: "{{fields.label}}"
+            fields:
+              - { name: label, label: Menu text, widget: string }
+              - { name: href, label: Goes to, widget: string }
