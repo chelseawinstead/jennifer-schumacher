@@ -1,159 +1,103 @@
 /* -----------------------------------------------------------------------------
- * Live site panel for the CMS.
+ * Live site companion window.
  *
- * Sveltia's built-in preview pane is disabled in config.yml. This docks the REAL
- * website beside the edit form — pixel-accurate by definition, and it follows
- * whichever page you're editing.
+ * An overlay panel can't work here: the CMS lays itself out against the browser
+ * viewport, so it slides underneath anything docked over it. Instead this opens
+ * the real site in its own window, which you can park beside the editor or drag
+ * to a second screen. It follows whichever page you're editing.
  * -------------------------------------------------------------------------- */
 (function () {
-  var WIDTH = '42vw';
+  var ENTRY_TO_PATH = { home: '/', about: '/about', site: '/' };
+  var LABEL = { '/': 'Home', '/about': 'About' };
 
-  // Which live page corresponds to each CMS entry
-  var ENTRY_TO_PATH = {
-    home: '/',
-    about: '/about',
-    site: '/',        // contact/footer details show on every page
-  };
-
-  var PAGES = [
-    { label: 'Home', path: '/' },
-    { label: 'About', path: '/about' },
-    { label: 'Buy', path: '/buy' },
-    { label: 'Sell', path: '/sell' },
-    { label: 'Listings', path: '/listings' },
-    { label: 'Journal', path: '/journal' },
-  ];
-
-  var open = true;
+  var win = null;
   var current = '/';
-  var manual = false;           // true once the user picks from the dropdown
-  var root, frame, select, toggle;
+  var btn, label;
 
   function css() {
     var s = document.createElement('style');
     s.textContent = [
-      ':root{--jsPanel:' + WIDTH + '}',
-      // squeeze the CMS into the remaining space instead of hiding under the panel
-      'body.jsLiveOpen > *:not(#jsLive){width:calc(100vw - var(--jsPanel)) !important;',
-      'right:auto !important;max-width:calc(100vw - var(--jsPanel)) !important}',
-      '#jsLive{position:fixed;top:0;right:0;bottom:0;width:var(--jsPanel);',
-      'background:#fff;border-left:1px solid #d8d5ce;z-index:2147483000;display:flex;',
-      'flex-direction:column;box-shadow:-14px 0 34px -26px rgba(0,20,45,.5);',
-      "font-family:'Jost',system-ui,sans-serif;transition:transform .18s ease}",
-      '#jsLive.closed{transform:translateX(calc(100% - 42px))}',
-      '#jsLiveBar{display:flex;align-items:center;gap:9px;padding:9px 11px;',
-      'background:#002349;color:#fff;flex:0 0 auto;flex-wrap:nowrap}',
-      '#jsLiveBar b{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;',
-      'font-weight:500;white-space:nowrap}',
-      '#jsLive select{font:inherit;font-size:12px;padding:5px 7px;border:1px solid rgba(255,255,255,.3);',
-      'background:rgba(255,255,255,.08);color:#fff;border-radius:3px}',
-      '#jsLive select option{color:#14181d}',
-      '#jsLive button{font:inherit;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;',
-      'padding:6px 10px;border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;',
-      'cursor:pointer;border-radius:3px;white-space:nowrap}',
-      '#jsLive button:hover{background:rgba(255,255,255,.14)}',
-      '#jsLiveToggle{margin-left:auto}',
-      '#jsLive iframe{flex:1;width:100%;border:0;background:#fff}',
-      '@media(max-width:1200px){:root{--jsPanel:46vw}}',
+      '#jsLiveBtn{position:fixed;right:18px;bottom:18px;z-index:2147483000;',
+      'display:flex;align-items:center;gap:10px;background:#002349;color:#fff;',
+      'border:none;border-radius:999px;padding:13px 20px;cursor:pointer;',
+      "font-family:'Jost',system-ui,sans-serif;font-size:12px;letter-spacing:.14em;",
+      'text-transform:uppercase;box-shadow:0 10px 26px -10px rgba(0,20,45,.55)}',
+      '#jsLiveBtn:hover{background:#013a70}',
+      '#jsLiveBtn span.dot{width:7px;height:7px;border-radius:50%;background:#7fd48b;display:block}',
+      '#jsLiveBtn span.dot.off{background:#9db4cb}',
     ].join('');
     document.head.appendChild(s);
   }
 
   function pathFromHash() {
-    // Sveltia uses hash routing, e.g. #/collections/pages/entries/about
     var m = (location.hash || '').match(/entries\/([a-z0-9_-]+)/i);
-    if (m && ENTRY_TO_PATH[m[1]]) return ENTRY_TO_PATH[m[1]];
-    return null;
+    return m && ENTRY_TO_PATH[m[1]] ? ENTRY_TO_PATH[m[1]] : null;
   }
 
-  function syncToHash() {
-    if (manual) return;
-    var p = pathFromHash();
-    if (p && p !== current) {
-      current = p;
-      if (select) select.value = p;
-      reload();
+  function isOpen() {
+    try { return win && !win.closed; } catch (e) { return false; }
+  }
+
+  function render() {
+    label.textContent = isOpen()
+      ? 'Live site · ' + (LABEL[current] || current)
+      : 'Open live site';
+    btn.firstChild.className = isOpen() ? 'dot' : 'dot off';
+  }
+
+  function openWin() {
+    // roughly half the screen, parked on the right
+    var w = Math.max(520, Math.round(screen.availWidth * 0.46));
+    var h = screen.availHeight;
+    var left = screen.availWidth - w;
+    win = window.open(current, 'jsLiveSite',
+      'width=' + w + ',height=' + h + ',left=' + left + ',top=0');
+    render();
+  }
+
+  function go(path, force) {
+    current = path;
+    if (isOpen()) {
+      try { win.location.replace(path + '?r=' + Date.now()); } catch (e) {}
+      if (force) { try { win.focus(); } catch (e) {} }
     }
-  }
-
-  function reload() {
-    frame.src = current + (current.indexOf('?') > -1 ? '&' : '?') + 'r=' + Date.now();
-  }
-
-  function setOpen(v) {
-    open = v;
-    root.classList.toggle('closed', !open);
-    document.body.classList.toggle('jsLiveOpen', open);
-    toggle.textContent = open ? 'Hide' : 'Show';
-  }
-
-  function build() {
-    root = document.createElement('div');
-    root.id = 'jsLive';
-
-    var bar = document.createElement('div');
-    bar.id = 'jsLiveBar';
-
-    var title = document.createElement('b');
-    title.textContent = 'Live site';
-
-    select = document.createElement('select');
-    PAGES.forEach(function (p) {
-      var o = document.createElement('option');
-      o.value = p.path;
-      o.textContent = p.label;
-      select.appendChild(o);
-    });
-    select.addEventListener('change', function () {
-      manual = true;             // stop auto-following once they choose
-      current = select.value;
-      reload();
-    });
-
-    var refresh = document.createElement('button');
-    refresh.textContent = 'Refresh';
-    refresh.addEventListener('click', function () {
-      manual = false;            // resume following the edited page
-      var p = pathFromHash();
-      if (p) { current = p; select.value = p; }
-      reload();
-    });
-
-    toggle = document.createElement('button');
-    toggle.id = 'jsLiveToggle';
-    toggle.addEventListener('click', function () { setOpen(!open); });
-
-    bar.appendChild(title);
-    bar.appendChild(select);
-    bar.appendChild(refresh);
-    bar.appendChild(toggle);
-
-    frame = document.createElement('iframe');
-    frame.setAttribute('title', 'Live website');
-
-    root.appendChild(bar);
-    root.appendChild(frame);
-    document.body.appendChild(root);
-
-    var p = pathFromHash();
-    if (p) current = p;
-    select.value = current;
-    frame.src = current;
-    setOpen(true);
+    render();
   }
 
   function boot() {
     if (!document.body) return setTimeout(boot, 100);
     css();
-    build();
 
-    window.addEventListener('hashchange', syncToHash);
-    setInterval(syncToHash, 800);   // hash routing doesn't always fire the event
+    btn = document.createElement('button');
+    btn.id = 'jsLiveBtn';
+    var dot = document.createElement('span');
+    dot.className = 'dot off';
+    label = document.createElement('span');
+    btn.appendChild(dot);
+    btn.appendChild(label);
+    btn.addEventListener('click', function () {
+      if (isOpen()) { try { win.focus(); } catch (e) {} go(current, true); }
+      else openWin();
+    });
+    document.body.appendChild(btn);
 
-    // refresh once the rebuild has had time to land
+    var p = pathFromHash();
+    if (p) current = p;
+    render();
+
+    // follow the page being edited
+    setInterval(function () {
+      var np = pathFromHash();
+      if (np && np !== current) go(np);
+      render();
+    }, 800);
+
+    // refresh once the rebuild has landed
     document.addEventListener('click', function (e) {
       var b = e.target && e.target.closest && e.target.closest('button');
-      if (b && /save/i.test(b.textContent || '')) setTimeout(reload, 35000);
+      if (b && /save/i.test(b.textContent || '')) {
+        setTimeout(function () { go(current); }, 35000);
+      }
     }, true);
   }
 
