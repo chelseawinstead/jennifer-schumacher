@@ -1,0 +1,34 @@
+# Site-wide details. These appear in the header and footer of EVERY page.
+name: Jennifer Schumacher
+brokerage: Russ Lyon Sotheby's International Realty
+brokerage_disclosure: Russ Lyon Sotheby's International Realty. Each office is independently owned and operated.
+phone_display: (480) 322‑2593
+phone_link: "14803222593"
+email: jennifer@schumacherliving.com
+address_line1: 6900 E. Camelback Rd., Suite 110
+address_line2: Scottsdale, AZ 85251
+
+# COMPLIANCE — must be Jennifer's real ADRE license number before launch.
+license_number: SA000000
+
+footer_blurb: >-
+  Luxury real estate across Scottsdale, Phoenix, and the greater Valley. Seamless,
+  stress-free, and successful — because you deserve nothing less than the best.
+
+copyright_year: 2026
+
+nav:
+  - { label: Home,     href: / }
+  - { label: About,    href: /about }
+  - { label: Buy,      href: /buy }
+  - { label: Sell,     href: /sell }
+  - { label: Listings, href: /listings }
+  - { label: Journal,  href: /journal }
+
+footer_nav:
+  - { label: Home,              href: / }
+  - { label: About,             href: /about }
+  - { label: Buy a Home,        href: /buy }
+  - { label: Sell Your Home,    href: /sell }
+  - { label: Featured Listings, href: /listings }
+  - { label: The Journal,       href: /journal }
