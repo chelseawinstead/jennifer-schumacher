@@ -146,8 +146,7 @@ collections:
                   - name: address
                     label: Street address
                     widget: string
-                    pattern: ['^(?!Address line$).+', 'Replace the placeholder with the real street address.']
-                    hint: "⚠️ Currently says “Address line” — a placeholder. Enter the real street address."
+                    hint: "⚠️ Placeholder — 'Address line' must be replaced with the real street address before launch."
                   - { name: city, label: City & state, widget: string }
                   - { name: specs, label: Beds · Baths · Sq ft, widget: string }
                   - { name: image, label: Photo, widget: image }
