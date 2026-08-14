@@ -10,7 +10,7 @@ hero:
   image: /assets/jennifer-portrait.png
   image_alt: Jennifer Schumacher
 why:
-  kicker: Why work with Jennifer
+  kicker: 'Why you should work with Jennifer:'
   heading: A dedicated partner, every step
   items:
     - number: '01'
