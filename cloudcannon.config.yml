@@ -18,6 +18,8 @@ collections_config:
     glob:
       - "home.yaml"
       - "about.yaml"
+      - "buy.yaml"
+      - "sell.yaml"
     name: Pages
     icon: wysiwyg
     description: The content of each page on the site.
@@ -265,3 +267,82 @@ _inputs:
   link_href:
     type: text
     label: Link goes to
+
+  # ---- Buy page ----
+  process:
+    type: object
+    label: The process
+  steps:
+    type: array
+    label: Steps
+    comment: Drag to reorder. Each step shows its number, title and description.
+  button:
+    type: text
+    label: Button text
+  image_break:
+    type: object
+    label: Full-width photo band
+  advantage:
+    type: object
+    label: The advantage
+  headline_line2_prefix:
+    type: text
+    label: Headline — second line lead-in
+    comment: The small words before the italic phrase.
+  headline_before:
+    type: text
+    label: Headline — lead-in
+  paragraph1_before:
+    type: text
+    label: Paragraph — before the name
+  paragraph1_name:
+    type: text
+    label: Paragraph — highlighted name
+  paragraph1_after:
+    type: textarea
+    label: Paragraph — after the name
+  paragraph2:
+    type: textarea
+    label: Second paragraph
+
+  # ---- Sell page ----
+  positioning:
+    type: object
+    label: Opening statement
+  statement:
+    type: textarea
+    label: Statement
+  included:
+    type: object
+    label: "What's included"
+  pillars:
+    type: array
+    label: Pillars
+    comment: Six fits the three-column layout neatly.
+  intro:
+    type: textarea
+    label: Intro paragraph
+  cards:
+    type: array
+    label: Cards
+  showcase:
+    type: object
+    label: Marketing showcase
+  attribution:
+    type: text
+    label: Client name & rating
+  footnote:
+    type: textarea
+    label: Closing note
+  review:
+    type: object
+    label: Featured review
+  stars:
+    type: text
+    label: Star rating
+  button_primary:
+    type: text
+    label: Main button text
+  button_secondary:
+    type: text
+    label: Second button text
