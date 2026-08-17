@@ -45,7 +45,7 @@ why:
     - number: '02'
       title: Transparent communication
       body: >-
-        You're never guessing. Clear, proactive updates keep you informed and
+        You are never guessing. Clear, proactive updates keep you informed and
         confident from first call to closing.
     - number: '03'
       title: Powerful negotiation
@@ -63,36 +63,34 @@ stats:
     label: In closed volume*
 communities:
   kicker: Where she works
-  heading: Featured communities
+  heading: Featured Cities
   link_label: View all →
   link_href: /listings
   featured:
     image: ''
     placeholder: Community photo — Silverleaf / DC Ranch
     badge: Signature community
-    name: Silverleaf
-    blurb: >-
-      Guard-gated luxury in DC Ranch — one of North Scottsdale's most coveted
-      addresses.
+    name: Paradise Valley
+    blurb: Luxury living with the most coveted addresses.
     cta: Explore Silverleaf →
     href: /listings
   others:
     - image: ''
       placeholder: Community photo — Paradise Valley
-      name: Paradise Valley
-      sub: Estates
+      name: Phoenix
+      sub: North Central, midtown &amp; Downtown
       href: /listings
       span: false
     - image: ''
       placeholder: Community photo — Arcadia
-      name: Arcadia
-      sub: Phoenix
+      name: East Valley
+      sub: Gilbert, Chandler, Tempe, Mesa, Queen Creek
       href: /listings
       span: false
     - image: ''
       placeholder: Community photo — Gilbert
-      name: Gilbert
-      sub: East Valley
+      name: Scottsdale
+      sub: Old town, Kierland, The Quarter &amp; North Scottsdale
       href: /listings
       span: true
 listings:
