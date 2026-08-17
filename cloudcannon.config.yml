@@ -69,7 +69,11 @@ collections_config:
     disable_add: true
     disable_add_folder: true
     disable_file_actions: true
+    # site.yaml isn't a page, so point its preview at the homepage — the header
+    # and footer she's editing appear there.
+    url: "/"
     _enabled_editors:
+      - visual
       - data
 
 # -----------------------------------------------------------------------------
