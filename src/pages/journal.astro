@@ -20,7 +20,7 @@ const rest = posts.filter((p) => p.id !== featured?.id);
   <!-- INTRO -->
   <section style="padding: 90px 64px 56px; text-align: center;">
     <span data-editable="text" data-prop={cc('intro.kicker')} data-type="span" style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">{intro.kicker}</span>
-    <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 66px; line-height: 1.05; color: #14181d; margin: 18px auto 20px; max-width: 900px;">{intro.headline_before}<em style="font-style: italic; color: #002349;"><editable-text data-prop={cc('intro.headline_emphasis')} data-type="span">{intro.headline_emphasis}</editable-text></em>{intro.headline_after}</h1>
+    <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 66px; line-height: 1.05; color: #14181d; margin: 18px auto 20px; max-width: 900px;"><editable-text data-prop={cc('intro.headline_before')} data-type="span">{intro.headline_before}</editable-text><em style="font-style: italic; color: #002349;"><editable-text data-prop={cc('intro.headline_emphasis')} data-type="span">{intro.headline_emphasis}</editable-text></em><editable-text data-prop={cc('intro.headline_after')} data-type="span">{intro.headline_after}</editable-text></h1>
     <p data-editable="text" data-prop={cc('intro.body')} data-type="text" style="font-size: 17px; line-height: 1.7; color: #55585c; font-weight: 300; max-width: 580px; margin: 0 auto;">{intro.body}</p>
   </section>
 
