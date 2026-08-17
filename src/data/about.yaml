@@ -27,16 +27,16 @@ why:
   kicker: Why real estate
   heading: A career built on serving people well.
   paragraphs:
-    - >-
-      Raised in North Dakota, I developed a relentless work ethic, a heart for
-      people, and a drive for excellence. Over twenty years in sales & marketing
-      taught me how to position, market, and sell at the highest level — but it
-      was the relationships that made me fall in love with the work.
-    - >-
-      My commitment goes beyond transactions. I create experiences that exceed
-      expectations — listening, advising, and fiercely advocating for your best
-      interests every step of the way. My goal is simple: to make your real
-      estate experience seamless, stress-free, and successful.
+    - text: >-
+        Raised in North Dakota, I developed a relentless work ethic, a heart for
+        people, and a drive for excellence. Over twenty years in sales & marketing
+        taught me how to position, market, and sell at the highest level — but it
+        was the relationships that made me fall in love with the work.
+    - text: >-
+        My commitment goes beyond transactions. I create experiences that exceed
+        expectations — listening, advising, and fiercely advocating for your best
+        interests every step of the way. My goal is simple: to make your real
+        estate experience seamless, stress-free, and successful.
 
 areas:
   background_image: /assets/scottsdale-aerial.jpg
@@ -47,12 +47,12 @@ areas:
     Valley, I know where value lives, how each community trades, and what it
     takes to win in a competitive market.
   names:
-    - Scottsdale
-    - Paradise Valley
-    - Phoenix
-    - Arcadia
-    - Gilbert
-    - East Valley
+    - name: Scottsdale
+    - name: Paradise Valley
+    - name: Phoenix
+    - name: Arcadia
+    - name: Gilbert
+    - name: East Valley
 
 philosophy:
   kicker: My philosophy

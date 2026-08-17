@@ -17,6 +17,19 @@ footer_blurb: >-
 
 copyright_year: 2026
 
+# Button labels used across the site. Links never change — only the wording.
+buttons:
+  call: Call Jennifer
+  text: Text Jennifer
+  call_prefix: "Call "
+  contact: Contact
+
+# Column headings in the footer
+footer_headings:
+  explore: Explore
+  contact: Contact
+  brokerage: Brokerage
+
 nav:
   - { label: Home,     href: / }
   - { label: About,    href: /about }

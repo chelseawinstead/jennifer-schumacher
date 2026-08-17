@@ -446,3 +446,31 @@ _inputs:
     type: number
     label: Sort order
     comment: Lower numbers appear first on the Listings page.
+
+  # ---- Buttons & footer wording ----
+  buttons:
+    type: object
+    label: Button wording
+    comment: The words on buttons across the site. The links themselves never change.
+  call:
+    type: text
+    label: "\"Call\" button text"
+  text:
+    type: text
+    label: "\"Text\" button text"
+  call_prefix:
+    type: text
+    label: Call button lead-in
+    comment: The word before the phone number, e.g. "Call ".
+  contact:
+    type: text
+    label: Header contact button
+  footer_headings:
+    type: object
+    label: Footer column headings
+  explore:
+    type: text
+    label: Menu column heading
+  brokerage_heading:
+    type: text
+    label: Brokerage column heading
