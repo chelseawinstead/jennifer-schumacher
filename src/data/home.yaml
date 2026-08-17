@@ -1,9 +1,3 @@
-# ---------------------------------------------------------------------------
-# HOMEPAGE CONTENT
-# Every word and photo on the homepage lives here. Editing this file changes
-# the site. The layout and styling live in src/pages/index.astro — not here.
-# ---------------------------------------------------------------------------
-
 seo:
   title: Jennifer Schumacher — Luxury Real Estate in Scottsdale & Phoenix
   description: >-
@@ -11,26 +5,24 @@ seo:
     Twenty years of sales and marketing expertise serving Scottsdale, Phoenix,
     Paradise Valley and the greater Valley.
   social_image: /assets/jennifer-portrait.png
-
 hero:
-  kicker: Top 1% REALTOR® · Scottsdale · Phoenix · The Valley
+  kicker: Top 1% REALTOR® · Scottsdale · Phoenix · Paradise Valley
   headline_line1: Arizona real estate,
   headline_emphasis: elevated.
   body: >-
-    For first-time buyers, seasoned investors, and luxury sellers alike — twenty
-    years of sales & marketing mastery, an unrelenting eye for detail, and
+    For first-time buyers, seasoned investors, and luxury sellers alike thirty
+    years of sales &amp; marketing mastery, an unrelenting eye for detail, and
     negotiation that fiercely protects what's yours.
   image: /assets/jennifer-portrait.png
   image_alt: Jennifer Schumacher
   button_call: Call Jennifer
   button_text: Text Jennifer
-
 split:
   - kicker: For Buyers
     title: Buy a Home
     body: >-
-      A guided path from search to keys — financing, inspection, appraisal, and a
-      negotiator in your corner.
+      A guided path from search to keys — financing, inspection, appraisal, and
+      a negotiator in your corner.
     cta: Learn more about buying →
     href: /buy
   - kicker: For Sellers
@@ -40,27 +32,25 @@ split:
       photography, video, and a data-driven strategy.
     cta: Learn more about selling →
     href: /sell
-
 why:
   kicker: Why work with Jennifer
   heading: A dedicated partner, every step
   items:
-    - number: "01"
+    - number: '01'
       title: Unwavering attention to detail
       body: >-
         Nothing slips. Every document, deadline, and detail is handled with
         precision so your transaction stays seamless.
-    - number: "02"
+    - number: '02'
       title: Transparent communication
       body: >-
         You're never guessing. Clear, proactive updates keep you informed and
         confident from first call to closing.
-    - number: "03"
+    - number: '03'
       title: Powerful negotiation
       body: >-
         Two decades of sales & marketing translate into leverage — fiercely
         advocating for your best interests.
-
 stats:
   - value: Top 1%
     label: REALTOR® in Arizona
@@ -70,17 +60,13 @@ stats:
     label: Homes sold*
   - value: $180M+
     label: In closed volume*
-
 communities:
   kicker: Where she works
   heading: Featured communities
   link_label: View all →
   link_href: /listings
-  # `image` is empty on all four — the site shows a striped placeholder until a
-  # photo is added. Drop files in public/assets and reference them as
-  # /assets/filename.jpg
   featured:
-    image: ""
+    image: ''
     placeholder: Community photo — Silverleaf / DC Ranch
     badge: Signature community
     name: Silverleaf
@@ -90,31 +76,29 @@ communities:
     cta: Explore Silverleaf →
     href: /listings
   others:
-    - image: ""
+    - image: ''
       placeholder: Community photo — Paradise Valley
       name: Paradise Valley
       sub: Estates
       href: /listings
       span: false
-    - image: ""
+    - image: ''
       placeholder: Community photo — Arcadia
       name: Arcadia
       sub: Phoenix
       href: /listings
       span: false
-    - image: ""
+    - image: ''
       placeholder: Community photo — Gilbert
       name: Gilbert
       sub: East Valley
       href: /listings
       span: true
-
 listings:
   kicker: Now available
   heading: Featured listings
   link_label: All listings →
   link_href: /listings
-  # "Address line" is placeholder text — replace with the real street address.
   items:
     - price: $2,450,000
       address: Address line
@@ -134,12 +118,12 @@ listings:
       specs: 5 Bed · 6 Bath · 6,200 sf
       image: /assets/home-pool-twilight.jpg
       href: /listings
-
 testimonials:
   kicker: In their words
   heading: Clients who'd do it again
   rating_line: 5.0 rating on Google Reviews
-  reviews_url: https://www.google.com/search?q=jennifer+schumacher#lrd=0x872b0b4749848683:0xaf1181cfaabaa65a,1,,,,
+  reviews_url: >-
+    https://www.google.com/search?q=jennifer+schumacher#lrd=0x872b0b4749848683:0xaf1181cfaabaa65a,1,,,,
   reviews_cta: Read all reviews on Google →
   items:
     - quote: >-
@@ -151,14 +135,13 @@ testimonials:
         transactions — consistently an invaluable asset."
       author: Mike
     - quote: >-
-        "Proactive and creative — always finding ways to make our homes stand out
-        and attract buyers' attention."
+        "Proactive and creative — always finding ways to make our homes stand
+        out and attract buyers' attention."
       author: Tabitha Stanley
     - quote: >-
-        "We're relocating to AZ and her help navigating a new-build in a new state
-        has been invaluable."
+        "We're relocating to AZ and her help navigating a new-build in a new
+        state has been invaluable."
       author: Kim Wilt
-
 affiliations:
   label: Affiliations & recognition
   serif:
@@ -167,14 +150,12 @@ affiliations:
   plain:
     - Top 1% Arizona
     - Top 50 Real Producers 2025
-
 cta:
   image: /assets/home-livingroom.jpg
   kicker: The next step
   heading: Let's make your move exceptional.
   body: >-
-    Whether you're buying, selling, or simply exploring — reach out for a private,
-    no-pressure conversation.
-  button_call: "Call "
+    Whether you're buying, selling, or simply exploring — reach out for a
+    private, no-pressure conversation.
+  button_call: 'Call '
   button_text: Text Jennifer
-
