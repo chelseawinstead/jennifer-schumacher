@@ -478,3 +478,13 @@ _inputs:
   brokerage_heading:
     type: text
     label: Brokerage column heading
+
+  # ---- Web address ----
+  slug:
+    type: text
+    label: Web address
+    comment: >-
+      The end of this page's link, e.g. "a-locals-guide-to-arcadia" becomes
+      /journal/a-locals-guide-to-arcadia. Lowercase, use hyphens instead of
+      spaces. Leave blank to use the file name. Changing this breaks any
+      existing links to the page.

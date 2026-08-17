@@ -5,7 +5,7 @@ import site from '../../data/site.yaml';
 
 export async function getStaticPaths() {
   const posts = await getCollection('journal', ({ data }) => data.published !== false);
-  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+  return posts.map((post) => ({ params: { slug: post.data.slug || post.id }, props: { post } }));
 }
 
 const { post } = Astro.props;
@@ -76,7 +76,7 @@ const others = (await getCollection('journal', ({ data }) => data.published !== 
       <div style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349; margin-bottom: 30px;">More from the Journal</div>
       <div style="display: grid; grid-template-columns: repeat(3,1fr); gap: 40px 28px;">
         {others.map((o) => (
-          <a href={`/journal/${o.id}`} class="card" style="display: block;">
+          <a href={`/journal/${o.data.slug || o.id}`} class="card" style="display: block;">
             <div style="aspect-ratio: 4/3; overflow: hidden;">
               <img src={o.data.image} alt={o.data.image_alt} style="width:100%;height:100%;object-fit:cover;display:block;">
             </div>

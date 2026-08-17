@@ -9,6 +9,7 @@ const journal = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/journal' }),
   schema: z.object({
     title: z.string(),
+    slug: z.string().default(''),        // custom web address; falls back to the filename
     kicker: z.string().default(''),          // e.g. "Arcadia · Phoenix"
     category: z.string().default('Journal'), // e.g. "Neighborhood guide"
     excerpt: z.string().default(''),
@@ -31,6 +32,7 @@ const listings = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/listings' }),
   schema: z.object({
     address: z.string(),
+    slug: z.string().default(''),        // custom web address; falls back to the filename
     city: z.string(),
     price: z.string(),
     status: z.string().default('For sale'),

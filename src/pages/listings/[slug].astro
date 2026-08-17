@@ -5,7 +5,7 @@ import site from '../../data/site.yaml';
 
 export async function getStaticPaths() {
   const homes = await getCollection('listings', ({ data }) => data.published !== false);
-  return homes.map((home) => ({ params: { slug: home.id }, props: { home } }));
+  return homes.map((home) => ({ params: { slug: home.data.slug || home.id }, props: { home } }));
 }
 
 const { home } = Astro.props;

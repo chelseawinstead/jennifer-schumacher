@@ -27,7 +27,7 @@ const rest = posts.filter((p) => p.id !== featured?.id);
   {featured && (
     <!-- FEATURED POST -->
     <section style="padding: 0 64px 20px;">
-      <a href={`/journal/${featured.id}`} class="card" style="display: grid; grid-template-columns: 1.25fr 1fr; align-items: stretch; border: 1px solid #e6e4df;">
+      <a href={`/journal/${featured.data.slug || featured.id}`} class="card" style="display: grid; grid-template-columns: 1.25fr 1fr; align-items: stretch; border: 1px solid #e6e4df;">
         <div style="min-height: 460px; overflow: hidden;">
           <img src={featured.data.image} alt={featured.data.image_alt} style="width:100%;height:100%;object-fit:cover;display:block;">
         </div>
@@ -45,7 +45,7 @@ const rest = posts.filter((p) => p.id !== featured?.id);
   <section style="padding: 56px 64px 96px;">
     <div style="display: grid; grid-template-columns: repeat(3,1fr); gap: 40px 28px;">
       {rest.map((post) => (
-        <a href={`/journal/${post.id}`} class="card" style="display: block;">
+        <a href={`/journal/${post.data.slug || post.id}`} class="card" style="display: block;">
           <div style="aspect-ratio: 4/3; overflow: hidden;">
             <img src={post.data.image} alt={post.data.image_alt} style="width:100%;height:100%;object-fit:cover;display:block;">
           </div>
