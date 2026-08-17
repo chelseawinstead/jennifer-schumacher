@@ -49,13 +49,13 @@ why:
     - number: '03'
       title: Powerful negotiation
       body: >-
-        Two decades of sales & marketing translate into leverage — fiercely
+        Two decades of sales &amp; marketing translate into leverage — fiercely
         advocating for your best interests.
 stats:
   - value: Top 1%
     label: REALTOR® in Arizona
   - value: 20+
-    label: Years in sales & marketing
+    label: Years in sales &amp; marketing
   - value: 250+
     label: Homes sold*
   - value: $180M+
@@ -157,5 +157,5 @@ cta:
   body: >-
     Whether you're buying, selling, or simply exploring — reach out for a
     private, no-pressure conversation.
-  button_call: 'Call '
+  button_call: Call
   button_text: Text Jennifer
