@@ -6,7 +6,7 @@ import home from '../data/home.yaml';
 const { seo, hero, split, why, stats, communities, listings, testimonials, affiliations, cta } = home;
 
 // CloudCannon visual editing: point an element at a value in home.yaml
-const F = 'src/data/home.yaml';
+const F = '/src/data/home.yaml';
 const p = (path) => `@file[${F}].${path}`;
 ---
 <Base title={seo.title} description={seo.description} image={seo.social_image} active="Home">
