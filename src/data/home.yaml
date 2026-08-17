@@ -35,7 +35,7 @@ split:
     href: /sell
 why:
   kicker: Why work with Jennifer
-  heading: A dedicated partner, every step
+  heading: A dedicated partner, every step.
   items:
     - number: '01'
       title: Unwavering attention to detail
@@ -99,23 +99,23 @@ listings:
   link_label: All listings →
   link_href: /listings
   items:
-    - price: $2,450,000
-      address: Address line
-      city: Scottsdale, AZ
-      specs: 4 Bed · 4.5 Bath · 4,820 sf
-      image: /assets/home-exterior-sunset.jpg
+    - price: $5,700,000
+      address: 4945 E Mountain View Road
+      city: Paradise Valley, AZ
+      specs: 5 Bed · 5.5 Bath · 5,338 sf
+      image: /assets/welcome-to-mountain-view.jpg
       href: /listings
     - price: $1,895,000
-      address: Address line
-      city: Paradise Valley, AZ
-      specs: 3 Bed · 3.5 Bath · 3,410 sf
-      image: /assets/home-greatroom.jpg
+      address: 20320 E Sunset Court
+      city: Queen Creek, AZ
+      specs: 4 Bed · 4.5 Bath · 5,318 sf
+      image: /assets/80-web-or-mls-twilight6-ai-edit.png
       href: /listings
-    - price: $3,750,000
-      address: Address line
-      city: Silverleaf, AZ
-      specs: 5 Bed · 6 Bath · 6,200 sf
-      image: /assets/home-pool-twilight.jpg
+    - price: $1,200,000
+      address: 1823 E Watford Court
+      city: Gilbert, AZ
+      specs: 4 Bed · 4.5 Bath · 3,979 sf
+      image: /assets/74-web-or-mls-1823-e-watford-ct.jpg
       href: /listings
 testimonials:
   kicker: In their words
@@ -131,7 +131,7 @@ testimonials:
       author: Abby Snyder
     - quote: >-
         "An exceptional level of service. We've worked with her on multiple
-        transactions — consistently an invaluable asset."
+        transactions — always going above and beyond."
       author: Mike
     - quote: >-
         "Proactive and creative — always finding ways to make our homes stand
@@ -150,7 +150,7 @@ affiliations:
     - Top 1% Arizona
     - Top 50 Real Producers 2025
 cta:
-  image: /assets/home-livingroom.jpg
+  image: /assets/0m4a2233.jpg
   kicker: The next step
   heading: Let's make your move exceptional.
   body: >-
