@@ -50,12 +50,12 @@ why:
     - number: '03'
       title: Powerful negotiation
       body: >-
-        Two decades of sales &amp; marketing translate into leverage — fiercely
-        advocating for your best interests.
+        Three decades of sales &amp; marketing translate into leverage to
+        fiercely advocate for your best interests.
 stats:
   - value: Top 1%
     label: REALTOR® in Arizona
-  - value: 20+
+  - value: 30+
     label: Years in sales &amp; marketing
   - value: 250+
     label: Homes sold*
@@ -121,7 +121,7 @@ listings:
       href: /listings
 testimonials:
   kicker: In their words
-  heading: Clients who'd do it again
+  heading: Clients who would do it again.
   rating_line: 5.0 rating on Google Reviews
   reviews_url: >-
     https://www.google.com/search?q=jennifer+schumacher#lrd=0x872b0b4749848683:0xaf1181cfaabaa65a,1,,,,
@@ -156,7 +156,7 @@ cta:
   kicker: The next step
   heading: Let's make your move exceptional.
   body: >-
-    Whether you're buying, selling, or simply exploring — reach out for a
+    Whether you're buying, selling, or simply exploring, please reach out for a
     private, no-pressure conversation.
   button_call: Call
   button_text: Text Jennifer
