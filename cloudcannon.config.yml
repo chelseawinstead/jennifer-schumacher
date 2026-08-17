@@ -443,6 +443,8 @@ _inputs:
     type: array
     label: Photo gallery
     comment: Add as many photos as you like. Drag to reorder.
+    options:
+      structures: _structures.gallery_photo
   caption:
     type: text
     label: Caption
@@ -488,3 +490,15 @@ _inputs:
       /journal/a-locals-guide-to-arcadia. Lowercase, use hyphens instead of
       spaces. Leave blank to use the file name. Changing this breaks any
       existing links to the page.
+
+# -----------------------------------------------------------------------------
+# Shapes for "Add" buttons inside arrays
+# -----------------------------------------------------------------------------
+_structures:
+  gallery_photo:
+    values:
+      - label: Photo
+        icon: image
+        value:
+          image: ""
+          caption: ""
