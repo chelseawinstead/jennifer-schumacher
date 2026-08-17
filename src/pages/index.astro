@@ -28,14 +28,14 @@ const p = (path) => `@file[${F}].${path}`;
   </header>
 
   <!-- BUYER / SELLER -->
-  <section class="m-split" style="display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid #ececec;">
+  <section data-editable="array" data-prop={p('split')} class="m-split" style="display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid #ececec;">
     {split.map((card, i) => (
-      <a href={card.href} style={i === 0
+      <a data-editable="array-item" href={card.href} style={i === 0
         ? 'display: block; padding: 66px 64px; border-right: 1px solid #ececec;'
         : 'display: block; padding: 66px 64px; background: #f6f5f2;'}>
-        <span data-editable="text" data-prop={p(`split[${i}].kicker`)} data-type="span" style="font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: #9a968d;">{card.kicker}</span>
-        <h3 data-editable="text" data-prop={p(`split[${i}].title`)} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 40px; color: #14181d; margin: 14px 0 14px;">{card.title}</h3>
-        <p data-editable="text" data-prop={p(`split[${i}].body`)} data-type="text" style="font-size: 15px; line-height: 1.7; color: #6b6b66; font-weight: 300; margin: 0 0 26px; max-width: 400px;">{card.body}</p>
+        <span data-editable="text" data-prop="kicker" data-type="span" style="font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: #9a968d;">{card.kicker}</span>
+        <h3 data-editable="text" data-prop="title" data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 40px; color: #14181d; margin: 14px 0 14px;">{card.title}</h3>
+        <p data-editable="text" data-prop="body" data-type="text" style="font-size: 15px; line-height: 1.7; color: #6b6b66; font-weight: 300; margin: 0 0 26px; max-width: 400px;">{card.body}</p>
         <span style="font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #002349; border-bottom: 1px solid #002349; padding-bottom: 4px;">{card.cta}</span>
       </a>
     ))}
@@ -47,26 +47,26 @@ const p = (path) => `@file[${F}].${path}`;
       <span data-editable="text" data-prop={p('why.kicker')} data-type="span" style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">{why.kicker}</span>
       <h2 data-editable="text" data-prop={p('why.heading')} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 48px; color: #14181d; margin: 16px 0 0;">{why.heading}</h2>
     </div>
-    <div class="m-why" style="display: grid; grid-template-columns: repeat(3,1fr); gap: 56px;">
+    <div data-editable="array" data-prop={p('why.items')} class="m-why" style="display: grid; grid-template-columns: repeat(3,1fr); gap: 56px;">
       {why.items.map((item, i) => (
-        <div>
+        <div data-editable="array-item">
           <div style="font-family: 'Cormorant Garamond', serif; font-size: 30px; color: #002349;">{item.number}</div>
           <div style="height: 1px; background: #e0ded7; margin: 18px 0;"></div>
-          <h4 data-editable="text" data-prop={p(`why.items[${i}].title`)} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 24px; color: #14181d; margin: 0 0 12px;">{item.title}</h4>
-          <p data-editable="text" data-prop={p(`why.items[${i}].body`)} data-type="text" style="font-size: 15px; line-height: 1.7; color: #6b6b66; font-weight: 300; margin: 0;">{item.body}</p>
+          <h4 data-editable="text" data-prop="title" data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 24px; color: #14181d; margin: 0 0 12px;">{item.title}</h4>
+          <p data-editable="text" data-prop="body" data-type="text" style="font-size: 15px; line-height: 1.7; color: #6b6b66; font-weight: 300; margin: 0;">{item.body}</p>
         </div>
       ))}
     </div>
   </section>
 
   <!-- STATS -->
-  <section style="background: #002349; color: #fff; padding: 78px 64px; display: grid; grid-template-columns: repeat(4,1fr); gap: 40px;">
+  <section data-editable="array" data-prop={p('stats')} style="background: #002349; color: #fff; padding: 78px 64px; display: grid; grid-template-columns: repeat(4,1fr); gap: 40px;">
     {stats.map((stat, i) => (
-      <div style={i === 0
+      <div data-editable="array-item" style={i === 0
         ? 'text-align: center;'
         : 'text-align: center; border-left: 1px solid rgba(255,255,255,.14);'}>
-        <div data-editable="text" data-prop={p(`stats[${i}].value`)} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-size: 58px; line-height: 1;">{stat.value}</div>
-        <div data-editable="text" data-prop={p(`stats[${i}].label`)} data-type="span" style="font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: #9db4cb; margin-top: 14px;">{stat.label}</div>
+        <div data-editable="text" data-prop="value" data-type="span" style="font-family: 'Cormorant Garamond', serif; font-size: 58px; line-height: 1;">{stat.value}</div>
+        <div data-editable="text" data-prop="label" data-type="span" style="font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: #9db4cb; margin-top: 14px;">{stat.label}</div>
       </div>
     ))}
   </section>
@@ -100,12 +100,12 @@ const p = (path) => `@file[${F}].${path}`;
           ? 'grid-column: span 2; position: relative; overflow: hidden; display: block;'
           : 'position: relative; overflow: hidden; display: block;'}>
           {c.image
-            ? <img data-editable="image" data-prop-src={p(`communities.others[${i}].image`)} src={c.image} alt={c.name} style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
+            ? <img src={c.image} alt={c.name} style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
             : <div class="ph" style="position: absolute; inset: 0;"><span class="phl">{c.placeholder}</span></div>}
           <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,20,45,0) 45%, rgba(0,20,45,.64) 100%);"></div>
           <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 22px;">
-            <div data-editable="text" data-prop={p(`communities.others[${i}].name`)} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-size: 23px; color: #fff; line-height: 1;">{c.name}</div>
-            <div data-editable="text" data-prop={p(`communities.others[${i}].sub`)} data-type="span" style="font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.8); margin-top: 6px;">{c.sub}</div>
+            <div style="font-family: 'Cormorant Garamond', serif; font-size: 23px; color: #fff; line-height: 1;">{c.name}</div>
+            <div style="font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.8); margin-top: 6px;">{c.sub}</div>
           </div>
         </a>
       ))}
@@ -121,16 +121,16 @@ const p = (path) => `@file[${F}].${path}`;
       </div>
       <a href={listings.link_href} style="font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #6b6b66;">{listings.link_label}</a>
     </div>
-    <div style="display: grid; grid-template-columns: repeat(3,1fr); gap: 28px;">
+    <div data-editable="array" data-prop={p('listings.items')} style="display: grid; grid-template-columns: repeat(3,1fr); gap: 28px;">
       {listings.items.map((l, i) => (
-        <a href={l.href} style="display: block; background: #fff;">
+        <a data-editable="array-item" href={l.href} style="display: block; background: #fff;">
           <div style="aspect-ratio: 4/3; overflow:hidden;">
-            <img data-editable="image" data-prop-src={p(`listings.items[${i}].image`)} src={l.image} alt={`${l.address}, ${l.city}`} style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+            <img data-editable="image" data-prop-src="image" src={l.image} alt={`${l.address}, ${l.city}`} style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
           </div>
           <div style="padding: 22px 24px 26px;">
-            <div data-editable="text" data-prop={p(`listings.items[${i}].price`)} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #14181d;">{l.price}</div>
-            <div style="font-size: 14px; color: #6b6b66; margin: 6px 0 14px;"><editable-text data-prop={p(`listings.items[${i}].address`)} data-type="span">{l.address}</editable-text> · <editable-text data-prop={p(`listings.items[${i}].city`)} data-type="span">{l.city}</editable-text></div>
-            <div data-editable="text" data-prop={p(`listings.items[${i}].specs`)} data-type="span" style="font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #9a968d;">{l.specs}</div>
+            <div data-editable="text" data-prop="price" data-type="span" style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #14181d;">{l.price}</div>
+            <div style="font-size: 14px; color: #6b6b66; margin: 6px 0 14px;"><editable-text data-prop="address" data-type="span">{l.address}</editable-text> · <editable-text data-prop="city" data-type="span">{l.city}</editable-text></div>
+            <div data-editable="text" data-prop="specs" data-type="span" style="font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #9a968d;">{l.specs}</div>
           </div>
         </a>
       ))}
@@ -144,11 +144,11 @@ const p = (path) => `@file[${F}].${path}`;
       <h2 data-editable="text" data-prop={p('testimonials.heading')} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 48px; color: #14181d; margin: 16px 0 14px;">{testimonials.heading}</h2>
       <div style="display: inline-flex; align-items: center; gap: 10px; font-size: 13px; letter-spacing: .04em; color: #6b6b66;"><span style="color: #002349; letter-spacing: .12em;">★★★★★</span> {testimonials.rating_line}</div>
     </div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 1080px; margin: 0 auto;">
+    <div data-editable="array" data-prop={p('testimonials.items')} style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 1080px; margin: 0 auto;">
       {testimonials.items.map((t, i) => (
-        <blockquote style="margin: 0; border-top: 2px solid #002349; padding-top: 24px;">
-          <p data-editable="text" data-prop={p(`testimonials.items[${i}].quote`)} data-type="text" style="font-family: 'Cormorant Garamond', serif; font-size: 25px; line-height: 1.5; color: #24272b; font-style: italic; margin: 0 0 20px;">{t.quote}</p>
-          <footer style="font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d;"><editable-text data-prop={p(`testimonials.items[${i}].author`)} data-type="span">{t.author}</editable-text> · ★★★★★</footer>
+        <blockquote data-editable="array-item" style="margin: 0; border-top: 2px solid #002349; padding-top: 24px;">
+          <p data-editable="text" data-prop="quote" data-type="text" style="font-family: 'Cormorant Garamond', serif; font-size: 25px; line-height: 1.5; color: #24272b; font-style: italic; margin: 0 0 20px;">{t.quote}</p>
+          <footer style="font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d;"><editable-text data-prop="author" data-type="span">{t.author}</editable-text> · ★★★★★</footer>
         </blockquote>
       ))}
     </div>
