@@ -1,8 +1,3 @@
-# ---------------------------------------------------------------------------
-# BUY A HOME PAGE
-# All copy and photos for /buy. Layout lives in src/pages/buy.astro.
-# ---------------------------------------------------------------------------
-
 seo:
   title: Buy a Home in Scottsdale & Phoenix — Jennifer Schumacher
   description: >-
@@ -10,57 +5,53 @@ seo:
     Valley and the greater Phoenix Valley — with early access to inventory and
     negotiation that protects your price and terms.
   social_image: /assets/home-livingroom.jpg
-
 hero:
   kicker: Buy a Home
   headline_line1: From first showing
-  headline_line2_prefix: "to "
-  headline_emphasis: front door.
+  headline_line2_prefix: 'to '
+  headline_emphasis: ' front door.'
   body: >-
     Buying in Arizona should feel exciting, not overwhelming. I'll guide you
     through every stage — with clear expectations, sharp negotiation, and no
     surprises.
   button: Start a conversation
   image: /assets/home-livingroom.jpg
-
 process:
   kicker: How we work together
   heading: A guided path to the right home
   steps:
-    - number: "01"
+    - number: '01'
       title: Private consultation
       body: >-
         We begin with your vision — lifestyle, timing, and long-term goals —
         never a checklist.
-    - number: "02"
+    - number: '02'
       title: A curated search
       body: >-
         Every home worth seeing — on-market, plus the pre-market and
         quietly-held opportunities my network hears about first.
-    - number: "03"
+    - number: '03'
       title: Private showings
       body: Discreet, unhurried tours arranged entirely around your schedule.
-    - number: "04"
+    - number: '04'
       title: Strategic offer
       body: >-
         Positioned with live market intelligence and negotiated to protect your
         interests.
-    - number: "05"
+    - number: '05'
       title: Due diligence
-      body: >-
-        Inspection, appraisal, and title — coordinated and managed end to end.
-    - number: "06"
+      body: Inspection, appraisal, and title — coordinated and managed end to end.
+    - number: '06'
       title: Closing & beyond
       body: >-
-        A seamless close — and a relationship that continues long after the keys.
-
+        A seamless close — and a relationship that continues long after the
+        keys.
 image_break:
   image: /assets/home-exterior-sunset.jpg
   image_alt: Arizona luxury home at sunset
   quote: >-
     "The right home is out there. My job is to find it — and to make sure you
     win it."
-
 advantage:
   kicker: The advantage
   heading: Why buyers choose Jennifer
@@ -92,13 +83,12 @@ advantage:
       body: >-
         Inspectors, lenders, designers, movers — a trusted circle managed on
         your behalf.
-
 team:
   image: /assets/jennifer-natalie.jpg
   image_alt: Jennifer Schumacher and Natalie Congleton
   kicker: Your buyer's team
   heading: Two of us, entirely on your side
-  paragraph1_before: "You'll work directly with me and "
+  paragraph1_before: 'You''ll work directly with me and '
   paragraph1_name: Natalie Congleton
   paragraph1_after: >-
     , our buyer's specialist. Together we bring two decades of negotiation, a
@@ -108,13 +98,11 @@ team:
     In practice, that means a look at homes before they're public, offers
     structured to win without overpaying, and a genuinely seamless experience —
     even if you're buying from out of state, sight unseen.
-
 cta:
   kicker: Ready when you are
   heading: Let's see if we're the right fit.
   body: >-
     A relaxed, no-pressure conversation with our team about what you're looking
     for — and how we can help you get there.
-  button_call: "Call "
+  button_call: 'Call '
   button_text: Text Jennifer
-
