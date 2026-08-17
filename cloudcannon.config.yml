@@ -1,0 +1,267 @@
+# =============================================================================
+# CloudCannon configuration — Jennifer Schumacher
+#
+# Defines what Jennifer and her team can edit, and what each field is called in
+# plain English. The site itself (Astro + Vercel) is unchanged; this only shapes
+# the editing experience.
+# =============================================================================
+
+paths:
+  static: public
+  uploads: public/assets
+  # so an uploaded photo is referenced as /assets/filename.jpg, matching the site
+  uploads_use_relative_path: false
+
+collections_config:
+  pages:
+    path: src/data
+    glob:
+      - "home.yaml"
+      - "about.yaml"
+    name: Pages
+    icon: wysiwyg
+    description: The content of each page on the site.
+    disable_add: true
+    disable_add_folder: true
+    disable_file_actions: true
+    _enabled_editors:
+      - visual
+      - data
+
+  settings:
+    path: src/data
+    glob:
+      - "site.yaml"
+    name: Contact & footer details
+    icon: contact_page
+    description: Appears in the header and footer of every page. Change once, updates everywhere.
+    disable_add: true
+    disable_add_folder: true
+    disable_file_actions: true
+    _enabled_editors:
+      - data
+
+# -----------------------------------------------------------------------------
+# Field labels and help text. `comment` shows as grey helper text under a field.
+# -----------------------------------------------------------------------------
+_inputs:
+  # ---- Search & social ----
+  seo:
+    type: object
+    label: Search & social
+    comment: How this page appears in Google and when the link is shared.
+  title:
+    type: text
+    label: Page title
+    comment: Shows in the browser tab and as the headline in Google results. Under 60 characters.
+  description:
+    type: textarea
+    label: Search description
+    comment: The grey summary under your link in Google. One or two sentences, under 160 characters.
+  social_image:
+    type: image
+    label: Social preview image
+    comment: The picture shown when the site is texted or posted to Facebook or Instagram.
+
+  # ---- Hero ----
+  hero:
+    type: object
+    label: Top of the page
+  kicker:
+    type: text
+    label: Small line above the heading
+  headline_line1:
+    type: text
+    label: Headline — first line
+  headline_emphasis:
+    type: text
+    label: Headline — italic word
+    comment: Shows in italic navy.
+  body:
+    type: textarea
+    label: Paragraph
+  image:
+    type: image
+    label: Photo
+  image_alt:
+    type: text
+    label: Photo description
+    comment: Describes the photo for screen readers and Google.
+
+  # ---- Repeating sections ----
+  heading:
+    type: text
+    label: Section heading
+  items:
+    type: array
+    label: Items
+  stats:
+    type: array
+    label: Numbers band
+    comment: The navy strip of statistics. Four fits the layout.
+  value:
+    type: text
+    label: Big number
+  number:
+    type: text
+    label: Number
+
+  # ---- Listings ----
+  listings:
+    type: object
+    label: Featured listings
+  price:
+    type: text
+    label: Price
+  address:
+    type: text
+    label: Street address
+    comment: "⚠️ 'Address line' is placeholder text — replace with the real street address before launch."
+  city:
+    type: text
+    label: City & state
+  specs:
+    type: text
+    label: Beds · Baths · Sq ft
+
+  # ---- Communities ----
+  communities:
+    type: object
+    label: Featured communities
+  placeholder:
+    type: text
+    label: Placeholder caption
+    comment: Shown on the grey striped box until a photo is added.
+  blurb:
+    type: textarea
+    label: Short description
+  badge:
+    type: text
+    label: Badge text
+  sub:
+    type: text
+    label: Small caption
+  span:
+    type: switch
+    label: Double width?
+
+  # ---- Reviews ----
+  testimonials:
+    type: object
+    label: Reviews
+  quote:
+    type: textarea
+    label: Quote
+  author:
+    type: text
+    label: Client name
+  rating_line:
+    type: text
+    label: Rating line
+  reviews_url:
+    type: text
+    label: Google reviews link
+  reviews_cta:
+    type: text
+    label: Button text
+
+  # ---- About page ----
+  paragraphs:
+    type: array
+    label: Paragraphs
+    comment: Add or remove paragraphs freely.
+  areas:
+    type: object
+    label: Areas you cover
+  names:
+    type: array
+    label: Community names
+    comment: Shown as a row across the bottom. Six fits neatly.
+  philosophy:
+    type: object
+    label: Philosophy quote
+  awards:
+    type: array
+    label: Awards band
+  fun_facts:
+    type: object
+    label: "Off the clock"
+  team:
+    type: object
+    label: The team
+  members:
+    type: array
+    label: Team member cards
+  support:
+    type: array
+    label: Support team
+  headshot:
+    type: image
+    label: Headshot
+    comment: Shown as a small circle. A face-centred crop works best.
+  role:
+    type: text
+    label: Title / credentials
+  background_image:
+    type: image
+    label: Background photo
+    comment: Full-width photo behind this section, darkened automatically.
+
+  # ---- Site-wide ----
+  name:
+    type: text
+    label: Name
+  brokerage:
+    type: text
+    label: Brokerage
+  brokerage_disclosure:
+    type: textarea
+    label: Brokerage disclosure
+  phone_display:
+    type: text
+    label: Phone (as shown)
+  phone_link:
+    type: text
+    label: Phone (digits only)
+    comment: Used for tap-to-call and tap-to-text. Digits only, including the leading 1.
+  email:
+    type: text
+    label: Email
+  address_line1:
+    type: text
+    label: Office address
+  address_line2:
+    type: text
+    label: City, state, ZIP
+  license_number:
+    type: text
+    label: Arizona license number
+    comment: "⚠️ REQUIRED BEFORE LAUNCH. Currently the placeholder SA000000. Arizona advertising rules require the real ADRE number."
+  footer_blurb:
+    type: textarea
+    label: Footer paragraph
+  copyright_year:
+    type: text
+    label: Copyright year
+  nav:
+    type: array
+    label: Main menu
+    comment: Drag to reorder the menu across the top of the site.
+  footer_nav:
+    type: array
+    label: Footer menu
+  label:
+    type: text
+    label: Label
+  href:
+    type: text
+    label: Links to
+  cta:
+    type: text
+    label: Link text
+  link_label:
+    type: text
+    label: Link text
+  link_href:
+    type: text
+    label: Link goes to
