@@ -30,6 +30,35 @@ collections_config:
       - visual
       - data
 
+  # ===========================================================================
+  journal:
+    path: src/content/journal
+    name: The Journal
+    icon: article
+    description: Blog posts. Use "+ Add" to publish a new one.
+    create:
+      path: "[relative_base_path]/{title|slugify}.md"
+    add_options:
+      - name: New journal post
+    _enabled_editors:
+      - content
+      - visual
+      - data
+
+  # ===========================================================================
+  listings:
+    path: src/content/listings
+    name: Listings
+    icon: home
+    description: One page per property. Use "+ Add" for a new listing.
+    create:
+      path: "[relative_base_path]/{address|slugify}.md"
+    add_options:
+      - name: New listing
+    _enabled_editors:
+      - visual
+      - data
+
   settings:
     path: src/data
     glob:
@@ -346,3 +375,74 @@ _inputs:
   button_secondary:
     type: text
     label: Second button text
+
+  # ---- The Journal ----
+  kicker:
+    type: text
+    label: Small line above the heading
+  category:
+    type: text
+    label: Category
+    comment: Shown above the title, e.g. "Neighborhood guide".
+  excerpt:
+    type: textarea
+    label: Short summary
+    comment: Appears on the Journal index and when the post is shared.
+  lede:
+    type: textarea
+    label: Opening line
+    comment: The large italic sentence before the article body.
+  image_caption:
+    type: text
+    label: Photo caption
+  author:
+    type: text
+    label: Author
+  read_time:
+    type: text
+    label: Read time
+    comment: e.g. "5 min read"
+  date:
+    type: date
+    label: Date published
+  featured:
+    type: switch
+    label: Feature this at the top?
+    comment: Only one should be featured at a time.
+  published:
+    type: switch
+    label: Visible on the site?
+    comment: Turn off to hide without deleting.
+
+  # ---- Listings ----
+  status:
+    type: text
+    label: Status
+    comment: e.g. "For sale", "New construction", "Under contract".
+  beds:
+    type: text
+    label: Bedrooms
+  baths:
+    type: text
+    label: Bathrooms
+  sqft:
+    type: text
+    label: Interior size
+    comment: e.g. "5,338 sf"
+  lot:
+    type: text
+    label: Lot size
+  year_built:
+    type: text
+    label: Year built
+  gallery:
+    type: array
+    label: Photo gallery
+    comment: Add as many photos as you like. Drag to reorder.
+  caption:
+    type: text
+    label: Caption
+  order:
+    type: number
+    label: Sort order
+    comment: Lower numbers appear first on the Listings page.

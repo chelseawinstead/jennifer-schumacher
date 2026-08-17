@@ -1,0 +1,118 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import site from '../../data/site.yaml';
+
+export async function getStaticPaths() {
+  const homes = await getCollection('listings', ({ data }) => data.published !== false);
+  return homes.map((home) => ({ params: { slug: home.id }, props: { home } }));
+}
+
+const { home } = Astro.props;
+const d = home.data;
+const { Content } = await render(home);
+
+const F = `/src/content/listings/${home.id}.md`;
+const cc = (path) => `@file[${F}].${path}`;
+
+const facts = [
+  { label: 'Bedrooms', value: d.beds },
+  { label: 'Bathrooms', value: d.baths },
+  { label: 'Interior', value: d.sqft },
+  { label: 'Lot', value: d.lot },
+  { label: 'Year built', value: d.year_built },
+].filter((f) => f.value);
+---
+<Base title={`${d.address}, ${d.city} — ${d.price} | Jennifer Schumacher`} description={d.excerpt} image={d.image} active="Listings">
+
+  <!-- HERO -->
+  <header style="padding: 0;">
+    <div style="aspect-ratio: 21/9; overflow: hidden;">
+      <img data-editable="image" data-prop-src={cc('image')} src={d.image} alt={d.address} style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+    </div>
+  </header>
+
+  <section style="padding: 44px 64px 0;">
+    <div style="font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #9a968d; margin-bottom: 22px;">
+      <a href="/listings" class="navlink">← Featured Listings</a>
+    </div>
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 24px; border-bottom: 1px solid #ececec; padding-bottom: 30px;">
+      <div>
+        <div style="font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: #9a968d; margin-bottom: 10px;">
+          <editable-text data-prop={cc('status')} data-type="span">{d.status}</editable-text>
+        </div>
+        <div data-editable="text" data-prop={cc('price')} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-size: 46px; color: #14181d; line-height: 1;">{d.price}</div>
+        <div style={`font-size: 16px; margin-top: 12px; color: ${d.address === 'Address line' ? '#8f2c2c' : '#6b6b66'};`}>
+          <editable-text data-prop={cc('address')} data-type="span">{d.address}</editable-text>, <editable-text data-prop={cc('city')} data-type="span">{d.city}</editable-text>
+          {d.address === 'Address line' && <span style="display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-top:6px;">← placeholder, needs the real address</span>}
+        </div>
+      </div>
+      <div style="display: flex; gap: 14px;">
+        <a href={`tel:${site.phone_link}`} style="background: #002349; color: #fff; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 30px;">Request a showing</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FACTS -->
+  {facts.length > 0 && (
+    <section style="padding: 40px 64px 0;">
+      <div style={`display: grid; grid-template-columns: repeat(${facts.length},1fr); gap: 30px; max-width: 900px;`}>
+        {facts.map((f, i) => (
+          <div style={i === 0 ? '' : 'border-left: 1px solid #ececec; padding-left: 30px;'}>
+            <div style="font-family: 'Cormorant Garamond', serif; font-size: 30px; color: #14181d;">{f.value}</div>
+            <div style="font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #9a968d; margin-top: 8px;">{f.label}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- DESCRIPTION -->
+  <section style="padding: 56px 64px 20px;">
+    <div style="max-width: 720px;">
+      {d.excerpt && (
+        <p data-editable="text" data-prop={cc('excerpt')} data-type="text" style="font-family: 'Cormorant Garamond', serif; font-size: 26px; line-height: 1.5; color: #24272b; font-style: italic; margin: 0 0 32px;">{d.excerpt}</p>
+      )}
+      <div class="prose" data-editable="text" data-prop={cc('@content')} data-type="block">
+        <Content />
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  {d.gallery.length > 0 && (
+    <section style="padding: 40px 64px 90px;">
+      <div data-editable="array" data-prop={cc('gallery')} style="display: grid; grid-template-columns: repeat(2,1fr); gap: 20px;">
+        {d.gallery.map((shot) => (
+          <figure data-editable="array-item" style="margin: 0;">
+            <div style="aspect-ratio: 3/2; overflow: hidden;">
+              <img data-editable="image" data-prop-src="image" src={shot.image} alt={shot.caption} style="width:100%;height:100%;object-fit:cover;display:block;">
+            </div>
+            {shot.caption && (
+              <figcaption data-editable="text" data-prop="caption" data-type="span" style="font-size: 12px; color: #9a968d; font-weight: 300; padding: 10px 2px 0;">{shot.caption}</figcaption>
+            )}
+          </figure>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- CTA -->
+  <section id="contact" style="background: #002349; color: #fff; padding: 90px 64px; text-align: center;">
+    <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #9db4cb;">Interested in this home?</span>
+    <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 46px; line-height: 1.1; margin: 18px auto 20px; max-width: 640px;">Arrange a private showing.</h2>
+    <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+      <a href={`tel:${site.phone_link}`} style="background: #fff; color: #002349; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 32px;">Call <span set:html={site.phone_display}></span></a>
+      <a href={`sms:${site.phone_link}`} style="border: 1px solid rgba(255,255,255,.4); color: #fff; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 32px;">Text Jennifer</a>
+    </div>
+  </section>
+
+</Base>
+
+<style is:global>
+  .prose p { font-size: 17px; line-height: 1.85; color: #44474b; font-weight: 300; margin: 0 0 24px; }
+  .prose h2 { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 28px; color: #14181d; margin: 36px 0 14px; }
+  .prose ul { margin: 0 0 24px; padding-left: 22px; }
+  .prose li { font-size: 17px; line-height: 1.85; color: #44474b; font-weight: 300; margin-bottom: 8px; }
+  .prose strong { font-weight: 500; color: #14181d; }
+</style>
