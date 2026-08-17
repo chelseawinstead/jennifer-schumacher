@@ -20,6 +20,8 @@ collections_config:
       - "about.yaml"
       - "buy.yaml"
       - "sell.yaml"
+      - "journal.yaml"
+      - "listings.yaml"
     name: Pages
     icon: wysiwyg
     description: The content of each page on the site.
