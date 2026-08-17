@@ -102,8 +102,8 @@ const facts = [
     <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #9db4cb;">Interested in this home?</span>
     <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 46px; line-height: 1.1; margin: 18px auto 20px; max-width: 640px;">Arrange a private showing.</h2>
     <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-      <a href={`tel:${site.phone_link}`} style="background: #fff; color: #002349; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 32px;"><editable-text data-prop="@file[/src/data/site.yaml].buttons.call_prefix" data-type="span">{site.buttons?.call_prefix ?? 'Call '}</editable-text><span set:html={site.phone_display}></span></a>
-      <a href={`sms:${site.phone_link}`} style="border: 1px solid rgba(255,255,255,.4); color: #fff; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 32px;"><editable-text data-prop="@file[/src/data/site.yaml].buttons.text" data-type="span">{site.buttons?.text ?? 'Text Jennifer'}</editable-text></a>
+      <a href={`tel:${site.phone_link}`} style="background: #fff; color: #002349; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 32px;">{site.buttons?.call_prefix ?? 'Call '}<span set:html={site.phone_display}></span></a>
+      <a href={`sms:${site.phone_link}`} style="border: 1px solid rgba(255,255,255,.4); color: #fff; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 32px;">{site.buttons?.text ?? 'Text Jennifer'}</a>
     </div>
   </section>
 

@@ -18,8 +18,8 @@ const p = (path) => `@file[${F}].${path}`;
       <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 74px; line-height: 1.04; letter-spacing: -.01em; color: #14181d; margin: 0 0 30px;"><editable-text data-prop={p('hero.headline_line1')} data-type="span">{hero.headline_line1}</editable-text><br><em style="font-style: italic; color: #002349;"><editable-text data-prop={p('hero.headline_emphasis')} data-type="span">{hero.headline_emphasis}</editable-text></em></h1>
       <p data-editable="text" data-prop={p('hero.body')} data-type="text" style="font-size: 17px; line-height: 1.75; color: #55585c; max-width: 460px; margin: 0 0 40px; font-weight: 300;">{hero.body}</p>
       <div style="display: flex; gap: 16px;">
-        <a href={`tel:${site.phone_link}`} style="background: #002349; color: #fff; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 30px;"><editable-text data-prop="@file[/src/data/site.yaml].buttons.call" data-type="span">{site.buttons?.call ?? 'Call Jennifer'}</editable-text></a>
-        <a href={`sms:${site.phone_link}`} style="border: 1px solid #cdccc6; color: #14181d; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 30px;"><editable-text data-prop="@file[/src/data/site.yaml].buttons.text" data-type="span">{site.buttons?.text ?? 'Text Jennifer'}</editable-text></a>
+        <a href={`tel:${site.phone_link}`} style="background: #002349; color: #fff; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 30px;">{site.buttons?.call ?? 'Call Jennifer'}</a>
+        <a href={`sms:${site.phone_link}`} style="border: 1px solid #cdccc6; color: #14181d; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 30px;">{site.buttons?.text ?? 'Text Jennifer'}</a>
       </div>
     </div>
     <div style="min-height: 620px;">
@@ -180,8 +180,8 @@ const p = (path) => `@file[${F}].${path}`;
       <h2 data-editable="text" data-prop={p('cta.heading')} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 52px; line-height: 1.08; margin: 0 0 24px;">{cta.heading}</h2>
       <p data-editable="text" data-prop={p('cta.body')} data-type="text" style="font-size: 16px; line-height: 1.7; color: #c6d3df; font-weight: 300; max-width: 420px; margin: 0 0 36px;">{cta.body}</p>
       <div style="display: flex; gap: 16px; align-items: center;">
-        <a href={`tel:${site.phone_link}`} style="background: #fff; color: #002349; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 30px;"><editable-text data-prop="@file[/src/data/site.yaml].buttons.call_prefix" data-type="span">{site.buttons?.call_prefix ?? 'Call '}</editable-text><span set:html={site.phone_display}></span></a>
-        <a href={`sms:${site.phone_link}`} style="border: 1px solid rgba(255,255,255,.4); color: #fff; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 30px;"><editable-text data-prop="@file[/src/data/site.yaml].buttons.text" data-type="span">{site.buttons?.text ?? 'Text Jennifer'}</editable-text></a>
+        <a href={`tel:${site.phone_link}`} style="background: #fff; color: #002349; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 30px;">{site.buttons?.call_prefix ?? 'Call '}<span set:html={site.phone_display}></span></a>
+        <a href={`sms:${site.phone_link}`} style="border: 1px solid rgba(255,255,255,.4); color: #fff; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 30px;">{site.buttons?.text ?? 'Text Jennifer'}</a>
       </div>
     </div>
   </section>

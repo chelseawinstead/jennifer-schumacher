@@ -5,18 +5,18 @@ import site from '../data/site.yaml';
   <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.1fr; gap: 40px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,.1);">
     <div>
       <div style="font-family: 'Cormorant Garamond', serif; font-size: 22px; letter-spacing: .2em; color: #fff; margin-bottom: 14px;">{site.name.toUpperCase()}</div>
-      <p data-editable="text" data-prop="@file[/src/data/site.yaml].footer_blurb" data-type="text" style="font-size: 14px; line-height: 1.7; font-weight: 300; margin: 0; max-width: 300px;">{site.footer_blurb}</p>
+      <p style="font-size: 14px; line-height: 1.7; font-weight: 300; margin: 0; max-width: 300px;">{site.footer_blurb}</p>
     </div>
     <div>
-      <div style="font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: #5f7488; margin-bottom: 18px;"><editable-text data-prop="@file[/src/data/site.yaml].footer_headings.explore" data-type="span">{site.footer_headings?.explore ?? 'Explore'}</editable-text></div>
+      <div style="font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: #5f7488; margin-bottom: 18px;">{site.footer_headings?.explore ?? 'Explore'}</div>
       <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; font-weight: 300;">
         {site.footer_nav.map((item, i) => (
-          <a href={item.href} class="navlink"><editable-text data-prop={`@file[/src/data/site.yaml].footer_nav[${i}].label`} data-type="span">{item.label}</editable-text></a>
+          <a href={item.href} class="navlink">{item.label}</a>
         ))}
       </div>
     </div>
     <div>
-      <div style="font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: #5f7488; margin-bottom: 18px;"><editable-text data-prop="@file[/src/data/site.yaml].footer_headings.contact" data-type="span">{site.footer_headings?.contact ?? 'Contact'}</editable-text></div>
+      <div style="font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: #5f7488; margin-bottom: 18px;">{site.footer_headings?.contact ?? 'Contact'}</div>
       <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; font-weight: 300;">
         <a href={`tel:${site.phone_link}`} set:html={site.phone_display}></a>
         <a href={`mailto:${site.email}`}>{site.email}</a>
@@ -24,8 +24,8 @@ import site from '../data/site.yaml';
       </div>
     </div>
     <div>
-      <div style="font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: #5f7488; margin-bottom: 18px;"><editable-text data-prop="@file[/src/data/site.yaml].footer_headings.brokerage" data-type="span">{site.footer_headings?.brokerage ?? 'Brokerage'}</editable-text></div>
-      <p data-editable="text" data-prop="@file[/src/data/site.yaml].brokerage_disclosure" data-type="text" style="font-size: 14px; line-height: 1.7; font-weight: 300; margin: 0;">{site.brokerage_disclosure}</p>
+      <div style="font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: #5f7488; margin-bottom: 18px;">{site.footer_headings?.brokerage ?? 'Brokerage'}</div>
+      <p style="font-size: 14px; line-height: 1.7; font-weight: 300; margin: 0;">{site.brokerage_disclosure}</p>
     </div>
   </div>
   <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 26px; font-size: 12px; letter-spacing: .1em; color: #5f7488;">

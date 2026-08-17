@@ -95,8 +95,8 @@ const specs = (d) => [d.beds && `${d.beds} Bed`, d.baths && `${d.baths} Bath`, d
     <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 52px; line-height: 1.1; margin: 20px auto 22px; max-width: 720px;"><editable-text data-prop={cc('cta.heading')} data-type="span">{cta.heading}</editable-text></h2>
     <p style="font-size: 17px; line-height: 1.7; color: #c6d3df; font-weight: 300; max-width: 520px; margin: 0 auto 38px;"><editable-text data-prop={cc('cta.body')} data-type="text">{cta.body}</editable-text></p>
     <div style="display: flex; gap: 16px; justify-content: center;">
-      <a href={`tel:${site.phone_link}`} style="background: #fff; color: #002349; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 17px 34px;"><editable-text data-prop="@file[/src/data/site.yaml].buttons.call_prefix" data-type="span">{site.buttons?.call_prefix ?? 'Call '}</editable-text><span set:html={site.phone_display}></span></a>
-      <a href={`sms:${site.phone_link}`} style="border: 1px solid rgba(255,255,255,.5); color: #fff; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 17px 34px;"><editable-text data-prop="@file[/src/data/site.yaml].buttons.text" data-type="span">{site.buttons?.text ?? 'Text Jennifer'}</editable-text></a>
+      <a href={`tel:${site.phone_link}`} style="background: #fff; color: #002349; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 17px 34px;">{site.buttons?.call_prefix ?? 'Call '}<span set:html={site.phone_display}></span></a>
+      <a href={`sms:${site.phone_link}`} style="border: 1px solid rgba(255,255,255,.5); color: #fff; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 17px 34px;">{site.buttons?.text ?? 'Text Jennifer'}</a>
     </div>
   </section>
 

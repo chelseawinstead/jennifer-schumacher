@@ -17,11 +17,11 @@ const { active = '' } = Astro.props;
         style={item.label === active
           ? 'color: #002349; border-bottom: 1px solid #002349; padding-bottom: 3px;'
           : undefined}
-      ><editable-text data-prop={`@file[/src/data/site.yaml].nav[${i}].label`} data-type="span">{item.label}</editable-text></a>
+      >{item.label}</a>
     ))}
   </div>
   <div style="display: flex; align-items: center; gap: 20px;">
     <a href={`tel:${site.phone_link}`} style="font-size: 13px; letter-spacing: .1em; color: #14181d; white-space: nowrap;" set:html={site.phone_display}></a>
-    <a href={`tel:${site.phone_link}`} style="border: 1px solid #002349; color: #002349; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; padding: 10px 20px;"><editable-text data-prop="@file[/src/data/site.yaml].buttons.contact" data-type="span">{site.buttons?.contact ?? 'Contact'}</editable-text></a>
+    <a href={`tel:${site.phone_link}`} style="border: 1px solid #002349; color: #002349; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; padding: 10px 20px;">{site.buttons?.contact ?? 'Contact'}</a>
   </div>
 </nav>
