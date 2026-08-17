@@ -4,22 +4,26 @@ import site from '../data/site.yaml';
 import home from '../data/home.yaml';
 
 const { seo, hero, split, why, stats, communities, listings, testimonials, affiliations, cta } = home;
+
+// CloudCannon visual editing: point an element at a value in home.yaml
+const F = 'src/data/home.yaml';
+const p = (path) => `@file[${F}].${path}`;
 ---
 <Base title={seo.title} description={seo.description} image={seo.social_image} active="Home">
 
   <!-- HERO -->
   <header class="m-hero" style="display: grid; grid-template-columns: 1.05fr .95fr; align-items: stretch;">
     <div style="padding: 92px 64px 88px; display: flex; flex-direction: column; justify-content: center;">
-      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349; margin-bottom: 30px;">{hero.kicker}</span>
-      <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 74px; line-height: 1.04; letter-spacing: -.01em; color: #14181d; margin: 0 0 30px;">{hero.headline_line1}<br><em style="font-style: italic; color: #002349;">{hero.headline_emphasis}</em></h1>
-      <p style="font-size: 17px; line-height: 1.75; color: #55585c; max-width: 460px; margin: 0 0 40px; font-weight: 300;">{hero.body}</p>
+      <span data-editable="text" data-prop={p('hero.kicker')} data-type="span" style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349; margin-bottom: 30px;">{hero.kicker}</span>
+      <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 74px; line-height: 1.04; letter-spacing: -.01em; color: #14181d; margin: 0 0 30px;"><editable-text data-prop={p('hero.headline_line1')} data-type="span">{hero.headline_line1}</editable-text><br><em style="font-style: italic; color: #002349;"><editable-text data-prop={p('hero.headline_emphasis')} data-type="span">{hero.headline_emphasis}</editable-text></em></h1>
+      <p data-editable="text" data-prop={p('hero.body')} data-type="text" style="font-size: 17px; line-height: 1.75; color: #55585c; max-width: 460px; margin: 0 0 40px; font-weight: 300;">{hero.body}</p>
       <div style="display: flex; gap: 16px;">
         <a href={`tel:${site.phone_link}`} style="background: #002349; color: #fff; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 30px;">Call Jennifer</a>
         <a href={`sms:${site.phone_link}`} style="border: 1px solid #cdccc6; color: #14181d; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 30px;">Text Jennifer</a>
       </div>
     </div>
     <div style="min-height: 620px;">
-      <img src={hero.image} alt={hero.image_alt} style="width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block;">
+      <img data-editable="image" data-prop-src={p('hero.image')} data-prop-alt={p('hero.image_alt')} src={hero.image} alt={hero.image_alt} style="width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block;">
     </div>
   </header>
 
@@ -29,9 +33,9 @@ const { seo, hero, split, why, stats, communities, listings, testimonials, affil
       <a href={card.href} style={i === 0
         ? 'display: block; padding: 66px 64px; border-right: 1px solid #ececec;'
         : 'display: block; padding: 66px 64px; background: #f6f5f2;'}>
-        <span style="font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: #9a968d;">{card.kicker}</span>
-        <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 40px; color: #14181d; margin: 14px 0 14px;">{card.title}</h3>
-        <p style="font-size: 15px; line-height: 1.7; color: #6b6b66; font-weight: 300; margin: 0 0 26px; max-width: 400px;">{card.body}</p>
+        <span data-editable="text" data-prop={p(`split[${i}].kicker`)} data-type="span" style="font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: #9a968d;">{card.kicker}</span>
+        <h3 data-editable="text" data-prop={p(`split[${i}].title`)} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 40px; color: #14181d; margin: 14px 0 14px;">{card.title}</h3>
+        <p data-editable="text" data-prop={p(`split[${i}].body`)} data-type="text" style="font-size: 15px; line-height: 1.7; color: #6b6b66; font-weight: 300; margin: 0 0 26px; max-width: 400px;">{card.body}</p>
         <span style="font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #002349; border-bottom: 1px solid #002349; padding-bottom: 4px;">{card.cta}</span>
       </a>
     ))}
@@ -40,16 +44,16 @@ const { seo, hero, split, why, stats, communities, listings, testimonials, affil
   <!-- WHY -->
   <section style="padding: 96px 64px; border-top: 1px solid #ececec;">
     <div style="text-align: center; margin-bottom: 66px;">
-      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">{why.kicker}</span>
-      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 48px; color: #14181d; margin: 16px 0 0;">{why.heading}</h2>
+      <span data-editable="text" data-prop={p('why.kicker')} data-type="span" style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">{why.kicker}</span>
+      <h2 data-editable="text" data-prop={p('why.heading')} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 48px; color: #14181d; margin: 16px 0 0;">{why.heading}</h2>
     </div>
     <div class="m-why" style="display: grid; grid-template-columns: repeat(3,1fr); gap: 56px;">
-      {why.items.map((item) => (
+      {why.items.map((item, i) => (
         <div>
           <div style="font-family: 'Cormorant Garamond', serif; font-size: 30px; color: #002349;">{item.number}</div>
           <div style="height: 1px; background: #e0ded7; margin: 18px 0;"></div>
-          <h4 style="font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 24px; color: #14181d; margin: 0 0 12px;">{item.title}</h4>
-          <p style="font-size: 15px; line-height: 1.7; color: #6b6b66; font-weight: 300; margin: 0;">{item.body}</p>
+          <h4 data-editable="text" data-prop={p(`why.items[${i}].title`)} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 24px; color: #14181d; margin: 0 0 12px;">{item.title}</h4>
+          <p data-editable="text" data-prop={p(`why.items[${i}].body`)} data-type="text" style="font-size: 15px; line-height: 1.7; color: #6b6b66; font-weight: 300; margin: 0;">{item.body}</p>
         </div>
       ))}
     </div>
@@ -61,8 +65,8 @@ const { seo, hero, split, why, stats, communities, listings, testimonials, affil
       <div style={i === 0
         ? 'text-align: center;'
         : 'text-align: center; border-left: 1px solid rgba(255,255,255,.14);'}>
-        <div style="font-family: 'Cormorant Garamond', serif; font-size: 58px; line-height: 1;">{stat.value}</div>
-        <div style="font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: #9db4cb; margin-top: 14px;">{stat.label}</div>
+        <div data-editable="text" data-prop={p(`stats[${i}].value`)} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-size: 58px; line-height: 1;">{stat.value}</div>
+        <div data-editable="text" data-prop={p(`stats[${i}].label`)} data-type="span" style="font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: #9db4cb; margin-top: 14px;">{stat.label}</div>
       </div>
     ))}
   </section>
@@ -71,8 +75,8 @@ const { seo, hero, split, why, stats, communities, listings, testimonials, affil
   <section style="padding: 96px 64px 80px;">
     <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 44px;">
       <div>
-        <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">{communities.kicker}</span>
-        <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 46px; color: #14181d; margin: 14px 0 0;">{communities.heading}</h2>
+        <span data-editable="text" data-prop={p('communities.kicker')} data-type="span" style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">{communities.kicker}</span>
+        <h2 data-editable="text" data-prop={p('communities.heading')} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 46px; color: #14181d; margin: 14px 0 0;">{communities.heading}</h2>
       </div>
       <a href={communities.link_href} style="font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #6b6b66;">{communities.link_label}</a>
     </div>
@@ -80,28 +84,28 @@ const { seo, hero, split, why, stats, communities, listings, testimonials, affil
 
       <a href={communities.featured.href} style="grid-row: span 2; position: relative; overflow: hidden; display: block;">
         {communities.featured.image
-          ? <img src={communities.featured.image} alt={communities.featured.name} style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
+          ? <img data-editable="image" data-prop-src={p('communities.featured.image')} src={communities.featured.image} alt={communities.featured.name} style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
           : <div class="ph" style="position: absolute; inset: 0;"><span class="phl">{communities.featured.placeholder}</span></div>}
         <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,20,45,0) 38%, rgba(0,20,45,.74) 100%);"></div>
         <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 34px;">
           <div style="display: inline-block; font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; color: #fff; border: 1px solid rgba(255,255,255,.6); padding: 5px 11px; margin-bottom: 16px;">{communities.featured.badge}</div>
-          <div style="font-family: 'Cormorant Garamond', serif; font-size: 36px; color: #fff; line-height: 1;">{communities.featured.name}</div>
-          <div style="font-size: 13px; color: rgba(255,255,255,.85); margin-top: 10px; max-width: 340px; font-weight: 300; line-height: 1.6;">{communities.featured.blurb}</div>
+          <div data-editable="text" data-prop={p('communities.featured.name')} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-size: 36px; color: #fff; line-height: 1;">{communities.featured.name}</div>
+          <div data-editable="text" data-prop={p('communities.featured.blurb')} data-type="text" style="font-size: 13px; color: rgba(255,255,255,.85); margin-top: 10px; max-width: 340px; font-weight: 300; line-height: 1.6;">{communities.featured.blurb}</div>
           <div style="font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #fff; border-bottom: 1px solid #fff; padding-bottom: 3px; display: inline-block; margin-top: 18px;">{communities.featured.cta}</div>
         </div>
       </a>
 
-      {communities.others.map((c) => (
+      {communities.others.map((c, i) => (
         <a href={c.href} style={c.span
           ? 'grid-column: span 2; position: relative; overflow: hidden; display: block;'
           : 'position: relative; overflow: hidden; display: block;'}>
           {c.image
-            ? <img src={c.image} alt={c.name} style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
+            ? <img data-editable="image" data-prop-src={p(`communities.others[${i}].image`)} src={c.image} alt={c.name} style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
             : <div class="ph" style="position: absolute; inset: 0;"><span class="phl">{c.placeholder}</span></div>}
           <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,20,45,0) 45%, rgba(0,20,45,.64) 100%);"></div>
           <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 22px;">
-            <div style="font-family: 'Cormorant Garamond', serif; font-size: 23px; color: #fff; line-height: 1;">{c.name}</div>
-            <div style="font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.8); margin-top: 6px;">{c.sub}</div>
+            <div data-editable="text" data-prop={p(`communities.others[${i}].name`)} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-size: 23px; color: #fff; line-height: 1;">{c.name}</div>
+            <div data-editable="text" data-prop={p(`communities.others[${i}].sub`)} data-type="span" style="font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.8); margin-top: 6px;">{c.sub}</div>
           </div>
         </a>
       ))}
@@ -112,21 +116,21 @@ const { seo, hero, split, why, stats, communities, listings, testimonials, affil
   <section style="padding: 40px 64px 96px; background: #f6f5f2;">
     <div style="padding-top: 56px; display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 44px;">
       <div>
-        <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">{listings.kicker}</span>
-        <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 46px; color: #14181d; margin: 14px 0 0;">{listings.heading}</h2>
+        <span data-editable="text" data-prop={p('listings.kicker')} data-type="span" style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">{listings.kicker}</span>
+        <h2 data-editable="text" data-prop={p('listings.heading')} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 46px; color: #14181d; margin: 14px 0 0;">{listings.heading}</h2>
       </div>
       <a href={listings.link_href} style="font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #6b6b66;">{listings.link_label}</a>
     </div>
     <div style="display: grid; grid-template-columns: repeat(3,1fr); gap: 28px;">
-      {listings.items.map((l) => (
+      {listings.items.map((l, i) => (
         <a href={l.href} style="display: block; background: #fff;">
           <div style="aspect-ratio: 4/3; overflow:hidden;">
-            <img src={l.image} alt={`${l.address}, ${l.city}`} style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+            <img data-editable="image" data-prop-src={p(`listings.items[${i}].image`)} src={l.image} alt={`${l.address}, ${l.city}`} style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
           </div>
           <div style="padding: 22px 24px 26px;">
-            <div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #14181d;">{l.price}</div>
-            <div style="font-size: 14px; color: #6b6b66; margin: 6px 0 14px;">{l.address} · {l.city}</div>
-            <div style="font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #9a968d;">{l.specs}</div>
+            <div data-editable="text" data-prop={p(`listings.items[${i}].price`)} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #14181d;">{l.price}</div>
+            <div style="font-size: 14px; color: #6b6b66; margin: 6px 0 14px;"><editable-text data-prop={p(`listings.items[${i}].address`)} data-type="span">{l.address}</editable-text> · <editable-text data-prop={p(`listings.items[${i}].city`)} data-type="span">{l.city}</editable-text></div>
+            <div data-editable="text" data-prop={p(`listings.items[${i}].specs`)} data-type="span" style="font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #9a968d;">{l.specs}</div>
           </div>
         </a>
       ))}
@@ -136,15 +140,15 @@ const { seo, hero, split, why, stats, communities, listings, testimonials, affil
   <!-- TESTIMONIALS -->
   <section style="padding: 96px 64px;">
     <div style="text-align: center; margin-bottom: 60px;">
-      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">{testimonials.kicker}</span>
-      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 48px; color: #14181d; margin: 16px 0 14px;">{testimonials.heading}</h2>
+      <span data-editable="text" data-prop={p('testimonials.kicker')} data-type="span" style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">{testimonials.kicker}</span>
+      <h2 data-editable="text" data-prop={p('testimonials.heading')} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 48px; color: #14181d; margin: 16px 0 14px;">{testimonials.heading}</h2>
       <div style="display: inline-flex; align-items: center; gap: 10px; font-size: 13px; letter-spacing: .04em; color: #6b6b66;"><span style="color: #002349; letter-spacing: .12em;">★★★★★</span> {testimonials.rating_line}</div>
     </div>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 1080px; margin: 0 auto;">
-      {testimonials.items.map((t) => (
+      {testimonials.items.map((t, i) => (
         <blockquote style="margin: 0; border-top: 2px solid #002349; padding-top: 24px;">
-          <p style="font-family: 'Cormorant Garamond', serif; font-size: 25px; line-height: 1.5; color: #24272b; font-style: italic; margin: 0 0 20px;">{t.quote}</p>
-          <footer style="font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d;">{t.author} · ★★★★★</footer>
+          <p data-editable="text" data-prop={p(`testimonials.items[${i}].quote`)} data-type="text" style="font-family: 'Cormorant Garamond', serif; font-size: 25px; line-height: 1.5; color: #24272b; font-style: italic; margin: 0 0 20px;">{t.quote}</p>
+          <footer style="font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d;"><editable-text data-prop={p(`testimonials.items[${i}].author`)} data-type="span">{t.author}</editable-text> · ★★★★★</footer>
         </blockquote>
       ))}
     </div>
@@ -169,12 +173,12 @@ const { seo, hero, split, why, stats, communities, listings, testimonials, affil
   <!-- FINAL CTA -->
   <section id="contact" style="display: grid; grid-template-columns: 1fr 1fr;">
     <div style="min-height: 460px; overflow:hidden;">
-      <img src={cta.image} alt="" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+      <img data-editable="image" data-prop-src={p('cta.image')} src={cta.image} alt="" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
     </div>
     <div style="background: #002349; color: #fff; padding: 92px 64px; display: flex; flex-direction: column; justify-content: center;">
-      <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #9db4cb; margin-bottom: 24px;">{cta.kicker}</span>
-      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 52px; line-height: 1.08; margin: 0 0 24px;">{cta.heading}</h2>
-      <p style="font-size: 16px; line-height: 1.7; color: #c6d3df; font-weight: 300; max-width: 420px; margin: 0 0 36px;">{cta.body}</p>
+      <span data-editable="text" data-prop={p('cta.kicker')} data-type="span" style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #9db4cb; margin-bottom: 24px;">{cta.kicker}</span>
+      <h2 data-editable="text" data-prop={p('cta.heading')} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 52px; line-height: 1.08; margin: 0 0 24px;">{cta.heading}</h2>
+      <p data-editable="text" data-prop={p('cta.body')} data-type="text" style="font-size: 16px; line-height: 1.7; color: #c6d3df; font-weight: 300; max-width: 420px; margin: 0 0 36px;">{cta.body}</p>
       <div style="display: flex; gap: 16px; align-items: center;">
         <a href={`tel:${site.phone_link}`} style="background: #fff; color: #002349; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 30px;">Call <span set:html={site.phone_display}></span></a>
         <a href={`sms:${site.phone_link}`} style="border: 1px solid rgba(255,255,255,.4); color: #fff; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 16px 30px;">Text Jennifer</a>
