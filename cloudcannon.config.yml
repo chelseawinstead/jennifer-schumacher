@@ -164,7 +164,7 @@ _inputs:
   # ---- Communities ----
   communities:
     type: object
-    label: Featured communities
+    label: Featured cities
   placeholder:
     type: text
     label: Placeholder caption

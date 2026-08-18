@@ -9,9 +9,10 @@ const { seo, hero, split, why, stats, communities, listings, testimonials, affil
 const F = '/src/data/home.yaml';
 const p = (path) => `@file[${F}].${path}`;
 
-// A 1x1 transparent pixel. Used so an <img> still exists (and stays clickable
-// in the CloudCannon editor) before a real photo has been uploaded.
-const BLANK = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+// Stand-in artwork shown until a real photo is uploaded. Rendering a genuine
+// <img> (rather than an empty box) is what gives CloudCannon something to
+// click, so photos can be swapped directly on the page.
+const PH = '/assets/placeholder-community.svg';
 ---
 <Base title={seo.title} description={seo.description} image={seo.social_image} active="Home">
 
@@ -86,11 +87,12 @@ const BLANK = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAI
     </div>
     <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; grid-auto-rows: 262px; gap: 20px;">
 
-      <a href={communities.featured.href} style="grid-row: span 2; position: relative; overflow: hidden; display: block;">
-        {!communities.featured.image && (
-          <div class="ph" style="position: absolute; inset: 0;"><span class="phl">{communities.featured.placeholder}</span></div>
-        )}
-        <img data-editable="image" data-prop-src={p('communities.featured.image')} src={communities.featured.image || BLANK} alt={communities.featured.name} style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
+      {/* Not linked for now — city pages still to be designed. Wrap this div in an anchor to re-enable. */}
+      <div style="grid-row: span 2; position: relative; overflow: hidden; display: block;">
+        <div class="ph" style="position: absolute; inset: 0;">
+          <img data-editable="image" data-prop-src={p('communities.featured.image')} src={communities.featured.image || PH} alt={communities.featured.name} style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
+          {!communities.featured.image && <span class="phl">{communities.featured.placeholder}</span>}
+        </div>
         <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,20,45,0) 38%, rgba(0,20,45,.74) 100%);"></div>
         <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 34px;">
           <div style="display: inline-block; font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; color: #fff; border: 1px solid rgba(255,255,255,.6); padding: 5px 11px; margin-bottom: 16px;"><editable-text data-prop={p('communities.featured.badge')} data-type="span">{communities.featured.badge}</editable-text></div>
@@ -98,23 +100,23 @@ const BLANK = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAI
           <div data-editable="text" data-prop={p('communities.featured.blurb')} data-type="text" style="font-size: 13px; color: rgba(255,255,255,.85); margin-top: 10px; max-width: 340px; font-weight: 300; line-height: 1.6;">{communities.featured.blurb}</div>
           <div style="font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #fff; border-bottom: 1px solid #fff; padding-bottom: 3px; display: inline-block; margin-top: 18px;"><editable-text data-prop={p('communities.featured.cta')} data-type="span">{communities.featured.cta}</editable-text></div>
         </div>
-      </a>
+      </div>
 
       <div data-editable="array" data-prop={p('communities.others')} style="display: contents;">
       {communities.others.map((c, i) => (
-        <a data-editable="array-item" href={c.href} style={c.span
+        <div data-editable="array-item" style={c.span
           ? 'grid-column: span 2; position: relative; overflow: hidden; display: block;'
           : 'position: relative; overflow: hidden; display: block;'}>
-          {!c.image && (
-            <div class="ph" style="position: absolute; inset: 0;"><span class="phl">{c.placeholder}</span></div>
-          )}
-          <img data-editable="image" data-prop-src="image" src={c.image || BLANK} alt={c.name} style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
+          <div class="ph" style="position: absolute; inset: 0;">
+            <img data-editable="image" data-prop-src="image" src={c.image || PH} alt={c.name} style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
+            {!c.image && <span class="phl">{c.placeholder}</span>}
+          </div>
           <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,20,45,0) 45%, rgba(0,20,45,.64) 100%);"></div>
           <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 22px;">
             <div data-editable="text" data-prop="name" data-type="span" style="font-family: 'Cormorant Garamond', serif; font-size: 23px; color: #fff; line-height: 1;">{c.name}</div>
             <div data-editable="text" data-prop="sub" data-type="span" style="font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.8); margin-top: 6px;">{c.sub}</div>
           </div>
-        </a>
+        </div>
       ))}
       </div>
     </div>

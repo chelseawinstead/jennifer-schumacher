@@ -50,13 +50,13 @@ why:
     - number: '03'
       title: Powerful negotiation
       body: >-
-        Three decades of sales &amp; marketing translate into leverage to
+        Three decades of sales & marketing translate into leverage to
         fiercely advocate for your best interests.
 stats:
   - value: Top 1%
     label: REALTOR® in Arizona
   - value: 30+
-    label: Years in sales &amp; marketing
+    label: Years in sales & marketing
   - value: 370+
     label: Homes sold*
   - value: $260M+
@@ -78,7 +78,7 @@ communities:
     - image: ''
       placeholder: Community photo — Paradise Valley
       name: Phoenix
-      sub: North Central, midtown &amp; Downtown
+      sub: North Central, midtown & Downtown
       href: /listings
       span: false
     - image: ''
@@ -90,7 +90,7 @@ communities:
     - image: ''
       placeholder: Community photo — Gilbert
       name: Scottsdale
-      sub: Old town, Kierland, The Quarter &amp; North Scottsdale
+      sub: Old town, Kierland, The Quarter & North Scottsdale
       href: /listings
       span: true
 listings:
