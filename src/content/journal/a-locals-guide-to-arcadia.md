@@ -16,11 +16,10 @@ lede: >-
   backdrop to nearly everything.
 author: Jennifer Schumacher
 read_time: 5 min read
-date: 2026-06-20
+date: 2026-06-20T00:00:00Z
 featured: true
 published: true
 ---
-
 Tucked between Phoenix and Scottsdale, Arcadia trades the desert palette for citrus groves, flood-irrigated lawns, and ranch homes reimagined as modern farmhouses. It's one of the few Valley neighborhoods where you can walk to dinner — and one of the reasons clients ask me about it by name.
 
 Whether you're visiting for the weekend or considering a move, here's where I'd point you.
