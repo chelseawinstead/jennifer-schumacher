@@ -7,7 +7,7 @@ seo:
   social_image: /assets/pv-aerial-front.jpg
 intro:
   kicker: Featured Listings
-  headline_before: 'Exceptional homes, '
+  headline_before: Exceptional homes,
   headline_emphasis: beautifully presented.
   body: >-
     Explore homes brought to life through striking photography, cinematic video,
@@ -27,12 +27,12 @@ property_pages:
     Each home gets its own page — full photo gallery, video, floor plans,
     neighborhood detail, and a direct line to schedule a private showing.
   button: Ask about a listing
-  image: /assets/home-bath.jpg
+  image: /assets/backyard1.jpg
 cta:
   kicker: Looking for something specific?
   heading: Let's find the one that fits.
   body: >-
     Tell me what you're looking for and I'll send curated listings — including
     homes before they hit the market.
-  button_call: 'Call '
+  button_call: Call
   button_text: Text Jennifer
