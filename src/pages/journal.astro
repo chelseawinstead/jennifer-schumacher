@@ -35,7 +35,7 @@ const rest = posts.filter((p) => p.id !== featured?.id);
           <span style="font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: #002349; margin-bottom: 18px;">{featured.data.category} · {featured.data.kicker}</span>
           <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 40px; line-height: 1.12; color: #14181d; margin: 0 0 18px;">{featured.data.title}</h2>
           <p style="font-size: 16px; line-height: 1.75; color: #55585c; font-weight: 300; margin: 0 0 28px;">{featured.data.excerpt}</p>
-          <span style="font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #002349; border-bottom: 1px solid #002349; padding-bottom: 4px; align-self: flex-start;">{featured_cta}</span>
+          <span style="font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #002349; border-bottom: 1px solid #002349; padding-bottom: 4px; align-self: flex-start;"><editable-text data-prop={cc('featured_cta')} data-type="span">{featured_cta}</editable-text></span>
         </div>
       </a>
     </section>

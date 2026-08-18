@@ -8,6 +8,10 @@ const { seo, hero, split, why, stats, communities, listings, testimonials, affil
 // CloudCannon visual editing: point an element at a value in home.yaml
 const F = '/src/data/home.yaml';
 const p = (path) => `@file[${F}].${path}`;
+
+// A 1x1 transparent pixel. Used so an <img> still exists (and stays clickable
+// in the CloudCannon editor) before a real photo has been uploaded.
+const BLANK = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 ---
 <Base title={seo.title} description={seo.description} image={seo.social_image} active="Home">
 
@@ -50,7 +54,7 @@ const p = (path) => `@file[${F}].${path}`;
     <div data-editable="array" data-prop={p('why.items')} class="m-why" style="display: grid; grid-template-columns: repeat(3,1fr); gap: 56px;">
       {why.items.map((item, i) => (
         <div data-editable="array-item">
-          <div style="font-family: 'Cormorant Garamond', serif; font-size: 30px; color: #002349;">{item.number}</div>
+          <div data-editable="text" data-prop="number" data-type="span" style="font-family: 'Cormorant Garamond', serif; font-size: 30px; color: #002349;">{item.number}</div>
           <div style="height: 1px; background: #e0ded7; margin: 18px 0;"></div>
           <h4 data-editable="text" data-prop="title" data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 24px; color: #14181d; margin: 0 0 12px;">{item.title}</h4>
           <p data-editable="text" data-prop="body" data-type="text" style="font-size: 15px; line-height: 1.7; color: #6b6b66; font-weight: 300; margin: 0;">{item.body}</p>
@@ -78,20 +82,21 @@ const p = (path) => `@file[${F}].${path}`;
         <span data-editable="text" data-prop={p('communities.kicker')} data-type="span" style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">{communities.kicker}</span>
         <h2 data-editable="text" data-prop={p('communities.heading')} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 46px; color: #14181d; margin: 14px 0 0;">{communities.heading}</h2>
       </div>
-      <a href={communities.link_href} style="font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #6b6b66;">{communities.link_label}</a>
+      <a href={communities.link_href} style="font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #6b6b66;"><editable-text data-prop={p('communities.link_label')} data-type="span">{communities.link_label}</editable-text></a>
     </div>
     <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; grid-auto-rows: 262px; gap: 20px;">
 
       <a href={communities.featured.href} style="grid-row: span 2; position: relative; overflow: hidden; display: block;">
-        {communities.featured.image
-          ? <img data-editable="image" data-prop-src={p('communities.featured.image')} src={communities.featured.image} alt={communities.featured.name} style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
-          : <div class="ph" style="position: absolute; inset: 0;"><span class="phl">{communities.featured.placeholder}</span></div>}
+        {!communities.featured.image && (
+          <div class="ph" style="position: absolute; inset: 0;"><span class="phl">{communities.featured.placeholder}</span></div>
+        )}
+        <img data-editable="image" data-prop-src={p('communities.featured.image')} src={communities.featured.image || BLANK} alt={communities.featured.name} style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
         <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,20,45,0) 38%, rgba(0,20,45,.74) 100%);"></div>
         <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 34px;">
-          <div style="display: inline-block; font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; color: #fff; border: 1px solid rgba(255,255,255,.6); padding: 5px 11px; margin-bottom: 16px;">{communities.featured.badge}</div>
+          <div style="display: inline-block; font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; color: #fff; border: 1px solid rgba(255,255,255,.6); padding: 5px 11px; margin-bottom: 16px;"><editable-text data-prop={p('communities.featured.badge')} data-type="span">{communities.featured.badge}</editable-text></div>
           <div data-editable="text" data-prop={p('communities.featured.name')} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-size: 36px; color: #fff; line-height: 1;">{communities.featured.name}</div>
           <div data-editable="text" data-prop={p('communities.featured.blurb')} data-type="text" style="font-size: 13px; color: rgba(255,255,255,.85); margin-top: 10px; max-width: 340px; font-weight: 300; line-height: 1.6;">{communities.featured.blurb}</div>
-          <div style="font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #fff; border-bottom: 1px solid #fff; padding-bottom: 3px; display: inline-block; margin-top: 18px;">{communities.featured.cta}</div>
+          <div style="font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #fff; border-bottom: 1px solid #fff; padding-bottom: 3px; display: inline-block; margin-top: 18px;"><editable-text data-prop={p('communities.featured.cta')} data-type="span">{communities.featured.cta}</editable-text></div>
         </div>
       </a>
 
@@ -100,9 +105,10 @@ const p = (path) => `@file[${F}].${path}`;
         <a data-editable="array-item" href={c.href} style={c.span
           ? 'grid-column: span 2; position: relative; overflow: hidden; display: block;'
           : 'position: relative; overflow: hidden; display: block;'}>
-          {c.image
-            ? <img data-editable="image" data-prop-src="image" src={c.image} alt={c.name} style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
-            : <div class="ph" style="position: absolute; inset: 0;"><span class="phl">{c.placeholder}</span></div>}
+          {!c.image && (
+            <div class="ph" style="position: absolute; inset: 0;"><span class="phl">{c.placeholder}</span></div>
+          )}
+          <img data-editable="image" data-prop-src="image" src={c.image || BLANK} alt={c.name} style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
           <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,20,45,0) 45%, rgba(0,20,45,.64) 100%);"></div>
           <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 22px;">
             <div data-editable="text" data-prop="name" data-type="span" style="font-family: 'Cormorant Garamond', serif; font-size: 23px; color: #fff; line-height: 1;">{c.name}</div>
@@ -121,7 +127,7 @@ const p = (path) => `@file[${F}].${path}`;
         <span data-editable="text" data-prop={p('listings.kicker')} data-type="span" style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">{listings.kicker}</span>
         <h2 data-editable="text" data-prop={p('listings.heading')} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 46px; color: #14181d; margin: 14px 0 0;">{listings.heading}</h2>
       </div>
-      <a href={listings.link_href} style="font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #6b6b66;">{listings.link_label}</a>
+      <a href={listings.link_href} style="font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: #6b6b66;"><editable-text data-prop={p('listings.link_label')} data-type="span">{listings.link_label}</editable-text></a>
     </div>
     <div data-editable="array" data-prop={p('listings.items')} style="display: grid; grid-template-columns: repeat(3,1fr); gap: 28px;">
       {listings.items.map((l, i) => (
@@ -144,7 +150,7 @@ const p = (path) => `@file[${F}].${path}`;
     <div style="text-align: center; margin-bottom: 60px;">
       <span data-editable="text" data-prop={p('testimonials.kicker')} data-type="span" style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">{testimonials.kicker}</span>
       <h2 data-editable="text" data-prop={p('testimonials.heading')} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 48px; color: #14181d; margin: 16px 0 14px;">{testimonials.heading}</h2>
-      <div style="display: inline-flex; align-items: center; gap: 10px; font-size: 13px; letter-spacing: .04em; color: #6b6b66;"><span style="color: #002349; letter-spacing: .12em;">★★★★★</span> {testimonials.rating_line}</div>
+      <div style="display: inline-flex; align-items: center; gap: 10px; font-size: 13px; letter-spacing: .04em; color: #6b6b66;"><span style="color: #002349; letter-spacing: .12em;">★★★★★</span> <editable-text data-prop={p('testimonials.rating_line')} data-type="span">{testimonials.rating_line}</editable-text></div>
     </div>
     <div data-editable="array" data-prop={p('testimonials.items')} style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 1080px; margin: 0 auto;">
       {testimonials.items.map((t, i) => (
@@ -155,13 +161,13 @@ const p = (path) => `@file[${F}].${path}`;
       ))}
     </div>
     <div style="text-align: center; margin-top: 52px;">
-      <a href={testimonials.reviews_url} target="_blank" rel="noopener" style="display: inline-block; border: 1px solid #002349; color: #002349; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 15px 32px;">{testimonials.reviews_cta}</a>
+      <a href={testimonials.reviews_url} target="_blank" rel="noopener" style="display: inline-block; border: 1px solid #002349; color: #002349; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 15px 32px;"><editable-text data-prop={p('testimonials.reviews_cta')} data-type="span">{testimonials.reviews_cta}</editable-text></a>
     </div>
   </section>
 
   <!-- AS SEEN IN -->
   <section style="padding: 56px 64px; border-top: 1px solid #ececec; border-bottom: 1px solid #ececec; background: #fbfaf8;">
-    <div style="text-align: center; font-size: 11px; letter-spacing: .32em; text-transform: uppercase; color: #9a968d; margin-bottom: 30px;">{affiliations.label}</div>
+    <div data-editable="text" data-prop={p('affiliations.label')} data-type="span" style="text-align: center; font-size: 11px; letter-spacing: .32em; text-transform: uppercase; color: #9a968d; margin-bottom: 30px;">{affiliations.label}</div>
     <div style="display: flex; align-items: center; justify-content: center; gap: 64px; flex-wrap: wrap; opacity: .7;">
       {affiliations.serif.map((a) => (
         <span style="font-family: 'Cormorant Garamond', serif; font-size: 20px; letter-spacing: .16em; color: #14181d;">{a}</span>
