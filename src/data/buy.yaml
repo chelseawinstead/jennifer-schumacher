@@ -9,7 +9,7 @@ hero:
   kicker: Buy a Home
   headline_line1: From first showing
   headline_line2_prefix: to
-  headline_emphasis: front door.
+  headline_emphasis: ' front door.'
   body: >-
     Buying in Arizona should feel exciting, not overwhelming. I'll guide you
     through every stage — with clear expectations, sharp negotiation, and no
@@ -89,7 +89,7 @@ team:
   kicker: Your buyer's team
   heading: Two of us, entirely on your side
   paragraph1_before: You will work directly with me and
-  paragraph1_name: Natalie Congleton
+  paragraph1_name: ' Natalie Congleton'
   paragraph1_after: >-
     , our buyer's specialist. Together we bring two decades of negotiation, a
     network that hears about homes early, and someone always ready to answer the
