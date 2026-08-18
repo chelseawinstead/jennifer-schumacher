@@ -64,16 +64,24 @@ fun_facts:
   items:
     - image: /assets/bts-gym.jpg
       title: Fitness
-      body: A passion that fuels my energy and mindset every single day.
+      body: >-
+        A passion that fuels my energy and mindset every single day. A sweat a
+        day keeps the doctor away!
     - image: /assets/bts-hike.jpg
       title: Adventure
-      body: Always chasing the next challenge — on and off the trail.
+      body: >-
+        Always chasing the next challenge on and off the trail. Let's grab a
+        hike together!
     - image: /assets/bts-lunch.jpg
       title: Travel
-      body: Global travel keeps my perspective wide and my ideas fresh.
+      body: >-
+        Global travel broadens my perspective, inspires fresh ideas, and
+        strengthens meaningful relationships with agents around the world!
     - image: /assets/bts-family.jpg
       title: Family
-      body: My foundation — the reason behind the drive for excellence.
+      body: >-
+        My family is my foundation, my greatest support, and the heart behind
+        everything I do.
 team:
   kicker: The team
   heading: Jennifer &amp; Natalie
