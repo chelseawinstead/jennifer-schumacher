@@ -21,7 +21,7 @@ why:
   paragraphs:
     - text: >-
         Raised in North Dakota, I developed a relentless work ethic, a heart for
-        people, and a drive for excellence. Over twenty years in sales &
+        people, and a drive for excellence. Over twenty years in sales &amp;
         marketing taught me how to position, market, and sell at the highest
         level — but it was the relationships that made me fall in love with the
         work.
@@ -55,7 +55,7 @@ awards:
   - value: Top 1%
     label: REALTOR® in Arizona
   - value: 20+ Years
-    label: Sales & marketing mastery
+    label: Sales &amp; marketing mastery
   - value: Top 50
     label: Scottsdale Real Producers · 2025
 fun_facts:
@@ -76,7 +76,7 @@ fun_facts:
       body: My foundation — the reason behind the drive for excellence.
 team:
   kicker: The team
-  heading: Jennifer & Natalie
+  heading: Jennifer &amp; Natalie
   intro: >-
     Clients repeatedly praise "Jennifer and her team" — the partnership that
     makes every transaction feel effortless.
@@ -88,9 +88,13 @@ team:
       role: Global Real Estate Advisor · Top 1% Arizona
       paragraphs:
         - >-
-          Team lead with 20+ years in sales & marketing and a 2025 Top 50
-          Scottsdale Real Producers honor — known for attention to detail,
-          transparent communication, and powerful negotiation.
+          Team lead with 30+ years in sales & marketing. Consistently ranked
+          among Arizona's Top 1% of Realtors for the past decade, she is
+          recognized as one of the state's leading luxury real estate advisors.
+          Ranked #34 out of more than 53,000 Realtors in Arizona and among the
+          Top 1% of Realtors in America, she is known for strategic marketing,
+          known for attention to detail, transparent communication, and powerful
+          negotiation.
     - headshot: /assets/natalie-headshot.jpg
       name: Natalie Congleton
       role: Buyer's Specialist · President's Club 2025
@@ -117,5 +121,5 @@ cta:
     If we're the right fit, you'll feel it in the first ten minutes. Reach out
     any time.
   image: /assets/home-pool-twilight.jpg
-  button_call: 'Call '
+  button_call: Call
   button_text: Text Jennifer
