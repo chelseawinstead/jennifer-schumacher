@@ -1,8 +1,3 @@
-# ---------------------------------------------------------------------------
-# FEATURED LISTINGS — page wrapper copy.
-# The properties themselves live one-per-file in src/content/listings/
-# ---------------------------------------------------------------------------
-
 seo:
   title: Featured Listings — Scottsdale & Paradise Valley | Jennifer Schumacher
   description: >-
@@ -10,17 +5,14 @@ seo:
     Valley, each with a dedicated property page, full gallery and private
     showing requests.
   social_image: /assets/pv-aerial-front.jpg
-
 intro:
   kicker: Featured Listings
-  headline_before: "Exceptional homes, "
+  headline_before: 'Exceptional homes, '
   headline_emphasis: beautifully presented.
   body: >-
     Large-format photography, cinematic video, and a dedicated property page for
-    every home Jennifer represents.
-
+    every home represented.
 featured_cta: View property →
-
 video:
   image: /assets/home-pool-twilight.jpg
   kicker: Property film
@@ -28,7 +20,6 @@ video:
   body: >-
     Cinematic walkthroughs and lifestyle films that let buyers experience a
     property before they ever step inside.
-
 property_pages:
   kicker: Dedicated property pages
   heading: A full experience for every listing.
@@ -37,13 +28,11 @@ property_pages:
     neighborhood detail, and a direct line to schedule a private showing.
   button: Ask about a listing
   image: /assets/home-bath.jpg
-
 cta:
   kicker: Looking for something specific?
   heading: Let's find the one that fits.
   body: >-
     Tell me what you're looking for and I'll send curated listings — including
     homes before they hit the market.
-  button_call: "Call "
+  button_call: 'Call '
   button_text: Text Jennifer
-
