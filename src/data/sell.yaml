@@ -1,8 +1,3 @@
-# ---------------------------------------------------------------------------
-# SELL YOUR HOME PAGE
-# All copy and photos for /sell. Layout lives in src/pages/sell.astro.
-# ---------------------------------------------------------------------------
-
 seo:
   title: Sell Your Home in Scottsdale & Phoenix — Jennifer Schumacher
   description: >-
@@ -10,136 +5,132 @@ seo:
     greater Phoenix Valley — strategic pricing, editorial photography, and the
     Sotheby's International Realty network behind every listing.
   social_image: /assets/home-pool-twilight.jpg
-
 hero:
   image: /assets/home-pool-twilight.jpg
   kicker: Sell Your Home
-  headline_before: "Positioned to sell for "
+  headline_before: Positioned to sell for
   headline_emphasis: more.
   body: >-
-    Twenty years of sales & marketing behind every listing — presentation that
-    turns heads, exposure through the Sotheby's International Realty network,
-    and negotiation that protects your bottom line.
+    Thirty years of sales &amp; marketing behind every listing is a presentation
+    that turns heads, exposure through the Sotheby's International Realty
+    network, and negotiation that protects your bottom line.
   button: Request your home value
-
 positioning:
   kicker: A different level of service
   statement: >-
     Selling a home at this level is part strategy, part storytelling, and part
-    relentless advocacy. I bring all three — plus a personal network of
-    thousands across the globe — so your home is seen by the right buyers,
-    remembered, and sold on your terms.
-
+    relentless advocacy. I bring all three, plus a personal network of thousands
+    across the globe so your home is seen by the right buyers, remembered, and
+    sold on your terms.
 included:
   kicker: White-glove listing service
   heading: Every detail, handled
   intro: >-
-    Six pillars of a listing engineered to sell — each one managed personally,
-    start to finish.
+    Six pillars of a listing engineered to sell with each one managed
+    personally, start to finish.
   pillars:
-    - number: "01"
-      title: Strategic valuation
+    - number: '01'
+      title: Strategic valuation.
       body: >-
-        A precise price built on live comparables, buyer demand, and two decades
-        of market instinct.
-    - number: "02"
-      title: Bespoke marketing plan
+        A precise price built on live comparables, buyer demand, and a decade of
+        market instinct.
+    - number: '02'
+      title: Bespoke marketing plan.
       body: >-
-        A tailored strategy positioning your home exactly where the right buyers
-        are looking.
-    - number: "03"
-      title: Editorial photography
+        Backed by 30+ years of marketing expertise, I create a tailored strategy
+        that positions your home to capture the attention of the right buyers
+        and maximize its value.
+    - number: '03'
+      title: Editorial photography.
       body: >-
         Magazine-grade imagery that makes buyers stop scrolling and book a
         showing.
-    - number: "04"
-      title: Cinematic video
+    - number: '04'
+      title: Cinematic video.
       body: >-
-        Property films and social reels that tell your home's story and travel
-        far.
-    - number: "05"
-      title: Global & digital reach
+        Cinematic property films and social reels that bring your home’s story
+        to life and extend its reach to buyers near and far.
+    - number: '05'
+      title: Global &amp; digital reach.
       body: >-
-        The Sotheby's platform plus targeted campaigns putting your listing in
-        front of qualified buyers daily.
-    - number: "06"
-      title: Expert negotiation
+        The power of Sotheby’s International Realty, my trusted personal
+        network, and OTN strategically connecting your home with qualified
+        buyers locally, nationally, and globally.
+    - number: '06'
+      title: Expert negotiation.
       body: >-
-        Powerful, experienced advocacy to protect your price, your terms, and
-        your timeline.
-
+        Decades of proven expert negotiation that protects your value,
+        strengthens your terms, and maximizes your outcome.
 why:
-  image: /assets/jennifer-mug.jpg
+  image: /assets/0m4a2250-1.jpg
   image_alt: Jennifer Schumacher
   kicker: Why Jennifer
   heading: The brand opens doors. Jennifer walks you through them.
   body: >-
-    The Sotheby's name carries weight — but it's Jennifer's personal network,
-    her launch strategy, and twenty years of marketing mastery that actually get
-    your home sold, and sold for more.
+    The Sotheby's International Realty name carries weight, but Jennifer’s
+    powerful personal network, proven launch strategy, and 30+ years of
+    marketing expertise create demand, attract qualified buyers, and deliver
+    exceptional results on your terms.
   cards:
-    - title: A personal global network
+    - title: A personal global network.
       body: >-
-        Thousands of relationships worldwide — buyers, agents, and referral
-        partners Jennifer activates the day you list.
-    - title: A choreographed launch
+        Thousands of relationships worldwide: buyers, agents, and referral
+        partners Jennifer activates the day you list. In addition to being a
+        valued member of Our Trusted Network (OTN).
+    - title: A choreographed launch.
       body: >-
         Coming-soon buzz, a timed market reveal, and momentum engineered from
-        day one — never a sign in the yard and a prayer.
-    - title: Marketing that gets seen
+        day one and reaches beyond a sign in the yard and a prayer.
+    - title: Marketing that gets seen.
       body: >-
-        Scroll-stopping media and campaigns built for reach — your home in front
-        of the right eyes, everywhere they look.
-    - title: 20 years of marketing mastery
+        Scroll-stopping media and campaigns built for reach, getting your home
+        in front of the right eyes, everywhere they look.
+    - title: 30 years of marketing mastery.
       body: >-
         A career spent positioning and selling at the highest level. Sotheby's
-        amplifies the reach; the strategy is entirely hers.
-
+        International Realty amplifies the reach; the strategy is entirely hers.
 showcase:
-  image: /assets/home-greatroom.jpg
+  image: /assets/great-room2.jpg
   kicker: Why it works
-  heading: Marketing that sells homes for asking — fast.
+  heading: Marketing designed to create demand, maximize value, and inspire action.
   body: >-
     "Her marketing strategies were impressively targeted, leading to my house
     selling for the asking price in less than a week." Presentation and exposure
-    aren't afterthoughts here — they're the strategy.
+    aren't afterthoughts, the are the strategy.
   attribution: Abby Snyder · ★★★★★
-
 process:
   kicker: The process
-  heading: What happens when you list with Jennifer
+  heading: What happens when you list with Jennifer.
   steps:
-    - number: "01"
-      title: Strategy & preparation
+    - number: '01'
+      title: Strategy &amp; preparation.
       body: >-
-        We start with your goals — then ready the home with pricing strategy,
+        We start with your goals then prepare the home with pricing strategy,
         staging guidance, and a media plan built for your property.
-    - number: "02"
-      title: The launch
+    - number: '02'
+      title: The launch.
       body: >-
-        A choreographed debut — coming-soon buzz, professional media, and a
-        timed reveal engineered to create demand from day one.
-    - number: "03"
-      title: Showings & offers
+        A choreographed debut: coming-soon buzz, professional media, and a timed
+        reveal engineered to create demand from day one.
+    - number: '03'
+      title: Showings &amp; offers.
       body: >-
-        Private tours, active buyer outreach, and honest feedback — with
-        Jennifer's network working your listing from every angle.
-    - number: "04"
-      title: Negotiation & close
+        Private tours, active buyer outreach, and honest feedback. This is the
+        standard with Jennifer's network working your listing from every angle.
+    - number: '04'
+      title: Negotiation &amp; close.
       body: >-
         Expert negotiation to protect your price and terms, then a managed path
         through inspection, appraisal, and closing.
   footnote: >-
-    Every sale is different — your plan and timeline are built around your
-    goals, never a template.
-
+    Every sale is different, your plan and timeline are built around your goals,
+    never a template.
 review:
   stars: ★★★★★
   quote: >-
     "Proactive and creative — always finding ways to make our homes stand out
     and attract buyers' attention. We wouldn't list with anyone else."
   attribution: Tabitha Stanley · Seller
-
 cta:
   kicker: Start here
   heading: What's your home worth today?
