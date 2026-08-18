@@ -1,12 +1,12 @@
 ---
 address: 4945 E Mountain View Road
 city: Paradise Valley, AZ
-price: $5,800,000
+price: $5,700,000
 status: New construction
 beds: '5'
 baths: '5.5'
 sqft: 5,338 sf
-lot: ''
+lot: 44,853 sf
 year_built: '2026'
 excerpt: >-
   New construction in the heart of Paradise Valley — soaring great room, resort
