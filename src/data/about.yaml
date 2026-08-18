@@ -83,7 +83,7 @@ team:
   photo: /assets/0m4a0027-1.jpg
   photo_alt: Jennifer Schumacher and Natalie Congleton
   members:
-    - headshot: /assets/jennifer-mug.jpg
+    - headshot: /assets/0m4a2250.jpg
       name: Jennifer Schumacher
       role: Global Real Estate Advisor · Top 1% Arizona
       paragraphs:
@@ -99,7 +99,7 @@ team:
           recognizing the company’s highest-performing agents. Her experience,
           strategic marketing, and commitment to exceptional service give buyers
           and sellers a distinct advantage.
-    - headshot: /assets/natalie-headshot.jpg
+    - headshot: /assets/0m4a0158-edit.jpg
       name: Natalie Congleton
       role: Buyer's Specialist · President's Club 2025
       paragraphs:
@@ -117,9 +117,9 @@ team:
           reflecting her dedication to excellence, professionalism, and client
           success. 
   support:
-    - name: Ashly
-      role: Operations Manager
-    - name: Beth
+    - name: Ashly Bock
+      role: Team Assistant
+    - name: Beth Spivey
       role: Transaction Coordinator
 cta:
   kicker: Let's talk
@@ -127,6 +127,6 @@ cta:
   body: >-
     If we're the right fit, you'll feel it in the first ten minutes. Reach out
     any time.
-  image: /assets/home-pool-twilight.jpg
+  image: /assets/0m4a0039-1.jpg
   button_call: Call
   button_text: Text Jennifer
