@@ -37,6 +37,6 @@ featured: true
 published: true
 order: 1
 ---
-A rare new-construction opportunity in one of Paradise Valley's most sought-after pockets. Every room is oriented to the mountain, with disappearing glass walls opening the great room to a resort-scale pool and covered patio.
+A rare new-construction opportunity in one of Paradise Valley's most sought-after pockets. Every room is oriented to the mountain, with disappearing glass walls opening the great room to a resort-scale pool and covered patio. This home features a rare 5 car garage.
 
 Contact Jennifer to arrange a private showing.
