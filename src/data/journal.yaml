@@ -1,30 +1,22 @@
-# ---------------------------------------------------------------------------
-# THE JOURNAL — page wrapper copy.
-# The posts themselves live one-per-file in src/content/journal/
-# ---------------------------------------------------------------------------
-
 seo:
   title: The Journal — Local Guides to the Valley | Jennifer Schumacher
   description: >-
     Neighborhood guides to Scottsdale, Paradise Valley, Arcadia and the East
     Valley — where to eat, explore and unwind, from a Top 1% Arizona REALTOR®.
   social_image: /assets/scottsdale-aerial.jpg
-
 intro:
   kicker: The Journal
-  headline_before: "Local guides to "
+  headline_before: 'Local guides to '
   headline_emphasis: living well
-  headline_after: " in the Valley"
+  headline_after: ' in the Valley'
   body: >-
-    Jennifer's favorite places to eat, explore, and unwind — neighborhood by
+    Jennifer's favorite places to eat, explore, and unwind neighborhood by
     neighborhood, from someone who knows them intimately.
-
 featured_cta: Read the guide →
-
 newsletter:
   kicker: Stay in the know
-  heading: New guides, listings, and local finds — first.
+  heading: New guides, listings, and local finds, you get them first.
   body: >-
-    A thoughtful note now and then. No noise — just the good stuff worth knowing
+    A thoughtful note now and then. No noise, just the good stuff worth knowing
     about the Valley.
-  button: Text to subscribe
+  button: subscribe
