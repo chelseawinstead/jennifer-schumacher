@@ -95,7 +95,9 @@ const PH = '/assets/placeholder-community.svg';
         </div>
         <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,20,45,0) 38%, rgba(0,20,45,.74) 100%);"></div>
         <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 34px;">
+          {communities.featured.badge && (
           <div style="display: inline-block; font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; color: #fff; border: 1px solid rgba(255,255,255,.6); padding: 5px 11px; margin-bottom: 16px;"><editable-text data-prop={p('communities.featured.badge')} data-type="span">{communities.featured.badge}</editable-text></div>
+          )}
           <div data-editable="text" data-prop={p('communities.featured.name')} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-size: 36px; color: #fff; line-height: 1;">{communities.featured.name}</div>
           <div data-editable="text" data-prop={p('communities.featured.blurb')} data-type="text" style="font-size: 13px; color: rgba(255,255,255,.85); margin-top: 10px; max-width: 340px; font-weight: 300; line-height: 1.6;">{communities.featured.blurb}</div>
           <div style="font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #fff; border-bottom: 1px solid #fff; padding-bottom: 3px; display: inline-block; margin-top: 18px;"><editable-text data-prop={p('communities.featured.cta')} data-type="span">{communities.featured.cta}</editable-text></div>
