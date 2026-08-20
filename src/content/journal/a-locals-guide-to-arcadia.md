@@ -1,5 +1,5 @@
 ---
-title: A local's guide to Arcadia
+title: A local's guide to Arcadia.
 kicker: Arcadia · Phoenix
 category: Neighborhood guide
 excerpt: >-
@@ -28,11 +28,11 @@ Whether you're visiting for the weekend or considering a move, here's where I'd 
 
 Start with coffee and a pastry at one of the local roasters along Indian School Road, then take an early walk or hike — the Camelback foothills are right there, and the light on the mountain before 8am is worth the alarm. If you'd rather ease in, the neighborhood's garden nurseries and boutiques make for a slow, pretty morning.
 
-Tip: weekend mornings fill up fast. Go early, or go mid-week.
+**Tip:** weekend mornings fill up fast. Go early, or go mid-week.
 
 ## Afternoon
 
-Lunch on a shaded patio is the move — Arcadia's dining scene is genuinely one of the best in the state, and the indoor-outdoor spots shine in spring and fall. Afterward, browse the design shops and home stores along the corridor; it's where a lot of the neighborhood's renovation inspiration comes from.
+Lunch on a shaded patio is the move. Arcadia's dining scene is genuinely one of the best in the state, and the indoor-outdoor spots shine in spring and fall. Afterward, browse the design shops and home stores along the corridor; it's where a lot of the neighborhood's renovation inspiration comes from.
 
 ## Evening
 

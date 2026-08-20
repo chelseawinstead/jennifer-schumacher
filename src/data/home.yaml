@@ -38,17 +38,17 @@ why:
   heading: A dedicated partner, every step.
   items:
     - number: '01'
-      title: Unwavering attention to detail
+      title: Unwavering attention to detail.
       body: >-
         Nothing slips. Every document, deadline, and detail is handled with
         precision so your transaction stays seamless.
     - number: '02'
-      title: Transparent communication
+      title: Transparent communication.
       body: >-
         You are never guessing. Clear, proactive updates keep you informed and
         confident from first call to closing.
     - number: '03'
-      title: Powerful negotiation
+      title: Powerful negotiation.
       body: >-
         Three decades of sales & marketing translate into leverage to fiercely
         advocate for your best interests.
@@ -71,8 +71,8 @@ communities:
     placeholder: Community photo — Silverleaf / DC Ranch
     badge: Signature community
     name: Paradise Valley
-    blurb: Luxury living with the most coveted addresses.
-    cta: Explore Silverleaf →
+    blurb: Luxury living in the most desirable address in Arizona.
+    cta: Explore →
     href: /listings
   others:
     - image: /assets/phoenix-community.jpg
@@ -128,24 +128,23 @@ testimonials:
     - quote: >-
         "Her marketing strategies were impressively targeted — my house sold for
         asking price in less than a week."
-      author: Abby Snyder
+      author: Abby Snyder · ★★★★★
     - quote: >-
         "An exceptional level of service. We've worked with her on multiple
         transactions — always going above and beyond."
-      author: Mike
+      author: Mike · ★★★★★
     - quote: >-
         "Proactive and creative — always finding ways to make our homes stand
         out and attract buyers' attention."
-      author: Tabitha Stanley
+      author: Tabitha Stanley · ★★★★★
     - quote: >-
         "We're relocating to AZ and her help navigating a new-build in a new
         state has been invaluable."
-      author: Kim Wilt
+      author: Kim Wilt · ★★★★★
 affiliations:
   label: Affiliations &amp; recognition
   serif:
-    - SOTHEBY'S INTERNATIONAL REALTY
-    - RUSS LYON
+    - RUSS LYON SOTHEBY'S INTERNATIONAL REALTY
   plain:
     - Top 1% Arizona
     - Top 50 Real Producers 2025

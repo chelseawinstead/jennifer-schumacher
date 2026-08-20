@@ -7,6 +7,7 @@ beds: '1'
 baths: '1'
 sqft: 937 sf
 lot: ''
+garage: '1'
 year_built: ''
 excerpt: Downtown Scottsdale living, moments from dining and galleries.
 image: /assets/scottsdale-rd-2010.jpg

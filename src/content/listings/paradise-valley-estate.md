@@ -6,6 +6,7 @@ status: For sale
 beds: '4'
 baths: '4.5'
 sqft: 5,318 sf
+garage: '4'
 excerpt: >-
   Single-level living with a great room built for entertaining and a 6-hole
   PuttTek par-3 course in your backyard.

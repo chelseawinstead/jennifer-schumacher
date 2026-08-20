@@ -7,6 +7,7 @@ beds: '4'
 baths: '4.5'
 sqft: 3,979 sf
 lot: ''
+garage: '4'
 year_built: ''
 excerpt: A Gilbert home built for entertaining, inside and out.
 image: /assets/74-web-or-mls-1823-e-watford-ct.jpg

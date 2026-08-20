@@ -1,5 +1,5 @@
 ---
-title: Where to dine in Paradise Valley
+title: Where to dine in Paradise Valley.
 kicker: Paradise Valley
 category: Neighborhood guide
 excerpt: >-

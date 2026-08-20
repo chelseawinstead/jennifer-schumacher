@@ -1,5 +1,5 @@
 ---
-title: The East Valley's best-kept secrets
+title: The East Valley's best-kept secrets.
 kicker: Gilbert
 category: Neighborhood guide
 excerpt: >-

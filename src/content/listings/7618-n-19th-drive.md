@@ -7,6 +7,7 @@ beds: '3'
 baths: '2.5'
 sqft: ''
 lot: ''
+garage: '2'
 year_built: ''
 excerpt: A Phoenix home close to shopping, dining, and easy freeway access.
 image: /assets/n-19th-drive.jpg

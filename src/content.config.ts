@@ -40,6 +40,7 @@ const listings = defineCollection({
     baths: z.string().default(''),
     sqft: z.string().default(''),
     lot: z.string().default(''),
+    garage: z.string().default(''),
     year_built: z.string().default(''),
     excerpt: z.string().default(''),
     image: z.string().default(''),

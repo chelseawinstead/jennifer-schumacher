@@ -438,6 +438,10 @@ _inputs:
   lot:
     type: text
     label: Lot size
+  garage:
+    type: text
+    label: Car garage
+    comment: Number of garage spaces, e.g. "3". Leave blank to hide.
   year_built:
     type: text
     label: Year built

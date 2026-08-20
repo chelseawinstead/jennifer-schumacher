@@ -91,14 +91,14 @@ advantage:
 team:
   image: /assets/0m4a0027-2.jpg
   image_alt: Jennifer Schumacher and Natalie Congleton
-  kicker: Your buyer's team
+  kicker: Your buyers' team
   heading: Two of us, entirely on your side.
-  paragraph1_before: >-
-    You will work directly with me Natalie Congleton and our buyer's specialist.
-    Together we bring four decades of negotiation, a network that hears about
-    homes early, and someone always ready to answer the call.
-  paragraph1_name:
-  paragraph1_after:
+  paragraph1_before: 'You will work directly with me and '
+  paragraph1_name: Natalie Congleton
+  paragraph1_after: >-
+    , our Buyers' Specialist. Together we bring four decades of negotiation, a
+    network that hears about homes early, and someone always ready to answer the
+    call.
   paragraph2: >-
     In practice, that means a look at homes before they're public, offers
     structured to win without overpaying, and a genuinely seamless experience

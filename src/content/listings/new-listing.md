@@ -7,6 +7,7 @@ beds: '5'
 baths: '5.5'
 sqft: 5,338 sf
 lot: ''
+garage: '5'
 year_built: '2026'
 excerpt: >-
   New construction in the heart of Paradise Valley — soaring great room, resort
