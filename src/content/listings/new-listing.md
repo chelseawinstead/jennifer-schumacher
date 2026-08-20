@@ -34,6 +34,6 @@ gallery:
   - image: /assets/pv-pool.jpg
     caption: Pool
 featured: true
-published: true
+published: false
 order: 1
 ---

@@ -10,7 +10,7 @@ excerpt: Guard-gated Grayhawk with generous indoor-outdoor living.
 image: /assets/home-bath.jpg
 gallery: []
 featured: false
-published: true
+published: false
 order: 3
 ---
 

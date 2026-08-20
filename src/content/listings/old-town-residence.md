@@ -10,7 +10,7 @@ excerpt: Walkable Old Town living, moments from dining and galleries.
 image: /assets/home-livingroom.jpg
 gallery: []
 featured: false
-published: true
+published: false
 order: 4
 ---
 

@@ -10,7 +10,19 @@ excerpt: >-
   Single-level living with a great room built for entertaining and a 6-hole
   PuttTek par-3 course in your backyard.
 image: /assets/80-web-or-mls-twilight6-ai-edit-2.png
-gallery: []
+gallery:
+  - image: /assets/sunset-court-exterior.jpg
+    caption: Front exterior
+  - image: /assets/sunset-court-living.jpg
+    caption: Living room
+  - image: /assets/sunset-court-kitchen.jpg
+    caption: Kitchen
+  - image: /assets/sunset-court-bedroom.jpg
+    caption: Primary bedroom
+  - image: /assets/sunset-court-bath.jpg
+    caption: Primary bath
+  - image: /assets/sunset-court-backyard.jpg
+    caption: Backyard
 featured: false
 published: true
 order: 2

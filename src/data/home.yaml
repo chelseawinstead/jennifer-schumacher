@@ -67,7 +67,7 @@ communities:
   link_label: View all →
   link_href: /listings
   featured:
-    image: ''
+    image: /assets/paradise-valley-community.jpg
     placeholder: Community photo — Silverleaf / DC Ranch
     badge: Signature community
     name: Paradise Valley
@@ -75,19 +75,19 @@ communities:
     cta: Explore Silverleaf →
     href: /listings
   others:
-    - image: ''
+    - image: /assets/phoenix-community.jpg
       placeholder: Community photo — Paradise Valley
       name: Phoenix
       sub: North Central, midtown & Downtown
       href: /listings
       span: false
-    - image: ''
+    - image: /assets/east-valley-community.jpg
       placeholder: Community photo — Arcadia
       name: East Valley
       sub: Gilbert, Chandler, Tempe, Mesa, Queen Creek
       href: /listings
       span: false
-    - image: ''
+    - image: /assets/scottsdale-community.jpg
       placeholder: Community photo — Gilbert
       name: Scottsdale
       sub: Old town, Kierland, The Quarter & North Scottsdale
@@ -102,19 +102,19 @@ listings:
     - price: $5,700,000
       address: 4945 E Mountain View Road
       city: Paradise Valley, AZ
-      specs: 5 Bed · 5.5 Bath · 5,338 sf
+      specs: 5 Bed · 5.5 Bath · 5,338 sf · 5 Car Garage
       image: /assets/welcome-to-mountain-view.jpg
       href: /listings
     - price: $1,895,000
       address: 20320 E Sunset Court
       city: Queen Creek, AZ
-      specs: 4 Bed · 4.5 Bath · 5,318 sf
+      specs: 4 Bed · 4.5 Bath · 5,318 sf · 4 Car Garage
       image: /assets/80-web-or-mls-twilight6-ai-edit.png
       href: /listings
     - price: $1,200,000
       address: 1823 E Watford Court
       city: Gilbert, AZ
-      specs: 4 Bed · 4.5 Bath · 3,979 sf
+      specs: 4 Bed · 4.5 Bath · 3,979 sf · 4 Car Garage
       image: /assets/74-web-or-mls-1823-e-watford-ct.jpg
       href: /listings
 testimonials:
