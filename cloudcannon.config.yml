@@ -330,6 +330,10 @@ _inputs:
   paragraph1_before:
     type: text
     label: Paragraph — before the name
+  paragraph1_name_url:
+    type: url
+    label: Link for that name
+    comment: Optional. Leave blank to show the name in bold with no link.
   paragraph1_name:
     type: text
     label: Paragraph — highlighted name

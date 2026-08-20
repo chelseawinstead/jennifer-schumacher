@@ -78,7 +78,9 @@ const cc = (path) => `@file[${F}].${path}`;
     <div style="padding: 104px 64px; display: flex; flex-direction: column; justify-content: center;">
       <span data-editable="text" data-prop={cc('team.kicker')} data-type="span" style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349; margin-bottom: 22px;">{team.kicker}</span>
       <h2 data-editable="text" data-prop={cc('team.heading')} data-type="span" style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 44px; line-height: 1.12; color: #14181d; margin: 0 0 24px;">{team.heading}</h2>
-      <p style="font-size: 16px; line-height: 1.85; color: #55585c; font-weight: 300; margin: 0 0 20px;"><editable-text data-prop={cc('team.paragraph1_before')} data-type="span">{team.paragraph1_before}</editable-text>{' '}<strong style="font-weight: 500; color: #14181d;"><editable-text data-prop={cc('team.paragraph1_name')} data-type="span">{team.paragraph1_name}</editable-text></strong><editable-text data-prop={cc('team.paragraph1_after')} data-type="text">{team.paragraph1_after}</editable-text></p>
+      <p style="font-size: 16px; line-height: 1.85; color: #55585c; font-weight: 300; margin: 0 0 20px;"><editable-text data-prop={cc('team.paragraph1_before')} data-type="span">{team.paragraph1_before}</editable-text>{' '}{team.paragraph1_name_url
+        ? <a href={team.paragraph1_name_url} target="_blank" rel="noopener" style="font-weight: 500; color: #14181d;"><editable-text data-prop={cc('team.paragraph1_name')} data-type="span">{team.paragraph1_name}</editable-text></a>
+        : <strong style="font-weight: 500; color: #14181d;"><editable-text data-prop={cc('team.paragraph1_name')} data-type="span">{team.paragraph1_name}</editable-text></strong>}<editable-text data-prop={cc('team.paragraph1_after')} data-type="text">{team.paragraph1_after}</editable-text></p>
       <p data-editable="text" data-prop={cc('team.paragraph2')} data-type="text" style="font-size: 16px; line-height: 1.85; color: #55585c; font-weight: 300; margin: 0;">{team.paragraph2}</p>
     </div>
   </section>

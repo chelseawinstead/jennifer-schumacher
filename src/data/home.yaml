@@ -104,19 +104,19 @@ listings:
       city: Paradise Valley, AZ
       specs: 5 Bed · 5.5 Bath · 5,338 sf · 5 Car Garage
       image: /assets/welcome-to-mountain-view.jpg
-      href: /listings
+      href: /listings/4945-e-mountain-view-road
     - price: $1,895,000
       address: 20320 E Sunset Court
       city: Queen Creek, AZ
       specs: 4 Bed · 4.5 Bath · 5,318 sf · 4 Car Garage
       image: /assets/80-web-or-mls-twilight6-ai-edit.png
-      href: /listings
+      href: /listings/paradise-valley-estate
     - price: $1,200,000
       address: 1823 E Watford Court
       city: Gilbert, AZ
       specs: 4 Bed · 4.5 Bath · 3,979 sf · 4 Car Garage
       image: /assets/74-web-or-mls-1823-e-watford-ct.jpg
-      href: /listings
+      href: /listings/1823-e-watford-court
 testimonials:
   kicker: In their words
   heading: Clients who would do it again.
