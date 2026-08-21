@@ -73,25 +73,25 @@ communities:
     name: Paradise Valley
     blurb: Luxury living in the most desirable address in Arizona.
     cta: Explore →
-    href: /listings
+    href: /journal/where-to-dine-in-paradise-valley
   others:
     - image: /assets/phoenix-community.jpg
       placeholder: Community photo — Paradise Valley
       name: Phoenix
       sub: North Central, midtown & Downtown
-      href: /listings
+      href: /journal/a-locals-guide-to-arcadia
       span: false
     - image: /assets/east-valley-community.jpg
       placeholder: Community photo — Arcadia
       name: East Valley
       sub: Gilbert, Chandler, Tempe, Mesa, Queen Creek
-      href: /listings
+      href: /journal/the-east-valleys-best-kept-secrets
       span: false
     - image: /assets/scottsdale-community.jpg
       placeholder: Community photo — Gilbert
       name: Scottsdale
       sub: Old town, Kierland, The Quarter & North Scottsdale
-      href: /listings
+      href: /journal/a-weekend-in-old-town-scottsdale
       span: true
 listings:
   kicker: Now available
