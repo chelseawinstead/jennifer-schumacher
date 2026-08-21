@@ -4,8 +4,12 @@ const { active = '' } = Astro.props;
 ---
 <nav style="display: flex; align-items: center; justify-content: space-between; gap: 40px; padding: 22px 48px; border-bottom: 1px solid #ececec; position: sticky; top: 0; background: rgba(255,255,255,.94); backdrop-filter: blur(8px); z-index: 20;">
   <a href="/" style="display: flex; flex-direction: column; gap: 3px;">
-    <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px; letter-spacing: .18em; color: #14181d; font-weight: 500;">{site.name.toUpperCase()}</span>
-    <span style="font-size: 9.5px; letter-spacing: .3em; color: #9a968d; text-transform: uppercase;">{site.brokerage}</span>
+    <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px; letter-spacing: .18em; margin-right: -.18em; color: #14181d; font-weight: 500;">{site.name.toUpperCase()}</span>
+    <span style="display: flex; justify-content: space-between; font-size: 9.5px; color: #9a968d; text-transform: uppercase;" aria-label={site.brokerage}>
+      {site.brokerage.toUpperCase().split('').map((ch) => (
+        <span aria-hidden="true">{ch === ' ' ? '\u00A0' : ch}</span>
+      ))}
+    </span>
   </a>
   <input type="checkbox" id="mnav" class="mnav-toggle">
   <label for="mnav" class="burger" aria-label="Menu"><span></span><span></span><span></span></label>
