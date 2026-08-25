@@ -1,6 +1,7 @@
 node_modules/
-dist/
-.astro/
 .DS_Store
+shots/
+_to_delete/
+tools/.fonts/
+_tmp/
 .vercel/
-_original/
