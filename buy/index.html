@@ -12,8 +12,12 @@
 <meta property="og:title" content="Buy a Home in Arizona | Jennifer Schumacher">
 <meta property="og:description" content="A guided path from search to keys: financing, inspection, appraisal, and a negotiator in your corner.">
 <meta property="og:url" content="https://www.schumacherliving.com/buy">
-<meta property="og:image" content="https://www.schumacherliving.com/images/i22.jpg">
+<meta property="og:image" content="https://www.schumacherliving.com/images/i7.jpg">
+<meta property="og:image:width" content="1100">
+<meta property="og:image:height" content="1650">
+<meta property="og:image:alt" content="Jennifer Schumacher">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.schumacherliving.com/images/i7.jpg">
 <meta name="theme-color" content="#002349">
 <link rel="icon" href="images/schumacher-living-navy.png">
 <link rel="apple-touch-icon" href="images/schumacher-living-navy.png">
@@ -59,7 +63,11 @@
     .m-hero span { color: #fff !important; }
     .m-hero h1 { color: #fff !important; }
     .m-hero h1 em { color: #e4ecf5 !important; }
-    .m-hero p { color: rgba(255,255,255,.9) !important; max-width: none !important; }
+    .m-hero p { color: rgba(255,255,255,.9) !important; max-width: none !important; margin-bottom: 0 !important; }
+    .hero-cta { display: none !important; }
+    .hero-cta-mobile { display: block !important; }
+    .quote-box { padding: 22px !important; }
+    .team-col { padding: 44px 22px !important; }
     .m-hero a:first-of-type { background: #fff !important; color: #002349 !important; }
     .m-hero a:last-of-type { background: transparent !important; border-color: rgba(255,255,255,.65) !important; color: #fff !important; }
     .m-hero>div:last-child img{object-position:center top !important;}
@@ -102,8 +110,8 @@
   .mnav-toggle, .burger { display: none; }
   @media (max-width: 1063px) {
     nav { flex-wrap: nowrap !important; justify-content: space-between !important; align-items: center !important; gap: 12px !important; padding: 14px 20px !important; }
-    nav > a:first-child span:first-child { font-size: 17px !important; letter-spacing: .12em !important; }
-    nav > a:first-child span:last-child { font-size: 9.5px !important; letter-spacing: .18em !important; }
+    .brand-name { white-space: nowrap !important; }
+    .brand-sub { white-space: nowrap !important; }
     .burger { display: flex !important; flex-direction: column; justify-content: center; gap: 5px; cursor: pointer; padding: 6px; }
     .burger span { display: block; width: 26px; height: 2px; background: #14181d; }
     nav > div:last-child { display: none !important; }
@@ -111,10 +119,14 @@
     .mnav-toggle:checked ~ .navmenu { display: flex !important; }
     .navmenu a { padding: 15px 24px !important; border-bottom: 1px solid #f4f3ee !important; border-left: none !important; font-size: 14px !important; letter-spacing: .14em !important; }
   }
+  @media (max-width: 560px) {
+    .brand-name { font-size: 17px !important; letter-spacing: .12em !important; }
+    .brand-sub { font-size: 9.25px !important; letter-spacing: .16em !important; }
+  }
 </style>
 <style>.navlink:hover { color: #002349 !important; }
 @media (max-width: 1319px) { .footgrid { grid-template-columns: 340px minmax(200px, 1fr) !important; row-gap: 48px !important; } .rl-logo { position: static !important; margin-top: 20px !important; } }
-@media (max-width: 820px) { .footgrid { grid-template-columns: 1fr !important; row-gap: 40px !important; gap: 28px !important; } .footgrid > div:first-child p { max-width: none !important; } }</style>
+@media (max-width: 820px) { .footgrid { grid-template-columns: 1fr !important; row-gap: 40px !important; gap: 28px !important; } .footgrid > div:first-child p { max-width: none !important; } .sl-logo { position: static !important; top: auto !important; margin-top: 24px !important; } }</style>
 <style>
 .hv1:hover{border-color: #002349 !important}
 .hv2:hover{background: #04305e !important}
@@ -162,8 +174,8 @@
 <nav style="display: flex; align-items: center; justify-content: space-between; gap: 40px; padding: 22px 48px; border-bottom: 1px solid #ececec; position: sticky; top: 0; background: rgba(255,255,255,.94); backdrop-filter: blur(8px); z-index: 20;">
 <div style="display: flex; flex-direction: column; gap: 9px;">
 <a href="./" style="display: flex; flex-direction: column; align-items: flex-start; gap: 3px;">
-<span style="font-family: 'Cormorant Garamond', serif; font-size: 22px; letter-spacing: .18em; color: #14181d; font-weight: 500;">JENNIFER SCHUMACHER</span>
-<span style="font-size: 9.75px; letter-spacing: .3em; color: #9a968d; text-transform: uppercase;">Russ Lyon Sotheby&#39;s International Realty</span>
+<span class="brand-name" style="font-family: 'Cormorant Garamond', serif; font-size: 22px; letter-spacing: .18em; color: #14181d; font-weight: 500;">JENNIFER SCHUMACHER</span>
+<span class="brand-sub" style="font-size: 9.75px; letter-spacing: .3em; color: #9a968d; text-transform: uppercase;">Russ Lyon Sotheby&#39;s International Realty</span>
 </a>
 </div>
 <input type="checkbox" id="mnav" class="mnav-toggle">
@@ -198,12 +210,15 @@
 <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349; margin-bottom: 28px;">Buy a Home</span>
 <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 68px; line-height: 1.04; letter-spacing: -.01em; color: #14181d; margin: 0 0 24px;">From first showing<br>to <em style="font-style: italic; color: #002349;">front door.</em></h1>
 <p style="font-size: 17px; line-height: 1.75; color: #55585c; max-width: 470px; margin: 0 0 38px; font-weight: 300;">Buying in Arizona should feel exciting and seamless. I will guide you through every step with clear communication, expert insight, and powerful negotiation from start to finish.</p>
-<a href="#" data-on-click="openModal" style="align-self: flex-start; background: #002349; color: #fff; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 17px 34px;">Start a conversation</a>
+<a href="#" data-on-click="openModal" class="hero-cta" style="align-self: flex-start; background: #002349; color: #fff; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 17px 34px;">Start a conversation</a>
 </div>
 <div style="min-height: 560px; overflow:hidden;">
 <img src="images/i17.jpg" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
 </div>
 </header>
+<div class="hero-cta-mobile" style="display: none; padding: 26px 22px 4px;">
+<a href="#" data-on-click="openModal" style="display: inline-block; background: #002349; color: #fff; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; padding: 17px 34px;">Start a conversation</a>
+</div>
 <section style="padding: 108px 64px; background: #f6f5f2;">
 <div style="max-width: 1180px; margin: 0 auto 60px;">
 <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">How we work together</span>
@@ -246,7 +261,7 @@
 <section class="m-imgbreak" style="position: relative; height: 460px; overflow: hidden;">
 <img src="images/i20.jpg" alt="Arizona luxury home at sunset" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 60%;">
 <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,20,45,.15) 0%, rgba(0,20,45,.55) 100%);"></div>
-<div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 64px; color: #fff;">
+<div class="quote-box" style="position: absolute; left: 0; right: 0; bottom: 0; padding: 64px; color: #fff;">
 <p style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-style: italic; font-size: 34px; line-height: 1.3; margin: 0; max-width: 720px;">&quot;The right home is out there. My job is to find it and to make sure you move in.&quot;</p>
 </div>
 </section>
@@ -284,7 +299,7 @@
 <div style="min-height: 440px; overflow: hidden;">
 <img src="images/i1.jpg" alt="Jennifer Schumacher and Natalie Congleton" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block;">
 </div>
-<div style="padding: 104px 64px; display: flex; flex-direction: column; justify-content: center;">
+<div class="team-col" style="padding: 104px 64px; display: flex; flex-direction: column; justify-content: center;">
 <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349; margin-bottom: 22px;">Your buyers&#39; team</span>
 <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 44px; line-height: 1.12; color: #14181d; margin: 0 0 24px;">Two of us, entirely on your side.</h2>
 <p style="font-size: 16px; line-height: 1.85; color: #55585c; font-weight: 300; margin: 0 0 20px;">You will work directly with me and <a href="https://natalieazrealtor.com/" target="_blank" rel="noopener" style="font-weight: 500; color: #14181d;">Natalie Congleton</a>, our Buyers&#39; Specialist. Together we bring four decades of negotiation, a network that hears about homes early, and someone always ready to answer the call.</p>
@@ -336,7 +351,7 @@
 <div style="position: relative;">
 <div style="font-family: 'Cormorant Garamond', serif; font-size: 22px; letter-spacing: .2em; color: #fff; margin-bottom: 14px;">JENNIFER SCHUMACHER</div>
 <p style="font-size: 14px; line-height: 1.7; font-weight: 300; margin: 0; max-width: 300px;">Luxury real estate across Scottsdale, Paradise Valley, Phoenix, and the greater Valley. Seamless, stress-free, and successful, because you deserve the best.</p>
-<img src="images/schumacher-living-white.png" alt="Schumacher Living" style="width: 150px; height: auto; display: block; position: absolute; left: 0; top: 147px; opacity: .92;">
+<img src="images/schumacher-living-white.png" alt="Schumacher Living" class="sl-logo" style="width: 150px; height: auto; display: block; position: absolute; left: 0; top: 147px; opacity: .92;">
 </div>
 <div>
 <div style="font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: #5f7488; margin-bottom: 18px;">Explore</div>

@@ -12,8 +12,12 @@
 <meta property="og:title" content="About Jennifer Schumacher | Russ Lyon Sotheby’s International Realty">
 <meta property="og:description" content="Thirty years in sales and marketing, now representing buyers and sellers across the Valley.">
 <meta property="og:url" content="https://www.schumacherliving.com/about">
-<meta property="og:image" content="https://www.schumacherliving.com/images/i22.jpg">
+<meta property="og:image" content="https://www.schumacherliving.com/images/i7.jpg">
+<meta property="og:image:width" content="1100">
+<meta property="og:image:height" content="1650">
+<meta property="og:image:alt" content="Jennifer Schumacher">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.schumacherliving.com/images/i7.jpg">
 <meta name="theme-color" content="#002349">
 <link rel="icon" href="images/schumacher-living-navy.png">
 <link rel="apple-touch-icon" href="images/schumacher-living-navy.png">
@@ -41,6 +45,7 @@
     section, header, footer { padding-left: 22px !important; padding-right: 22px !important; }
     section, header { padding-top: 48px !important; padding-bottom: 48px !important; }
     [style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+    [style*="gap: 72px"], [style*="gap: 64px"], [style*="gap: 56px"] { gap: 26px !important; }
     [style*="repeat(5,1fr)"], [style*="repeat(5, 1fr)"] { grid-template-columns: repeat(2,1fr) !important; }
     [style*="1.4fr 1fr 1fr 1.1fr"] { grid-template-columns: 1fr 1fr !important; }
     [style*="grid-template-rows"] { grid-template-rows: auto !important; }
@@ -88,6 +93,10 @@
   }
   @media (max-width: 820px) {
     img, iframe { max-width: 100%; }
+    .m-teamrow { flex-direction: column !important; align-items: center !important; gap: 34px !important; }
+    .m-teamdiv { display: none !important; }
+    .cred-sep { display: none !important; }
+    .cred-part { display: block !important; }
     [style*="grid-auto-rows"] { display: flex !important; flex-direction: column !important; gap: 12px !important; }
     [style*="grid-auto-rows"] > * { grid-row: auto !important; grid-column: auto !important; width: 100% !important; height: 220px !important; }
     .sell-social { position: static !important; display: flex !important; margin: 0 0 20px !important; left: auto !important; top: auto !important; }
@@ -102,8 +111,8 @@
   .mnav-toggle, .burger { display: none; }
   @media (max-width: 1063px) {
     nav { flex-wrap: nowrap !important; justify-content: space-between !important; align-items: center !important; gap: 12px !important; padding: 14px 20px !important; }
-    nav > a:first-child span:first-child { font-size: 17px !important; letter-spacing: .12em !important; }
-    nav > a:first-child span:last-child { font-size: 9.5px !important; letter-spacing: .18em !important; }
+    .brand-name { white-space: nowrap !important; }
+    .brand-sub { white-space: nowrap !important; }
     .burger { display: flex !important; flex-direction: column; justify-content: center; gap: 5px; cursor: pointer; padding: 6px; }
     .burger span { display: block; width: 26px; height: 2px; background: #14181d; }
     nav > div:last-child { display: none !important; }
@@ -111,10 +120,14 @@
     .mnav-toggle:checked ~ .navmenu { display: flex !important; }
     .navmenu a { padding: 15px 24px !important; border-bottom: 1px solid #f4f3ee !important; border-left: none !important; font-size: 14px !important; letter-spacing: .14em !important; }
   }
+  @media (max-width: 560px) {
+    .brand-name { font-size: 17px !important; letter-spacing: .12em !important; }
+    .brand-sub { font-size: 9.25px !important; letter-spacing: .16em !important; }
+  }
 </style>
 <style>.navlink:hover { color: #002349 !important; }
 @media (max-width: 1319px) { .footgrid { grid-template-columns: 340px minmax(200px, 1fr) !important; row-gap: 48px !important; } .rl-logo { position: static !important; margin-top: 20px !important; } }
-@media (max-width: 820px) { .footgrid { grid-template-columns: 1fr !important; row-gap: 40px !important; gap: 28px !important; } .footgrid > div:first-child p { max-width: none !important; } }</style>
+@media (max-width: 820px) { .footgrid { grid-template-columns: 1fr !important; row-gap: 40px !important; gap: 28px !important; } .footgrid > div:first-child p { max-width: none !important; } .sl-logo { position: static !important; top: auto !important; margin-top: 24px !important; } }</style>
 <style>
 .hv1:hover{border-color: #002349 !important}
 </style>
@@ -160,8 +173,8 @@
 <nav style="display: flex; align-items: center; justify-content: space-between; gap: 40px; padding: 22px 48px; border-bottom: 1px solid #ececec; position: sticky; top: 0; background: rgba(255,255,255,.94); backdrop-filter: blur(8px); z-index: 20;">
 <div style="display: flex; flex-direction: column; gap: 9px;">
 <a href="./" style="display: flex; flex-direction: column; align-items: flex-start; gap: 3px;">
-<span style="font-family: 'Cormorant Garamond', serif; font-size: 22px; letter-spacing: .18em; color: #14181d; font-weight: 500;">JENNIFER SCHUMACHER</span>
-<span style="font-size: 9.75px; letter-spacing: .3em; color: #9a968d; text-transform: uppercase;">Russ Lyon Sotheby&#39;s International Realty</span>
+<span class="brand-name" style="font-family: 'Cormorant Garamond', serif; font-size: 22px; letter-spacing: .18em; color: #14181d; font-weight: 500;">JENNIFER SCHUMACHER</span>
+<span class="brand-sub" style="font-size: 9.75px; letter-spacing: .3em; color: #9a968d; text-transform: uppercase;">Russ Lyon Sotheby&#39;s International Realty</span>
 </a>
 </div>
 <input type="checkbox" id="mnav" class="mnav-toggle">
@@ -314,7 +327,7 @@
 </div>
 <div>
 <div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #14181d;">Jennifer Schumacher</div>
-<div style="font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d; margin-top: 4px;">Global Real Estate Advisor · Top 1% Arizona</div>
+<div class="cred-line" style="font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d; margin-top: 4px; text-align: left;"><span>Global Real Estate Advisor</span><span class="cred-sep"> · </span><span class="cred-part">Top 1% Arizona</span></div>
 </div>
 </div>
 <p style="font-size: 15px; line-height: 1.75; color: #6b6b66; font-weight: 300; margin: 0 0 14px;">With 30+ years of sales and marketing expertise and a decade ranked among Arizona’s Top 1% of Realtors, Jennifer brings proven strategy, meticulous attention to detail, and powerful negotiation to every transaction.</p><p style="font-size: 15px; line-height: 1.75; color: #6b6b66; font-weight: 300; margin: 0 0 0;">Ranked #34 among more than 53,000 Arizona Realtors and among the Top 1% nationwide, Jennifer is also a member of Russ Lyon Sotheby’s International Realty’s prestigious Lyons Elite and Club 47, recognizing the company’s highest-performing agents. Her experience, strategic marketing, and commitment to exceptional service give buyers and sellers a distinct advantage.</p>
@@ -337,7 +350,7 @@
 <div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #14181d;">Ashly Bock</div>
 <div style="font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d; margin-top: 6px;">Team Assistant</div>
 </div>
-<div style="width: 1px; background: #e0ded7;"></div><div style="text-align: center;">
+<div style="width: 1px; background: #e0ded7;" class="m-teamdiv"></div><div style="text-align: center;">
 <div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #14181d;">Beth Spivey</div>
 <div style="font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #9a968d; margin-top: 6px;">Transaction Coordinator</div>
 </div>
@@ -362,7 +375,7 @@
 <div style="position: relative;">
 <div style="font-family: 'Cormorant Garamond', serif; font-size: 22px; letter-spacing: .2em; color: #fff; margin-bottom: 14px;">JENNIFER SCHUMACHER</div>
 <p style="font-size: 14px; line-height: 1.7; font-weight: 300; margin: 0; max-width: 300px;">Luxury real estate across Scottsdale, Paradise Valley, Phoenix, and the greater Valley. Seamless, stress-free, and successful, because you deserve the best.</p>
-<img src="images/schumacher-living-white.png" alt="Schumacher Living" style="width: 150px; height: auto; display: block; position: absolute; left: 0; top: 147px; opacity: .92;">
+<img src="images/schumacher-living-white.png" alt="Schumacher Living" class="sl-logo" style="width: 150px; height: auto; display: block; position: absolute; left: 0; top: 147px; opacity: .92;">
 </div>
 <div>
 <div style="font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: #5f7488; margin-bottom: 18px;">Explore</div>
