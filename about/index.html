@@ -97,6 +97,9 @@
     .m-teamdiv { display: none !important; }
     .cred-sep { display: none !important; }
     .cred-part { display: block !important; }
+    .cred-line { letter-spacing: .12em !important; }
+    .bio-card { padding: 24px 22px !important; }
+    .cred-line > span { white-space: nowrap !important; }
     [style*="grid-auto-rows"] { display: flex !important; flex-direction: column !important; gap: 12px !important; }
     [style*="grid-auto-rows"] > * { grid-row: auto !important; grid-column: auto !important; width: 100% !important; height: 220px !important; }
     .sell-social { position: static !important; display: flex !important; margin: 0 0 20px !important; left: auto !important; top: auto !important; }
@@ -110,6 +113,7 @@
   .navlink:hover { color: #002349 !important; }
   .mnav-toggle, .burger { display: none; }
   @media (max-width: 1063px) {
+    .social-row { padding: 14px 20px 0 !important; }
     nav { flex-wrap: nowrap !important; justify-content: space-between !important; align-items: center !important; gap: 12px !important; padding: 14px 20px !important; }
     .brand-name { white-space: nowrap !important; }
     .brand-sub { white-space: nowrap !important; }
@@ -143,26 +147,21 @@
  * belongs back in Claude Design, not here.
  * ------------------------------------------------------------------------ */
 
-/* Home — "Affiliations & recognition".
- * The row is flex-wrap: nowrap with four white-space: nowrap links, so on a
- * phone it runs ~460px past the viewport and gives the whole homepage a
- * horizontal scrollbar. Let it wrap below the desktop breakpoint. */
-@media (max-width: 1063px) {
-  [style*="flex-wrap: nowrap"] {
+/* Home — "Affiliations & recognition", the tablet gap.
+ *
+ * The export now handles this itself below 820px: `.affil-row` stacks into a
+ * centred column. Above about 1280px the four links fit on one line. In
+ * between they do not, and because the row is `flex-wrap: nowrap` with
+ * `white-space: nowrap` links it pushes the whole homepage sideways — 209px
+ * at 860px wide, still 89px at 1100px.
+ *
+ * Only the middle band is left to cover. If Jennifer widens her own rule to
+ * match, delete this and the file goes empty. */
+@media (min-width: 821px) and (max-width: 1279px) {
+  .affil-row {
     flex-wrap: wrap !important;
-    row-gap: 16px !important;
-    column-gap: 28px !important;
-  }
-}
-
-/* On a phone the longest of those links ("Russ Lyon Sotheby's International
- * Realty") is wider than the viewport on its own, so wrapping the row is not
- * enough — the link itself has to be allowed to break. */
-@media (max-width: 640px) {
-  [style*="flex-wrap: nowrap"] > a {
-    white-space: normal !important;
-    text-align: center;
-    max-width: 100%;
+    row-gap: 14px !important;
+    column-gap: 32px !important;
   }
 }
 </style>
@@ -193,7 +192,7 @@
 </div>
 </nav>
 
-<div style="display: flex; gap: 10px; align-items: center; padding: 14px 48px 0;">
+<div class="social-row" style="display: flex; gap: 10px; align-items: center; padding: 14px 48px 0;">
 <a href="https://www.instagram.com/schuliving/" target="_blank" rel="noopener" aria-label="Instagram" style="width: 28px; height: 28px; border: 1px solid #ddd9d1; border-radius: 999px; display: flex; align-items: center; justify-content: center;" class="hv1">
 <svg width="13" height="13" viewBox="0 0 18 18" fill="none" stroke="#002349" stroke-width="1.4"><rect x="1.6" y="1.6" width="14.8" height="14.8" rx="4.4"></rect><circle cx="9" cy="9" r="3.7"></circle><circle cx="13.2" cy="4.8" r="1" fill="#002349" stroke="none"></circle></svg>
 </a>
@@ -263,39 +262,39 @@
 <div style="font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: #9db4cb; margin-top: 14px;">Scottsdale Real Producers · 2025</div>
 </div>
 </section>
-<section style="padding: 100px 64px;">
+<section style="padding: 100px 64px 56px;">
 <div style="text-align: center; margin-bottom: 60px;">
 <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">Off the clock</span>
 <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 46px; color: #14181d; margin: 16px 0 0;">A few things about me.</h2>
 </div>
 <div class="m-funfacts" style="display: grid; grid-template-columns: repeat(4,1fr); gap: 32px;">
 <div style="text-align: center;">
-<div style="aspect-ratio: 3/4; overflow: hidden; margin-bottom: 22px;">
+<div style="aspect-ratio: 1/1; overflow: hidden; margin-bottom: 22px;">
 <img src="images/i14.jpg" alt="Fitness" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;">
 </div>
 <div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #002349; margin-bottom: 8px;">Fitness</div>
 <p style="font-size: 14px; line-height: 1.7; color: #6b6b66; font-weight: 300; margin: 0;">A passion that fuels my energy and mindset every single day. A sweat a day keeps the doctor away!</p>
 </div><div style="text-align: center;">
-<div style="aspect-ratio: 3/4; overflow: hidden; margin-bottom: 22px;">
+<div style="aspect-ratio: 1/1; overflow: hidden; margin-bottom: 22px;">
 <img src="images/i15.jpg" alt="Adventure" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;">
 </div>
 <div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #002349; margin-bottom: 8px;">Adventure</div>
 <p style="font-size: 14px; line-height: 1.7; color: #6b6b66; font-weight: 300; margin: 0;">Always chasing the next challenge on and off the trail. Let&#39;s grab a hike together!</p>
 </div><div style="text-align: center;">
-<div style="aspect-ratio: 3/4; overflow: hidden; margin-bottom: 22px;">
-<img src="images/i16.jpg" alt="Travel" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;">
+<div style="aspect-ratio: 1/1; overflow: hidden; margin-bottom: 22px;">
+<img src="images/i16.jpg" alt="Travel" style="width:100%;height:100%;object-fit:cover;object-position:center center;display:block;">
 </div>
 <div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #002349; margin-bottom: 8px;">Travel</div>
 <p style="font-size: 14px; line-height: 1.7; color: #6b6b66; font-weight: 300; margin: 0;">Global travel broadens my perspective, inspires fresh ideas, and strengthens meaningful relationships with agents around the world!</p>
 </div><div style="text-align: center;">
-<div style="aspect-ratio: 3/4; overflow: hidden; margin-bottom: 22px;">
+<div style="aspect-ratio: 1/1; overflow: hidden; margin-bottom: 22px;">
 <img src="images/i13.jpg" alt="Family" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;">
 </div>
 <div style="font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #002349; margin-bottom: 8px;">Family</div>
 <p style="font-size: 14px; line-height: 1.7; color: #6b6b66; font-weight: 300; margin: 0;">My family is my foundation, my greatest support, and the heart behind everything I do.</p>
 </div>
 </div>
-<div style="display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 72px;">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 16px; margin-top: 40px;">
 <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">Connect with me</span>
 <div style="display: flex; gap: 14px; align-items: center;">
 <a href="https://www.instagram.com/schuliving/" target="_blank" rel="noopener" aria-label="Instagram" style="width: 42px; height: 42px; border: 1px solid #d9d6ce; border-radius: 999px; display: flex; align-items: center; justify-content: center;" class="hv1">
@@ -309,7 +308,7 @@
 </div>
 </div>
 </section>
-<section style="padding: 96px 64px; background: #f6f5f2;">
+<section style="padding: 56px 64px 96px; background: #f6f5f2;">
 <div style="text-align: center; margin-bottom: 56px;">
 <span style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #002349;">The team</span>
 <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 46px; color: #14181d; margin: 16px 0 12px;">Jennifer &amp; Natalie</h2>
@@ -320,7 +319,7 @@
 <img src="images/i0.jpg" alt="Jennifer Schumacher and Natalie Congleton" style="width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;">
 </div>
 <div style="display: flex; flex-direction: column; gap: 24px; justify-content: center;">
-<div style="background: #fff; padding: 34px 36px;">
+<div class="bio-card" style="background: #fff; padding: 34px 36px;">
 <div style="display: flex; gap: 18px; align-items: center; margin-bottom: 18px;">
 <div style="width: 62px; height: 62px; flex: none; overflow: hidden; border-radius: 999px;">
 <img src="images/i6.jpg" alt="Jennifer Schumacher" style="width: 100%; height: 100%; object-fit: cover; object-position: center 18%; display: block;">
@@ -331,7 +330,7 @@
 </div>
 </div>
 <p style="font-size: 15px; line-height: 1.75; color: #6b6b66; font-weight: 300; margin: 0 0 14px;">With 30+ years of sales and marketing expertise and a decade ranked among Arizona’s Top 1% of Realtors, Jennifer brings proven strategy, meticulous attention to detail, and powerful negotiation to every transaction.</p><p style="font-size: 15px; line-height: 1.75; color: #6b6b66; font-weight: 300; margin: 0 0 0;">Ranked #34 among more than 53,000 Arizona Realtors and among the Top 1% nationwide, Jennifer is also a member of Russ Lyon Sotheby’s International Realty’s prestigious Lyons Elite and Club 47, recognizing the company’s highest-performing agents. Her experience, strategic marketing, and commitment to exceptional service give buyers and sellers a distinct advantage.</p>
-</div><div style="background: #fff; padding: 34px 36px;">
+</div><div class="bio-card" style="background: #fff; padding: 34px 36px;">
 <div style="display: flex; gap: 18px; align-items: center; margin-bottom: 18px;">
 <div style="width: 62px; height: 62px; flex: none; overflow: hidden; border-radius: 999px;">
 <img src="images/i3.jpg" alt="Natalie Congleton" style="width: 100%; height: 100%; object-fit: cover; object-position: center 18%; display: block;">

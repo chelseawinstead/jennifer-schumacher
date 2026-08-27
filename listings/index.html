@@ -108,6 +108,7 @@
   .navlink:hover { color: #002349 !important; }
   .mnav-toggle, .burger { display: none; }
   @media (max-width: 1063px) {
+    .social-row { padding: 14px 20px 0 !important; }
     nav { flex-wrap: nowrap !important; justify-content: space-between !important; align-items: center !important; gap: 12px !important; padding: 14px 20px !important; }
     .brand-name { white-space: nowrap !important; }
     .brand-sub { white-space: nowrap !important; }
@@ -141,26 +142,21 @@
  * belongs back in Claude Design, not here.
  * ------------------------------------------------------------------------ */
 
-/* Home — "Affiliations & recognition".
- * The row is flex-wrap: nowrap with four white-space: nowrap links, so on a
- * phone it runs ~460px past the viewport and gives the whole homepage a
- * horizontal scrollbar. Let it wrap below the desktop breakpoint. */
-@media (max-width: 1063px) {
-  [style*="flex-wrap: nowrap"] {
+/* Home — "Affiliations & recognition", the tablet gap.
+ *
+ * The export now handles this itself below 820px: `.affil-row` stacks into a
+ * centred column. Above about 1280px the four links fit on one line. In
+ * between they do not, and because the row is `flex-wrap: nowrap` with
+ * `white-space: nowrap` links it pushes the whole homepage sideways — 209px
+ * at 860px wide, still 89px at 1100px.
+ *
+ * Only the middle band is left to cover. If Jennifer widens her own rule to
+ * match, delete this and the file goes empty. */
+@media (min-width: 821px) and (max-width: 1279px) {
+  .affil-row {
     flex-wrap: wrap !important;
-    row-gap: 16px !important;
-    column-gap: 28px !important;
-  }
-}
-
-/* On a phone the longest of those links ("Russ Lyon Sotheby's International
- * Realty") is wider than the viewport on its own, so wrapping the row is not
- * enough — the link itself has to be allowed to break. */
-@media (max-width: 640px) {
-  [style*="flex-wrap: nowrap"] > a {
-    white-space: normal !important;
-    text-align: center;
-    max-width: 100%;
+    row-gap: 14px !important;
+    column-gap: 32px !important;
   }
 }
 </style>
@@ -191,7 +187,7 @@
 </div>
 </nav>
 
-<div style="display: flex; gap: 10px; align-items: center; padding: 14px 48px 0;">
+<div class="social-row" style="display: flex; gap: 10px; align-items: center; padding: 14px 48px 0;">
 <a href="https://www.instagram.com/schuliving/" target="_blank" rel="noopener" aria-label="Instagram" style="width: 28px; height: 28px; border: 1px solid #ddd9d1; border-radius: 999px; display: flex; align-items: center; justify-content: center;" class="hv1">
 <svg width="13" height="13" viewBox="0 0 18 18" fill="none" stroke="#002349" stroke-width="1.4"><rect x="1.6" y="1.6" width="14.8" height="14.8" rx="4.4"></rect><circle cx="9" cy="9" r="3.7"></circle><circle cx="13.2" cy="4.8" r="1" fill="#002349" stroke="none"></circle></svg>
 </a>
