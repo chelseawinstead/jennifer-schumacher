@@ -69,13 +69,16 @@ function intercept(page, asked) {
   });
 }
 
+// Listings and Little Black Book entries are read off disk, so a new one the
+// export brings in is checked without anyone having to remember to add it here.
+const under = (dir) => fs.existsSync(path.join(ROOT, dir))
+  ? fs.readdirSync(path.join(ROOT, dir))
+      .filter(n => fs.existsSync(path.join(ROOT, dir, n, 'index.html')))
+      .sort().map(n => `/${dir}/${n}`)
+  : [];
+
 const routes = ['/', '/about', '/buy', '/sell', '/listings', '/journal',
-  '/listings/4945-e-mountain-view-road', '/listings/20320-e-sunset-court',
-  '/listings/1823-e-watford-court', '/listings/4020-n-scottsdale-road',
-  '/listings/7618-n-19th-drive',
-  '/journal/a-locals-guide-to-arcadia', '/journal/a-weekend-in-old-town-scottsdale',
-  '/journal/the-east-valleys-best-kept-secrets', '/journal/where-to-dine-in-paradise-valley',
-  '/404.html'];
+  ...under('listings'), ...under('journal'), '/404.html'];
 
 const browser = await chromium.launch(
   process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});

@@ -295,6 +295,66 @@ def defer_iframes(markup):
                   r'\1 data-src-lazy="\2"', markup)
 
 
+PLAY_PATH = "M25 15 0 30V0z"
+
+
+def _matching_close(markup, start, tag="span"):
+    """End index of the </tag> that closes the <tag at start."""
+    depth, i = 0, start
+    opener = re.compile(r"<%s\b" % tag)
+    closer = re.compile(r"</%s>" % tag)
+    while i < len(markup):
+        o, c = opener.search(markup, i), closer.search(markup, i)
+        if not c:
+            return None
+        if o and o.start() < c.start():
+            depth, i = depth + 1, o.end()
+        else:
+            depth, i = depth - 1, c.end()
+            if depth == 0:
+                return i
+    return None
+
+
+def drop_orphan_play_badge(markup):
+    """Remove a play badge that has no film behind it.
+
+    A listing hero is meant to ship as an image branch with a play badge and a
+    hidden video branch that site.js reveals on click. If the video branch is
+    missing from the export - which is how a hero looks after the click binding
+    is lost in the Design document - the badge is left over a still with nothing
+    to click. Ship the still on its own rather than a button that does nothing.
+
+    The badge comes back by itself as soon as the export carries a video branch
+    again, so this never has to be undone.
+    """
+    if PLAY_PATH not in markup or 'data-on-click="openVideo"' in markup:
+        return markup
+    while True:
+        i = markup.find(PLAY_PATH)
+        if i < 0:
+            return markup
+        start = markup.rfind("<span", 0, i)
+        if start < 0:
+            return markup
+        # Widen to the span that covers the hero, so the centering wrapper goes
+        # too and no empty overlay is left behind.
+        while True:
+            outer = markup.rfind("<span", 0, start)
+            if outer < 0:
+                break
+            close = _matching_close(markup, outer)
+            if close is None or close < i:
+                break
+            start = outer
+            if re.search(r"inset:\s*0", markup[outer:markup.find(">", outer)]):
+                break
+        end = _matching_close(markup, start)
+        if end is None:
+            return markup
+        markup = markup[:start] + markup[end:]
+
+
 def rewrite_links(markup):
     """Point old design slugs at the published address-based routes.
 
@@ -392,6 +452,7 @@ def build_page(src_path, rel_route, components, out_root, report):
     head += '<script src="site.js" defer></script>\n'
 
     # ---- assemble --------------------------------------------------------
+    body = drop_orphan_play_badge(body)
     body = rewrite_images(rewrite_links(body))
     lang = re.search(r'<html([^>]*)>', src).group(1)
     page = ("<!DOCTYPE html>\n<html%s>\n<head>%s</head>\n<body>\n%s\n</body>\n</html>\n"
