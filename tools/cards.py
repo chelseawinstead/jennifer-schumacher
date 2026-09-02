@@ -7,8 +7,9 @@ three drift apart the first time a price moves. So they are all written from the
 same content file, and a price is only ever typed once.
 
 Which listing gets the big block at the top of the Listings page is `featured`
-in that listing's content file. Order across both pages is `order`, and the
-first three also appear on the homepage.
+in that listing's content file. Everything else is ordered by price, most
+expensive first, which is the order the site has always been in - and the three
+priciest are the ones the homepage shows.
 """
 
 import re
@@ -128,8 +129,15 @@ def home_photo(listing):
 # Ordering
 # --------------------------------------------------------------------------
 
+def price_of(listing):
+    """"$1,895,000" -> 1895000. Anything unreadable sorts to the bottom."""
+    digits = re.sub(r"[^0-9]", "", listing.get("price") or "")
+    return int(digits) if digits else -1
+
+
 def in_order(listings):
-    return sorted(listings, key=lambda d: (d.get("order", 999), d.get("slug", "")))
+    """Most expensive first."""
+    return sorted(listings, key=lambda d: (-price_of(d), d.get("slug", "")))
 
 
 def featured_of(listings):

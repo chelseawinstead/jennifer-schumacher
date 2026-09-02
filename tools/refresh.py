@@ -10,6 +10,7 @@ Only the paths listed in GENERATED are ever touched, so tools/, .git,
 README.md and anything else you keep here are safe.
 """
 
+import datetime
 import os
 import shutil
 import subprocess
@@ -65,11 +66,27 @@ def main():
     # listing, a photo Jennifer swapped out — has to go, or git keeps
     # publishing it.
     stale = sorted(before - files_under(out, GENERATED))
-    stranded = []
+    stranded, retired = [], []
+    # Deleting outright is not always allowed - running this through the
+    # desktop bridge, os.remove fails on every file in the repo. A retired
+    # listing that cannot be removed keeps its page and its photos published,
+    # so anything undeletable is moved into _to_delete instead, which git and
+    # Vercel both ignore. Same outcome, and the files are still there if the
+    # removal turns out to be a mistake.
+    grave = os.path.join(REPO, "_to_delete",
+                         "retired-" + datetime.date.today().isoformat())
     for rel in stale:
         path = os.path.join(REPO, rel)
         try:
             os.remove(path)
+            continue
+        except OSError:
+            pass
+        try:
+            dest = os.path.join(grave, rel)
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
+            os.rename(path, dest)
+            retired.append(rel)
         except OSError:
             stranded.append(rel)
 
@@ -78,7 +95,16 @@ def main():
     if stale:
         print("\nRemoved %d file(s) the new export no longer uses:" % len(stale))
         for rel in stale:
-            print("  %s%s" % (rel, "  (COULD NOT DELETE)" if rel in stranded else ""))
+            if rel in stranded:
+                note = "  (COULD NOT REMOVE - delete this one by hand)"
+            elif rel in retired:
+                note = "  (moved to _to_delete)"
+            else:
+                note = ""
+            print("  %s%s" % (rel, note))
+    if retired:
+        print("\n%d file(s) could not be deleted here, so they were moved into "
+              "_to_delete/ — git sees them as gone, which is what matters." % len(retired))
     if stranded:
         print("\nDelete the file(s) marked above by hand before committing — "
               "they are still tracked and would keep being published.")

@@ -578,7 +578,14 @@ def load_listings():
                 for key, value in (data.pop(group, None) or {}).items():
                     if value not in (None, "", []):
                         data.setdefault(key, value)
-            data.setdefault("slug", os.path.splitext(name)[0])
+            # A draft lives in the form and never reaches the site - no page,
+            # no card, no sitemap entry, no findable URL.
+            if str(data.get("state", "Published")).strip().lower() == "draft":
+                continue
+            if not data.get("slug"):
+                address = (data.get("address") or "").split(",")[0]
+                data["slug"] = (re.sub(r"[^a-z0-9]+", "-", address.lower()).strip("-")
+                                or os.path.splitext(name)[0])
             out.append(data)
     return out
 

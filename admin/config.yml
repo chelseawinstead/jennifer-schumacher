@@ -28,16 +28,19 @@ collections:
     format: yaml
     create: true
     delete: false          # sold homes get a status change, not a deletion
-    slug: "{{fields.slug}}"
+    slug: "{{address}}"
     identifier_field: address
     summary: "{{address}} — {{price}}"
-    sortable_fields: [address, price, status]
+    # Listings show newest-priciest first on the site; the order here is just
+    # for finding things.
+    sortable_fields: [address, price, status, state]
     fields:
-      - { name: order, label: Position, widget: number, value_type: int, default: 99,
-          hint: "Lower numbers come first. The top three also appear on the homepage." }
+      - { name: state, label: Draft or published, widget: select, default: Draft,
+          options: [Draft, Published],
+          hint: "A draft stays in here and never reaches the site. Switch it to Published when the listing is ready to go live." }
       - { name: featured, label: Feature this one at the top of the Listings page,
           widget: boolean, default: false,
-          hint: "Only one listing should have this switched on." }
+          hint: "The big photo at the top of the Listings page. Only one listing should have this switched on." }
       - { name: status, label: Status, widget: select, default: For sale,
           options: [For sale, Under contract, Sold] }
       - { name: price, label: Price, widget: string, hint: "With the dollar sign, e.g. $1,200,000" }
