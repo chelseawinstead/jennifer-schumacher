@@ -1,0 +1,61 @@
+# Rebuild the site when someone saves a listing in the form.
+#
+# Vercel serves this repository exactly as it is — it runs no build. So when
+# the form commits a content file, nothing on the site would change until the
+# pages were rebuilt. This does that rebuild, here, within a minute of saving.
+#
+# It only touches what the content drives: listing pages, the Listings page,
+# the homepage cards, the sitemap and uploaded photos. Everything that comes
+# from Jennifer's Claude Design document is rebuilt by tools/refresh.py, which
+# still runs on Chelsea's machine.
+
+name: Publish listing changes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "content/**"
+      - "tools/listings.py"
+      - "tools/cards.py"
+      - "tools/render_content.py"
+      - "tools/listing-template.html"
+  workflow_dispatch:
+
+# The job writes the rebuilt pages back to the repository.
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-listings
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install what the rebuild needs
+        run: pip install --quiet PyYAML==6.0.2 Pillow==11.0.0
+
+      - name: Rebuild the pages the content drives
+        run: python3 tools/render_content.py
+
+      - name: Commit the result
+        run: |
+          if git diff --quiet; then
+            echo "Nothing changed — the pages already matched the content."
+            exit 0
+          fi
+          git config user.name  "schumacherliving"
+          git config user.email "noreply@schumacherliving.com"
+          git add -A
+          git commit -m "Rebuild listing pages from the content files
+
+          Triggered by ${{ github.event.head_commit.message && 'a content change' || 'a manual run' }}."
+          git push

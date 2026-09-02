@@ -187,8 +187,11 @@ def _add_listing(config_json, name):
         return config_json
     if not cfg.get("mailTo"):
         return config_json
+    # The template is itself a rendered listing page, so it arrives carrying
+    # the previous listing's address. Drop it before putting this one's in,
+    # or every page ends up named after the template.
     ordered = {"listing": name}
-    ordered.update(cfg)
+    ordered.update({k: v for k, v in cfg.items() if k != "listing"})
     return json.dumps(ordered)
 
 

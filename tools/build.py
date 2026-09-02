@@ -633,6 +633,12 @@ def main():
         import listings as listing_tpl
         tpl_route = ROUTES.get(LISTING_TEMPLATE, LISTING_TEMPLATE)
         template = read(os.path.join(out, tpl_route, "index.html"))
+        # Kept next to the tools so the pages can be rebuilt from content alone,
+        # without the export — which is what runs on GitHub when the team saves
+        # a listing. It also survives the template listing being taken down.
+        with open(os.path.join(os.path.dirname(__file__), "listing-template.html"),
+                  "w", encoding="utf-8") as fh:
+            fh.write(template)
         # the export-built template page is about to be replaced by its own
         # content file, so it should be listed once, not twice
         report[:] = [r for r in report if r[0] != tpl_route]

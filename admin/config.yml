@@ -27,7 +27,10 @@ collections:
     extension: yml
     format: yaml
     create: true
-    delete: false          # sold homes get a status change, not a deletion
+    # No Delete button on purpose: Archived takes a listing off the site
+    # completely and is reversible, which is what "delete" almost always means
+    # here. Nothing is ever destroyed by someone in a hurry.
+    delete: false
     slug: "{{address}}"
     identifier_field: address
     summary: "{{address}} — {{price}}"
@@ -35,9 +38,9 @@ collections:
     # for finding things.
     sortable_fields: [address, price, status, state]
     fields:
-      - { name: state, label: Draft or published, widget: select, default: Draft,
-          options: [Draft, Published],
-          hint: "A draft stays in here and never reaches the site. Switch it to Published when the listing is ready to go live." }
+      - { name: state, label: Where this listing is, widget: select, default: Draft,
+          options: [Draft, Published, Archived],
+          hint: "Draft — still being written, never been on the site. Published — live. Archived — taken down, but everything is kept and it can go back up in one click." }
       - { name: featured, label: Feature this one at the top of the Listings page,
           widget: boolean, default: false,
           hint: "The big photo at the top of the Listings page. Only one listing should have this switched on." }
