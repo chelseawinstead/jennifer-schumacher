@@ -41,6 +41,9 @@ SPEC_ITEM_RE = (r"<div style=\"font-family: 'Cormorant Garamond', serif; font-si
                 r"color: #14181d;\">(.*?)</div>\n"
                 r"<div style=\"font-size: 11px; letter-spacing: \.2em; text-transform: uppercase; "
                 r"color: #9a968d; margin-top: 8px;\">(.*?)</div>")
+FIGURES = [("bedrooms", "Bedrooms"), ("bathrooms", "Bathrooms"),
+           ("interior", "Interior"), ("lot", "Lot"), ("garage", "Car Garage")]
+
 SPEC_FIRST = '<div style>\n%s\n</div>'
 SPEC_REST = '<div style="border-left: 1px solid #ececec; padding-left: 30px;">\n%s\n</div>'
 SPEC_BODY = ("<div style=\"font-family: 'Cormorant Garamond', serif; font-size: 30px; "
@@ -135,12 +138,12 @@ def render(template, data):
     html = template
 
     for key, pattern in SCALARS.items():
-        value = d[key]
+        value = money(d[key]) if key == "price" else d[key]
         html = _sub_once(pattern,
                          lambda m, v=value: m.group(0).replace(m.group(1), v, 1),
                          html, key)
 
-    html = _spec_grid(html, d["specs"])
+    html = _spec_grid(html, figures_of(d))
 
     html = _sub_once(HERO_RE,
                      lambda m: m.group(1) + _lit(photo_src(d["hero"]["src"])) + m.group(3)
@@ -273,6 +276,26 @@ def _close(html, start, tag="span"):
 # What the form doesn't have to ask for
 # --------------------------------------------------------------------------
 
+def figures_of(data):
+    """The row under the price, as value/label pairs in the order it is shown.
+
+    The form asks for Bedrooms, Bathrooms, Interior, Lot and Garage by name -
+    "Value" and "Label" meant nothing to anyone filling it in. A blank is left
+    out entirely, which is how a home with no lot size shows four figures and
+    Mountain View shows five.
+    """
+    figures = data.get("figures")
+    if isinstance(figures, dict):
+        out = []
+        for key, label in FIGURES:
+            value = str(figures.get(key) or "").strip()
+            if value:
+                out.append({"value": value, "label": label})
+        return out
+    # Listings written before the form asked by name.
+    return [dict(s) for s in (data.get("specs") or [])]
+
+
 def paragraphs(body):
     """The description, however it was written, as one paragraph per entry.
 
@@ -313,6 +336,21 @@ def film_id(value):
     return None
 
 
+def money(value):
+    """Print a price the way the site prints prices, however it was typed.
+
+    "1700000", "1,700,000" and "$1700000" all come out as $1,700,000. Anything
+    with words in it - "Price on request" - is left exactly as written.
+    """
+    text = (value or "").strip()
+    if not text:
+        return text
+    if not re.fullmatch(r"[$\s,.\d]+", text):
+        return text
+    digits = re.sub(r"[^0-9]", "", text.split(".")[0])
+    return "$%s" % format(int(digits), ",") if digits else text
+
+
 def photo_src(value):
     """Accept a bare filename or whatever path the form recorded."""
     return re.sub(r"^/?(?:images/)?", "", (value or "").strip())
@@ -348,8 +386,7 @@ def with_defaults(data):
     d.setdefault("slug", slugify(street_of(address)))
     d.setdefault("title_plain", address)
     d.setdefault("title", "%s | %s" % (d["title_plain"], BRAND))
-    d.setdefault("specs", [])
-    by_label = {s["label"].lower(): s["value"] for s in d["specs"]}
+    by_label = {f["label"].lower(): f["value"] for f in figures_of(d)}
     d.setdefault("meta_description",
                  "%s bed, %s bath, %s with a %s car garage in %s."
                  % (by_label.get("bedrooms", ""), by_label.get("bathrooms", ""),

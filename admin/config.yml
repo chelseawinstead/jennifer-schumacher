@@ -33,7 +33,8 @@ collections:
     delete: false
     slug: "{{address}}"
     identifier_field: address
-    summary: "{{address}} — {{price}}"
+    # The state leads, so it is obvious at a glance which listings are live.
+    summary: "{{state}}  ·  {{address}} — {{price}}"
     # Listings show newest-priciest first on the site; the order here is just
     # for finding things.
     sortable_fields: [address, price, status, state]
@@ -46,22 +47,28 @@ collections:
           hint: "The big photo at the top of the Listings page. Only one listing should have this switched on." }
       - { name: status, label: Status, widget: select, default: For sale,
           options: [For sale, Under contract, Sold] }
-      - { name: price, label: Price, widget: string, hint: "With the dollar sign, e.g. $1,200,000" }
+      - { name: price, label: Price, widget: string,
+          hint: "e.g. $1,200,000 — typing 1200000 is fine too, it gets tidied up" }
       - { name: address, label: Address, widget: string,
           hint: "Street, city, state — this also becomes the web address of the page" }
       - { name: lede, label: One-line intro, widget: string,
           hint: "The single italic line under the price" }
 
-      - name: specs
-        label: The figures
-        label_singular: Figure
-        widget: list
-        min: 1
-        summary: "{{fields.value}} {{fields.label}}"
-        hint: "Usually Bedrooms, Bathrooms, Interior, Car Garage — add Lot when there is one"
+      - name: figures
+        label: The figures under the price
+        widget: object
+        hint: "The row that reads 4 · Bedrooms · 4.5 · Bathrooms and so on, across the top of the listing page."
         fields:
-          - { name: value, label: Value, widget: string, hint: "e.g. 4, 4.5, or 3,979 sf" }
-          - { name: label, label: Label, widget: string }
+          - { name: bedrooms, label: Bedrooms, widget: string,
+              hint: "Just the number — 4" }
+          - { name: bathrooms, label: Bathrooms, widget: string,
+              hint: "Just the number — 4.5" }
+          - { name: interior, label: Interior, widget: string,
+              hint: "Square footage, written how it should look — 3,979 sf" }
+          - { name: lot, label: Lot, widget: string, required: false,
+              hint: "Square footage — 44,853 sf. Leave blank and no Lot figure appears." }
+          - { name: garage, label: Garage, widget: string,
+              hint: "Just the number — 4. It shows on the page as 4 Car Garage." }
 
       - name: hero
         label: Main photo

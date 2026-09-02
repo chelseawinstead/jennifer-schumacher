@@ -3,15 +3,11 @@ status: For sale
 price: $600,000
 address: 4020 N Scottsdale Road, Unit 2010, Scottsdale, AZ 85251
 lede: Downtown Scottsdale living, moments from dining and galleries.
-specs:
-- value: '1'
-  label: Bedrooms
-- value: '1'
-  label: Bathrooms
-- value: 937 sf
-  label: Interior
-- value: '1'
-  label: Car Garage
+figures:
+  bedrooms: '1'
+  bathrooms: '1'
+  interior: 937 sf
+  garage: '1'
 hero:
   src: scottsdale-rd-2010.jpg
   alt: 4020 N Scottsdale Rd 2010

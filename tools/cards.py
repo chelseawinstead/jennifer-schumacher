@@ -61,9 +61,11 @@ SHORT = {"bedrooms": "Bed", "bathrooms": "Bath", "car garage": "Car Garage"}
 CARD_SPECS = ["bedrooms", "bathrooms", "interior", "car garage"]
 
 
-def specs_line(specs):
+def specs_line(listing):
     """"5 Bed · 5.5 Bath · 5,338 sf · 5 Car Garage" — Lot is left off a card."""
-    by_label = {s["label"].strip().lower(): s["value"].strip() for s in specs or []}
+    import listings as listing_tpl
+    by_label = {f["label"].strip().lower(): f["value"].strip()
+                for f in listing_tpl.figures_of(listing)}
     parts = []
     for label in CARD_SPECS:
         value = by_label.get(label)
@@ -163,7 +165,8 @@ def _card(template, listing, photo, kicker, meta, specs=None, alt=None):
                   card, count=1, flags=re.S)
     if kicker is not None:
         card = _swap(KICKER_RE, kicker, card)
-    card = _swap(PRICE_RE, listing.get("price", ""), card)
+    import listings as listing_tpl
+    card = _swap(PRICE_RE, listing_tpl.money(listing.get("price", "")), card)
     card = _swap(META_RE, meta, card)
     if specs is not None:
         card = _swap(HOME_SPECS_RE, specs, card)
@@ -187,9 +190,10 @@ def render_listings_index(html, listings):
                                   + _lit(photo_alt(star)) + x.group(3)),
                        block, count=1, flags=re.S)
         block = _swap(KICKER_RE, kicker_of(star), block)
-        block = _swap(PRICE_RE, star.get("price", ""), block)
+        import listings as listing_tpl
+        block = _swap(PRICE_RE, listing_tpl.money(star.get("price", "")), block)
         block = _swap(META_RE,
-                      star.get("address", "") + SEP + specs_line(star.get("specs")),
+                      star.get("address", "") + SEP + specs_line(star),
                       block)
         return m.group(1) + block + m.group(3)
 
@@ -201,7 +205,7 @@ def render_listings_index(html, listings):
         template = re.search(CARD_RE, m.group(2), re.S).group(0)
         cards = "".join(
             _card(template, d, card_photo(d), card_kicker_of(d),
-                  "%s · %s" % (street(d), specs_line(d.get("specs"))))
+                  "%s · %s" % (street(d), specs_line(d)))
             for d in rest)
         return m.group(1) + cards + m.group(3)
 
@@ -219,7 +223,7 @@ def render_home(html, listings, limit=3):
         cards = "".join(
             _card(template, d, home_photo(d), None,
                   "%s · %s" % (street(d), city_state(d)),
-                  specs=specs_line(d.get("specs")),
+                  specs=specs_line(d),
                   alt=d.get("address", ""))
             for d in picks)
         return m.group(1) + cards + m.group(3)
