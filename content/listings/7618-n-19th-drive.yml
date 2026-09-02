@@ -1,0 +1,43 @@
+status: For sale
+price: $385,000
+address: 7618 N 19th Drive, Phoenix, AZ
+lede: A Phoenix home close to shopping, dining, and easy freeway access.
+specs:
+- value: '3'
+  label: Bedrooms
+- value: '2.5'
+  label: Bathrooms
+- value: 2,400 sf
+  label: Interior
+- value: '2'
+  label: Car Garage
+hero:
+  src: 19th-drive-hero.jpg
+  alt: 7618 N 19th Drive
+film: _6I0mvvOFGk
+body: |
+  An updated spacious residence featuring multiple living areas, a dedicated dining space, and kitchen complete with stainless steel appliances, ample cabinetry, and generous workspace. Comfortable bedrooms and abundant storage enhance everyday functionality, complemented by an attached two-car garage. A private fenced patio extends the living space outdoors, ideal for relaxing or entertaining and is steps to the community pool.
+
+  Contact Jennifer for full details and a private showing.
+gallery:
+- src: 19th-drive-twilight.jpg
+  alt: Front exterior
+  caption: Front exterior
+- src: 19th-drive-living.jpg
+  alt: Living room
+  caption: Living room
+- src: 19th-drive-kitchen.jpg
+  alt: Kitchen
+  caption: Kitchen
+- src: 19th-drive-bedroom.jpg
+  alt: Primary bedroom
+  caption: Primary bedroom
+- src: 19th-drive-bath.jpg
+  alt: Primary bath
+  caption: Primary bath
+- src: 19th-drive-pool.jpg
+  alt: Community pool
+  caption: Community pool
+slug: 7618-n-19th-drive
+title: 7618 N 19th Drive, Phoenix, AZ | Jennifer Schumacher
+meta_description: A Phoenix residence represented by Jennifer Schumacher.

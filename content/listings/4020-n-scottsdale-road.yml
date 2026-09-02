@@ -1,0 +1,43 @@
+status: For sale
+price: $600,000
+address: 4020 N Scottsdale Road, Unit 2010, Scottsdale, AZ 85251
+lede: Downtown Scottsdale living, moments from dining and galleries.
+specs:
+- value: '1'
+  label: Bedrooms
+- value: '1'
+  label: Bathrooms
+- value: 937 sf
+  label: Interior
+- value: '1'
+  label: Car Garage
+hero:
+  src: scottsdale-rd-2010.jpg
+  alt: 4020 N Scottsdale Rd 2010
+film: FrppnJz5hv4
+body: |
+  Contemporary loft-style studio in a boutique 21-unit building located in the heart of Old Town Scottsdale. This open-concept residence features stainless steel appliances, concrete countertops, and wood flooring. Floor-to-ceiling windows bring in natural light and connect to a private patio with views of Camelback Mountain. The building's central location offers convenient access to nearby dining, shopping, entertainment, and recreational options, providing an ideal setting for urban living in Old Town.
+
+  Contact Jennifer for full details and a private showing.
+gallery:
+- src: scottsdale-rd-2010-exterior.jpg
+  alt: Front exterior
+  caption: Front exterior
+- src: scottsdale-rd-2010-living.jpg
+  alt: Living room
+  caption: Living room
+- src: scottsdale-rd-2010-kitchen.jpg
+  alt: Kitchen
+  caption: Kitchen
+- src: scottsdale-rd-2010-bedroom.jpg
+  alt: Primary bedroom
+  caption: Primary bedroom
+- src: scottsdale-rd-2010-bath.jpg
+  alt: Primary bath
+  caption: Primary bath
+- src: scottsdale-rd-2010-patio.jpg
+  alt: Patio
+  caption: Patio
+slug: 4020-n-scottsdale-road
+title: 4020 N Scottsdale Road, Unit 2010, Scottsdale, AZ | Jennifer Schumacher
+meta_description: 1 bed, 1 bath, 937 sf with a 1 car garage in Scottsdale.

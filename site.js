@@ -87,8 +87,12 @@
       render();
       return;
     }
-    var lines = ["First name: " + state.first, "Last name: " + state.last,
-                 "Email: " + state.email];
+    var lines = [];
+    // A showing request that does not say which home it is about is no use to
+    // anyone; listing pages put their address in the page config for this.
+    if (cfg.listing) lines.push("Listing: " + cfg.listing, "");
+    lines.push("First name: " + state.first, "Last name: " + state.last,
+               "Email: " + state.email);
     if (cfg.phoneRequired) lines.push("Phone: " + state.phone);
     window.open("mailto:" + cfg.mailTo +
       "?subject=" + encodeURIComponent(cfg.mailSubject || "") +

@@ -1,0 +1,57 @@
+status: New construction
+price: $5,650,000
+address: 4945 E Mountain View Road, Paradise Valley, AZ
+lede: New construction in the heart of Paradise Valley — soaring great room, resort pool, and Camelback views from nearly every room.
+specs:
+- value: '5'
+  label: Bedrooms
+- value: '5.5'
+  label: Bathrooms
+- value: 5,338 sf
+  label: Interior
+- value: 44,853 sf
+  label: Lot
+- value: '5'
+  label: Car Garage
+hero:
+  src: i26.jpg
+  alt: 4945 E Mountain View Road
+film: HF_uJ6YwRJU
+body: |
+  A rare new-construction opportunity in one of Paradise Valley’s most sought-after pockets. Every room is oriented to the mountain, with disappearing glass walls opening the great room to a resort-scale pool and covered patio. This home features a rare 5 car garage.
+
+  Contact Jennifer to arrange a private showing.
+gallery:
+- src: i28.jpg
+  alt: Front elevation
+  caption: Front elevation
+- src: i29.jpg
+  alt: Great room
+  caption: Great room
+- src: i30.jpg
+  alt: Kitchen
+  caption: Kitchen
+- src: i34.jpg
+  alt: Prep kitchen
+  caption: Prep kitchen
+- src: i27.jpg
+  alt: Dining
+  caption: Dining
+- src: i31.jpg
+  alt: Living room
+  caption: Living room
+- src: i36.jpg
+  alt: Primary bedroom
+  caption: Primary bedroom
+- src: i35.jpg
+  alt: Primary bath
+  caption: Primary bath
+- src: i32.jpg
+  alt: Office
+  caption: Office
+- src: i33.jpg
+  alt: Pool
+  caption: Pool
+slug: 4945-e-mountain-view-road
+title: 4945 E Mountain View Road, Paradise Valley, AZ | Jennifer Schumacher
+meta_description: 5 bed, 5.5 bath, 5,338 sf with a 5 car garage in Paradise Valley.

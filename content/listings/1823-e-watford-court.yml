@@ -1,0 +1,43 @@
+status: For sale
+price: $1,200,000
+address: 1823 E Watford Court, Gilbert, AZ
+lede: A Gilbert home built for entertaining, inside and out.
+specs:
+- value: '4'
+  label: Bedrooms
+- value: '4.5'
+  label: Bathrooms
+- value: 3,979 sf
+  label: Interior
+- value: '4'
+  label: Car Garage
+hero:
+  src: i9.jpg
+  alt: 1823 E Watford Court
+film: null
+body: |
+  Tucked within the prestigious gated enclave of The Reserves at Val Vista, this exceptional estate redefines luxury living in Gilbert. Perfectly positioned on a premier cul-de-sac lot overlooking the community park, the residence offers a sophisticated blend of timeless elegance, modern comfort, and seamless indoor outdoor living.
+
+  Contact Jennifer for full details and a private showing.
+gallery:
+- src: watford-court-exterior.jpg
+  alt: Front exterior
+  caption: Front exterior
+- src: watford-court-living.jpg
+  alt: Living room
+  caption: Living room
+- src: watford-court-kitchen.jpg
+  alt: Kitchen
+  caption: Kitchen
+- src: watford-court-bedroom.jpg
+  alt: Primary bedroom
+  caption: Primary bedroom
+- src: watford-court-bath.jpg
+  alt: Primary bath
+  caption: Primary bath
+- src: watford-court-backyard.jpg
+  alt: Backyard
+  caption: Backyard
+slug: 1823-e-watford-court
+title: 1823 E Watford Court, Gilbert, AZ | Jennifer Schumacher
+meta_description: 4 bed, 4.5 bath, 3,979 sf with a 4 car garage in Gilbert.

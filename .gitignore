@@ -5,3 +5,4 @@ _to_delete/
 tools/.fonts/
 _tmp/
 .vercel/
+__pycache__/

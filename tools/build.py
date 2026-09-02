@@ -31,6 +31,17 @@ from collections import OrderedDict
 # Route map: Claude Design's slugs -> the URLs we actually publish.
 # Listing pages are published under their real street address.
 # --------------------------------------------------------------------------
+# The listing whose exported page supplies the template every listing is built
+# from. It needs a hero film and captioned gallery photos, so the branches the
+# other listings need are present to fill or remove.
+LISTING_TEMPLATE = "listings/2300-e-campbell-ave-202"
+
+# Listing content, held apart from the design. When content/listings is absent
+# the build falls back to taking listings straight from the export, which is
+# how the site worked before the team had a form.
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CONTENT = os.path.join(REPO, "content")
+
 ROUTES = {
     "listings/paradise-valley-estate": "listings/20320-e-sunset-court",
     "listings/watford-court": "listings/1823-e-watford-court",
@@ -472,6 +483,31 @@ MAX_WIDTH = 2000
 JPEG_QUALITY = 82
 
 
+def image_sources(export):
+    """Where photographs come from, in order of precedence.
+
+    The export brings Jennifer's design imagery; content/images holds photos
+    the team uploaded through the form. Both go through the same re-encode, so
+    a 6MB photo straight off a camera lands on the site at the same size as
+    everything else.
+    """
+    dirs = [os.path.join(export, "images")]
+    uploaded = os.path.join(CONTENT, "images")
+    if os.path.isdir(uploaded):
+        dirs.append(uploaded)
+    return dirs
+
+
+def image_index(dirs):
+    """filename -> full path, with later directories winning."""
+    found = {}
+    for d in dirs:
+        for name in sorted(os.listdir(d)):
+            if not name.startswith("."):
+                found[name] = os.path.join(d, name)
+    return found
+
+
 def plan_images(src_dir):
     """Decide what each source image becomes.
 
@@ -483,11 +519,11 @@ def plan_images(src_dir):
     from PIL import Image
 
     rename = {}
-    for name in sorted(os.listdir(src_dir)):
+    for name, path in sorted(src_dir.items()):
         stem, ext = os.path.splitext(name)
         if ext.lower() != ".png":
             continue
-        with Image.open(os.path.join(src_dir, name)) as im:
+        with Image.open(path) as im:
             alpha = im.mode in ("RGBA", "LA") or "transparency" in im.info
             if alpha:
                 im = im.convert("RGBA")
@@ -504,12 +540,11 @@ def write_images(src_dir, out_dir, rename, keep):
     os.makedirs(out_dir, exist_ok=True)
     before = after = 0
     dropped = []
-    for name in sorted(os.listdir(src_dir)):
+    for name, src in sorted(src_dir.items()):
         target = rename.get(name, name)
         if target not in keep:
             dropped.append(name)
             continue
-        src = os.path.join(src_dir, name)
         before += os.path.getsize(src)
         with Image.open(src) as im:
             im = ImageOps.exif_transpose(im)
@@ -524,6 +559,22 @@ def write_images(src_dir, out_dir, rename, keep):
                                        optimize=True, progressive=True)
         after += os.path.getsize(dest)
     return before, after, dropped
+
+
+def load_listings():
+    """Every listing's content, in the order they should appear."""
+    folder = os.path.join(CONTENT, "listings")
+    if not os.path.isdir(folder):
+        return []
+    import yaml
+    out = []
+    for name in sorted(os.listdir(folder)):
+        if name.endswith((".yml", ".yaml")):
+            with open(os.path.join(folder, name), encoding="utf-8") as fh:
+                data = yaml.safe_load(fh) or {}
+            data.setdefault("slug", os.path.splitext(name)[0])
+            out.append(data)
+    return out
 
 
 def main():
@@ -542,7 +593,14 @@ def main():
     pages = [("index.html", "")]
     for name in ("about", "buy", "sell", "listings", "journal"):
         pages.append(("%s/index.html" % name, name))
+    listing_content = load_listings()
     for group in ("listings", "journal"):
+        if group == "listings" and listing_content:
+            # Only the template listing is built from the export; the rest are
+            # rendered from content/listings further down.
+            route = ROUTES.get(LISTING_TEMPLATE, LISTING_TEMPLATE)
+            pages.append(("%s/index.html" % LISTING_TEMPLATE, route))
+            continue
         for entry in sorted(os.listdir(os.path.join(export, group))):
             p = os.path.join(export, group, entry, "index.html")
             if os.path.isfile(p):
@@ -550,11 +608,32 @@ def main():
                 pages.append(("%s/index.html" % route, ROUTES.get(route, route)))
 
     global IMAGE_RENAME
-    IMAGE_RENAME = plan_images(os.path.join(export, "images"))
+    all_images = image_index(image_sources(export))
+    IMAGE_RENAME = plan_images(all_images)
 
     report = []
     for src_rel, route in pages:
         build_page(os.path.join(export, src_rel), route, components, out, report)
+
+    listing_routes = []
+    if listing_content:
+        import listings as listing_tpl
+        tpl_route = ROUTES.get(LISTING_TEMPLATE, LISTING_TEMPLATE)
+        template = read(os.path.join(out, tpl_route, "index.html"))
+        # the export-built template page is about to be replaced by its own
+        # content file, so it should be listed once, not twice
+        report[:] = [r for r in report if r[0] != tpl_route]
+        for data in listing_content:
+            page = listing_tpl.render(template, data)
+            route = "listings/%s" % data["slug"]
+            os.makedirs(os.path.join(out, route), exist_ok=True)
+            with open(os.path.join(out, route, "index.html"), "w",
+                      encoding="utf-8") as fh:
+                fh.write(page)
+            listing_routes.append(route)
+            report.append((route, len(page)))
+        pages = [p for p in pages if p[1] != tpl_route]
+        pages += [("", r) for r in listing_routes]
 
     for name in ("404.html", "robots.txt"):
         shutil.copy(os.path.join(export, name), os.path.join(out, name))
@@ -564,11 +643,12 @@ def main():
 
     # Only ship what the pages actually reference.
     used = set()
-    for path in ["404.html"] + [os.path.join(r, "index.html") if r else "index.html"
-                                for _, r in pages]:
+    scan = ["404.html"] + [os.path.join(r, "index.html") if r else "index.html"
+                           for _, r in pages]
+    for path in scan:
         for ref in re.findall(r"images/([A-Za-z0-9._-]+)", read(os.path.join(out, path))):
             used.add(ref)
-    before, after, dropped = write_images(os.path.join(export, "images"),
+    before, after, dropped = write_images(all_images,
                                           os.path.join(out, "images"),
                                           IMAGE_RENAME, used)
     print("  images: %.1f MB -> %.1f MB (%d shipped, %d unreferenced left out)"
