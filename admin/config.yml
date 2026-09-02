@@ -8,14 +8,8 @@ backend:
   name: github
   repo: chelseawinstead/jennifer-schumacher
   branch: main
-  # No base_url on purpose. Without one, the login screen offers "Sign In with
-  # Token": each editor makes a GitHub token once, from a link the login screen
-  # hands them with the right permissions already ticked. That needs no OAuth
-  # app and no server to run it.
-  #
-  # If the token step ever becomes a nuisance, deploying sveltia-cms-auth to
-  # Cloudflare Workers and putting its address here turns it into a plain
-  # "Sign in with GitHub" button. Nothing else changes.
+  # Set this to the Cloudflare worker that handles "Sign in with GitHub".
+  base_url: https://REPLACE-ME.workers.dev
 
 # Photos the team uploads. The build re-encodes everything here down to 2000px
 # and copies it to /images, so a 6MB photo off a camera lands the right size.
@@ -39,6 +33,11 @@ collections:
     summary: "{{address}} — {{price}}"
     sortable_fields: [address, price, status]
     fields:
+      - { name: order, label: Position, widget: number, value_type: int, default: 99,
+          hint: "Lower numbers come first. The top three also appear on the homepage." }
+      - { name: featured, label: Feature this one at the top of the Listings page,
+          widget: boolean, default: false,
+          hint: "Only one listing should have this switched on." }
       - { name: status, label: Status, widget: select, default: For sale,
           options: [For sale, Under contract, Sold] }
       - { name: price, label: Price, widget: string, hint: "With the dollar sign, e.g. $1,200,000" }
@@ -59,11 +58,25 @@ collections:
           - { name: label, label: Label, widget: string }
 
       - name: hero
-        label: Hero photo
+        label: Main photo
         widget: object
+        hint: "The wide photo at the top of the listing's own page"
         fields:
           - { name: src, label: Photo, widget: image }
           - { name: alt, label: Description for screen readers, widget: string }
+
+      - name: cardart
+        label: Other photos and labels
+        widget: object
+        collapsed: true
+        hint: "All optional. Leave these alone and the main photo is used everywhere."
+        fields:
+          - { name: card, label: Photo for the Listings page, widget: image, required: false }
+          - { name: card_home, label: Photo for the homepage, widget: image, required: false }
+          - { name: kicker, label: Line above the price when featured, widget: string,
+              required: false, hint: "e.g. New construction · Paradise Valley" }
+          - { name: card_kicker, label: Line above the price on its card, widget: string,
+              required: false, hint: "The city, unless you write something else" }
 
       - { name: film, label: Property film, widget: string, required: false,
           hint: "The YouTube link or ID. Leave blank and the play button won't appear." }

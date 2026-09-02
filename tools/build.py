@@ -572,6 +572,12 @@ def load_listings():
         if name.endswith((".yml", ".yaml")):
             with open(os.path.join(folder, name), encoding="utf-8") as fh:
                 data = yaml.safe_load(fh) or {}
+            # The form keeps some fields in collapsed groups; everything
+            # downstream expects them at the top level.
+            for group in ("seo", "cardart"):
+                for key, value in (data.pop(group, None) or {}).items():
+                    if value not in (None, "", []):
+                        data.setdefault(key, value)
             data.setdefault("slug", os.path.splitext(name)[0])
             out.append(data)
     return out
@@ -634,6 +640,17 @@ def main():
             report.append((route, len(page)))
         pages = [p for p in pages if p[1] != tpl_route]
         pages += [("", r) for r in listing_routes]
+
+        # The cards on the homepage and the Listings page are written from the
+        # same content as the listing pages, so a price changed in one place is
+        # right in all three.
+        import cards as listing_cards
+        for rel, fill in (("listings/index.html", listing_cards.render_listings_index),
+                          ("index.html", listing_cards.render_home)):
+            path = os.path.join(out, rel)
+            filled = fill(read(path), listing_content)
+            with open(path, "w", encoding="utf-8") as fh:
+                fh.write(filled)
 
     for name in ("404.html", "robots.txt"):
         shutil.copy(os.path.join(export, name), os.path.join(out, name))

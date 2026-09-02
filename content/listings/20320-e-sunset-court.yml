@@ -1,3 +1,4 @@
+order: 2
 status: For sale
 price: $1,895,000
 address: 20320 E Sunset Court, Queen Creek, AZ
@@ -14,6 +15,7 @@ specs:
 hero:
   src: i10.jpg
   alt: 20320 E Sunset Court
+card_home: i11.jpg
 film: 3ZDzgkXhdRs
 body: |
   Experience the pinnacle of peaceful elegance in the exclusive, gated Pecans neighborhood. Designed for both relaxation and play, the resort style grounds feature a large pool, a rejuvenating spa, and a private 6-hole PuttTek par-3 course nestled under a canopy of mature shade trees. Whether you’re hosting a garden party or enjoying a quiet morning on the green, this outdoor retreat offers privacy and beauty.

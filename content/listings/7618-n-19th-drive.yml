@@ -1,3 +1,4 @@
+order: 6
 status: For sale
 price: $385,000
 address: 7618 N 19th Drive, Phoenix, AZ
@@ -14,6 +15,7 @@ specs:
 hero:
   src: 19th-drive-hero.jpg
   alt: 7618 N 19th Drive
+card: n-19th-drive.jpg
 film: _6I0mvvOFGk
 body: |
   An updated spacious residence featuring multiple living areas, a dedicated dining space, and kitchen complete with stainless steel appliances, ample cabinetry, and generous workspace. Comfortable bedrooms and abundant storage enhance everyday functionality, complemented by an attached two-car garage. A private fenced patio extends the living space outdoors, ideal for relaxing or entertaining and is steps to the community pool.
