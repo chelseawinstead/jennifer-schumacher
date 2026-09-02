@@ -26,7 +26,10 @@
     copied: function () { return state.copied; },
     videoPlaying: function () { return state.playing; },
     notVideoPlaying: function () { return !state.playing; },
-    videoNotPlaying: function () { return !state.playing; }
+    videoNotPlaying: function () { return !state.playing; },
+    // The listing heroes name the same two states videoOpen/videoClosed.
+    videoOpen: function () { return state.playing; },
+    videoClosed: function () { return !state.playing; }
   };
 
   var texts = {
@@ -107,6 +110,30 @@
     }).catch(function () {});
   }
 
+  // YouTube picks a stream from the iframe's size on load, which on a 21/9
+  // hero lands well below the source. The export nudged it back up to the
+  // best available for the first few seconds; this does the same.
+  function forceQuality() {
+    var frame = document.querySelector('iframe[title="Property video"]');
+    if (!frame || !frame.contentWindow) return;
+    var tries = 0;
+    var timer = setInterval(function () {
+      if (++tries > 10 || !frame.contentWindow) { clearInterval(timer); return; }
+      ["hd2160", "highres", "hd1440", "hd1080"].forEach(function (q) {
+        frame.contentWindow.postMessage(JSON.stringify(
+          { event: "command", func: "setPlaybackQuality", args: [q] }), "*");
+      });
+    }, 1200);
+  }
+
+  function play(e) {
+    e.stopPropagation();
+    if (e.preventDefault) e.preventDefault();
+    state.playing = true;
+    render();
+    forceQuality();
+  }
+
   // ---- handlers ---------------------------------------------------------
   var handlers = {
     openModal: function (e) {
@@ -121,9 +148,11 @@
     },
     stop: function (e) { e.stopPropagation(); },
     submit: function (e) { e.preventDefault(); submit(); },
-    playVideo: function (e) {
+    playVideo: play,
+    openVideo: play,
+    closeVideo: function (e) {
       e.stopPropagation();
-      state.playing = true;
+      state.playing = false;
       render();
     },
     copyEmail: function (e) { copyEmail(e.currentTarget); }

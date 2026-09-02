@@ -174,6 +174,22 @@ for (const route of routes) {
   await ctx.close();
 }
 
+// ---- hero property film, on every listing that ships one ------------------
+for (const route of under('listings')) {
+  const { ctx, page } = await open(route);
+  const badge = page.locator('[data-on-click="openVideo"]');
+  if (await badge.count() === 0) { await ctx.close(); continue; }
+  const film = page.locator('[data-if="videoOpen"] iframe');
+  if (await film.isVisible()) note(route, 'hero film is playing before it is asked for');
+  await badge.click();
+  await page.waitForTimeout(400);
+  if (!(await film.isVisible())) note(route, 'hero play button did nothing');
+  const src = await film.getAttribute('src');
+  if (!src || !src.includes('/embed/')) note(route, `hero film src after play was "${src}"`);
+  if (await badge.isVisible()) note(route, 'hero still is on top of the film after play');
+  await ctx.close();
+}
+
 // ---- navigation chrome ----------------------------------------------------
 {
   const { ctx, page } = await open('/buy');
