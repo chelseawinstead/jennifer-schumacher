@@ -1,16 +1,15 @@
-state: Draft
+state: Published
 featured: false
 status: For sale
 price: '1700000'
 address: 14437 E WETHERSFIELD RD Scottsdale, AZ 85259
 lede: Scottsdale - Hidden Hills
-specs:
-  - value: hi
-    label: test
-  - value: hi
-    label: test
-  - value: hi
-    label: test
+figures:
+  bedrooms: '4'
+  bathrooms: '4.5'
+  interior: '3500'
+  lot: '12500'
+  garage: '3'
 hero:
   src: /content/images/TWILIGHT9.jpg
   alt: What is this for?
@@ -29,3 +28,10 @@ seo:
   slug: ''
   title: ''
   meta_description: ''
+specs:
+  - label: test
+    value: hi
+  - label: test
+    value: hi
+  - label: test
+    value: hi
