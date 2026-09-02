@@ -82,7 +82,7 @@ collections:
               required: false, hint: "The city, unless you write something else" }
 
       - { name: film, label: Property film, widget: string, required: false,
-          hint: "The YouTube link or ID. Leave blank and the play button won't appear." }
+          hint: "Paste the YouTube link — the one from the address bar or the Share button. Leave it blank and no play button appears." }
 
       - { name: body, label: Description, widget: text,
           hint: "Leave a blank line between paragraphs" }

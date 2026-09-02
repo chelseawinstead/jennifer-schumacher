@@ -149,8 +149,9 @@ def render(template, data):
 
     # The film. No film means no video branch and no play badge, rather than a
     # button with nothing behind it.
-    if d["film"]:
-        html = re.sub(FILM_RE, lambda m: m.group(1) + _lit(d["film"]) + m.group(3), html)
+    film = film_id(d["film"])
+    if film:
+        html = re.sub(FILM_RE, lambda m: m.group(1) + _lit(film) + m.group(3), html)
     else:
         html = drop_film(html)
 
@@ -278,6 +279,35 @@ def paragraphs(body):
     if isinstance(body, list):
         return [p.strip() for p in body if p.strip()]
     return [p.strip() for p in re.split(r"\n\s*\n", body or "") if p.strip()]
+
+
+YOUTUBE_ID = r"[A-Za-z0-9_-]{6,}"
+
+
+def film_id(value):
+    """The YouTube id, from whatever anyone pastes in.
+
+    Nobody should have to know what a video id is, or where in a URL it
+    hides. watch?v=, youtu.be/, /embed/, /shorts/, /live/, with or without
+    a timestamp or a share tag - all of them, plus a bare id, come out the
+    same.
+    """
+    value = (value or "").strip()
+    if not value:
+        return None
+    for pattern in (r"[?&]v=(%s)" % YOUTUBE_ID,
+                    r"youtu\.be/(%s)" % YOUTUBE_ID,
+                    r"/embed/(%s)" % YOUTUBE_ID,
+                    r"/shorts/(%s)" % YOUTUBE_ID,
+                    r"/live/(%s)" % YOUTUBE_ID):
+        m = re.search(pattern, value)
+        if m:
+            return m.group(1)
+    if re.fullmatch(YOUTUBE_ID, value):
+        return value
+    # Something that is neither a bare id nor a link we recognise: better to
+    # show no film than to build a broken embed.
+    return None
 
 
 def photo_src(value):
