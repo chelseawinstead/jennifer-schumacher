@@ -21,12 +21,25 @@ cardart:
   kicker: ''
   card_kicker: ''
 film: ''
-body: Designed for effortless Arizona living, this fully remodeled Scottsdale retreat is ideal as an Airbnb, second home, or investment property. The open-concept living, dining, and kitchen areas flow through expansive sliding glass doors to a private backyard and sparkling pool. The stylish kitchen features modern appliances, granite waterfall countertops, and generous storage. The spacious primary suite offers a spa-inspired bath with a soaking tub, walk-in shower, six showerheads, dual sinks, and designer tile. Remodeled in 2022 with on-trend finishes throughout, the home is minutes from Old Town Scottsdale, ASU, Sky Harbor Airport, spring training, dining, shopping, and entertainment.
+body: |-
+  Designed for effortless Arizona living, this fully remodeled Scottsdale retreat is ideal as an Airbnb, second home, or investment property. The open-concept living, dining, and kitchen areas flow through expansive sliding glass doors to a private backyard and sparkling pool. 
+
+  The stylish kitchen features modern appliances, granite waterfall countertops, and generous storage. The spacious primary suite offers a spa-inspired bath with a soaking tub, walk-in shower, six showerheads, dual sinks, and designer tile.
+
+  Remodeled in 2022 with on-trend finishes throughout, the home is minutes from Old Town Scottsdale, ASU, Sky Harbor Airport, spring training, dining, shopping, and entertainment.
+
+  Contact Jennifer for full details and a private showing.
 gallery:
   - src: /content/images/14-web-or-mls-Kitchen4.jpg
     caption: Updated Kitchen
+  - src: /content/images/12-web-or-mls-Kitchen3 (2).jpg
+    caption: Modern Finishes
   - src: /content/images/11-web-or-mls-Living Space1.jpg
     caption: Open Concept
+  - src: /content/images/24-web-or-mls-Primary Bedroom2.jpg
+    caption: Primary Bedroom
+  - src: /content/images/28-web-or-mls-Primary Bedroom6 (1).jpg
+    caption: Primary Ensuite
   - src: /content/images/34-web-or-mls-TWILIGHT5 (1).jpg
     caption: Outdoor Living
 seo:
