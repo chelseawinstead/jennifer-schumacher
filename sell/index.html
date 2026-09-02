@@ -165,6 +165,21 @@
     column-gap: 32px !important;
   }
 }
+
+/* Listing heroes — the property film inside a 21:9 box.
+ *
+ * The heroes are 21:9 and the films are 16:9, so YouTube fits the film by
+ * height and pads the sides with black. A quarter of the hero goes to bars,
+ * which on a phone leaves the film at 264x148 inside a 346px-wide box — small
+ * enough that Jennifer flagged it from her own listing.
+ *
+ * Give the box the film's own shape for as long as it is playing. The still
+ * keeps the wide 21:9 crop it was framed for; only the player changes. Fixing
+ * this in the Design document means giving the hero's video branch its own
+ * aspect ratio, after which this rule can go. */
+header > div:has(> [data-if="videoOpen"][data-open]) {
+  aspect-ratio: 16 / 9 !important;
+}
 </style>
 <script type="application/json" id="page-config">{"mailTo": "jennifer@schumacherliving.com", "mailSubject": "Request Your Home Value", "fields": ["first", "last", "email", "phone"], "phoneRequired": true}</script>
 <script src="site.js" defer></script>
