@@ -1,42 +1,54 @@
 state: Published
-status: For sale
+featured: false
+status: Under contract
 price: $1,200,000
 street: 1823 E Watford Court
 city: Gilbert
 state_code: AZ
+zip: ''
 lede: A Gilbert home built for entertaining, inside and out.
 figures:
   bedrooms: '4'
   bathrooms: '4.5'
   interior: 3,979 sf
+  lot: ''
   garage: '4'
 hero:
   src: i9.jpg
   alt: 1823 E Watford Court
-film: null
-body: |
+cardart:
+  card: ''
+  card_home: ''
+  kicker: ''
+  card_kicker: ''
+film: ''
+body: |-
   Tucked within the prestigious gated enclave of The Reserves at Val Vista, this exceptional estate redefines luxury living in Gilbert. Perfectly positioned on a premier cul-de-sac lot overlooking the community park, the residence offers a sophisticated blend of timeless elegance, modern comfort, and seamless indoor outdoor living.
 
   Contact Jennifer for full details and a private showing.
 gallery:
-- src: watford-court-exterior.jpg
-  alt: Front exterior
-  caption: Front exterior
-- src: watford-court-living.jpg
-  alt: Living room
-  caption: Living room
-- src: watford-court-kitchen.jpg
-  alt: Kitchen
-  caption: Kitchen
-- src: watford-court-bedroom.jpg
-  alt: Primary bedroom
-  caption: Primary bedroom
-- src: watford-court-bath.jpg
-  alt: Primary bath
-  caption: Primary bath
-- src: watford-court-backyard.jpg
-  alt: Backyard
-  caption: Backyard
+  - src: watford-court-exterior.jpg
+    caption: Front exterior
+    alt: Front exterior
+  - src: watford-court-living.jpg
+    caption: Living room
+    alt: Living room
+  - src: watford-court-kitchen.jpg
+    caption: Kitchen
+    alt: Kitchen
+  - src: watford-court-bedroom.jpg
+    caption: Primary bedroom
+    alt: Primary bedroom
+  - src: watford-court-bath.jpg
+    caption: Primary bath
+    alt: Primary bath
+  - src: watford-court-backyard.jpg
+    caption: Backyard
+    alt: Backyard
+seo:
+  slug: ''
+  title: ''
+  meta_description: ''
+meta_description: 4 bed, 4.5 bath, 3,979 sf with a 4 car garage in Gilbert.
 slug: 1823-e-watford-court
 title: 1823 E Watford Court, Gilbert, AZ | Jennifer Schumacher
-meta_description: 4 bed, 4.5 bath, 3,979 sf with a 4 car garage in Gilbert.
