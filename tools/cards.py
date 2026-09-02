@@ -77,13 +77,9 @@ def specs_line(listing):
 
 
 def street(listing):
-    """The address without the city, state and zip.
-
-    Not simply the part before the first comma: "4020 N Scottsdale Road,
-    Unit 2010" keeps its unit, which is how that home is named on its card.
-    """
-    parts = [p.strip() for p in (listing.get("address") or "").split(",")]
-    return ", ".join(parts[:-2]) if len(parts) > 2 else (parts[0] if parts else "")
+    """The street line — everything before the city."""
+    import listings as listing_tpl
+    return listing_tpl.street_of(listing)
 
 
 def photo_alt(listing):
@@ -91,18 +87,25 @@ def photo_alt(listing):
     return (listing.get("hero") or {}).get("alt") or street(listing)
 
 
+def address_line(listing):
+    import listings as listing_tpl
+    return listing_tpl.address_of(listing)
+
+
 def city(listing):
-    parts = [p.strip() for p in (listing.get("address") or "").split(",")]
-    return parts[-2] if len(parts) >= 3 else ""
+    import listings as listing_tpl
+    return listing_tpl.city_of_listing(listing)
 
 
 def city_state(listing):
     """"Paradise Valley, AZ" — the address without street number or zip."""
-    parts = [p.strip() for p in (listing.get("address") or "").split(",")]
-    if len(parts) < 3:
-        return ""
-    state = re.sub(r"\s*\d{5}$", "", parts[-1]).strip()
-    return "%s, %s" % (parts[-2], state)
+    import listings as listing_tpl
+    place = listing_tpl.city_of_listing(listing)
+    state = (listing.get("state_code") or "").strip()
+    if not state:
+        parts = [p.strip() for p in (listing.get("address") or "").split(",")]
+        state = re.sub(r"\s*\d{5}$", "", parts[-1]).strip() if len(parts) >= 3 else ""
+    return "%s, %s" % (place, state) if place and state else place
 
 
 def kicker_of(listing):
@@ -193,7 +196,7 @@ def render_listings_index(html, listings):
         import listings as listing_tpl
         block = _swap(PRICE_RE, listing_tpl.money(star.get("price", "")), block)
         block = _swap(META_RE,
-                      star.get("address", "") + SEP + specs_line(star),
+                      address_line(star) + SEP + specs_line(star),
                       block)
         return m.group(1) + block + m.group(3)
 
@@ -224,7 +227,7 @@ def render_home(html, listings, limit=3):
             _card(template, d, home_photo(d), None,
                   "%s · %s" % (street(d), city_state(d)),
                   specs=specs_line(d),
-                  alt=d.get("address", ""))
+                  alt=address_line(d))
             for d in picks)
         return m.group(1) + cards + m.group(3)
 

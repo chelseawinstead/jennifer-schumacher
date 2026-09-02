@@ -31,13 +31,13 @@ collections:
     # completely and is reversible, which is what "delete" almost always means
     # here. Nothing is ever destroyed by someone in a hurry.
     delete: false
-    slug: "{{address}}"
-    identifier_field: address
+    slug: "{{street}}"
+    identifier_field: street
     # The state leads, so it is obvious at a glance which listings are live.
-    summary: "{{state}}  ·  {{address}} — {{price}}"
+    summary: "{{state}}  ·  {{street}}, {{city}} — {{price}}"
     # Listings show newest-priciest first on the site; the order here is just
     # for finding things.
-    sortable_fields: [address, price, status, state]
+    sortable_fields: [street, city, price, status, state]
     fields:
       - { name: state, label: Where this listing is, widget: select, default: Draft,
           options: [Draft, Published, Archived],
@@ -49,8 +49,11 @@ collections:
           options: [For sale, Under contract, Sold] }
       - { name: price, label: Price, widget: string,
           hint: "e.g. $1,200,000 — typing 1200000 is fine too, it gets tidied up" }
-      - { name: address, label: Address, widget: string,
-          hint: "Street, city, state — this also becomes the web address of the page" }
+      - { name: street, label: Street address, widget: string,
+          hint: "Number and street — 4945 E Mountain View Road. Add a unit here too if there is one." }
+      - { name: city, label: City, widget: string, hint: "Paradise Valley" }
+      - { name: state_code, label: State, widget: string, default: AZ }
+      - { name: zip, label: ZIP, widget: string, required: false }
       - { name: lede, label: One-line intro, widget: string,
           hint: "The single italic line under the price" }
 
@@ -76,7 +79,6 @@ collections:
         hint: "The wide photo at the top of the listing's own page"
         fields:
           - { name: src, label: Photo, widget: image }
-          - { name: alt, label: Description for screen readers, widget: string }
 
       - name: cardart
         label: Other photos and labels
@@ -104,7 +106,6 @@ collections:
         summary: "{{fields.caption}}"
         fields:
           - { name: src, label: Photo, widget: image }
-          - { name: alt, label: Description for screen readers, widget: string }
           - { name: caption, label: Caption, widget: string, required: false,
               hint: "Shown under the photo. Leave blank for no caption." }
 

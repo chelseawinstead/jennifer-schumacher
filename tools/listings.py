@@ -352,8 +352,14 @@ def money(value):
 
 
 def photo_src(value):
-    """Accept a bare filename or whatever path the form recorded."""
-    return re.sub(r"^/?(?:images/)?", "", (value or "").strip())
+    """Just the filename, whatever path the form recorded.
+
+    The photo lands in images/ either way, so the only part that matters is
+    the name. Taking the last segment copes with every shape the form might
+    hand over - a bare name, /images/name, content/images/name - instead of
+    stripping one prefix and mangling the rest.
+    """
+    return (value or "").strip().rstrip("/").split("/")[-1]
 
 
 def slugify(text):
@@ -361,13 +367,39 @@ def slugify(text):
     return text.strip("-")
 
 
-def street_of(address):
-    return address.split(",")[0].strip()
+def address_of(data):
+    """The address as one line, from the four boxes the form asks for.
+
+    Written as separate fields there is nothing to punctuate wrongly - the
+    city is the city because it is in the city box, not because it sits
+    between the right two commas.
+    """
+    if data.get("address"):
+        return data["address"].strip()
+    state = " ".join(x for x in [(data.get("state_code") or "").strip(),
+                                 (data.get("zip") or "").strip()] if x)
+    parts = [(data.get("street") or "").strip(), (data.get("city") or "").strip(), state]
+    return ", ".join(p for p in parts if p)
 
 
-def city_of(address):
-    parts = [p.strip() for p in address.split(",")]
-    return parts[-2] if len(parts) >= 3 else (parts[-1] if parts else "")
+def street_of(data):
+    """The street line: everything before the city."""
+    if isinstance(data, str):
+        parts = [p.strip() for p in data.split(",")]
+        return ", ".join(parts[:-2]) if len(parts) > 2 else (parts[0] if parts else "")
+    if data.get("street"):
+        return data["street"].strip()
+    return street_of(data.get("address") or "")
+
+
+def city_of_listing(data):
+    if data.get("city"):
+        return data["city"].strip()
+    parts = [p.strip() for p in (data.get("address") or "").split(",")]
+    return parts[-2] if len(parts) >= 3 else ""
+
+
+
 
 
 def with_defaults(data):
@@ -382,8 +414,9 @@ def with_defaults(data):
     d.setdefault("film", None)
     d.setdefault("body", "")
     d.setdefault("gallery", [])
-    address = (d.get("address") or "").strip()
-    d.setdefault("slug", slugify(street_of(address)))
+    address = address_of(d)
+    d["address"] = address
+    d.setdefault("slug", slugify(street_of(d)))
     d.setdefault("title_plain", address)
     d.setdefault("title", "%s | %s" % (d["title_plain"], BRAND))
     by_label = {f["label"].lower(): f["value"] for f in figures_of(d)}
@@ -391,6 +424,17 @@ def with_defaults(data):
                  "%s bed, %s bath, %s with a %s car garage in %s."
                  % (by_label.get("bedrooms", ""), by_label.get("bathrooms", ""),
                     by_label.get("interior", ""), by_label.get("car garage", ""),
-                    city_of(address)))
-    d.setdefault("hero", {"src": "", "alt": street_of(address)})
+                    city_of_listing(d)))
+    hero = dict(d.get("hero") or {})
+    hero.setdefault("alt", street_of(d) or address)
+    if not hero.get("alt"):
+        hero["alt"] = address
+    d["hero"] = hero
+    d["gallery"] = [dict(p, alt=p.get("alt") or p.get("caption") or street_of(d))
+                    for p in (d.get("gallery") or [])]
+    # Last: anything still missing gets a blank, so one incomplete listing
+    # leaves one gap on one page instead of crashing the rebuild for all of
+    # them. Everything derivable has already been derived above.
+    for key in SCALARS:
+        d.setdefault(key, "")
     return d
