@@ -83,8 +83,8 @@ def street(listing):
 
 
 def photo_alt(listing):
-    """Cards reuse the hero photo's own description."""
-    return (listing.get("hero") or {}).get("alt") or street(listing)
+    """Cards describe the photo by the property it shows."""
+    return street(listing)
 
 
 def address_line(listing):
@@ -123,11 +123,20 @@ def card_kicker_of(listing):
 
 
 def card_photo(listing):
-    return listing.get("card") or (listing.get("hero") or {}).get("src", "")
+    """Just the filename, same as the listing page does it.
+
+    Missing this is what put images//content/images/NAME.jpg on the cards
+    while the listing's own page was fine - the two were reading the stored
+    path in different ways.
+    """
+    import listings as listing_tpl
+    return listing_tpl.photo_src(
+        listing.get("card") or (listing.get("hero") or {}).get("src", ""))
 
 
 def home_photo(listing):
-    return listing.get("card_home") or card_photo(listing)
+    import listings as listing_tpl
+    return listing_tpl.photo_src(listing.get("card_home") or "") or card_photo(listing)
 
 
 # --------------------------------------------------------------------------

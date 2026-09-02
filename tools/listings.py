@@ -425,12 +425,14 @@ def with_defaults(data):
                  % (by_label.get("bedrooms", ""), by_label.get("bathrooms", ""),
                     by_label.get("interior", ""), by_label.get("car garage", ""),
                     city_of_listing(d)))
-    hero = dict(d.get("hero") or {})
-    hero.setdefault("alt", street_of(d) or address)
-    if not hero.get("alt"):
-        hero["alt"] = address
-    d["hero"] = hero
-    d["gallery"] = [dict(p, alt=p.get("alt") or p.get("caption") or street_of(d))
+    # Nobody is asked for alt text any more, so it is worked out every time
+    # rather than kept - otherwise a listing saved before the box went away is
+    # stuck with whatever went in it, with no way to correct it.
+    d["hero"] = dict(d.get("hero") or {}, alt=street_of(d) or address)
+    # A gallery photo describes itself by its caption; where there is no
+    # caption an older description is better than the address - "Backyard"
+    # says more about that photo than "20320 E Sunset Court" does.
+    d["gallery"] = [dict(p, alt=p.get("caption") or p.get("alt") or street_of(d))
                     for p in (d.get("gallery") or [])]
     # Last: anything still missing gets a blank, so one incomplete listing
     # leaves one gap on one page instead of crashing the rebuild for all of
