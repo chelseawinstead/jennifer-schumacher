@@ -8,8 +8,14 @@ backend:
   name: github
   repo: chelseawinstead/jennifer-schumacher
   branch: main
-  # Set this to the Cloudflare worker that handles "Sign in with GitHub".
-  base_url: https://REPLACE-ME.workers.dev
+  # No base_url on purpose. Without one, the login screen offers "Sign In with
+  # Token": each editor makes a GitHub token once, from a link the login screen
+  # hands them with the right permissions already ticked. That needs no OAuth
+  # app and no server to run it.
+  #
+  # If the token step ever becomes a nuisance, deploying sveltia-cms-auth to
+  # Cloudflare Workers and putting its address here turns it into a plain
+  # "Sign in with GitHub" button. Nothing else changes.
 
 # Photos the team uploads. The build re-encodes everything here down to 2000px
 # and copies it to /images, so a 6MB photo off a camera lands the right size.
