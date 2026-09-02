@@ -1,0 +1,35 @@
+state: Draft
+featured: false
+status: For sale
+price: $1,250,000
+street: 6907 E Willetta St
+city: Scottsdale
+state_code: AZ
+zip: '85257'
+lede: Fully Remodeled Scottsdale Retreat, Minutes from Old Town
+figures:
+  bedrooms: '4'
+  bathrooms: '2'
+  interior: 2,438 sf
+  lot: 7,238 sf
+  garage: '1'
+hero:
+  src: /content/images/2-web-or-mls-TWILIGHT1 (1).jpg
+cardart:
+  card: ''
+  card_home: ''
+  kicker: ''
+  card_kicker: ''
+film: ''
+body: Designed for effortless Arizona living, this fully remodeled Scottsdale retreat is ideal as an Airbnb, second home, or investment property. The open-concept living, dining, and kitchen areas flow through expansive sliding glass doors to a private backyard and sparkling pool. The stylish kitchen features modern appliances, granite waterfall countertops, and generous storage. The spacious primary suite offers a spa-inspired bath with a soaking tub, walk-in shower, six showerheads, dual sinks, and designer tile. Remodeled in 2022 with on-trend finishes throughout, the home is minutes from Old Town Scottsdale, ASU, Sky Harbor Airport, spring training, dining, shopping, and entertainment.
+gallery:
+  - src: /content/images/14-web-or-mls-Kitchen4.jpg
+    caption: Updated Kitchen
+  - src: /content/images/11-web-or-mls-Living Space1.jpg
+    caption: Open Concept
+  - src: /content/images/34-web-or-mls-TWILIGHT5 (1).jpg
+    caption: Outdoor Living
+seo:
+  slug: ''
+  title: ''
+  meta_description: ''
