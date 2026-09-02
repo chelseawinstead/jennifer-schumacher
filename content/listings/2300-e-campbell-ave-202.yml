@@ -2,7 +2,10 @@ state: Published
 card_kicker: Phoenix · Biltmore Corridor
 status: For sale
 price: $500,000
-address: 2300 E Campbell Ave 202, Phoenix, AZ 85016
+street: 2300 E Campbell Ave 202
+city: Phoenix
+state_code: AZ
+zip: '85016'
 lede: Lock-and-leave luxury in the Biltmore Corridor.
 figures:
   bedrooms: '2'

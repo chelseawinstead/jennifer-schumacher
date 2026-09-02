@@ -1,7 +1,9 @@
 state: Published
 status: For sale
 price: $1,200,000
-address: 1823 E Watford Court, Gilbert, AZ
+street: 1823 E Watford Court
+city: Gilbert
+state_code: AZ
 lede: A Gilbert home built for entertaining, inside and out.
 figures:
   bedrooms: '4'

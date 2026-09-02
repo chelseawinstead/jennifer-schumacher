@@ -2,7 +2,10 @@ state: Draft
 featured: false
 status: For sale
 price: '1700000'
-address: 14437 E WETHERSFIELD RD Scottsdale, AZ 85259
+street: 14437 E WETHERSFIELD RD Scottsdale
+city: ''
+state_code: AZ
+zip: '85259'
 lede: Scottsdale - Hidden Hills
 figures:
   bedrooms: '4'
@@ -13,25 +16,10 @@ figures:
 hero:
   src: /content/images/TWILIGHT9.jpg
   alt: What is this for?
-cardart:
-  card: ''
-  card_home: ''
-  kicker: ''
-  card_kicker: ''
 film: ''
-body: Tucked within the gated Hidden Hill community, this thoughtfully renovated residence is nestled in the foothills of the McDowell Mountains, offering the perfect lock-and-leave Scottsdale lifestyle. Enjoy direct access to miles of hiking and biking trails, while an open floor plan, 12-foot ceilings, and expansive windows create a bright, inviting setting. The remodeled kitchen boasts European cabinetry, marble countertops, and stainless-steel appliances. The primary retreat features a custom walk-in closet and private backyard access.
+body: |
+  Tucked within the gated Hidden Hill community, this thoughtfully renovated residence is nestled in the foothills of the McDowell Mountains, offering the perfect lock-and-leave Scottsdale lifestyle. Enjoy direct access to miles of hiking and biking trails, while an open floor plan, 12-foot ceilings, and expansive windows create a bright, inviting setting. The remodeled kitchen boasts European cabinetry, marble countertops, and stainless-steel appliances. The primary retreat features a custom walk-in closet and private backyard access.
 gallery:
-  - src: /content/images/TWILIGHT9.jpg
-    alt: hi
-    caption: ''
-seo:
-  slug: ''
-  title: ''
-  meta_description: ''
-specs:
-  - label: test
-    value: hi
-  - label: test
-    value: hi
-  - label: test
-    value: hi
+- src: /content/images/TWILIGHT9.jpg
+  alt: hi
+  caption: ''

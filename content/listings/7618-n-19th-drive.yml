@@ -1,7 +1,9 @@
 state: Published
 status: For sale
 price: $385,000
-address: 7618 N 19th Drive, Phoenix, AZ
+street: 7618 N 19th Drive
+city: Phoenix
+state_code: AZ
 lede: A Phoenix home close to shopping, dining, and easy freeway access.
 figures:
   bedrooms: '3'

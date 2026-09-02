@@ -1,7 +1,9 @@
 state: Published
 status: For sale
 price: $1,895,000
-address: 20320 E Sunset Court, Queen Creek, AZ
+street: 20320 E Sunset Court
+city: Queen Creek
+state_code: AZ
 lede: Single-level living with a great room built for entertaining and a 6-hole PuttTek par-3 course in your backyard.
 figures:
   bedrooms: '4'
