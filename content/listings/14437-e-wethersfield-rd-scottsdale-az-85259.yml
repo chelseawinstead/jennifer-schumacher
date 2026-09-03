@@ -22,7 +22,12 @@ cardart:
   kicker: ''
   card_kicker: ''
 film: ''
-body: Tucked within the gated Hidden Hill community, this thoughtfully renovated residence is nestled in the foothills of the McDowell Mountains, offering the perfect lock-and-leave Scottsdale lifestyle. Enjoy direct access to miles of hiking and biking trails, while an open floor plan, 12-foot ceilings, and expansive windows create a bright, inviting setting. The remodeled kitchen boasts European cabinetry, marble countertops, and stainless-steel appliances. The primary retreat features a custom walk-in closet and private backyard access.
+body: |-
+  Tucked within the gated Hidden Hill community, this thoughtfully renovated residence is nestled in the foothills of the McDowell Mountains, offering the perfect lock-and-leave Scottsdale lifestyle. 
+
+  Enjoy direct access to miles of hiking and biking trails, while an open floor plan, 12-foot ceilings, and expansive windows create a bright, inviting setting. The remodeled kitchen boasts European cabinetry, marble countertops, and stainless-steel appliances. The primary retreat features a custom walk-in closet and private backyard access.
+
+  Contact Jennifer for full details and a private showing.
 gallery:
   - src: /content/images/11-web-or-mls-LIVING ROOM PS1.jpg
     caption: Open Concept
