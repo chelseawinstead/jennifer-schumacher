@@ -1,0 +1,41 @@
+state: Draft
+featured: false
+status: For sale
+price: $455,000
+street: 17768 W Cassia Way
+city: Goodyear
+state_code: AZ
+zip: '85338'
+lede: 'Centella at Estrella: Resort Living in the Heart of the Sonoran Desert'
+figures:
+  bedrooms: '4'
+  bathrooms: '3'
+  interior: 2,474 sf
+  lot: 4,424 sf
+  garage: '2'
+hero:
+  src: /content/images/2-web-or-mls-TWILIGHT3 (1).jpg
+cardart:
+  card: ''
+  card_home: ''
+  kicker: ''
+  card_kicker: ''
+film: ''
+body: Contact Jennifer for full details and a private showing.
+gallery:
+  - src: /content/images/10-web-or-mls-Living Space2.jpg
+    caption: Open Living Area
+  - src: /content/images/14-web-or-mls-Kitchen5.jpg
+    caption: Airy Kitchen
+  - src: /content/images/19-web-or-mls-Kitchen7.jpg
+    caption: Breakfast Dining Nook
+  - src: /content/images/41-web-or-mls-TWILIGHT6.jpg
+    caption: Outdoor Living Area
+  - src: /content/images/59-web-or-mls-DRONE North Lake1.jpg
+    caption: Resort-Style Amenities
+  - src: /content/images/61-web-or-mls-DRONE South Lake1.jpg
+    caption: Stunning Community
+seo:
+  slug: ''
+  title: ''
+  meta_description: ''
