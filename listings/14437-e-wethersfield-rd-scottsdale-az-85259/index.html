@@ -203,10 +203,17 @@ header > div:has(> [data-if="videoOpen"][data-open]) {
 
 <header style="padding: 0;">
 <div id="heroMedia" style="position: relative; aspect-ratio: 21/9; overflow: hidden; background: #001428;">
+<div data-if="videoOpen">
+<iframe data-src-lazy="https://www.youtube.com/embed/-q_cKmPZ1oA?autoplay=1&rel=0&playsinline=1&modestbranding=1&vq=hd1080&hd=1&enablejsapi=1" title="Property video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen" referrerpolicy="strict-origin-when-cross-origin" style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block;"></iframe>
+</div>
 <div data-if="videoClosed" data-open>
-<div style="position: absolute; inset: 0; cursor: pointer;">
+<div data-on-click="openVideo" role="button" aria-label="Play property video" style="position: absolute; inset: 0; cursor: pointer;">
 <img src="images/4-web-or-mls-TWILIGHT4.jpg" alt="14437 E Wethersfield Road" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
-
+<span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+<span style="display:flex; align-items:center; justify-content:center; width:86px; height:86px; border-radius:50%; border:1.5px solid rgba(255,255,255,.9); background:transparent;">
+<svg width="26" height="30" viewBox="0 0 26 30" fill="none" aria-hidden="true"><path d="M25 15 0 30V0z" fill="#fff"></path></svg>
+</span>
+</span>
 </div>
 </div>
 </div>
@@ -250,7 +257,7 @@ header > div:has(> [data-if="videoOpen"][data-open]) {
 <div style="max-width: 720px;">
 <p style="font-family: 'Cormorant Garamond', serif; font-size: 26px; line-height: 1.5; color: #24272b; font-style: italic; margin: 0 0 32px;">Scottsdale - Hidden Hills</p>
 <div class="prose">
-<p>Tucked within the gated Hidden Hill community, this thoughtfully renovated residence is nestled in the foothills of the McDowell Mountains, offering the perfect lock-and-leave Scottsdale lifestyle.</p>
+<p>Tucked within the gated Hidden Hills community, this thoughtfully renovated residence is nestled in the foothills of the McDowell Mountains, offering the perfect lock-and-leave Scottsdale lifestyle.</p>
 <p>Enjoy direct access to miles of hiking and biking trails, while an open floor plan, 12-foot ceilings, and expansive windows create a bright, inviting setting. The remodeled kitchen boasts European cabinetry, marble countertops, and stainless-steel appliances. The primary retreat features a custom walk-in closet and private backyard access.</p>
 <p>Contact Jennifer for full details and a private showing.</p>
 </div>
