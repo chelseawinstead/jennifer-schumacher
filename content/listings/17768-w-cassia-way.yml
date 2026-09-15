@@ -21,7 +21,10 @@ cardart:
   kicker: ''
   card_kicker: ''
 film: https://youtu.be/tmhrl62Zm5A
-body: 'Description needed: Contact Jennifer for full details and a private showing.'
+body: |-
+  Experience elevated living in Centella at Estrella, where updated finishes, thoughtful design and community amenities make this home exceptional. Mountain views can be enjoyed from both the front and back of the home, creating a beautiful backdrop throughout the day. The light-filled interior features a main floor primary suite and a modern kitchen with quartz countertops, custom cabinetry, stainless steel appliances and an oversized island that opens to the great room. The private backyard with covered patio offers an inviting space to relax or entertain while enjoying the views. The two-car garage includes an EV charger, and EVO smart home technology adds convenience throughout. Enjoy Estrella's exceptional lifestyle, including multiple clubhouses and pools, fitness, golf, tennis, pickleball, parks and 50+ miles of scenic trails surrounded by the beauty of the Sonoran Desert. 
+
+  Contact Jennifer for full details and a private showing.
 gallery:
   - src: /content/images/10-web-or-mls-Living Space2.jpg
     caption: Open Living Area
