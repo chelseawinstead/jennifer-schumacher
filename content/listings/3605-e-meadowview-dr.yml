@@ -1,4 +1,4 @@
-state: Draft
+state: Published
 featured: false
 status: For sale
 price: $600,000
@@ -6,7 +6,7 @@ street: 3605 E Meadowview Dr
 city: Gilbert
 state_code: AZ
 zip: '85298'
-lede: Effortless Lock and Leave Living in Seville
+lede: Effortless lock-and-leave living in Seville.
 figures:
   bedrooms: '3'
   bathrooms: '2'
@@ -27,17 +27,17 @@ body: |-
   Contact Jennifer for full details and a private showing.
 gallery:
   - src: /content/images/10-web-or-mls-Kitchen2.jpg
-    caption: Modern Finishes
+    caption: Kitchen
   - src: /content/images/18-web-or-mls-Living Space1.jpg
-    caption: Great Room to Kitchen
-  - src: /content/images/41-web-or-mls-TWILIGHT4.jpg
-    caption: Covered Patio
+    caption: Living Room
+  - src: /content/images/24-web-or-mls-Primary Bedroom2.jpg
+    caption: Primary Bedroom
+  - src: /content/images/28-web-or-mls-Primary Bedroom5.jpg
+    caption: Primary Bathroom
   - src: /content/images/40-web-or-mls-TWILIGHT5.jpg
-    caption: Back Yard Oasis
+    caption: Back Yard
   - src: /content/images/42-web-or-mls-DRONE9.jpg
     caption: Aerial View
-  - src: /content/images/50-web-or-mls-DRONE13.jpg
-    caption: Seville Living!
 seo:
   slug: ''
   title: ''
