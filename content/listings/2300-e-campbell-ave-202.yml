@@ -1,5 +1,5 @@
 state: Published
-card_kicker: Phoenix · Biltmore Corridor
+featured: false
 status: For sale
 price: $500,000
 street: 2300 E Campbell Ave 202
@@ -11,12 +11,18 @@ figures:
   bedrooms: '2'
   bathrooms: '2.5'
   interior: 1,382 sf
+  lot: ''
   garage: '2'
 hero:
   src: campbell-202-hero.jpg
   alt: 2300 E Campbell Ave 202
-film: Z0gZhMMBGgU
-body: |
+cardart:
+  card: ''
+  card_home: ''
+  kicker: ''
+  card_kicker: ''
+film: https://youtu.be/Z0gZhMMBGgU
+body: |-
   Luxury living meets effortless convenience at Biltmore Contour in Phoenix's coveted Biltmore Corridor. This secure, lock-and-leave corner residence is ideal for effortless living, featuring high ceilings, wood flooring, an open layout, and a contemporary kitchen with quartz countertops, sleek cabinetry, stainless appliances and island seating.
 
   Two private balconies showcase mountain views, city lights and breathtaking sunsets. The primary suite offers dual sinks and a custom walk-in closet. Enjoy a resort-style pool, two-story fitness center, sky lounge, rooftop sundeck, clubhouse, grills and two assigned underground parking spaces with EV charging.
@@ -25,24 +31,29 @@ body: |
 
   Contact Jennifer for full details and a private showing.
 gallery:
-- src: campbell-202-living.jpg
-  alt: Living area
-  caption: Living area
-- src: campbell-202-kitchen.jpg
-  alt: Kitchen
-  caption: Kitchen
-- src: campbell-202-balcony.jpg
-  alt: Balcony view
-  caption: Balcony view
-- src: campbell-202-primary.jpg
-  alt: Primary bedroom
-  caption: Primary bedroom
-- src: campbell-202-bath.jpg
-  alt: Primary bath
-  caption: Primary bath
-- src: campbell-202-amenities.jpg
-  alt: Community amenities
-  caption: Community amenities
+  - src: campbell-202-living.jpg
+    caption: Living area
+    alt: Living area
+  - src: campbell-202-kitchen.jpg
+    caption: Kitchen
+    alt: Kitchen
+  - src: campbell-202-balcony.jpg
+    caption: Balcony view
+    alt: Balcony view
+  - src: campbell-202-primary.jpg
+    caption: Primary bedroom
+    alt: Primary bedroom
+  - src: campbell-202-bath.jpg
+    caption: Primary bath
+    alt: Primary bath
+  - src: campbell-202-amenities.jpg
+    caption: Community amenities
+    alt: Community amenities
+seo:
+  slug: ''
+  title: ''
+  meta_description: ''
+card_kicker: Phoenix · Biltmore Corridor
+meta_description: 2 bed, 2.5 bath, 1,382 sf with a 2 car garage at Biltmore Contour in Phoenix's Biltmore Corridor.
 slug: 2300-e-campbell-ave-202
 title: 2300 E Campbell Ave 202, Phoenix, AZ 85016 | Jennifer Schumacher
-meta_description: 2 bed, 2.5 bath, 1,382 sf with a 2 car garage at Biltmore Contour in Phoenix's Biltmore Corridor.
