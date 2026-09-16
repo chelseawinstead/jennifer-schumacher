@@ -37,15 +37,15 @@ gallery:
   - src: campbell-202-kitchen.jpg
     caption: Kitchen
     alt: Kitchen
-  - src: campbell-202-balcony.jpg
-    caption: Balcony view
-    alt: Balcony view
   - src: campbell-202-primary.jpg
     caption: Primary bedroom
     alt: Primary bedroom
   - src: campbell-202-bath.jpg
     caption: Primary bath
     alt: Primary bath
+  - src: campbell-202-balcony.jpg
+    caption: Balcony view
+    alt: Balcony view
   - src: campbell-202-amenities.jpg
     caption: Community amenities
     alt: Community amenities
