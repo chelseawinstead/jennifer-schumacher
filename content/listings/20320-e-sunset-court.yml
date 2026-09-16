@@ -11,7 +11,7 @@ figures:
   bedrooms: '4'
   bathrooms: '4.5'
   interior: 5,318 sf
-  lot: ''
+  lot: 30,143 sf
   garage: '4'
 hero:
   src: i10.jpg
@@ -43,7 +43,7 @@ gallery:
     caption: Primary bath
     alt: Primary bath
   - src: sunset-court-backyard.jpg
-    caption: Backyard
+    caption: ''
     alt: Backyard
 seo:
   slug: ''
