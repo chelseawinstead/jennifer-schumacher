@@ -27,17 +27,17 @@ body: |-
   Contact Jennifer for full details and a private showing.
 gallery:
   - src: /content/images/10-web-or-mls-Living Space2.jpg
-    caption: Open Living Area
+    caption: Living Room
   - src: /content/images/14-web-or-mls-Kitchen5.jpg
-    caption: Airy Kitchen
+    caption: Kitchen
   - src: /content/images/19-web-or-mls-Kitchen7.jpg
     caption: Breakfast Dining Nook
   - src: /content/images/41-web-or-mls-TWILIGHT6.jpg
-    caption: Outdoor Living Area
+    caption: Backyard
   - src: /content/images/59-web-or-mls-DRONE North Lake1.jpg
     caption: Resort-Style Amenities
   - src: /content/images/61-web-or-mls-DRONE South Lake1.jpg
-    caption: Stunning Community
+    caption: Mountain Surrounded Community
 seo:
   slug: ''
   title: ''
