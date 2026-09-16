@@ -1,12 +1,12 @@
 state: Draft
 featured: false
 status: For sale
-price: 600,000
+price: $600,000
 street: 3605 E Meadowview Dr
 city: Gilbert
 state_code: AZ
 zip: '85298'
-lede: Effortless Lock-and-Leave Living in Seville
+lede: Effortless Lock and Leave Living in Seville
 figures:
   bedrooms: '3'
   bathrooms: '2'
@@ -14,12 +14,12 @@ figures:
   lot: ''
   garage: '2'
 hero:
-  src: /content/images/2-web-or-mls-TWILIGHT7.jpg
+  src: /content/images/3-web-or-mls-DRONE6.jpg
 cardart:
   card: /content/images/40-web-or-mls-TWILIGHT5.jpg
   card_home: ''
-  kicker: ''
-  card_kicker: ''
+  kicker: Outdoor Living
+  card_kicker: Gilbert
 film: ''
 body: |-
   Enjoy effortless lock-and-leave living in Seville, where beautiful views and resort-style amenities create an exceptional Arizona lifestyle. Set along the golf course, this light-filled home features an open-concept design and desirable split floor plan, ideal for both everyday comfort and entertaining. The primary suite offers a spa-inspired bath with dual vanities, a freestanding tub and walk-in shower. Outside, relax beneath the covered patio, enjoy the heated pool or practice on the putting green, all framed by golf course and mountain views. With convenient access to golf, tennis, pickleball, dining, shopping and everyday essentials, this is the perfect home to simply lock, leave and enjoy.
@@ -27,11 +27,11 @@ body: |-
   Contact Jennifer for full details and a private showing.
 gallery:
   - src: /content/images/10-web-or-mls-Kitchen2.jpg
-    caption: Modern Kitchen
-  - src: /content/images/16-web-or-mls-Dining Nook.jpg
-    caption: Dining Room
-  - src: /content/images/24-web-or-mls-Primary Bedroom2.jpg
-    caption: Primary Bedroom
+    caption: Modern Finishes
+  - src: /content/images/18-web-or-mls-Living Space1.jpg
+    caption: Great Room to Kitchen
+  - src: /content/images/41-web-or-mls-TWILIGHT4.jpg
+    caption: Covered Patio
   - src: /content/images/40-web-or-mls-TWILIGHT5.jpg
     caption: Back Yard Oasis
   - src: /content/images/42-web-or-mls-DRONE9.jpg
