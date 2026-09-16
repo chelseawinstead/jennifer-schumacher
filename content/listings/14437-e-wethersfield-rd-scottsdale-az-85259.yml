@@ -29,18 +29,18 @@ body: |-
 
   Contact Jennifer for full details and a private showing.
 gallery:
+  - src: /content/images/4-web-or-mls-TWILIGHT4.jpg
+    caption: Front Exterior
   - src: /content/images/11-web-or-mls-LIVING ROOM PS1.jpg
-    caption: Open Concept
+    caption: Living Room
   - src: /content/images/17-web-or-mls-Kitchen5.jpg
-    caption: Custom Euro Cabinetry
-  - src: /content/images/14-web-or-mls-Living Room1.jpg
-    caption: Great Room to Dining Area
-  - src: /content/images/53-web-or-mls-TWILIGHT6.jpg
-    caption: Private Backyard
-  - src: /content/images/66-web-or-mls-DRONE13.jpg
-    caption: Mountain Views
+    caption: Kitchen
+  - src: /content/images/31-web-or-mls-Primary Bedroom3.jpg
+    caption: Primary Bedroom
+  - src: /content/images/34-web-or-mls-Primary Bedroom6.jpg
+    caption: Primary Bathroom
   - src: /content/images/57-web-or-mls-TWILIGHT1_AI EDIT.png
-    caption: Stunning Pool
+    caption: Backyard
 seo:
   slug: ''
   title: ''
