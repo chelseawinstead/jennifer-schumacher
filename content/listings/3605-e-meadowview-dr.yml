@@ -26,6 +26,8 @@ body: |-
 
   Contact Jennifer for full details and a private showing.
 gallery:
+  - src: /content/images/3-web-or-mls-DRONE6.jpg
+    caption: Front Exterior
   - src: /content/images/10-web-or-mls-Kitchen2.jpg
     caption: Kitchen
   - src: /content/images/18-web-or-mls-Living Space1.jpg
@@ -36,8 +38,6 @@ gallery:
     caption: Primary Bathroom
   - src: /content/images/40-web-or-mls-TWILIGHT5.jpg
     caption: Back Yard
-  - src: /content/images/42-web-or-mls-DRONE9.jpg
-    caption: Aerial View
 seo:
   slug: ''
   title: ''
