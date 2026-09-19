@@ -1,11 +1,11 @@
 state: Published
 featured: true
-kicker: New construction · Paradise Valley
 status: New construction
-price: $5,650,000
+price: $5,500,000
 street: 4945 E Mountain View Road
 city: Paradise Valley
 state_code: AZ
+zip: ''
 lede: New construction in the heart of Paradise Valley — soaring great room, resort pool, and Camelback views from nearly every room.
 figures:
   bedrooms: '5'
@@ -16,43 +16,53 @@ figures:
 hero:
   src: i26.jpg
   alt: 4945 E Mountain View Road
-card_home: i38.jpg
+cardart:
+  card: ''
+  card_home: ''
+  kicker: ''
+  card_kicker: ''
 film: HF_uJ6YwRJU
-body: |
+body: |-
   A rare new-construction opportunity in one of Paradise Valley’s most sought-after pockets. Every room is oriented to the mountain, with disappearing glass walls opening the great room to a resort-scale pool and covered patio. This home features a rare 5 car garage.
 
   Contact Jennifer to arrange a private showing.
 gallery:
-- src: i28.jpg
-  alt: Front elevation
-  caption: Front elevation
-- src: i29.jpg
-  alt: Great room
-  caption: Great room
-- src: i30.jpg
-  alt: Kitchen
-  caption: Kitchen
-- src: i34.jpg
-  alt: Prep kitchen
-  caption: Prep kitchen
-- src: i27.jpg
-  alt: Dining
-  caption: Dining
-- src: i31.jpg
-  alt: Living room
-  caption: Living room
-- src: i36.jpg
-  alt: Primary bedroom
-  caption: Primary bedroom
-- src: i35.jpg
-  alt: Primary bath
-  caption: Primary bath
-- src: i32.jpg
-  alt: Office
-  caption: Office
-- src: i33.jpg
-  alt: Pool
-  caption: Pool
+  - src: i28.jpg
+    caption: Front elevation
+    alt: Front elevation
+  - src: i29.jpg
+    caption: Great room
+    alt: Great room
+  - src: i30.jpg
+    caption: Kitchen
+    alt: Kitchen
+  - src: i34.jpg
+    caption: Prep kitchen
+    alt: Prep kitchen
+  - src: i27.jpg
+    caption: Dining
+    alt: Dining
+  - src: i31.jpg
+    caption: Living room
+    alt: Living room
+  - src: i36.jpg
+    caption: Primary bedroom
+    alt: Primary bedroom
+  - src: i35.jpg
+    caption: Primary bath
+    alt: Primary bath
+  - src: i32.jpg
+    caption: Office
+    alt: Office
+  - src: i33.jpg
+    caption: Pool
+    alt: Pool
+seo:
+  slug: ''
+  title: ''
+  meta_description: ''
+card_home: i38.jpg
+kicker: New construction · Paradise Valley
+meta_description: 5 bed, 5.5 bath, 5,338 sf with a 5 car garage in Paradise Valley.
 slug: 4945-e-mountain-view-road
 title: 4945 E Mountain View Road, Paradise Valley, AZ | Jennifer Schumacher
-meta_description: 5 bed, 5.5 bath, 5,338 sf with a 5 car garage in Paradise Valley.
