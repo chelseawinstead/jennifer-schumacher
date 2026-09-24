@@ -30,18 +30,18 @@ body: |-
 
   Contact Jennifer for full details and a private showing.
 gallery:
-  - src: /content/images/14-web-or-mls-Kitchen4.jpg
-    caption: Updated Kitchen
-  - src: /content/images/12-web-or-mls-Kitchen3 (2).jpg
-    caption: Modern Finishes
+  - src: /content/images/3-web-or-mls-DRONE5.jpg
+    caption: Front Exterior
   - src: /content/images/11-web-or-mls-Living Space1.jpg
-    caption: Open Concept
+    caption: Living Room
+  - src: /content/images/14-web-or-mls-Kitchen4.jpg
+    caption: Kitchen
   - src: /content/images/24-web-or-mls-Primary Bedroom2.jpg
     caption: Primary Bedroom
   - src: /content/images/28-web-or-mls-Primary Bedroom6 (1).jpg
-    caption: Primary Ensuite
+    caption: Primary Bathroom
   - src: /content/images/34-web-or-mls-TWILIGHT5 (1).jpg
-    caption: Outdoor Living
+    caption: Backyard
 seo:
   slug: ''
   title: ''
