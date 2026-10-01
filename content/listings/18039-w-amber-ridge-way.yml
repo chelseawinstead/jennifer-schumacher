@@ -1,0 +1,46 @@
+state: Draft
+featured: false
+status: For sale
+price: $400,000
+street: 18039 W Amber Ridge Way
+city: Goodyear
+state_code: AZ
+zip: '85338'
+lede: 'CantaMia at Estrella: Resort Living in the Heart of the Sonoran Desert'
+figures:
+  bedrooms: '2'
+  bathrooms: '2'
+  interior: 1612 sf
+  lot: 6044 sf
+  garage: '2'
+hero:
+  src: /content/images/1_2R7A7393.jpg
+cardart:
+  card: ''
+  card_home: ''
+  kicker: ''
+  card_kicker: ''
+film: ''
+body: |-
+  Enjoy Arizona sunshine and resort-style living at CantaMia at Estrella, a guard-gated Active Adult community. Meticulously maintained by its original owner, this inviting home offers an open floor plan ideal for relaxed living and entertaining, a modern kitchen, and a private primary retreat with dual vanities and a spacious walk-in shower. A laundry room with abundant storage adds everyday convenience. 
+
+  Outside, take in stunning mountain views from your low-maintenance backyard perfect for enjoying more time outdoors. Whether you’re seeking a winter escape or a year-round home, CantaMia makes it easy to stay active and connected with indoor and outdoor pools, fitness facilities, yoga, pickleball, tennis, an art studio, a café, and scenic walking trails. Your next chapter starts under the Arizona sun.
+
+  Contact Jennifer for full details and a private showing.
+gallery:
+  - src: /content/images/8_DJI_20260928194132_0137_D.jpg
+    caption: Front Exterior
+  - src: /content/images/10_2R7A7239.jpg
+    caption: Kitchen
+  - src: /content/images/14_2R7A7264.jpg
+    caption: Living Room
+  - src: /content/images/20_2R7A7209.jpg
+    caption: Primary Bedroom
+  - src: /content/images/22_2R7A7188.jpg
+    caption: Primary Bathroom
+  - src: /content/images/32_2R7A7384.jpg
+    caption: Backyard
+seo:
+  slug: ''
+  title: ''
+  meta_description: ''
