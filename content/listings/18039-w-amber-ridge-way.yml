@@ -10,8 +10,8 @@ lede: 'CantaMia at Estrella: Resort Living in the Heart of the Sonoran Desert'
 figures:
   bedrooms: '2'
   bathrooms: '2'
-  interior: 1612 sf
-  lot: 6044 sf
+  interior: 1,612 sf
+  lot: 6,044 sf
   garage: '2'
 hero:
   src: /content/images/1_2R7A7393.jpg
