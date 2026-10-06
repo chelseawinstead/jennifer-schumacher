@@ -6,13 +6,13 @@ street: '620 N 4th Ave #7'
 city: Phoenix
 state_code: AZ
 zip: '85003'
-lede: Downtown Phoenix Condo with City Views
+lede: Downtown Phoenix living, moments from dining, art, and entertainment.
 figures:
   bedrooms: '3'
   bathrooms: '3'
   interior: 1,756 sf
   lot: 829 sf
-  garage: 2 Car Port Spaces
+  garage: '2'
 hero:
   src: /content/images/1_DJI_20260929194513_0160_D.jpg
 cardart:
@@ -30,16 +30,16 @@ body: |-
 gallery:
   - src: /content/images/52_DJI_20260929195727_0183_D.jpg
     caption: Front exterior
-  - src: /content/images/8_2R7A7864.jpg
+  - src: /content/images/15_2R7A7889.jpg
     caption: Living area
   - src: /content/images/11_2R7A7899.jpg
     caption: Kitchen
   - src: /content/images/18_2R7A7950.jpg
     caption: Primary bedroom
   - src: /content/images/24_2R7A7985.jpg
-    caption: Primary bath
+    caption: Primary bathroom
   - src: /content/images/2_2R7A8090.jpg
-    caption: Balcony
+    caption: Balcony view
 seo:
   slug: ''
   title: ''
