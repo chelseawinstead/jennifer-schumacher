@@ -1,0 +1,31 @@
+state: Draft
+featured: false
+status: For sale
+price: $860,000
+street: 19699 E Apricot Lane
+city: Queen Creek
+state_code: AZ
+zip: '85142'
+lede: Elevated Living in Gated Cielo Noche
+figures:
+  bedrooms: '5'
+  bathrooms: '5'
+  interior: 3,742 sf
+  lot: 8,125 sf
+  garage: '3'
+hero:
+  src: /content/images/Screenshot 2026-10-26 at 11.31.12 AM.png
+cardart:
+  card: ''
+  card_home: ''
+  kicker: ''
+  card_kicker: ''
+film: ''
+body: NA - REPLACE PHOTOS
+gallery:
+  - src: /content/images/Screenshot 2026-10-26 at 11.31.12 AM.png
+    caption: ''
+seo:
+  slug: ''
+  title: ''
+  meta_description: ''
