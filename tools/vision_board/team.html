@@ -290,10 +290,8 @@
     act(id, a).then(function(res){
       if (!res) return;
       if (!res.ok && res.error==='full'){
-        if (a==='paid' && confirm('All seats are taken. Mark ' + who + ' paid anyway? This puts the event one over capacity.')){
-          return act(id, 'paid', 'force').then(function(){ toast('Marked paid'); return load(); });
-        }
-        toast('No open seats. Cancel or release a hold first.'); btn.disabled=false; return;
+        alert('All ' + data.settings.capacity + ' seats are taken, so ' + who + ' can\u2019t be given a seat right now. Cancel someone else first if this person should get a seat.');
+        btn.disabled=false; return load();
       }
       if (!res.ok){ toast('That didn’t save. Refresh and try again.'); btn.disabled=false; return; }
       var done = { paid:'Marked paid', unpaid:'Moved back to awaiting payment', cancel: r.status==='waitlist' ? 'Removed from waitlist' : 'Seat cancelled', extend:'Hold extended 24 hours', offer:'Seat offered with a new 72-hour hold' }[a];
