@@ -99,6 +99,17 @@
   #mBody{ width:100%; margin-top:14px; font:inherit; font-size:14px; line-height:1.6; padding:12px; border:1px solid #cfcbc2; resize:vertical; }
   .mail-help{ color:var(--muted); font-size:13px; margin:8px 0 16px; }
   .mail-acts{ display:flex; flex-wrap:wrap; gap:8px; }
+  .mail.tpl{ max-width:1100px; }
+  .tpl-grid{ display:grid; grid-template-columns:1fr 1fr; gap:28px; }
+  .fld{ display:block; font-size:13px; color:var(--warm); margin-bottom:12px; }
+  .fld input,.fld textarea{ display:block; width:100%; margin-top:6px; font:inherit; font-size:15px; color:var(--ink); padding:10px 12px; border:1px solid #cfcbc2; resize:vertical; line-height:1.55; }
+  .fld input:focus,.fld textarea:focus{ outline:0; border-color:var(--navy); box-shadow:0 0 0 1px var(--navy); }
+  .chips{ display:flex; flex-wrap:wrap; gap:6px; margin:-4px 0 14px; }
+  .chips button{ background:var(--stone); border:1px solid var(--line); font-size:12px; padding:4px 8px; color:var(--ink); }
+  .chips button:hover{ border-color:var(--navy); color:var(--navy); }
+  .tpl-prev iframe{ width:100%; height:620px; border:1px solid var(--line); background:var(--stone); }
+  .mailfail{ font-size:12px; color:var(--red); margin-top:6px; }
+  @media (max-width:900px){ .tpl-grid{ grid-template-columns:1fr; } .tpl-prev iframe{ height:480px; } }
   .toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 20px; font-size:14px; opacity:0; transition:opacity .2s; pointer-events:none; z-index:30; }
   .toast.on{ opacity:1; }
 
@@ -127,6 +138,7 @@
   <div class="bar-actions" id="barActions" hidden>
     <span class="updated" id="updated"></span>
     <button class="ghost" id="refreshBtn">Refresh</button>
+    <button class="ghost" id="tplBtn">Email templates</button>
     <button class="ghost" id="csvBtn">Download spreadsheet</button>
     <button class="ghost" id="logoutBtn">Sign out</button>
   </div>
@@ -159,14 +171,39 @@
     <div class="mail-head"><h2 id="mTitle">Email preview</h2><button type="button" class="ghost" id="mClose">Close</button></div>
     <div class="mail-row"><span>To</span><b id="mTo"></b></div>
     <label class="mail-row"><span>Subject</span><input id="mSubject"></label>
-    <textarea id="mBody" rows="14" aria-label="Email message"></textarea>
-    <p class="mail-help">Edit anything you like, then open it in your email to send it.</p>
+    <label class="mail-row"><span>Heading</span><input id="mHeading"></label>
+    <textarea id="mBody" rows="11" aria-label="Email message"></textarea>
+    <p class="mail-help" id="mHelp"></p>
     <div class="mail-acts">
-      <button type="button" class="solid" id="mGmail">Open in Gmail</button>
-      <button type="button" class="solid" id="mOutlook">Open in Outlook</button>
-      <button type="button" class="ghost" id="mApp">Open in mail app</button>
+      <button type="button" class="solid" id="mSend" hidden>Send from Jennifer’s Gmail</button>
+      <button type="button" class="ghost" id="mGmail">Open in Gmail</button>
+      <button type="button" class="ghost" id="mOutlook">Open in Outlook</button>
       <button type="button" class="ghost" id="mCopy">Copy email</button>
-      <button type="button" class="ghost" id="mSent" style="margin-left:auto">Mark as sent</button>
+      <button type="button" class="ghost" id="mSent" style="margin-left:auto" hidden>Mark as sent</button>
+    </div>
+  </div>
+</div>
+<div class="mail-wrap" id="tplBox" hidden>
+  <div class="mail tpl" role="dialog" aria-modal="true" aria-labelledby="tTitle">
+    <div class="mail-head"><h2 id="tTitle">Email templates</h2><button type="button" class="ghost" id="tClose">Close</button></div>
+    <div class="tabs" id="tTabs"></div>
+    <p class="mail-help" id="tWhen"></p>
+    <div class="tpl-grid">
+      <div>
+        <label class="fld">Subject<input id="tSubject"></label>
+        <label class="fld">Heading<input id="tHeading"></label>
+        <label class="fld">Message<textarea id="tBody" rows="12"></textarea></label>
+        <div class="chips" id="tChips"></div>
+        <label class="fld" id="tHotelWrap">ANdAZ room discount code<input id="tHotel" placeholder="Fills in {hotel_code}"></label>
+        <div class="mail-acts" style="margin-top:14px">
+          <button type="button" class="solid" id="tSave">Save templates</button>
+          <span class="mail-help" id="tStatus" style="margin:0;align-self:center"></span>
+        </div>
+      </div>
+      <div class="tpl-prev">
+        <div class="mail-help" style="margin:0 0 6px">Preview with a sample guest</div>
+        <iframe id="tPreview" title="Email preview"></iframe>
+      </div>
     </div>
   </div>
 </div>
@@ -257,12 +294,16 @@
       }
       if (r.status==='paid' && r.paid_at) extra = '<div class="sub" style="margin-top:6px">Paid ' + short(r.paid_at) + '</div>';
       if (r.status==='waitlist') extra = '<div class="sub" style="margin-top:6px">#' + (waitOrder.indexOf(r.id)+1) + ' in line</div>';
-      if (r.confirmation_sent_at) extra += '<div class="sent">Confirmation emailed ' + short(r.confirmation_sent_at) + '</div>';
+      var log = r.email_log || [], last = log[log.length-1];
+      var KL = { hold:'Payment email', waitlist:'Waitlist email', offer:'Seat-offer email', paid:'Confirmation' };
+      if (last && last.ok) extra += '<div class="sent">' + KL[last.kind] + ' sent ' + short(last.at) + (last.by==='auto' ? ' (automatic)' : '') + '</div>';
+      else if (last && !last.ok) extra += '<div class="mailfail">' + KL[last.kind] + ' didn\u2019t send: ' + esc(last.error) + '</div>';
+      else if (r.confirmation_sent_at) extra += '<div class="sent">Confirmation marked sent ' + short(r.confirmation_sent_at) + '</div>';
 
       var b = [];
       if (r.status==='pending'){ b.push('<button class="pay" data-act="paid">Mark paid</button>'); b.push('<button data-act="email-pay">Email payment details</button>'); b.push('<button data-act="extend">Extend 24 hrs</button>'); b.push('<button class="danger" data-act="cancel">Cancel</button>'); }
       if (r.status==='paid'){ b.push('<button data-act="email-confirm">Email confirmation</button>'); b.push('<button data-act="unpaid">Undo paid</button>'); b.push('<button class="danger" data-act="cancel">Cancel</button>'); }
-      if (r.status==='waitlist'){ b.push('<button class="pay" data-act="offer">Offer seat</button>'); b.push('<button class="danger" data-act="cancel">Remove</button>'); }
+      if (r.status==='waitlist'){ b.push('<button class="pay" data-act="offer">Offer seat</button>'); b.push('<button data-act="email-wait">Email</button>'); b.push('<button class="danger" data-act="cancel">Remove</button>'); }
       if (r.status==='expired' || r.status==='cancelled'){ b.push('<button data-act="offer">Re-open hold</button>'); b.push('<button data-act="paid">Mark paid</button>'); }
 
       return '<tr data-id="'+r.id+'"' + ((r.status==='expired'||r.status==='cancelled') ? ' class="dim"' : '') + '>' +
@@ -278,52 +319,110 @@
     $('updated').textContent = 'Updated ' + az(new Date().toISOString(), { hour:'numeric', minute:'2-digit' }) + ' AZ';
   }
 
-  // ---- emails (open in the team member's own mail app) ----
-  var EVENT = 'Vision Board Crew 2027';
-  // Shows the email in a panel; the team picks Gmail, Outlook or their mail app. Nothing is recorded as sent until they say so.
+  // ---- emails ----
+  var KINDS = [['hold','Payment request','Sent automatically the moment someone registers and gets a seat.'],
+               ['paid','Payment received','Sent when the team clicks “Email confirmation” after marking someone paid.'],
+               ['waitlist','Waitlist','Sent automatically when someone registers after all seats are taken.'],
+               ['offer','Seat opened up','Sent when the team offers a waitlisted guest a seat.']];
   var mailState = null;
-  function mail(r, subject, body, onSent){
-    mailState = { r:r, onSent:onSent };
+  function setMailFields(m){ $('mSubject').value = m.subject; $('mHeading').value = m.heading; $('mBody').value = m.body; }
+  function mail(r, kind, onSent){
+    mailState = { r:r, kind:kind, onSent:onSent };
+    var connected = data.settings.mailer_connected;
     $('mTo').textContent = r.first_name + ' ' + r.last_name + ' <' + r.email + '>';
-    $('mSubject').value = subject; $('mBody').value = body;
-    $('mSent').hidden = !onSent;
-    $('mailBox').hidden = false; $('mBody').scrollTop = 0; $('mGmail').focus();
+    setMailFields({ subject:'Loading…', heading:'', body:'' });
+    $('mSend').hidden = !connected;
+    $('mSent').hidden = connected || kind !== 'paid';
+    $('mHelp').textContent = (kind==='hold'||kind==='offer' ? 'The payment details box and “View my payment details” button are added below your message automatically. ' : '') +
+      (connected ? 'Edit anything for just this guest, then send.' : 'Edit anything you like, then open it in your email to send it.');
+    $('mailBox').hidden = false;
+    api('team-email-render', { id:r.id, kind:kind }).then(function(m){
+      if (!m.ok){ toast('Couldn’t load that email. Refresh and try again.'); return; }
+      setMailFields(m); $('mBody').scrollTop = 0; (connected ? $('mSend') : $('mGmail')).focus();
+    });
   }
-  function mailParts(){ return { to: mailState.r.email, su: $('mSubject').value, body: $('mBody').value }; }
+  function edited(){ return { subject:$('mSubject').value, heading:$('mHeading').value, body:$('mBody').value }; }
+  function renderEdited(){ return api('team-email-render', { id:mailState.r.id, kind:mailState.kind, template:edited() }); }
   function closeMail(){ $('mailBox').hidden = true; mailState = null; }
-  $('mGmail').addEventListener('click', function(){ var m=mailParts();
-    window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(m.to) + '&su=' + encodeURIComponent(m.su) + '&body=' + encodeURIComponent(m.body), '_blank', 'noopener'); });
-  $('mOutlook').addEventListener('click', function(){ var m=mailParts();
-    window.open('https://outlook.office.com/mail/deeplink/compose?to=' + encodeURIComponent(m.to) + '&subject=' + encodeURIComponent(m.su) + '&body=' + encodeURIComponent(m.body), '_blank', 'noopener'); });
-  $('mApp').addEventListener('click', function(){ var m=mailParts();
-    location.href = 'mailto:' + encodeURIComponent(m.to) + '?subject=' + encodeURIComponent(m.su) + '&body=' + encodeURIComponent(m.body); });
-  $('mCopy').addEventListener('click', function(){ var m=mailParts();
-    var t = 'To: ' + m.to + '\nSubject: ' + m.su + '\n\n' + m.body;
-    (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function(){ toast('Email copied'); }, function(){ $('mBody').select(); toast('Press Ctrl/Cmd+C to copy'); }); });
+  function openOut(build){
+    var w = window.open('about:blank', '_blank'); // open now so the browser doesn't block it
+    renderEdited().then(function(m){ if (w) w.location = build(m); });
+  }
+  $('mGmail').addEventListener('click', function(){ var to = mailState.r.email; openOut(function(m){
+    return 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(to) + '&su=' + encodeURIComponent(m.subject) + '&body=' + encodeURIComponent(m.text); }); });
+  $('mOutlook').addEventListener('click', function(){ var to = mailState.r.email; openOut(function(m){
+    return 'https://outlook.office.com/mail/deeplink/compose?to=' + encodeURIComponent(to) + '&subject=' + encodeURIComponent(m.subject) + '&body=' + encodeURIComponent(m.text); }); });
+  $('mCopy').addEventListener('click', function(){ var to = mailState.r.email;
+    renderEdited().then(function(m){
+      var t = 'To: ' + to + '\nSubject: ' + m.subject + '\n\n' + m.text;
+      (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function(){ toast('Email copied'); }, function(){ toast('Copy didn’t work in this browser'); });
+    }); });
+  $('mSend').addEventListener('click', function(){
+    var st = mailState, btn = $('mSend'); btn.disabled = true; btn.textContent = 'Sending…';
+    api('team-email-send', { id:st.r.id, kind:st.kind, template:edited() }).then(function(res){
+      btn.disabled = false; btn.textContent = 'Send from Jennifer’s Gmail';
+      if (res.ok){ closeMail(); toast('Sent from Jennifer’s Gmail'); load(); }
+      else toast('Didn’t send: ' + (res.error || 'try again'));
+    });
+  });
   $('mSent').addEventListener('click', function(){ var cb = mailState && mailState.onSent; closeMail(); if (cb) cb(); });
   $('mClose').addEventListener('click', closeMail);
   $('mailBox').addEventListener('click', function(e){ if (e.target.id==='mailBox') closeMail(); });
-  document.addEventListener('keydown', function(e){ if (e.key==='Escape' && !$('mailBox').hidden) closeMail(); });
-  function payBody(r, opened){
-    var s = data.settings;
-    var deadline = r.hold_expires_at ? az(r.hold_expires_at, { weekday:'long', month:'long', day:'numeric', hour:'numeric', minute:'2-digit' }) + ' Arizona time' : 'within 72 hours';
-    return 'Hi ' + r.first_name + ',\n\n' +
-      (opened ? 'Great news: a seat has opened up for ' + EVENT + ', and it’s yours if you’d like it.\n\n' : 'Thank you for registering for ' + EVENT + '! Your seat is on hold.\n\n') +
-      'To reserve it, please send $' + Number(r.amount).toLocaleString() + ' by Zelle by ' + deadline + '.\n\n' +
-      'Zelle to: ' + (s.zelle_to || '[Zelle email or phone]') + '\n' +
-      'Memo: ' + r.code + '\n\n' +
-      'Please put your code ' + r.code + ' in the Zelle memo so we can match your payment. If payment isn’t received by then, the seat is released to the next guest.\n\n' +
-      'Friday & Saturday, January 8–9, 2027\nANdAZ Resort, 6114 N Scottsdale Rd, Scottsdale, AZ 85253\n\n' +
-      'See you soon,\nJennifer Schumacher\n(480) 322-2593';
+
+  // ---- template editor ----
+  var tpl = null, tKind = 'hold', tTimer = null;
+  var CHIPS = [['{first_name}','First name'],['{code}','Their code'],['{amount}','Amount'],['{deadline}','Pay-by deadline'],['{zelle_to}','Zelle address'],['{hotel_code}','Hotel code'],['{payment_link}','Payment page link']];
+  function openTemplates(){
+    tpl = JSON.parse(JSON.stringify(data.settings.email_templates || {}));
+    $('tHotel').value = data.settings.hotel_code || '';
+    $('tChips').innerHTML = 'Insert: ' + CHIPS.map(function(c){ return '<button type="button" data-ins="'+c[0]+'" title="'+c[0]+'">'+c[1]+'</button>'; }).join('');
+    $('tStatus').textContent = '';
+    showKind('hold'); $('tplBox').hidden = false;
   }
-  function confirmBody(r){
-    var s = data.settings;
-    return 'Hi ' + r.first_name + ',\n\n' +
-      'Your payment has been received and your seat at ' + EVENT + ' is confirmed. Your confirmation code is ' + r.code + '.\n\n' +
-      'Friday & Saturday, January 8–9, 2027\nANdAZ Resort, 6114 N Scottsdale Rd, Scottsdale, AZ 85253\nCheck-in opens Friday at 3:30pm.\n\n' +
-      'If you’d like to stay at the resort, use this discount code when you book your room: ' + (s.hotel_code || '[hotel discount code]') + '\n\n' +
-      'We can’t wait to see you there!\n\nJennifer Schumacher\n(480) 322-2593';
+  function stash(){ tpl[tKind] = { subject:$('tSubject').value, heading:$('tHeading').value, body:$('tBody').value }; }
+  function showKind(k){
+    if ($('tplBox').hidden === false && tpl[tKind]) stash();
+    tKind = k; var t = tpl[k] || { subject:'', heading:'', body:'' };
+    $('tTabs').innerHTML = KINDS.map(function(x){ return '<button type="button" data-k="'+x[0]+'" aria-pressed="'+(x[0]===k)+'">'+x[1]+'</button>'; }).join('');
+    $('tWhen').textContent = KINDS.filter(function(x){ return x[0]===k; })[0][2];
+    $('tSubject').value = t.subject; $('tHeading').value = t.heading; $('tBody').value = t.body;
+    $('tHotelWrap').hidden = k !== 'paid';
+    preview();
   }
+  function preview(){
+    clearTimeout(tTimer);
+    tTimer = setTimeout(function(){
+      api('team-email-render', { kind:tKind, template:{ subject:$('tSubject').value, heading:$('tHeading').value, body:$('tBody').value }, hotel_code:$('tHotel').value })
+        .then(function(m){ if (m.ok) $('tPreview').srcdoc = '<div style="font:13px Helvetica,Arial,sans-serif;color:#55585c;padding:12px 16px;background:#fff;border-bottom:1px solid #e4e1da"><b>Subject:</b> ' + esc(m.subject) + '</div>' + m.html; });
+    }, 400);
+  }
+  $('tplBtn').addEventListener('click', openTemplates);
+  $('tTabs').addEventListener('click', function(e){ var b = e.target.closest('button[data-k]'); if (b) showKind(b.dataset.k); });
+  ['tSubject','tHeading','tBody','tHotel'].forEach(function(id){ $(id).addEventListener('input', function(){ $('tStatus').textContent = 'Unsaved changes'; preview(); }); });
+  var lastField = 'tBody';
+  ['tSubject','tHeading','tBody'].forEach(function(id){ $(id).addEventListener('focus', function(){ lastField = id; }); });
+  $('tChips').addEventListener('mousedown', function(e){ if (e.target.closest('button')) e.preventDefault(); });
+  $('tChips').addEventListener('click', function(e){
+    var b = e.target.closest('button[data-ins]'); if (!b) return;
+    var el = $(lastField), a = el.selectionStart || el.value.length, z = el.selectionEnd || a;
+    el.value = el.value.slice(0, a) + b.dataset.ins + el.value.slice(z); el.focus(); el.selectionStart = el.selectionEnd = a + b.dataset.ins.length;
+    $('tStatus').textContent = 'Unsaved changes'; preview();
+  });
+  $('tSave').addEventListener('click', function(){
+    stash(); $('tSave').disabled = true;
+    api('team-templates', { templates:tpl, hotel_code:$('tHotel').value }).then(function(r){
+      $('tSave').disabled = false;
+      if (r.ok){ $('tStatus').textContent = 'Saved. New emails will use this wording.'; load(); }
+      else $('tStatus').textContent = 'Didn’t save. Try again.';
+    });
+  });
+  function closeTpl(){ if ($('tStatus').textContent === 'Unsaved changes' && !confirm('Close without saving your changes?')) return; $('tplBox').hidden = true; }
+  $('tClose').addEventListener('click', closeTpl);
+  $('tplBox').addEventListener('click', function(e){ if (e.target.id==='tplBox') closeTpl(); });
+  document.addEventListener('keydown', function(e){
+    if (e.key !== 'Escape') return;
+    if (!$('mailBox').hidden) closeMail(); else if (!$('tplBox').hidden) closeTpl();
+  });
 
   // ---- actions ----
   function act(id, action, value){
@@ -338,8 +437,9 @@
     var r = data.registrations.filter(function(x){ return x.id===id; })[0];
     var a = btn.dataset.act, who = r.first_name + ' ' + r.last_name + ' (' + r.code + ')';
 
-    if (a==='email-pay'){ mail(r, 'Your ' + EVENT + ' seat: payment details', payBody(r, false)); return; }
-    if (a==='email-confirm'){ mail(r, 'You’re confirmed for ' + EVENT, confirmBody(r), function(){ act(id,'emailed').then(function(){ toast('Marked as sent'); load(); }); }); return; }
+    if (a==='email-pay'){ mail(r, 'hold'); return; }
+    if (a==='email-wait'){ mail(r, 'waitlist'); return; }
+    if (a==='email-confirm'){ mail(r, 'paid', function(){ act(id,'emailed').then(function(){ toast('Marked as sent'); load(); }); }); return; }
 
     if (a==='cancel' && !confirm((r.status==='waitlist' ? 'Remove ' + who + ' from the waitlist?' : 'Cancel ' + who + '’s seat? It will open up on the public page right away.'))) return;
     if (a==='unpaid' && !confirm('Undo the payment for ' + who + '? They’ll go back to a 72-hour hold.')) return;
@@ -357,7 +457,7 @@
       return load().then(function(){
         if (a==='offer'){
           var nr = data.registrations.filter(function(x){ return x.id===id; })[0];
-          if (nr && confirm('Email ' + nr.first_name + ' now to tell them the seat is theirs?')) mail(nr, 'A seat opened up for ' + EVENT, payBody(nr, true));
+          if (nr && confirm('Email ' + nr.first_name + ' now to tell them the seat is theirs?')) mail(nr, 'offer');
         }
       });
     });
