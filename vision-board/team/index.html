@@ -41,8 +41,13 @@
   /* summary */
   .wrap{ padding:32px 40px 80px; }
   .summary{ display:grid; grid-template-columns:1.3fr repeat(4,1fr); border:1px solid var(--line); margin-bottom:28px; }
-  .summary > div{ padding:22px 24px; border-right:1px solid var(--line); }
-  .summary > div:last-child{ border-right:0; }
+  .summary > .tile{ padding:22px 24px; border:0; border-right:1px solid var(--line); background:#fff; color:inherit; font:inherit; text-align:left; cursor:pointer; position:relative; }
+  .summary > .tile:last-child{ border-right:0; }
+  .summary > .tile:hover{ background:var(--stone); }
+  .summary > .tile[aria-pressed="true"]:not(.money)::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:3px; background:var(--navy); }
+  .summary > .tile.seats{ background:var(--navy); color:#fff; }
+  .summary > .tile.seats:hover{ background:#0a3566; }
+  .summary > .tile.seats[aria-pressed="true"]::after{ background:#d6b77a; }
   .summary .big{ font-family:'Cormorant Garamond',serif; font-size:46px; line-height:1; font-variant-numeric:lining-nums tabular-nums; }
   .summary .lbl{ color:var(--muted); font-size:13px; margin-top:6px; line-height:1.4; }
   .summary .seats{ background:var(--navy); color:#fff; }
@@ -87,7 +92,7 @@
   @media (max-width:1100px){
     .summary{ grid-template-columns:repeat(2,1fr); }
     .summary .seats{ grid-column:1/-1; }
-    .summary > div{ border-bottom:1px solid var(--line); }
+    .summary > .tile{ border-bottom:1px solid var(--line); }
     thead{ display:none; }
     table, tbody, tr, td{ display:block; }
     tr{ border:1px solid var(--line); margin-bottom:14px; padding:6px 4px; }
@@ -185,13 +190,16 @@
     var paid = count('paid'), pend = count('pending'), wait = count('waitlist');
     var left = Math.max(s.capacity - paid - pend, 0);
     var pctPaid = 100*paid/s.capacity, pctHold = 100*pend/s.capacity;
+    var tile = function(tab, cls, big, lbl, extra){
+      return '<button type="button" class="tile ' + cls + '" data-tab="' + tab + '" aria-pressed="' + (filter===tab) + '"><div class="big">' + big + '</div><div class="lbl">' + lbl + '</div>' + (extra||'') + '</button>';
+    };
     $('summary').innerHTML =
-      '<div class="seats"><div class="big">' + left + '</div><div class="lbl">of ' + s.capacity + ' seats open on the public page</div>' +
-        '<div class="meter"><i style="width:'+pctPaid+'%;background:#fff"></i><i style="width:'+pctHold+'%;background:#d6b77a"></i></div></div>' +
-      '<div><div class="big">' + paid + '</div><div class="lbl">Paid &amp; confirmed</div></div>' +
-      '<div><div class="big">' + pend + '</div><div class="lbl">Holding a seat, awaiting Zelle</div></div>' +
-      '<div><div class="big">' + wait + '</div><div class="lbl">On the waitlist</div></div>' +
-      '<div><div class="big">' + money(paid * s.price) + '</div><div class="lbl">Collected</div></div>';
+      tile('all', 'seats', left, 'of ' + s.capacity + ' seats open on the public page',
+        '<div class="meter"><i style="width:'+pctPaid+'%;background:#fff"></i><i style="width:'+pctHold+'%;background:#d6b77a"></i></div>') +
+      tile('paid', '', paid, 'Paid &amp; confirmed') +
+      tile('pending', '', pend, 'Holding a seat, awaiting Zelle') +
+      tile('waitlist', '', wait, 'On the waitlist') +
+      tile('paid', 'money', money(paid * s.price), 'Collected');
 
     $('tabs').innerHTML = TABS.map(function(t){
       var n = regs.filter(function(r){ return inTab(r, t[0]); }).length;
@@ -301,10 +309,6 @@
           var nr = data.registrations.filter(function(x){ return x.id===id; })[0];
           if (nr && confirm('Email ' + nr.first_name + ' now to tell them the seat is theirs?')) mail(nr, 'A seat opened up for ' + EVENT, payBody(nr, true));
         }
-        if (a==='paid'){
-          var pr = data.registrations.filter(function(x){ return x.id===id; })[0];
-          if (pr && confirm('Email ' + pr.first_name + ' their confirmation now?')){ mail(pr, 'You’re confirmed for ' + EVENT, confirmBody(pr)); act(id,'emailed').then(load); }
-        }
       });
     });
   });
@@ -313,7 +317,9 @@
     var id = e.target.closest('tr').dataset.id;
     act(id, 'notes', e.target.value).then(function(r){ if (r && r.ok){ toast('Note saved'); var x = data.registrations.filter(function(y){ return y.id===id; })[0]; if (x) x.notes = e.target.value; } });
   });
-  $('tabs').addEventListener('click', function(e){ var b=e.target.closest('button[data-tab]'); if (!b) return; filter=b.dataset.tab; render(); });
+  function pickTab(e){ var b=e.target.closest('button[data-tab]'); if (!b) return; filter=b.dataset.tab; render(); }
+  $('tabs').addEventListener('click', pickTab);
+  $('summary').addEventListener('click', pickTab);
   $('search').addEventListener('input', function(e){ query=e.target.value.trim(); render(); });
   $('refreshBtn').addEventListener('click', function(){ load().then(function(){ toast('Up to date'); }); });
   $('logoutBtn').addEventListener('click', function(){ pw=''; try{ sessionStorage.removeItem('vbTeamPw'); }catch(e){} location.reload(); });
