@@ -70,6 +70,7 @@
   .code{ font-family:'Cormorant Garamond',serif; font-size:21px; color:var(--navy); white-space:nowrap; }
   .name{ font-weight:500; }
   .sub{ color:var(--muted); font-size:13px; }
+  .sub.co{ color:var(--ink); }
   .pill{ display:inline-block; font-size:12px; padding:3px 9px; border-radius:20px; white-space:nowrap; }
   .pill.paid{ background:var(--paid-bg); color:var(--paid); }
   .pill.pending{ background:var(--hold-bg); color:var(--hold); }
@@ -159,7 +160,7 @@
   <div class="summary" id="summary"></div>
   <div class="tools">
     <div class="tabs" id="tabs"></div>
-    <input class="search" id="search" type="search" placeholder="Search name, code, email or phone">
+    <input class="search" id="search" type="search" placeholder="Search name, company, code, email or phone">
   </div>
   <table>
     <thead><tr><th>Code</th><th>Guest</th><th>Contact</th><th>Mailing address</th><th>Status</th><th>Actions</th><th>Notes</th></tr></thead>
@@ -276,7 +277,7 @@
     var q = query.toLowerCase();
     var list = regs.filter(function(r){ return inTab(r, filter); }).filter(function(r){
       if (!q) return true;
-      return [r.code, r.first_name+' '+r.last_name, r.email, r.phone, (r.phone||'').replace(/\D/g,'')].join(' ').toLowerCase().indexOf(q) > -1;
+      return [r.code, r.first_name+' '+r.last_name, r.company||'', r.email, r.phone, (r.phone||'').replace(/\D/g,'')].join(' ').toLowerCase().indexOf(q) > -1;
     });
     // waitlist shows in the order people joined; everything else newest first
     list.sort(function(a,b){ return (a.status==='waitlist' && b.status==='waitlist') ? a.created_at.localeCompare(b.created_at) : b.created_at.localeCompare(a.created_at); });
@@ -309,7 +310,7 @@
 
       return '<tr data-id="'+r.id+'"' + ((r.status==='expired'||r.status==='cancelled') ? ' class="dim"' : '') + '>' +
         '<td data-l="Code"><span class="code">'+esc(r.code)+'</span></td>' +
-        '<td data-l="Guest"><div class="name">'+esc(r.first_name)+' '+esc(r.last_name)+'</div><div class="sub">Registered '+short(r.created_at)+'</div></td>' +
+        '<td data-l="Guest"><div class="name">'+esc(r.first_name)+' '+esc(r.last_name)+'</div>'+(r.company?'<div class="sub co">'+esc(r.company)+'</div>':'')+'<div class="sub">Registered '+short(r.created_at)+'</div></td>' +
         '<td data-l="Contact"><a href="mailto:'+esc(r.email)+'">'+esc(r.email)+'</a><div><a href="tel:'+esc((r.phone||'').replace(/[^\d+]/g,''))+'">'+esc(r.phone)+'</a></div></td>' +
         '<td data-l="Mailing address">'+esc(r.street)+(r.street2?'<br>'+esc(r.street2):'')+'<br>'+esc(r.city)+', '+esc(r.state)+' '+esc(r.zip)+'</td>' +
         '<td data-l="Status"><span class="pill '+r.status+'">'+status+'</span>'+extra+'</td>' +
@@ -475,7 +476,7 @@
   $('refreshBtn').addEventListener('click', function(){ load().then(function(){ toast('Up to date'); }); });
   $('logoutBtn').addEventListener('click', function(){ pw=''; try{ sessionStorage.removeItem('vbTeamPw'); }catch(e){} location.reload(); });
   $('csvBtn').addEventListener('click', function(){
-    var cols = ['code','status','first_name','last_name','email','phone','street','street2','city','state','zip','amount','created_at','hold_expires_at','paid_at','confirmation_sent_at','notes'];
+    var cols = ['code','status','first_name','last_name','company','email','phone','street','street2','city','state','zip','amount','created_at','hold_expires_at','paid_at','confirmation_sent_at','notes'];
     var lines = [cols.join(',')].concat(data.registrations.map(function(r){
       return cols.map(function(c){ var v = r[c]==null ? '' : String(r[c]); return /[",\n]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; }).join(',');
     }));
