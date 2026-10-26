@@ -50,8 +50,11 @@ export function renderEmail(kind: Kind, g: Guest, st: Settings, override?: Parti
   const link = `${SITE}/vision-board/pay?r=${g.id}`;
   const serif = "'Cormorant Garamond',Georgia,'Times New Roman',serif";
   const sans = "'Helvetica Neue',Helvetica,Arial,sans-serif";
+  // [words](https://...) in a template becomes a clickable link
+  const LINK = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+  const linkify = (h: string) => h.replace(LINK, (_m, t, u) => `<a href="${u}" style="color:#002349;text-decoration:underline">${t}</a>`);
   const paras = body.split(/\n\s*\n/).map((p) =>
-    `<p style="margin:0 0 16px;font:16px/1.7 ${sans};color:#55585c">${esc(p).replace(/\n/g, "<br>")}</p>`).join("");
+    `<p style="margin:0 0 16px;font:16px/1.7 ${sans};color:#55585c">${linkify(esc(p)).replace(/\n/g, "<br>")}</p>`).join("");
   const wantsPayment = kind === "hold" || kind === "offer";
   const row = (k: string, v: string) =>
     `<tr><td style="padding:10px 0;border-bottom:1px solid #e4e1da;font:14px ${sans};color:#9a968d;width:130px;vertical-align:top">${k}</td><td style="padding:10px 0;border-bottom:1px solid #e4e1da;font:16px ${sans};color:#14181d">${v}</td></tr>`;
@@ -88,7 +91,7 @@ export function renderEmail(kind: Kind, g: Guest, st: Settings, override?: Parti
     <div style="font:11px/1.6 ${sans};color:#9a968d;max-width:600px;margin-top:16px">Jennifer Schumacher · Russ Lyon Sotheby's International Realty · 6900 E. Camelback Rd., Suite 110, Scottsdale, AZ 85251</div>
   </td></tr></table></body></html>`;
 
-  const text = [heading, body,
+  const text = [heading, body.replace(LINK, "$1 ($2)"),
     wantsPayment ? `Your code: ${g.code}\nAmount: $${Number(g.amount).toLocaleString()}\nZelle to: ${st.zelle_to || "info@schumacherliving.com"}\nZelle memo: ${g.code}\nPay by: ${azTime(g.hold_expires_at)}\nYour payment details: ${link}` : "",
     "Friday & Saturday, January 8-9, 2027\nANdAZ Resort, 6114 N Scottsdale Rd, Scottsdale, AZ 85253\nQuestions? Reply to this email or call Jennifer at (480) 322-2593."]
     .filter(Boolean).join("\n\n");
