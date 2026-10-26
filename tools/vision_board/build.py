@@ -59,11 +59,20 @@ def main():
     with open(os.path.join(out_dir, "index.html"), "w", encoding="utf-8") as f:
         f.write(page)
 
+    # guest payment page (linked from the welcome email), one level deeper so the base href needs one more ../
+    pay = open(os.path.join(HERE, "pay-content.html"), encoding="utf-8").read()
+    pay_head = fix_head(head, "https://www.schumacherliving.com/vision-board/pay", noindex=True)
+    pay_head = pay_head.replace('<base href="../">', '<base href="../../">', 1)
+    pay_head = re.sub(r"<title>.*?</title>", "<title>Your Vision Board Crew seat | Jennifer Schumacher</title>", pay_head, flags=re.S)
+    os.makedirs(os.path.join(out_dir, "pay"), exist_ok=True)
+    with open(os.path.join(out_dir, "pay", "index.html"), "w", encoding="utf-8") as f:
+        f.write(pay_head + nav + pay + "\n" + footer)
+
     team = open(os.path.join(HERE, "team.html"), encoding="utf-8").read()
     os.makedirs(os.path.join(out_dir, "team"), exist_ok=True)
     with open(os.path.join(out_dir, "team", "index.html"), "w", encoding="utf-8") as f:
         f.write(team)
-    print("built vision-board/index.html (%d bytes) and vision-board/team/index.html" % len(page))
+    print("built vision-board/index.html (%d bytes), vision-board/pay/index.html and vision-board/team/index.html" % len(page))
 
 
 if __name__ == "__main__":

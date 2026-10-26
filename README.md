@@ -136,4 +136,8 @@ Sources are in `tools/vision_board/`. After any `refresh.py`, rebuild them so th
 
     python3 tools/vision_board/build.py
 
+- `/vision-board/pay?r=<id>` — a guest's own payment page, linked from the automatic welcome email.
+
+The backend (Supabase edge function `vision-board`) source is kept in `tools/vision_board/edge/index.ts`; it sends the welcome email through Resend once a `RESEND_API_KEY` secret is set on the function.
+
 Registrations live in the `vision_board` schema of the NAMB CRM Supabase project, reached only through the `vision-board` edge function. Capacity (50), the 72-hour hold, the price, the Zelle recipient, the hotel discount code and the team password are all in `vision_board.settings`.

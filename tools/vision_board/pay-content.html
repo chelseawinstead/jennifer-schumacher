@@ -1,0 +1,75 @@
+<style>
+  .vbp{ --navy:#002349; --ink:#14181d; --muted:#55585c; --warm:#9a968d; --stone:#f6f5f2; --line:#e4e1da; color:var(--ink); }
+  .vbp *{ box-sizing:border-box; }
+  :where(.vbp) :where(h1,h2,h3){ font-family:'Cormorant Garamond',serif; font-weight:400; margin:0; }
+  :where(.vbp) p{ margin:0; }
+  .vbp-wrap{ max-width:760px; margin:0 auto; padding:110px 64px 120px; }
+  .vbp .kick{ font-size:12px; letter-spacing:.3em; text-transform:uppercase; color:var(--navy); display:block; margin-bottom:22px; }
+  .vbp h1{ font-size:60px; line-height:1.05; margin-bottom:22px; }
+  .vbp .lede{ font-size:18px; line-height:1.75; color:var(--muted); margin-bottom:12px; }
+  .vbp-pay{ margin:34px 0; display:grid; grid-template-columns:auto 1fr; gap:16px 32px; align-items:baseline; padding:30px 0; border-top:1px solid var(--ink); border-bottom:1px solid var(--line); }
+  .vbp-pay dt{ font-size:14px; color:var(--warm); }
+  .vbp-pay dd{ margin:0; font-size:20px; }
+  .vbp-code{ font-family:'Cormorant Garamond',serif; font-size:48px; color:var(--navy); letter-spacing:.04em; margin-right:16px; vertical-align:middle; }
+  .vbp-copy{ font:inherit; font-size:12px; letter-spacing:.14em; text-transform:uppercase; background:none; border:1px solid var(--navy); color:var(--navy); padding:9px 15px; cursor:pointer; vertical-align:middle; }
+  .vbp-copy:hover{ background:var(--navy); color:#fff; }
+  .vbp-steps{ list-style:none; padding:0; margin:0 0 30px; counter-reset:s; }
+  .vbp-steps li{ counter-increment:s; display:grid; grid-template-columns:40px 1fr; padding:12px 0; font-size:17px; line-height:1.6; color:var(--muted); }
+  .vbp-steps li::before{ content:counter(s); font-family:'Cormorant Garamond',serif; font-size:26px; color:var(--navy); line-height:1.1; }
+  .vbp-note{ background:var(--stone); padding:22px 24px; font-size:15px; line-height:1.7; color:var(--muted); }
+  .vbp a:focus-visible,.vbp button:focus-visible{ outline:2px solid var(--navy); outline-offset:3px; }
+  @media (max-width:820px){
+    .vbp-wrap{ padding:40px 0 80px; }
+    .vbp h1{ font-size:42px; }
+    .vbp-pay{ grid-template-columns:1fr; gap:4px; }
+    .vbp-pay dd{ margin-bottom:14px; }
+    .vbp-code{ font-size:40px; }
+  }
+</style>
+
+<main class="vbp">
+  <section class="vbp-wrap" id="vbp" aria-live="polite">
+    <span class="kick">Vision Board Crew 2027</span>
+    <h1>Finding your registration…</h1>
+  </section>
+</main>
+
+<script>
+(function(){
+  var API = 'https://agnpwmdwofrdyqzttmlv.supabase.co/functions/v1/vision-board';
+  var box = document.getElementById('vbp');
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function az(iso){ return new Date(iso).toLocaleString('en-US', { timeZone:'America/Phoenix', weekday:'long', month:'long', day:'numeric', hour:'numeric', minute:'2-digit' }) + ' Arizona time'; }
+  var head = '<span class="kick">Vision Board Crew 2027</span>';
+  var contact = '<p class="vbp-note">Questions? Call or text Jennifer at <a href="tel:14803222593">(480) 322-2593</a> or email <a href="mailto:jennifer@schumacherliving.com">jennifer@schumacherliving.com</a>.</p>';
+  var id = new URLSearchParams(location.search).get('r') || '';
+  function show(html){ box.innerHTML = head + html; }
+  if (!id){ show('<h1>We couldn’t find that registration.</h1><p class="lede">Use the button in your confirmation email to open this page.</p>' + contact); return; }
+
+  fetch(API + '?action=guest&r=' + encodeURIComponent(id), { cache:'no-store' }).then(function(r){ return r.json(); }).then(function(g){
+    if (!g.ok){ show('<h1>We couldn’t find that registration.</h1><p class="lede">The link may be incomplete. Use the button in your confirmation email, or contact Jennifer.</p>' + contact); return; }
+    var n = esc(g.first_name);
+    if (g.status === 'paid'){
+      show('<h1>You’re confirmed, ' + n + '.</h1><p class="lede">Your payment has been received and your seat is reserved under code <strong>' + esc(g.code) + '</strong>. We’ll see you Friday, January 8 at the ANdAZ Resort, Scottsdale.</p>' + contact);
+    } else if (g.status === 'waitlist'){
+      show('<h1>You’re on the waitlist, ' + n + '.</h1><p class="lede">All seats are taken right now, so there’s nothing to pay. If a seat opens, we’ll contact you in the order you joined. Your waitlist code is <strong>' + esc(g.code) + '</strong>.</p>' + contact);
+    } else if (g.status === 'expired' || g.status === 'cancelled'){
+      show('<h1>This seat hold has ended.</h1><p class="lede">' + (g.status === 'expired' ? 'Payment wasn’t received within 72 hours, so the seat was released.' : 'This registration was cancelled.') + ' Please don’t send a payment for code ' + esc(g.code) + '. If you think this is a mistake, contact Jennifer right away.</p>' + contact);
+    } else {
+      show('<h1>Your seat is on hold, ' + n + '.</h1>' +
+        '<p class="lede">Send your payment by <strong>' + esc(az(g.hold_expires_at)) + '</strong> to keep it. After that the seat is released to the next guest.</p>' +
+        '<dl class="vbp-pay">' +
+          '<dt>Your code</dt><dd><span class="vbp-code">' + esc(g.code) + '</span><button type="button" class="vbp-copy" id="cp">Copy code</button></dd>' +
+          '<dt>Amount</dt><dd>$' + Number(g.price).toLocaleString() + '</dd>' +
+          '<dt>Zelle to</dt><dd>' + esc(g.zelle_to || 'info@schumacherliving.com') + ' <button type="button" class="vbp-copy" id="cpz" style="margin-left:10px">Copy</button></dd>' +
+          '<dt>Zelle memo</dt><dd>' + esc(g.code) + '</dd>' +
+        '</dl>' +
+        '<ol class="vbp-steps"><li>Open your bank’s app and choose Zelle.</li><li>Send $' + Number(g.price).toLocaleString() + ' to ' + esc(g.zelle_to || 'info@schumacherliving.com') + '.</li><li>Type ' + esc(g.code) + ' in the memo so we can match your payment.</li></ol>' +
+        '<p class="vbp-note" style="margin-bottom:16px">Once your payment arrives, we’ll email your confirmation and the ANdAZ room discount code.</p>' + contact);
+      var copy = function(btn, text){ btn.addEventListener('click', function(){ if (navigator.clipboard) navigator.clipboard.writeText(text).then(function(){ btn.textContent = 'Copied'; }); }); };
+      copy(document.getElementById('cp'), g.code);
+      copy(document.getElementById('cpz'), g.zelle_to || 'info@schumacherliving.com');
+    }
+  }).catch(function(){ show('<h1>We couldn’t load your registration.</h1><p class="lede">Check your connection and refresh this page.</p>' + contact); });
+})();
+</script>

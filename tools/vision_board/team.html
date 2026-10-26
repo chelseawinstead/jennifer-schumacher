@@ -86,7 +86,20 @@
   .notes{ width:100%; min-width:160px; font:inherit; font-size:13px; border:1px solid transparent; background:var(--stone); padding:6px 8px; resize:vertical; min-height:34px; }
   .notes:focus{ outline:0; border-color:var(--navy); background:#fff; }
   .empty{ padding:48px 12px; color:var(--muted); text-align:center; }
-  .toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 20px; font-size:14px; opacity:0; transition:opacity .2s; pointer-events:none; z-index:10; }
+  .mail-wrap{ position:fixed; inset:0; background:rgba(20,24,29,.45); display:flex; align-items:center; justify-content:center; padding:20px; z-index:20; }
+  .mail-wrap[hidden]{ display:none; }
+  .mail{ background:#fff; width:100%; max-width:680px; max-height:calc(100vh - 40px); overflow:auto; padding:28px; }
+  .mail-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+  .mail-head h2{ font-size:30px; }
+  .mail-row{ display:flex; gap:14px; align-items:center; padding:10px 0; border-bottom:1px solid var(--line); }
+  .mail-row span{ width:70px; color:var(--warm); font-size:13px; flex:none; }
+  .mail-row b{ font-weight:400; }
+  .mail-row input{ flex:1; font:inherit; border:0; padding:4px 0; }
+  .mail-row input:focus{ outline:0; }
+  #mBody{ width:100%; margin-top:14px; font:inherit; font-size:14px; line-height:1.6; padding:12px; border:1px solid #cfcbc2; resize:vertical; }
+  .mail-help{ color:var(--muted); font-size:13px; margin:8px 0 16px; }
+  .mail-acts{ display:flex; flex-wrap:wrap; gap:8px; }
+  .toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 20px; font-size:14px; opacity:0; transition:opacity .2s; pointer-events:none; z-index:30; }
   .toast.on{ opacity:1; }
 
   @media (max-width:1100px){
@@ -141,6 +154,22 @@
     <tbody id="rows"></tbody>
   </table>
 </main>
+<div class="mail-wrap" id="mailBox" hidden>
+  <div class="mail" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <div class="mail-head"><h2 id="mTitle">Email preview</h2><button type="button" class="ghost" id="mClose">Close</button></div>
+    <div class="mail-row"><span>To</span><b id="mTo"></b></div>
+    <label class="mail-row"><span>Subject</span><input id="mSubject"></label>
+    <textarea id="mBody" rows="14" aria-label="Email message"></textarea>
+    <p class="mail-help">Edit anything you like, then open it in your email to send it.</p>
+    <div class="mail-acts">
+      <button type="button" class="solid" id="mGmail">Open in Gmail</button>
+      <button type="button" class="solid" id="mOutlook">Open in Outlook</button>
+      <button type="button" class="ghost" id="mApp">Open in mail app</button>
+      <button type="button" class="ghost" id="mCopy">Copy email</button>
+      <button type="button" class="ghost" id="mSent" style="margin-left:auto">Mark as sent</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
@@ -251,9 +280,30 @@
 
   // ---- emails (open in the team member's own mail app) ----
   var EVENT = 'Vision Board Crew 2027';
-  function mail(r, subject, body){
-    location.href = 'mailto:' + encodeURIComponent(r.email) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  // Shows the email in a panel; the team picks Gmail, Outlook or their mail app. Nothing is recorded as sent until they say so.
+  var mailState = null;
+  function mail(r, subject, body, onSent){
+    mailState = { r:r, onSent:onSent };
+    $('mTo').textContent = r.first_name + ' ' + r.last_name + ' <' + r.email + '>';
+    $('mSubject').value = subject; $('mBody').value = body;
+    $('mSent').hidden = !onSent;
+    $('mailBox').hidden = false; $('mBody').scrollTop = 0; $('mGmail').focus();
   }
+  function mailParts(){ return { to: mailState.r.email, su: $('mSubject').value, body: $('mBody').value }; }
+  function closeMail(){ $('mailBox').hidden = true; mailState = null; }
+  $('mGmail').addEventListener('click', function(){ var m=mailParts();
+    window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(m.to) + '&su=' + encodeURIComponent(m.su) + '&body=' + encodeURIComponent(m.body), '_blank', 'noopener'); });
+  $('mOutlook').addEventListener('click', function(){ var m=mailParts();
+    window.open('https://outlook.office.com/mail/deeplink/compose?to=' + encodeURIComponent(m.to) + '&subject=' + encodeURIComponent(m.su) + '&body=' + encodeURIComponent(m.body), '_blank', 'noopener'); });
+  $('mApp').addEventListener('click', function(){ var m=mailParts();
+    location.href = 'mailto:' + encodeURIComponent(m.to) + '?subject=' + encodeURIComponent(m.su) + '&body=' + encodeURIComponent(m.body); });
+  $('mCopy').addEventListener('click', function(){ var m=mailParts();
+    var t = 'To: ' + m.to + '\nSubject: ' + m.su + '\n\n' + m.body;
+    (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function(){ toast('Email copied'); }, function(){ $('mBody').select(); toast('Press Ctrl/Cmd+C to copy'); }); });
+  $('mSent').addEventListener('click', function(){ var cb = mailState && mailState.onSent; closeMail(); if (cb) cb(); });
+  $('mClose').addEventListener('click', closeMail);
+  $('mailBox').addEventListener('click', function(e){ if (e.target.id==='mailBox') closeMail(); });
+  document.addEventListener('keydown', function(e){ if (e.key==='Escape' && !$('mailBox').hidden) closeMail(); });
   function payBody(r, opened){
     var s = data.settings;
     var deadline = r.hold_expires_at ? az(r.hold_expires_at, { weekday:'long', month:'long', day:'numeric', hour:'numeric', minute:'2-digit' }) + ' Arizona time' : 'within 72 hours';
@@ -289,7 +339,7 @@
     var a = btn.dataset.act, who = r.first_name + ' ' + r.last_name + ' (' + r.code + ')';
 
     if (a==='email-pay'){ mail(r, 'Your ' + EVENT + ' seat: payment details', payBody(r, false)); return; }
-    if (a==='email-confirm'){ mail(r, 'You’re confirmed for ' + EVENT, confirmBody(r)); act(id,'emailed').then(load); return; }
+    if (a==='email-confirm'){ mail(r, 'You’re confirmed for ' + EVENT, confirmBody(r), function(){ act(id,'emailed').then(function(){ toast('Marked as sent'); load(); }); }); return; }
 
     if (a==='cancel' && !confirm((r.status==='waitlist' ? 'Remove ' + who + ' from the waitlist?' : 'Cancel ' + who + '’s seat? It will open up on the public page right away.'))) return;
     if (a==='unpaid' && !confirm('Undo the payment for ' + who + '? They’ll go back to a 72-hour hold.')) return;
