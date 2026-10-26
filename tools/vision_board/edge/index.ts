@@ -174,13 +174,14 @@ Deno.serve(async (req) => {
         first: clean(b.first_name, 80), last: clean(b.last_name, 80), email: clean(b.email, 160),
         phone: clean(b.phone, 40), street: clean(b.street), street2: clean(b.street2),
         city: clean(b.city, 80), state: clean(b.state, 40), zip: clean(b.zip, 12),
+        company: clean(b.company, 120),
       };
       const missing = Object.entries(f).filter(([k, v]) => k !== "street2" && !v).map(([k]) => k);
       if (missing.length) return json({ ok: false, error: "missing", fields: missing }, 400);
       if (!EMAIL.test(f.email)) return json({ ok: false, error: "email" }, 400);
       if (f.phone.replace(/\D/g, "").length < 10) return json({ ok: false, error: "phone" }, 400);
       const [row] = await sql`select vision_board.register(${f.first}, ${f.last}, ${f.email}, ${f.phone},
-        ${f.street}, ${f.street2}, ${f.city}, ${f.state}, ${f.zip}) as r`;
+        ${f.street}, ${f.street2}, ${f.city}, ${f.state}, ${f.zip}, ${f.company}) as r`;
       if (row.r.ok && !row.r.duplicate) {
         // send after responding so the guest never waits on Gmail
         // @ts-ignore EdgeRuntime is provided by Supabase
