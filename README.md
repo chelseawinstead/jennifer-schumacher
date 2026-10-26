@@ -124,3 +124,16 @@ captured server-side.
 Canonical URLs, `robots.txt` and `sitemap.xml` all use
 `https://www.schumacherliving.com` — change `SITE_URL` in `tools/build.py` if
 the live domain differs.
+
+## Vision Board Crew registration
+
+Two pages that live outside the Claude Design export, so `refresh.py` never touches them:
+
+- `/vision-board` — public registration page with the live seat counter (noindex, not in the nav or sitemap; share the link by email).
+- `/vision-board/team` — password-protected guest list where Jennifer's team marks Zelle payments paid, cancels, extends holds, offers seats to the waitlist and downloads a spreadsheet.
+
+Sources are in `tools/vision_board/`. After any `refresh.py`, rebuild them so the header and footer match the new export:
+
+    python3 tools/vision_board/build.py
+
+Registrations live in the `vision_board` schema of the NAMB CRM Supabase project, reached only through the `vision-board` edge function. Capacity (50), the 72-hour hold, the price, the Zelle recipient, the hotel discount code and the team password are all in `vision_board.settings`.

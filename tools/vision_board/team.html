@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vision Board Guest List | Jennifer Schumacher</title>
+<meta name="theme-color" content="#002349">
+<link rel="icon" href="/images/schumacher-living-navy.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{ --navy:#002349; --ink:#14181d; --muted:#55585c; --warm:#9a968d; --stone:#f6f5f2; --line:#e4e1da;
+         --paid:#2f6b4f; --paid-bg:#e7f1eb; --hold:#8a5a14; --hold-bg:#f8efdf; --wait:#3d4f8a; --wait-bg:#e9ecf6; --off:#7a7a7a; --off-bg:#efefef; --red:#a3271f; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:#fff; color:var(--ink); font-family:'Jost',system-ui,sans-serif; font-size:15px; }
+  h1,h2{ font-family:'Cormorant Garamond',serif; font-weight:400; margin:0; }
+  button{ font:inherit; cursor:pointer; }
+  a{ color:var(--navy); }
+  :focus-visible{ outline:2px solid var(--navy); outline-offset:2px; }
+
+  .bar{ display:flex; justify-content:space-between; align-items:center; gap:20px; padding:20px 40px; border-bottom:1px solid #ececec; position:sticky; top:0; background:rgba(255,255,255,.96); z-index:5; }
+  .brand{ display:flex; flex-direction:column; gap:3px; }
+  .brand b{ font-family:'Cormorant Garamond',serif; font-weight:500; font-size:20px; letter-spacing:.18em; }
+  .brand span{ font-size:12px; color:var(--warm); letter-spacing:.04em; }
+  .bar-actions{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .ghost{ background:none; border:1px solid var(--navy); color:var(--navy); padding:9px 16px; font-size:13px; }
+  .solid{ background:var(--navy); border:1px solid var(--navy); color:#fff; padding:9px 16px; font-size:13px; }
+  .solid:hover{ background:#0a3566; }
+
+  /* login */
+  .login{ max-width:420px; margin:12vh auto; padding:0 20px; }
+  .login h1{ font-size:44px; margin-bottom:10px; }
+  .login p{ color:var(--muted); line-height:1.6; margin:0 0 26px; }
+  .login input{ width:100%; font:inherit; font-size:17px; padding:14px; border:1px solid #cfcbc2; margin-bottom:14px; }
+  .login input:focus{ outline:0; border-color:var(--navy); box-shadow:0 0 0 1px var(--navy); }
+  .login .solid{ width:100%; padding:15px; font-size:14px; letter-spacing:.12em; text-transform:uppercase; }
+  .msg-err{ color:var(--red); margin-top:12px; min-height:1.4em; }
+
+  /* summary */
+  .wrap{ padding:32px 40px 80px; }
+  .summary{ display:grid; grid-template-columns:1.3fr repeat(4,1fr); border:1px solid var(--line); margin-bottom:28px; }
+  .summary > div{ padding:22px 24px; border-right:1px solid var(--line); }
+  .summary > div:last-child{ border-right:0; }
+  .summary .big{ font-family:'Cormorant Garamond',serif; font-size:46px; line-height:1; font-variant-numeric:lining-nums tabular-nums; }
+  .summary .lbl{ color:var(--muted); font-size:13px; margin-top:6px; line-height:1.4; }
+  .summary .seats{ background:var(--navy); color:#fff; }
+  .summary .seats .lbl{ color:#c9d3df; }
+  .meter{ display:flex; height:6px; background:rgba(255,255,255,.2); margin-top:14px; }
+  .meter i{ display:block; height:100%; }
+
+  .tools{ display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
+  .tabs{ display:flex; gap:4px; flex-wrap:wrap; }
+  .tabs button{ background:none; border:1px solid transparent; padding:8px 14px; color:var(--muted); font-size:14px; }
+  .tabs button[aria-pressed="true"]{ border-color:var(--ink); color:var(--ink); }
+  .tabs .n{ color:var(--warm); margin-left:4px; }
+  .search{ font:inherit; padding:9px 12px; border:1px solid #cfcbc2; min-width:240px; }
+  .updated{ font-size:12px; color:var(--warm); }
+
+  table{ width:100%; border-collapse:collapse; }
+  th{ text-align:left; font-weight:400; font-size:12px; color:var(--warm); letter-spacing:.06em; padding:10px 12px; border-bottom:1px solid var(--ink); white-space:nowrap; }
+  td{ padding:14px 12px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.45; }
+  tr.dim td{ color:var(--off); }
+  .code{ font-family:'Cormorant Garamond',serif; font-size:21px; color:var(--navy); white-space:nowrap; }
+  .name{ font-weight:500; }
+  .sub{ color:var(--muted); font-size:13px; }
+  .pill{ display:inline-block; font-size:12px; padding:3px 9px; border-radius:20px; white-space:nowrap; }
+  .pill.paid{ background:var(--paid-bg); color:var(--paid); }
+  .pill.pending{ background:var(--hold-bg); color:var(--hold); }
+  .pill.waitlist{ background:var(--wait-bg); color:var(--wait); }
+  .pill.expired,.pill.cancelled{ background:var(--off-bg); color:var(--off); }
+  .due{ font-size:13px; margin-top:6px; color:var(--hold); }
+  .due.soon{ color:var(--red); font-weight:500; }
+  .sent{ font-size:12px; color:var(--paid); margin-top:6px; }
+  .acts{ display:flex; flex-wrap:wrap; gap:6px; min-width:210px; }
+  .acts button{ background:#fff; border:1px solid #cfcbc2; padding:6px 10px; font-size:13px; color:var(--ink); }
+  .acts button:hover{ border-color:var(--navy); color:var(--navy); }
+  .acts button.pay{ background:var(--navy); border-color:var(--navy); color:#fff; }
+  .acts button.danger:hover{ border-color:var(--red); color:var(--red); }
+  .notes{ width:100%; min-width:160px; font:inherit; font-size:13px; border:1px solid transparent; background:var(--stone); padding:6px 8px; resize:vertical; min-height:34px; }
+  .notes:focus{ outline:0; border-color:var(--navy); background:#fff; }
+  .empty{ padding:48px 12px; color:var(--muted); text-align:center; }
+  .toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 20px; font-size:14px; opacity:0; transition:opacity .2s; pointer-events:none; z-index:10; }
+  .toast.on{ opacity:1; }
+
+  @media (max-width:1100px){
+    .summary{ grid-template-columns:repeat(2,1fr); }
+    .summary .seats{ grid-column:1/-1; }
+    .summary > div{ border-bottom:1px solid var(--line); }
+    thead{ display:none; }
+    table, tbody, tr, td{ display:block; }
+    tr{ border:1px solid var(--line); margin-bottom:14px; padding:6px 4px; }
+    td{ border:0; padding:8px 12px; }
+    td[data-l]::before{ content:attr(data-l); display:block; font-size:11px; color:var(--warm); letter-spacing:.06em; margin-bottom:2px; }
+  }
+  @media (max-width:640px){
+    .bar{ padding:16px 20px; position:static; flex-direction:column; align-items:flex-start; }
+    .bar-actions{ gap:8px; }
+    .updated{ width:100%; }
+    .wrap{ padding:20px 16px 60px; }
+    .search{ min-width:0; width:100%; }
+  }
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="brand"><b>JENNIFER SCHUMACHER</b><span>Vision Board Crew 2027 · Guest list</span></div>
+  <div class="bar-actions" id="barActions" hidden>
+    <span class="updated" id="updated"></span>
+    <button class="ghost" id="refreshBtn">Refresh</button>
+    <button class="ghost" id="csvBtn">Download spreadsheet</button>
+    <button class="ghost" id="logoutBtn">Sign out</button>
+  </div>
+</div>
+
+<section class="login" id="login">
+  <h1>Team sign in</h1>
+  <p>Enter the team password to see registrations and record Zelle payments.</p>
+  <form id="loginForm">
+    <label for="pw" style="position:absolute;left:-9999px">Team password</label>
+    <input type="password" id="pw" autocomplete="current-password" placeholder="Team password" required>
+    <button class="solid" type="submit" id="loginBtn">Sign in</button>
+    <div class="msg-err" id="loginErr" role="alert"></div>
+  </form>
+</section>
+
+<main class="wrap" id="app" hidden>
+  <div class="summary" id="summary"></div>
+  <div class="tools">
+    <div class="tabs" id="tabs"></div>
+    <input class="search" id="search" type="search" placeholder="Search name, code, email or phone">
+  </div>
+  <table>
+    <thead><tr><th>Code</th><th>Guest</th><th>Contact</th><th>Mailing address</th><th>Status</th><th>Actions</th><th>Notes</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  var API = 'https://agnpwmdwofrdyqzttmlv.supabase.co/functions/v1/vision-board';
+  var $ = function(id){ return document.getElementById(id); };
+  var pw = '';
+  try { pw = sessionStorage.getItem('vbTeamPw') || ''; } catch(e){}
+  var data = null, filter = 'all', query = '';
+
+  function toast(t){ var el=$('toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(function(){ el.classList.remove('on'); }, 2600); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function az(iso, opts){ return new Date(iso).toLocaleString('en-US', Object.assign({ timeZone:'America/Phoenix' }, opts)); }
+  function short(iso){ return az(iso, { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }); }
+  function money(n){ return '$' + Number(n).toLocaleString(); }
+
+  function api(action, body){
+    return fetch(API + '?action=' + action, {
+      method: body ? 'POST' : 'GET', cache:'no-store',
+      headers: Object.assign({ 'x-team-password': pw }, body ? { 'content-type':'application/json' } : {}),
+      body: body ? JSON.stringify(body) : undefined
+    }).then(function(r){ return r.json().then(function(j){ j._status = r.status; return j; }); });
+  }
+
+  function signIn(e){
+    if (e) e.preventDefault();
+    if (!pw) pw = $('pw').value;
+    $('loginBtn').disabled = true; $('loginErr').textContent = '';
+    api('team-list').then(function(d){
+      $('loginBtn').disabled = false;
+      if (d._status === 401){ pw=''; try{ sessionStorage.removeItem('vbTeamPw'); }catch(e){} $('login').hidden=false; $('app').hidden=true; $('barActions').hidden=true; $('loginErr').textContent = 'That password didn’t work. Check with Chelsea for the current one.'; return; }
+      try { sessionStorage.setItem('vbTeamPw', pw); } catch(e){}
+      $('login').hidden = true; $('app').hidden = false; $('barActions').hidden = false;
+      data = d; render();
+    }).catch(function(){ $('loginBtn').disabled=false; $('loginErr').textContent = 'Couldn’t reach the guest list. Check your connection and try again.'; });
+  }
+  function load(){ return api('team-list').then(function(d){ if (d._status===401){ signIn(); return; } data=d; render(); }); }
+
+  var TABS = [
+    ['all','All'], ['pending','Awaiting payment'], ['paid','Paid'], ['waitlist','Waitlist'], ['closed','Expired & cancelled']
+  ];
+  function inTab(r, t){ return t==='all' || (t==='closed' ? (r.status==='expired'||r.status==='cancelled') : r.status===t); }
+
+  function render(){
+    var s = data.settings, regs = data.registrations;
+    var count = function(st){ return regs.filter(function(r){ return r.status===st; }).length; };
+    var paid = count('paid'), pend = count('pending'), wait = count('waitlist');
+    var left = Math.max(s.capacity - paid - pend, 0);
+    var pctPaid = 100*paid/s.capacity, pctHold = 100*pend/s.capacity;
+    $('summary').innerHTML =
+      '<div class="seats"><div class="big">' + left + '</div><div class="lbl">of ' + s.capacity + ' seats open on the public page</div>' +
+        '<div class="meter"><i style="width:'+pctPaid+'%;background:#fff"></i><i style="width:'+pctHold+'%;background:#d6b77a"></i></div></div>' +
+      '<div><div class="big">' + paid + '</div><div class="lbl">Paid &amp; confirmed</div></div>' +
+      '<div><div class="big">' + pend + '</div><div class="lbl">Holding a seat, awaiting Zelle</div></div>' +
+      '<div><div class="big">' + wait + '</div><div class="lbl">On the waitlist</div></div>' +
+      '<div><div class="big">' + money(paid * s.price) + '</div><div class="lbl">Collected</div></div>';
+
+    $('tabs').innerHTML = TABS.map(function(t){
+      var n = regs.filter(function(r){ return inTab(r, t[0]); }).length;
+      return '<button data-tab="'+t[0]+'" aria-pressed="'+(filter===t[0])+'">'+t[1]+'<span class="n">'+n+'</span></button>';
+    }).join('');
+
+    var q = query.toLowerCase();
+    var list = regs.filter(function(r){ return inTab(r, filter); }).filter(function(r){
+      if (!q) return true;
+      return [r.code, r.first_name+' '+r.last_name, r.email, r.phone, (r.phone||'').replace(/\D/g,'')].join(' ').toLowerCase().indexOf(q) > -1;
+    });
+    // waitlist shows in the order people joined; everything else newest first
+    list.sort(function(a,b){ return (a.status==='waitlist' && b.status==='waitlist') ? a.created_at.localeCompare(b.created_at) : b.created_at.localeCompare(a.created_at); });
+    var waitOrder = regs.filter(function(r){ return r.status==='waitlist'; }).sort(function(a,b){ return a.created_at.localeCompare(b.created_at); }).map(function(r){ return r.id; });
+
+    if (!list.length){
+      $('rows').innerHTML = '<tr><td colspan="7" class="empty">' + (regs.length ? 'No one matches this view.' : 'No registrations yet. They’ll appear here as soon as someone signs up.') + '</td></tr>';
+      return;
+    }
+    $('rows').innerHTML = list.map(function(r){
+      var status = { paid:'Paid', pending:'Awaiting payment', waitlist:'Waitlist', expired:'Hold expired', cancelled:'Cancelled' }[r.status];
+      var extra = '';
+      if (r.status==='pending' && r.hold_expires_at){
+        var hrs = (new Date(r.hold_expires_at) - Date.now())/36e5;
+        extra = '<div class="due' + (hrs < 12 ? ' soon' : '') + '">Hold ends ' + short(r.hold_expires_at) + '</div>';
+      }
+      if (r.status==='paid' && r.paid_at) extra = '<div class="sub" style="margin-top:6px">Paid ' + short(r.paid_at) + '</div>';
+      if (r.status==='waitlist') extra = '<div class="sub" style="margin-top:6px">#' + (waitOrder.indexOf(r.id)+1) + ' in line</div>';
+      if (r.confirmation_sent_at) extra += '<div class="sent">Confirmation emailed ' + short(r.confirmation_sent_at) + '</div>';
+
+      var b = [];
+      if (r.status==='pending'){ b.push('<button class="pay" data-act="paid">Mark paid</button>'); b.push('<button data-act="email-pay">Email payment details</button>'); b.push('<button data-act="extend">Extend 24 hrs</button>'); b.push('<button class="danger" data-act="cancel">Cancel</button>'); }
+      if (r.status==='paid'){ b.push('<button data-act="email-confirm">Email confirmation</button>'); b.push('<button data-act="unpaid">Undo paid</button>'); b.push('<button class="danger" data-act="cancel">Cancel</button>'); }
+      if (r.status==='waitlist'){ b.push('<button class="pay" data-act="offer">Offer seat</button>'); b.push('<button class="danger" data-act="cancel">Remove</button>'); }
+      if (r.status==='expired' || r.status==='cancelled'){ b.push('<button data-act="offer">Re-open hold</button>'); b.push('<button data-act="paid">Mark paid</button>'); }
+
+      return '<tr data-id="'+r.id+'"' + ((r.status==='expired'||r.status==='cancelled') ? ' class="dim"' : '') + '>' +
+        '<td data-l="Code"><span class="code">'+esc(r.code)+'</span></td>' +
+        '<td data-l="Guest"><div class="name">'+esc(r.first_name)+' '+esc(r.last_name)+'</div><div class="sub">Registered '+short(r.created_at)+'</div></td>' +
+        '<td data-l="Contact"><a href="mailto:'+esc(r.email)+'">'+esc(r.email)+'</a><div><a href="tel:'+esc((r.phone||'').replace(/[^\d+]/g,''))+'">'+esc(r.phone)+'</a></div></td>' +
+        '<td data-l="Mailing address">'+esc(r.street)+(r.street2?'<br>'+esc(r.street2):'')+'<br>'+esc(r.city)+', '+esc(r.state)+' '+esc(r.zip)+'</td>' +
+        '<td data-l="Status"><span class="pill '+r.status+'">'+status+'</span>'+extra+'</td>' +
+        '<td data-l="Actions"><div class="acts">'+b.join('')+'</div></td>' +
+        '<td data-l="Notes"><textarea class="notes" rows="1" placeholder="Add a note" aria-label="Notes for '+esc(r.code)+'">'+esc(r.notes||'')+'</textarea></td>' +
+      '</tr>';
+    }).join('');
+    $('updated').textContent = 'Updated ' + az(new Date().toISOString(), { hour:'numeric', minute:'2-digit' }) + ' AZ';
+  }
+
+  // ---- emails (open in the team member's own mail app) ----
+  var EVENT = 'Vision Board Crew 2027';
+  function mail(r, subject, body){
+    location.href = 'mailto:' + encodeURIComponent(r.email) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  }
+  function payBody(r, opened){
+    var s = data.settings;
+    var deadline = r.hold_expires_at ? az(r.hold_expires_at, { weekday:'long', month:'long', day:'numeric', hour:'numeric', minute:'2-digit' }) + ' Arizona time' : 'within 72 hours';
+    return 'Hi ' + r.first_name + ',\n\n' +
+      (opened ? 'Great news: a seat has opened up for ' + EVENT + ', and it’s yours if you’d like it.\n\n' : 'Thank you for registering for ' + EVENT + '! Your seat is on hold.\n\n') +
+      'To reserve it, please send $' + Number(r.amount).toLocaleString() + ' by Zelle by ' + deadline + '.\n\n' +
+      'Zelle to: ' + (s.zelle_to || '[Zelle email or phone]') + '\n' +
+      'Memo: ' + r.code + '\n\n' +
+      'Please put your code ' + r.code + ' in the Zelle memo so we can match your payment. If payment isn’t received by then, the seat is released to the next guest.\n\n' +
+      'Friday & Saturday, January 8–9, 2027\nANdAZ Resort, 6114 N Scottsdale Rd, Scottsdale, AZ 85253\n\n' +
+      'See you soon,\nJennifer Schumacher\n(480) 322-2593';
+  }
+  function confirmBody(r){
+    var s = data.settings;
+    return 'Hi ' + r.first_name + ',\n\n' +
+      'Your payment has been received and your seat at ' + EVENT + ' is confirmed. Your confirmation code is ' + r.code + '.\n\n' +
+      'Friday & Saturday, January 8–9, 2027\nANdAZ Resort, 6114 N Scottsdale Rd, Scottsdale, AZ 85253\nCheck-in opens Friday at 3:30pm.\n\n' +
+      'If you’d like to stay at the resort, use this discount code when you book your room: ' + (s.hotel_code || '[hotel discount code]') + '\n\n' +
+      'We can’t wait to see you there!\n\nJennifer Schumacher\n(480) 322-2593';
+  }
+
+  // ---- actions ----
+  function act(id, action, value){
+    return api('team-action', { id:id, action:action, value:value }).then(function(r){
+      if (r._status === 401){ signIn(); return null; }
+      return r;
+    });
+  }
+  $('rows').addEventListener('click', function(e){
+    var btn = e.target.closest('button[data-act]'); if (!btn) return;
+    var id = btn.closest('tr').dataset.id;
+    var r = data.registrations.filter(function(x){ return x.id===id; })[0];
+    var a = btn.dataset.act, who = r.first_name + ' ' + r.last_name + ' (' + r.code + ')';
+
+    if (a==='email-pay'){ mail(r, 'Your ' + EVENT + ' seat: payment details', payBody(r, false)); return; }
+    if (a==='email-confirm'){ mail(r, 'You’re confirmed for ' + EVENT, confirmBody(r)); act(id,'emailed').then(load); return; }
+
+    if (a==='cancel' && !confirm((r.status==='waitlist' ? 'Remove ' + who + ' from the waitlist?' : 'Cancel ' + who + '’s seat? It will open up on the public page right away.'))) return;
+    if (a==='unpaid' && !confirm('Undo the payment for ' + who + '? They’ll go back to a 72-hour hold.')) return;
+
+    btn.disabled = true;
+    act(id, a).then(function(res){
+      if (!res) return;
+      if (!res.ok && res.error==='full'){
+        if (a==='paid' && confirm('All seats are taken. Mark ' + who + ' paid anyway? This puts the event one over capacity.')){
+          return act(id, 'paid', 'force').then(function(){ toast('Marked paid'); return load(); });
+        }
+        toast('No open seats. Cancel or release a hold first.'); btn.disabled=false; return;
+      }
+      if (!res.ok){ toast('That didn’t save. Refresh and try again.'); btn.disabled=false; return; }
+      var done = { paid:'Marked paid', unpaid:'Moved back to awaiting payment', cancel: r.status==='waitlist' ? 'Removed from waitlist' : 'Seat cancelled', extend:'Hold extended 24 hours', offer:'Seat offered with a new 72-hour hold' }[a];
+      toast(done);
+      return load().then(function(){
+        if (a==='offer'){
+          var nr = data.registrations.filter(function(x){ return x.id===id; })[0];
+          if (nr && confirm('Email ' + nr.first_name + ' now to tell them the seat is theirs?')) mail(nr, 'A seat opened up for ' + EVENT, payBody(nr, true));
+        }
+        if (a==='paid'){
+          var pr = data.registrations.filter(function(x){ return x.id===id; })[0];
+          if (pr && confirm('Email ' + pr.first_name + ' their confirmation now?')){ mail(pr, 'You’re confirmed for ' + EVENT, confirmBody(pr)); act(id,'emailed').then(load); }
+        }
+      });
+    });
+  });
+  $('rows').addEventListener('change', function(e){
+    if (!e.target.classList.contains('notes')) return;
+    var id = e.target.closest('tr').dataset.id;
+    act(id, 'notes', e.target.value).then(function(r){ if (r && r.ok){ toast('Note saved'); var x = data.registrations.filter(function(y){ return y.id===id; })[0]; if (x) x.notes = e.target.value; } });
+  });
+  $('tabs').addEventListener('click', function(e){ var b=e.target.closest('button[data-tab]'); if (!b) return; filter=b.dataset.tab; render(); });
+  $('search').addEventListener('input', function(e){ query=e.target.value.trim(); render(); });
+  $('refreshBtn').addEventListener('click', function(){ load().then(function(){ toast('Up to date'); }); });
+  $('logoutBtn').addEventListener('click', function(){ pw=''; try{ sessionStorage.removeItem('vbTeamPw'); }catch(e){} location.reload(); });
+  $('csvBtn').addEventListener('click', function(){
+    var cols = ['code','status','first_name','last_name','email','phone','street','street2','city','state','zip','amount','created_at','hold_expires_at','paid_at','confirmation_sent_at','notes'];
+    var lines = [cols.join(',')].concat(data.registrations.map(function(r){
+      return cols.map(function(c){ var v = r[c]==null ? '' : String(r[c]); return /[",\n]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; }).join(',');
+    }));
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([lines.join('\n')], { type:'text/csv' }));
+    a.download = 'vision-board-2027-guests.csv'; document.body.appendChild(a); a.click(); a.remove();
+  });
+  $('loginForm').addEventListener('submit', signIn);
+
+  // keep the list fresh while the tab is open, but don't redraw while someone is typing a note
+  setInterval(function(){ if (data && !document.hidden && !(document.activeElement && document.activeElement.classList.contains('notes'))) load(); }, 30000);
+  if (pw) signIn();
+})();
+</script>
+</body>
+</html>
