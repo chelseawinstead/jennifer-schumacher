@@ -1,6 +1,15 @@
 import postgres from "npm:postgres@3.4.4";
 
-const sql = postgres(Deno.env.get("SUPABASE_DB_URL")!, { max: 3, prepare: false });
+// Connect through Supabase's transaction pooler (port 6543), not the direct connection,
+// so a burst of visitors can't use up the database's connection slots (it also runs the CRM).
+const _direct = new URL(Deno.env.get("SUPABASE_DB_URL")!);
+const sql = postgres({
+  host: "aws-1-us-east-1.pooler.supabase.com", port: 6543, database: "postgres",
+  user: "postgres.agnpwmdwofrdyqzttmlv", password: decodeURIComponent(_direct.password),
+  ssl: "require", prepare: false, max: 2, idle_timeout: 10, connect_timeout: 10,
+});
+// The public seat counter is polled by every open page; answer from a short cache.
+let _status: { at: number; body: unknown } | null = null;
 const SITE = Deno.env.get("VB_SITE_URL") || "https://www.schumacherliving.com";
 
 const ALLOWED = ["https://www.schumacherliving.com", "https://schumacherliving.com"];
@@ -156,7 +165,9 @@ Deno.serve(async (req) => {
     const action = url.searchParams.get("action") || "status";
 
     if (req.method === "GET" && action === "status") {
+      if (_status && Date.now() - _status.at < 4000) return json(_status.body);
       const [row] = await sql`select vision_board.public_status() as s`;
+      _status = { at: Date.now(), body: row.s };
       return json(row.s);
     }
 
@@ -182,6 +193,7 @@ Deno.serve(async (req) => {
       if (f.phone.replace(/\D/g, "").length < 10) return json({ ok: false, error: "phone" }, 400);
       const [row] = await sql`select vision_board.register(${f.first}, ${f.last}, ${f.email}, ${f.phone},
         ${f.street}, ${f.street2}, ${f.city}, ${f.state}, ${f.zip}, ${f.company}) as r`;
+      _status = null;
       if (row.r.ok && !row.r.duplicate) {
         // send after responding so the guest never waits on Gmail
         // @ts-ignore EdgeRuntime is provided by Supabase
