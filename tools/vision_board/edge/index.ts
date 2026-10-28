@@ -233,6 +233,13 @@ Deno.serve(async (req) => {
         if (p.facebook) L.push(`X-SOCIALPROFILE;TYPE=facebook:${fb(p.facebook)}`);
         if (p.linkedin) L.push(`X-SOCIALPROFILE;TYPE=linkedin:${p.linkedin}`);
         if (p.youtube) L.push(`X-SOCIALPROFILE;TYPE=youtube:${p.youtube}`);
+        // Labeled links too: iPhone and Android both show these, even when they skip X-SOCIALPROFILE
+        let n = 0;
+        const item = (label: string, u: string) => { n++; L.push(`item${n}.URL:${u}`, `item${n}.X-ABLabel:${label}`); };
+        if (p.instagram) item("Instagram", ig(p.instagram));
+        if (p.facebook) item("Facebook", fb(p.facebook));
+        if (p.linkedin) item("LinkedIn", p.linkedin);
+        if (p.youtube) item("YouTube", p.youtube);
         if (p.note) L.push(`NOTE:${ve(p.note)}`);
         if (p.photo) L.push(p.photo);
         L.push("END:VCARD");
@@ -258,7 +265,8 @@ Deno.serve(async (req) => {
       if (!row.g.ok) return json({ ok: false }, 403);
       const crew = (row.g.crew || []) as any[];
       const toP = (c: any): P => ({ first_name: c.first_name, last_name: c.last_name, name: c.name, company: c.company, phone: c.phone, email: c.email,
-        city: c.city, state: c.state, instagram: c.instagram, facebook: c.facebook, note: MET + (c.my_note ? "\n" + c.my_note : "") });
+        city: c.city, state: c.state, instagram: c.instagram, facebook: c.facebook,
+        note: [MET, c.instagram ? "Instagram: " + ig(c.instagram) : "", c.facebook ? "Facebook: " + fb(c.facebook) : "", c.my_note ? "\nMy notes: " + c.my_note : ""].filter(Boolean).join("\n") });
       if (url.searchParams.get("all")) {
         const others = crew.filter((c) => !c.me);
         return vcf(others.map((c) => card(toP(c))).join("\r\n"), "Vision-Board-Crew-2027.vcf");
