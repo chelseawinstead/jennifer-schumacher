@@ -55,6 +55,12 @@
   .host-sheet .hs-acts .full{ grid-column:1/-1; }
   @media (max-width:380px){ .host-sheet .hs-acts a, .host-sheet .hs-acts button{ font-size:13px; } .host-sheet .hs-acts svg{ display:none; } .host-sheet .hs-acts .full svg{ display:inline; } }
   .host-sheet .hs-acts svg{ width:16px; height:16px; flex:none; }
+  .host-sheet .hs-soc{ display:flex; justify-content:center; flex-wrap:wrap; gap:14px; margin:16px 0 4px; }
+  .host-sheet .hs-soc a{ width:50px; height:50px; border-radius:50%; border:1px solid var(--navy); color:var(--navy); display:flex; align-items:center; justify-content:center; text-decoration:none; }
+  .host-sheet .hs-soc a:active{ background:var(--stone); }
+  .host-sheet .hs-soc svg{ width:22px; height:22px; }
+  .host-sheet .hs-save{ margin-top:14px; width:100%; display:flex; align-items:center; justify-content:center; gap:8px; min-height:48px; background:var(--navy); color:#fff; border:0; font-size:14px; }
+  .host-sheet .hs-save svg{ width:16px; height:16px; }
   .host-sheet .hs-line{ font-size:14px; color:var(--muted); margin:14px 0 4px; overflow-wrap:anywhere; }
   .speakers{ display:grid; gap:10px; margin-top:12px; }
   .spk{ display:grid; grid-template-columns:56px minmax(0,1fr); gap:12px; padding:12px; background:var(--paper); border:1px solid var(--line); }
@@ -641,20 +647,16 @@
     if (tel) a += '<a class="solid" href="sms:' + esc(tel) + '">' + ICON.text + 'Text</a><a href="tel:' + esc(tel) + '">' + ICON.call + 'Call</a>';
     if (h.email) a += '<a href="mailto:' + esc(h.email) + '">' + ICON.mail + 'Email</a>';
     var soc = '';
-    if (h.website) soc += '<a href="' + esc(h.website) + '" target="_blank" rel="noopener">' + ICON.web + 'Website</a>';
-    if (h.instagram) soc += '<a href="' + esc(igUrl(h.instagram)) + '" target="_blank" rel="noopener">' + ICON.ig + 'Instagram</a>';
-    if (h.facebook) soc += '<a href="' + esc(fbUrl(h.facebook)) + '" target="_blank" rel="noopener">' + ICON.fb + 'Facebook</a>';
-    if (h.linkedin) soc += '<a href="' + esc(h.linkedin) + '" target="_blank" rel="noopener">' + ICON.li + 'LinkedIn</a>';
-    if (h.youtube) soc += '<a href="' + esc(h.youtube) + '" target="_blank" rel="noopener">' + ICON.yt + 'YouTube</a>';
-    // three per row; if two are left over on the last row, they split it evenly
-    var socList = soc.match(/<a [\s\S]*?<\/a>/g) || [];
-    if (socList.length % 3 === 2) socList = socList.map(function(x, i){ return i >= socList.length - 2 ? x.replace('<a ', '<a class="half" ') : x; });
-    if (socList.length % 3 === 1) socList[socList.length - 1] = socList[socList.length - 1].replace('<a ', '<a class="full" ');
-    a += socList.join('');
-    a += '<button type="button" class="full solid" id="hostSave">' + ICON.save + 'Save Jennifer\u2019s contact</button>';
+    function ic(href, icon, label){ return '<a href="' + esc(href) + '" target="_blank" rel="noopener" aria-label="' + label + '" title="' + label + '">' + icon + '</a>'; }
+    if (h.website) soc += ic(h.website, ICON.web, 'Website');
+    if (h.instagram) soc += ic(igUrl(h.instagram), ICON.ig, 'Instagram');
+    if (h.facebook) soc += ic(fbUrl(h.facebook), ICON.fb, 'Facebook');
+    if (h.linkedin) soc += ic(h.linkedin, ICON.li, 'LinkedIn');
+    if (h.youtube) soc += ic(h.youtube, ICON.yt, 'YouTube');
     var lines = [h.phone ? prettyPhone(h.phone) : '', h.email || ''].filter(Boolean).join(' \u00b7 ');
     $('hostBody').innerHTML = '<div class="hs-top"><span class="av">' + (h.photo_url ? '<img src="' + esc(h.photo_url) + '" alt="">' : 'JS') + '</span><div><h2 id="hostName">' + esc(name) + '</h2>' +
-      (h.title ? '<p>' + esc(h.title) + '</p>' : '') + '</div></div>' + '<div class="hs-acts">' + a + '</div>' + (lines ? '<p class="hs-line">' + esc(lines) + '</p>' : '');
+      (h.title ? '<p>' + esc(h.title) + '</p>' : '') + '</div></div>' + '<div class="hs-acts">' + a + '</div>' + (soc ? '<div class="hs-soc">' + soc + '</div>' : '') +
+      '<button type="button" class="hs-save" id="hostSave">' + ICON.save + 'Save Jennifer\u2019s contact</button>' + (lines ? '<p class="hs-line">' + esc(lines) + '</p>' : '');
     $('hostSheet').hidden = false;
   }
   $('hostBtn').addEventListener('click', function(){ if (data) openHost(); });
