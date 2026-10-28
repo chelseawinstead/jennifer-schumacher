@@ -110,13 +110,26 @@
   .ag-day{ border:1px solid var(--line); padding:14px; margin-bottom:14px; }
   .ag-day-head{ display:flex; gap:10px; align-items:end; margin-bottom:8px; }
   .ag-day-head .fld{ flex:1; margin:0; }
-  .ag-item{ display:grid; grid-template-columns:130px 1fr 1fr 1fr auto; gap:8px; align-items:start; padding:10px 0; border-top:1px solid var(--line); }
+  .ag-item{ display:grid; grid-template-columns:170px 1fr 1fr 1fr auto; gap:8px; align-items:start; padding:10px 0; border-top:1px solid var(--line); }
   .ag-item input,.ag-item textarea,.ag-note input,.ag-note textarea{ width:100%; font:inherit; font-size:14px; padding:8px 10px; border:1px solid #cfcbc2; }
   .ag-item textarea{ grid-column:1/-2; min-height:38px; resize:vertical; }
   .ag-item .tools,.ag-note .tools{ display:flex; gap:4px; }
   .ag-item .tools button,.ag-note .tools button{ background:#fff; border:1px solid #cfcbc2; padding:6px 9px; font-size:13px; }
   .ag-item .tools button:hover,.ag-note .tools button:hover{ border-color:var(--navy); color:var(--navy); }
-  .ag-cap{ font-size:11px; color:var(--warm); letter-spacing:.04em; display:grid; grid-template-columns:130px 1fr 1fr 1fr auto; gap:8px; padding-bottom:4px; }
+  .ag-cap{ font-size:11px; color:var(--warm); letter-spacing:.04em; display:grid; grid-template-columns:170px 1fr 1fr 1fr auto; gap:8px; padding-bottom:4px; }
+  .ag-spk-wrap{ grid-column:1/-1; display:grid; gap:8px; }
+  .ag-spk{ display:grid; grid-template-columns:72px 1fr 1fr auto; gap:8px; align-items:start; background:var(--stone); padding:10px; }
+  .ag-spk input,.ag-spk textarea{ width:100%; font:inherit; font-size:14px; padding:8px 10px; border:1px solid #cfcbc2; background:#fff; }
+  .ag-spk textarea{ grid-column:2/-1; min-height:60px; resize:vertical; }
+  .ag-spk .links{ grid-column:2/-1; display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .ag-ph{ grid-row:span 3; display:grid; gap:4px; justify-items:center; font-size:12px; }
+  .ag-ph .pic{ width:64px; height:64px; border-radius:50%; background:#fff; border:1px dashed #b9b4a9; overflow:hidden; display:flex; align-items:center; justify-content:center; color:var(--warm); font-size:11px; text-align:center; }
+  .ag-ph .pic img{ width:100%; height:100%; object-fit:cover; }
+  .ag-ph label,.ag-ph button{ cursor:pointer; color:var(--navy); text-decoration:underline; background:none; border:0; padding:0; font-size:12px; }
+  .ag-spk .tools button{ background:#fff; border:1px solid #cfcbc2; padding:6px 9px; font-size:13px; }
+  .add.small{ font-size:13px; padding:6px 10px; justify-self:start; }
+  .ag-host{ display:grid; grid-template-columns:120px 1fr; gap:16px; align-items:start; }
+  .ag-host .ag-ph .pic{ width:110px; height:110px; }
   .ag-note{ border:1px solid var(--line); padding:12px; margin-bottom:10px; display:grid; grid-template-columns:150px 1fr auto; gap:8px; }
   .ag-note textarea{ grid-column:1/-1; min-height:90px; resize:vertical; }
   .add{ background:none; border:1px dashed var(--navy); color:var(--navy); padding:8px 14px; font-size:14px; }
@@ -126,6 +139,8 @@
     .ag-cap{ display:none; }
     .ag-item{ grid-template-columns:1fr 1fr; }
     .ag-item textarea{ grid-column:1/-1; }
+    .ag-spk{ grid-template-columns:72px 1fr; } .ag-spk textarea,.ag-spk .links{ grid-column:1/-1; } .ag-spk .links{ grid-template-columns:1fr; }
+    .ag-host{ grid-template-columns:1fr; }
     .ag-note{ grid-template-columns:1fr; }
   }
   .tpl-grid{ display:grid; grid-template-columns:1fr 1fr; gap:28px; }
@@ -450,7 +465,7 @@
   var SITE = 'https://www.schumacherliving.com';
   var ag = null, agTab = 'schedule', agDirty = false;
   function agTabs(){
-    var T = [['schedule','Schedule'],['venue','Venue & welcome'],['notes','Notes from Jennifer'],['settings','App settings']];
+    var T = [['schedule','Schedule'],['host','Jennifer\u2019s card'],['venue','Venue & welcome'],['notes','Notes from Jennifer'],['settings','App settings']];
     $('agTabs').innerHTML = T.map(function(t){ return '<button type="button" data-agt="'+t[0]+'" aria-pressed="'+(agTab===t[0])+'">'+t[1]+'</button>'; }).join('');
   }
   function fld(label, path, val, opts){
@@ -463,7 +478,7 @@
     agTabs();
     var h = '';
     if (agTab === 'schedule'){
-      h += '<p class="mail-help">Each line is one block of the weekend. Location and dress code are optional, and show as small tags under the title.</p>';
+      h += '<p class="mail-help">Each line is one block of the weekend. Location and dress code are optional, and show as small tags under the title. Use “+ Add speaker” to show a speaker’s photo, bio and links under that line.</p>';
       (ag.days||[]).forEach(function(d, di){
         h += '<div class="ag-day"><div class="ag-day-head">' + fld('Day', 'days.'+di+'.label', d.label, { ph:'Friday, January 8' }) +
           '<div class="tools ag-note" style="border:0;padding:0;margin:0;display:flex"><button type="button" data-ag="day-up" data-d="'+di+'">↑</button><button type="button" data-ag="day-down" data-d="'+di+'">↓</button><button type="button" data-ag="day-del" data-d="'+di+'">Remove day</button></div></div>' +
@@ -477,11 +492,35 @@
             '<input data-p="'+p+'dress" value="'+esc(it.dress)+'" placeholder="e.g. Cocktail casual" aria-label="Dress code">' +
             '<div class="tools"><button type="button" data-ag="up" data-d="'+di+'" data-i="'+ii+'" aria-label="Move up">↑</button><button type="button" data-ag="down" data-d="'+di+'" data-i="'+ii+'" aria-label="Move down">↓</button><button type="button" data-ag="del" data-d="'+di+'" data-i="'+ii+'" aria-label="Remove">✕</button></div>' +
             '<textarea data-p="'+p+'details" rows="1" placeholder="Extra details (optional)" aria-label="Details">'+esc(it.details||'')+'</textarea>' +
+            '<div class="ag-spk-wrap">' + (it.speakers||[]).map(function(sp, si){
+              var sp_ = p + 'speakers.' + si + '.';
+              return '<div class="ag-spk">' + photoPicker(sp_ + 'photo_url', sp.photo_url) +
+                '<input data-p="'+sp_+'name" value="'+esc(sp.name)+'" placeholder="Speaker name" aria-label="Speaker name">' +
+                '<input data-p="'+sp_+'title" value="'+esc(sp.title)+'" placeholder="e.g. Founder, Bloom Realty" aria-label="Speaker title">' +
+                '<div class="tools"><button type="button" data-ag="spk-del" data-d="'+di+'" data-i="'+ii+'" data-s="'+si+'" aria-label="Remove speaker">✕</button></div>' +
+                '<textarea data-p="'+sp_+'bio" placeholder="Short bio (optional)" aria-label="Speaker bio">'+esc(sp.bio||'')+'</textarea>' +
+                '<div class="links"><input data-p="'+sp_+'website" value="'+esc(sp.website)+'" placeholder="Website, e.g. bloomrealty.com" aria-label="Website">' +
+                '<input data-p="'+sp_+'instagram" value="'+esc(sp.instagram)+'" placeholder="Instagram, e.g. @handle" aria-label="Instagram">' +
+                '<input data-p="'+sp_+'facebook" value="'+esc(sp.facebook)+'" placeholder="Facebook link or username" aria-label="Facebook">' +
+                '<input data-p="'+sp_+'linkedin" value="'+esc(sp.linkedin)+'" placeholder="LinkedIn link" aria-label="LinkedIn"></div>' +
+              '</div>';
+            }).join('') + '<button type="button" class="add small" data-ag="spk-add" data-d="'+di+'" data-i="'+ii+'">+ Add speaker</button></div>' +
           '</div>';
         });
         h += '<button type="button" class="add" data-ag="add-item" data-d="'+di+'">+ Add to this day</button></div>';
       });
       h += '<button type="button" class="add" data-ag="add-day">+ Add a day</button>';
+    }
+    if (agTab === 'host'){
+      var ho = ag.host || {};
+      h += '<p class="mail-help">Guests see this photo next to your name at the top of the app. Tapping it opens this card with buttons to text, call, email and follow you, plus “Save Jennifer’s contact.”</p>' +
+        '<div class="ag-host">' + photoPicker('host.photo_url', ho.photo_url) + '<div class="ag-grid">' +
+        fld('Name', 'host.name', ho.name, { ph:'Jennifer Schumacher' }) + fld('Title line', 'host.title', ho.title, { ph:'e.g. Your host · Global Real Estate Advisor' }) +
+        fld('Cell phone', 'host.phone', ho.phone, { ph:'(480) 322-2593' }) + fld('Email', 'host.email', ho.email, { ph:'jennifer@schumacherliving.com' }) +
+        fld('Website', 'host.website', ho.website, { ph:'https://www.schumacherliving.com' }) + fld('Instagram handle', 'host.instagram', ho.instagram, { ph:'e.g. @schuliving' }) +
+        fld('Facebook link', 'host.facebook', ho.facebook, { ph:'https://www.facebook.com/…' }) + fld('LinkedIn link', 'host.linkedin', ho.linkedin, { ph:'https://www.linkedin.com/in/…' }) +
+        fld('YouTube link', 'host.youtube', ho.youtube, { ph:'https://www.youtube.com/@…' }) +
+        '</div></div>';
     }
     if (agTab === 'venue'){
       var v = ag.venue || {};
@@ -511,6 +550,13 @@
     }
     $('agBody').innerHTML = h;
   }
+  function photoPicker(path, url){
+    var id = 'ph-' + path.replace(/\W/g,'-');
+    return '<div class="ag-ph"><span class="pic">' + (url ? '<img src="' + esc(url) + '" alt="">' : 'No photo') + '</span>' +
+      '<label for="' + id + '">' + (url ? 'Change photo' : 'Add photo') + '</label><input type="file" accept="image/*" id="' + id + '" data-photo="' + path + '" hidden>' +
+      (url ? '<button type="button" data-ag="photo-del" data-path="' + path + '">Remove</button>' : '') + '</div>';
+  }
+  function agGetPath(path){ return path.split('.').reduce(function(o,k){ return o == null ? o : o[/^\d+$/.test(k) ? +k : k]; }, ag); }
   function agSetPath(path, val){
     var ks = path.split('.'), o = ag;
     for (var i=0;i<ks.length-1;i++){ var k = /^\d+$/.test(ks[i]) ? +ks[i] : ks[i]; if (o[k]==null) o[k] = {}; o = o[k]; }
@@ -526,7 +572,7 @@
   }
   function openAgenda(){
     ag = JSON.parse(JSON.stringify(data.settings.guide || {}));
-    ag.days = ag.days || []; ag.notes = ag.notes || []; ag.venue = ag.venue || {};
+    ag.days = ag.days || []; ag.notes = ag.notes || []; ag.venue = ag.venue || {}; ag.host = ag.host || {};
     ag._closes = new Date(new Date(data.settings.agenda_closes_at).getTime() - 7*36e5).toISOString().slice(0,10);
     agDirty = false; $('agStatus').textContent = ''; agSendInfo(); agRender(); $('agBox').hidden = false;
   }
@@ -539,6 +585,25 @@
     var el = e.target.closest('[data-p]'); if (!el) return;
     agSetPath(el.dataset.p, el.value); agDirty = true; $('agStatus').textContent = 'Unsaved changes';
   });
+  // photo upload for a speaker or Jennifer's card: square-crop to 600px, upload, keep the link
+  $('agBody').addEventListener('change', function(e){
+    var el = e.target.closest('[data-photo]'); if (!el) return;
+    var f = el.files && el.files[0], path = el.dataset.photo; el.value = ''; if (!f) return;
+    var img = new Image(), url = URL.createObjectURL(f);
+    $('agStatus').textContent = 'Uploading photo…';
+    img.onload = function(){
+      var s = Math.min(img.naturalWidth, img.naturalHeight), size = Math.min(600, s);
+      var c = document.createElement('canvas'); c.width = c.height = size;
+      c.getContext('2d').drawImage(img, (img.naturalWidth - s)/2, (img.naturalHeight - s)/2, s, s, 0, 0, size, size);
+      URL.revokeObjectURL(url);
+      api('team-upload-photo', { photo: c.toDataURL('image/jpeg', 0.86) }).then(function(r){
+        if (!r.ok){ $('agStatus').textContent = 'Photo didn’t upload. Try a different photo.'; return; }
+        agSetPath(path, r.url); agDirty = true; $('agStatus').textContent = 'Photo added. Click Save agenda to keep it.'; agRender();
+      }).catch(function(){ $('agStatus').textContent = 'Photo didn’t upload. Check your connection.'; });
+    };
+    img.onerror = function(){ $('agStatus').textContent = 'That photo couldn’t be opened. Try a JPG or PNG.'; };
+    img.src = url;
+  });
   $('agBody').addEventListener('click', function(e){
     var b = e.target.closest('[data-ag]'); if (!b) return;
     var a = b.dataset.ag, d = +b.dataset.d, i = +b.dataset.i, n = +b.dataset.n;
@@ -548,6 +613,9 @@
     if (a==='up') swap(ag.days[d].items, i, i-1);
     if (a==='down') swap(ag.days[d].items, i, i+1);
     if (a==='add-day') ag.days.push({ label:'', items:[] });
+    if (a==='spk-add'){ var it_ = ag.days[d].items[i]; it_.speakers = (it_.speakers||[]).concat([{ name:'', title:'', bio:'', photo_url:'', website:'', instagram:'', facebook:'', linkedin:'' }]); }
+    if (a==='spk-del' && confirm('Remove this speaker?')) ag.days[d].items[i].speakers.splice(+b.dataset.s, 1);
+    if (a==='photo-del') agSetPath(b.dataset.path, '');
     if (a==='day-del' && confirm('Remove this whole day and everything in it?')) ag.days.splice(d,1);
     if (a==='day-up') swap(ag.days, d, d-1);
     if (a==='day-down') swap(ag.days, d, d+1);
@@ -560,7 +628,9 @@
   $('agSave').addEventListener('click', function(){
     var btn = $('agSave'); btn.disabled = true;
     var closes = ag._closes ? new Date(ag._closes + 'T23:59:00-07:00').toISOString() : null;
-    var guide = { welcome: ag.welcome, venue: ag.venue, days: ag.days, notes: ag.notes };
+    var guide = { welcome: ag.welcome, host: ag.host || {}, venue: ag.venue, days: ag.days, notes: ag.notes };
+    var unnamed = (ag.days||[]).some(function(d){ return (d.items||[]).some(function(it){ return (it.speakers||[]).some(function(sp){ return !String(sp.name||'').trim(); }); }); });
+    if (unnamed && !confirm('A speaker has no name, so they won’t be saved. Save anyway?')){ btn.disabled = false; return; }
     api('team-guide-save', { guide: guide, closes_at: closes }).then(function(r){
       btn.disabled = false;
       if (r.ok){ agDirty = false; $('agStatus').textContent = 'Saved. Guests see it the next time they open the app.'; load(); }

@@ -367,8 +367,17 @@ Deno.serve(async (req) => {
         const g = b.guide;
         if (!g || typeof g !== "object") return json({ ok: false, error: "guide" }, 400);
         const str = (v: unknown, n = 500) => clean(v, n);
+        const httpsOnly = (v: unknown) => { let u = clean(v, 1000); if (u && !/^https?:\/\//i.test(u) && /\.[a-z]{2,}/i.test(u)) u = "https://" + u; return /^https:\/\//i.test(u) ? u : (/^http:\/\//i.test(u) ? u : ""); };
         const guide = {
           welcome: str(g.welcome, 1000),
+          host: {
+            name: str(g.host?.name, 120), title: str(g.host?.title, 200),
+            photo_url: /^\/[\w\-./]+$/.test(str(g.host?.photo_url, 500)) ? str(g.host?.photo_url, 500) : httpsOnly(g.host?.photo_url),
+            phone: str(g.host?.phone, 40), email: EMAIL.test(str(g.host?.email, 160)) ? str(g.host?.email, 160) : "",
+            website: httpsOnly(g.host?.website),
+            instagram: str(g.host?.instagram, 80).replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/^@/, "").replace(/[/?#].*$/, ""),
+            facebook: str(g.host?.facebook, 300), linkedin: httpsOnly(g.host?.linkedin), youtube: httpsOnly(g.host?.youtube),
+          },
           venue: {
             name: str(g.venue?.name, 200), address: str(g.venue?.address, 300), phone: str(g.venue?.phone, 60),
             booking_label: str(g.venue?.booking_label, 120), booking_url: /^https?:\/\//.test(str(g.venue?.booking_url, 1000)) ? str(g.venue?.booking_url, 1000) : "",
@@ -378,6 +387,12 @@ Deno.serve(async (req) => {
             label: str(d?.label, 120),
             items: (Array.isArray(d?.items) ? d.items : []).slice(0, 40).map((i: any) => ({
               time: str(i?.time, 60), title: str(i?.title, 200), location: str(i?.location, 200), dress: str(i?.dress, 200), details: str(i?.details, 1500),
+              speakers: (Array.isArray(i?.speakers) ? i.speakers : []).slice(0, 12).map((sp: any) => ({
+                name: str(sp?.name, 120), title: str(sp?.title, 200), bio: str(sp?.bio, 1500),
+                photo_url: httpsOnly(sp?.photo_url), website: httpsOnly(sp?.website),
+                instagram: str(sp?.instagram, 80).replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/^@/, "").replace(/[/?#].*$/, ""),
+                facebook: str(sp?.facebook, 300), linkedin: httpsOnly(sp?.linkedin),
+              })).filter((sp: any) => sp.name),
             })),
           })),
           notes: (Array.isArray(g.notes) ? g.notes : []).slice(0, 50).map((n: any) => ({
@@ -399,6 +414,20 @@ Deno.serve(async (req) => {
         // @ts-ignore EdgeRuntime is provided by Supabase
         EdgeRuntime.waitUntil((async () => { for (const id of ids) { await sendKind(id, "agenda", "team"); await new Promise((r) => setTimeout(r, 400)); } })());
         return json({ ok: true, queued: ids.length });
+      }
+
+      // Upload a speaker photo from the agenda editor; returns its public URL
+      if (action === "team-upload-photo" && req.method === "POST") {
+        const m = /^data:image\/jpeg;base64,([A-Za-z0-9+/=]+)$/.exec(String(b.photo || ""));
+        if (!m) return json({ ok: false, error: "photo" }, 400);
+        const bytes = Uint8Array.from(atob(m[1]), (c) => c.charCodeAt(0));
+        if (bytes.length > 1_500_000) return json({ ok: false, error: "photo_too_big" }, 400);
+        const path = `speakers/${crypto.randomUUID()}.jpg`;
+        const up = await fetch(`${Deno.env.get("SUPABASE_URL")}/storage/v1/object/vision-board-photos/${path}`, {
+          method: "POST", headers: { ...storageAuth(), "Content-Type": "image/jpeg", "cache-control": "31536000" }, body: bytes,
+        });
+        if (!up.ok) { console.error("speaker upload", up.status, await up.text()); return json({ ok: false, error: "upload" }, 502); }
+        return json({ ok: true, url: `${Deno.env.get("SUPABASE_URL")}/storage/v1/object/public/vision-board-photos/${path}` });
       }
 
       if (action === "team-optin" && req.method === "POST") {
