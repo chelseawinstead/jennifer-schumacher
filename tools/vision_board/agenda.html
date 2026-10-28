@@ -59,7 +59,7 @@
   .host-sheet .hs-soc a{ width:50px; height:50px; border-radius:50%; border:1px solid var(--navy); color:var(--navy); display:flex; align-items:center; justify-content:center; text-decoration:none; }
   .host-sheet .hs-soc a:active{ background:var(--stone); }
   .host-sheet .hs-soc svg{ width:22px; height:22px; }
-  .host-sheet .hs-save{ margin-top:14px; width:100%; display:flex; align-items:center; justify-content:center; gap:8px; min-height:48px; background:var(--navy); color:#fff; border:0; font-size:14px; }
+  .host-sheet .hs-save{ margin-top:14px; width:100%; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px; min-height:48px; background:var(--navy); color:#fff; border:0; font-size:14px; }
   .host-sheet .hs-save svg{ width:16px; height:16px; }
   .host-sheet .hs-line{ font-size:14px; color:var(--muted); margin:14px 0 4px; overflow-wrap:anywhere; }
   .speakers{ display:grid; gap:10px; margin-top:12px; }
@@ -299,6 +299,11 @@
       <div><b>Show me in the Crew list</b><span>On for everyone. Shows your name, photo, company, city, cell number and socials to confirmed guests only. Turn it off to hide.</span></div>
       <label class="switch"><input type="checkbox" id="pfOptin" aria-label="Show me in the Crew list"><i></i></label>
     </div>
+    <label class="fld">Company<input id="pfCo" autocomplete="organization" placeholder="e.g. Russ Lyon Sotheby's"></label>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:10px">
+      <label class="fld">City<input id="pfCity" autocomplete="address-level2" placeholder="e.g. Scottsdale"></label>
+      <label class="fld">State<input id="pfState" autocomplete="address-level1" placeholder="e.g. AZ" maxlength="20"></label>
+    </div>
     <label class="fld">Instagram handle<input id="pfIg" placeholder="@yourhandle" autocapitalize="none" autocomplete="off" spellcheck="false"></label>
     <label class="fld">Facebook profile link or username<input id="pfFb" placeholder="facebook.com/yourname" autocapitalize="none" autocomplete="off" spellcheck="false"></label>
     <button class="btn solid" type="button" id="pfSave" style="width:100%">Save my profile</button>
@@ -348,7 +353,7 @@
   function initials(name){ return String(name||'?').split(/\s+/).map(function(w){ return w[0]||''; }).slice(0,2).join('').toUpperCase(); }
   function avatar(p){ return p.photo_url ? '<img src="' + esc(p.photo_url) + '" alt="" loading="lazy">' : esc(initials(p.name || ((p.first_name||'') + ' ' + (p.last_name||'')))); }
   function igUrl(h){ return 'https://www.instagram.com/' + encodeURIComponent(String(h).replace(/^@/,'')) + '/'; }
-  function fbUrl(f){ return /^https?:\/\//i.test(f) ? f : 'https://www.facebook.com/' + encodeURIComponent(String(f).replace(/^@/,'')); }
+  function fbUrl(f){ f = String(f).trim(); if (/^https?:\/\//i.test(f)) return f; if (/^(www\.|m\.)?(facebook|fb)\.com\//i.test(f)) return 'https://www.facebook.com/' + f.replace(/^(www\.|m\.)?(facebook|fb)\.com\//i, ''); return 'https://www.facebook.com/' + encodeURIComponent(f.replace(/^@/,'')); }
   function toast(t){ var el=$('toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(function(){ el.classList.remove('on'); }, 2400); }
   function store(v){ try { v ? localStorage.setItem(KEY, v) : localStorage.removeItem(KEY); } catch(e){} }
   function stored(){ try { return localStorage.getItem(KEY) || ''; } catch(e){ return ''; } }
@@ -481,7 +486,7 @@
       if (tel && !p.me) acts += '<a class="solid" href="sms:' + esc(tel) + '">' + ICON.text + 'Text</a><a href="tel:' + esc(tel) + '">' + ICON.call + 'Call</a>';
       if (p.instagram) acts += '<a href="' + esc(igUrl(p.instagram)) + '" target="_blank" rel="noopener">' + ICON.ig + 'Instagram</a>';
       if (p.facebook) acts += '<a href="' + esc(fbUrl(p.facebook)) + '" target="_blank" rel="noopener">' + ICON.fb + 'Facebook</a>';
-      if (!p.me) acts += '<button type="button" data-save="' + esc(p.id) + '">' + ICON.save + 'Save contact</button>';
+      if (!p.me) acts += '<a href="' + API + '?action=vcard&r=' + encodeURIComponent(R) + '&p=' + encodeURIComponent(p.id) + '">' + ICON.save + 'Save contact</a>';
       return '<div class="person' + (open ? ' open' : '') + '" data-id="' + esc(p.id) + '">' +
         '<button class="p-row" type="button" aria-expanded="' + open + '"><span class="av">' + avatar(p) + '</span><span>' +
           '<span class="nm">' + esc(p.name) + (p.me ? '<span class="you-tag">You</span>' : '') + '</span>' +
@@ -534,7 +539,7 @@
   $('saveAll').addEventListener('click', function(){
     var others = (data.crew||[]).filter(function(p){ return !p.me; });
     if (!others.length) return;
-    download('Vision-Board-Crew-2027.vcf', others.map(vcard).join('\r\n'));
+    location.href = API + '?action=vcard&all=1&r=' + encodeURIComponent(R);
   });
 
   // ---- private notes (autosave) ----
@@ -568,6 +573,7 @@
     var me = data.me || {}; pendingPhoto = null; removePhoto = false;
     $('pfAv').innerHTML = avatar(me); $('pfRemove').hidden = !me.photo_url;
     $('pfOptin').checked = !!me.directory_opt_in; $('pfIg').value = me.instagram ? '@' + me.instagram : ''; $('pfFb').value = me.facebook || '';
+    $('pfCo').value = me.company || ''; $('pfCity').value = me.city || ''; $('pfState').value = me.state || '';
     $('pfMsg').textContent = ''; $('pfMsg').className = 'msg'; $('sheet').hidden = false;
   }
   function closeSheet(){ $('sheet').hidden = true; }
@@ -595,7 +601,8 @@
   });
   $('pfSave').addEventListener('click', function(){
     var btn = $('pfSave'); btn.disabled = true; btn.textContent = 'Saving\u2026';
-    var body = { r:R, directory_opt_in: $('pfOptin').checked, instagram: $('pfIg').value, facebook: $('pfFb').value };
+    var body = { r:R, directory_opt_in: $('pfOptin').checked, instagram: $('pfIg').value, facebook: $('pfFb').value,
+      company: $('pfCo').value, city: $('pfCity').value, state: $('pfState').value };
     if (pendingPhoto) body.photo = pendingPhoto; else if (removePhoto) body.remove_photo = true;
     post('profile', body).then(function(d){
       btn.disabled = false; btn.textContent = 'Save my profile';
@@ -656,20 +663,13 @@
     var lines = [h.phone ? prettyPhone(h.phone) : '', h.email || ''].filter(Boolean).join(' \u00b7 ');
     $('hostBody').innerHTML = '<div class="hs-top"><span class="av">' + (h.photo_url ? '<img src="' + esc(h.photo_url) + '" alt="">' : 'JS') + '</span><div><h2 id="hostName">' + esc(name) + '</h2>' +
       (h.title ? '<p>' + esc(h.title) + '</p>' : '') + '</div></div>' + '<div class="hs-acts">' + a + '</div>' + (soc ? '<div class="hs-soc">' + soc + '</div>' : '') +
-      '<button type="button" class="hs-save" id="hostSave">' + ICON.save + 'Save Jennifer\u2019s contact</button>' + (lines ? '<p class="hs-line">' + esc(lines) + '</p>' : '');
+      '<a class="hs-save" href="' + API + '?action=vcard&host=1">' + ICON.save + 'Save Jennifer\u2019s contact</a>' + (lines ? '<p class="hs-line">' + esc(lines) + '</p>' : '');
     $('hostSheet').hidden = false;
   }
   $('hostBtn').addEventListener('click', function(){ if (data) openHost(); });
   $('hostClose').addEventListener('click', function(){ $('hostSheet').hidden = true; });
   $('hostSheet').addEventListener('click', function(e){
     if (e.target.id === 'hostSheet') { $('hostSheet').hidden = true; return; }
-    if (e.target.closest('#hostSave')){
-      var h = (data.guide && data.guide.host) || {}, parts = String(h.name || 'Jennifer Schumacher').split(/\s+/);
-      var links = [h.instagram ? 'Instagram: ' + igUrl(h.instagram) : '', h.facebook ? 'Facebook: ' + fbUrl(h.facebook) : '', h.linkedin ? 'LinkedIn: ' + h.linkedin : '', h.youtube ? 'YouTube: ' + h.youtube : ''].filter(Boolean).join('\n');
-      download('Jennifer-Schumacher.vcf', vcard({ name: h.name || 'Jennifer Schumacher', first_name: parts[0], last_name: parts.slice(1).join(' '),
-        company: 'Russ Lyon Sotheby\u2019s International Realty', phone: h.phone, email: h.email, website: h.website, instagram: h.instagram, facebook: h.facebook,
-        note_override: 'Host of Vision Board Crew 2027.' + (links ? '\n' + links : '') }));
-    }
   });
   document.addEventListener('visibilitychange', function(){
     if (document.hidden || !data || !$('sheet').hidden || document.activeElement && document.activeElement.matches('textarea,input')) return;

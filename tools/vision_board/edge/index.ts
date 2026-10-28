@@ -200,6 +200,75 @@ Deno.serve(async (req) => {
       return json(row.g, row.g.ok ? 200 : 404);
     }
 
+    // Contact cards (.vcf). Served as a real file so iPhone/Android open their "Add contact" screen.
+    //   ?action=vcard&host=1                  Jennifer (public info)
+    //   ?action=vcard&r=<guest id>&p=<public_id>   one Crew member, with the viewer's private note
+    //   ?action=vcard&r=<guest id>&all=1      everyone in the Crew list except the viewer
+    if (req.method === "GET" && action === "vcard") {
+      const ve = (v: unknown) => String(v ?? "").replace(/\\/g, "\\\\").replace(/\r?\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
+      const digits = (v: unknown) => String(v ?? "").replace(/[^\d+]/g, "");
+      const ig = (h: string) => `https://www.instagram.com/${encodeURIComponent(h.replace(/^@/, ""))}/`;
+      const fb = (f: string) => /^https?:\/\//i.test(f) ? f : `https://www.facebook.com/${encodeURIComponent(f.replace(/^@/, ""))}`;
+      async function photoLine(url: string | null | undefined) {
+        if (!url) return "";
+        try {
+          const abs = url.startsWith("/") ? SITE + url : url;
+          const r = await fetch(abs); if (!r.ok) return "";
+          const buf = new Uint8Array(await r.arrayBuffer()); if (buf.length > 400_000) return "";
+          let bin = ""; for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode(...buf.subarray(i, i + 0x8000));
+          return "PHOTO;ENCODING=b;TYPE=JPEG:" + btoa(bin);
+        } catch { return ""; }
+      }
+      type P = { first_name?: string; last_name?: string; name?: string; company?: string; title?: string; phone?: string; email?: string;
+        city?: string; state?: string; website?: string; instagram?: string; facebook?: string; linkedin?: string; youtube?: string; note?: string; photo?: string };
+      const card = (p: P) => {
+        const L = ["BEGIN:VCARD", "VERSION:3.0", `N:${ve(p.last_name)};${ve(p.first_name)};;;`, `FN:${ve(p.name || `${p.first_name || ""} ${p.last_name || ""}`.trim())}`];
+        if (p.company) L.push(`ORG:${ve(p.company)}`);
+        if (p.title) L.push(`TITLE:${ve(p.title)}`);
+        if (p.phone && digits(p.phone).replace(/\D/g, "").replace(/0/g, "")) L.push(`TEL;TYPE=CELL:${digits(p.phone)}`);
+        if (p.email) L.push(`EMAIL;TYPE=INTERNET:${p.email}`);
+        if (p.city || p.state) L.push(`ADR;TYPE=WORK:;;;${ve(p.city)};${ve(p.state)};;`);
+        if (p.website) L.push(`URL:${p.website}`);
+        if (p.instagram) L.push(`X-SOCIALPROFILE;TYPE=instagram:${ig(p.instagram)}`);
+        if (p.facebook) L.push(`X-SOCIALPROFILE;TYPE=facebook:${fb(p.facebook)}`);
+        if (p.linkedin) L.push(`X-SOCIALPROFILE;TYPE=linkedin:${p.linkedin}`);
+        if (p.youtube) L.push(`X-SOCIALPROFILE;TYPE=youtube:${p.youtube}`);
+        if (p.note) L.push(`NOTE:${ve(p.note)}`);
+        if (p.photo) L.push(p.photo);
+        L.push("END:VCARD");
+        return L.join("\r\n");
+      };
+      const vcf = (body: string, file: string) => new Response(body + "\r\n", { headers: { ...cors,
+        "Content-Type": "text/vcard; charset=utf-8", "Content-Disposition": `inline; filename="${file}"`, "Cache-Control": "no-store" } });
+      const MET = "Met at Vision Board Crew 2027 (Jan 8-9, Scottsdale).";
+
+      if (url.searchParams.get("host")) {
+        const [row] = await sql`select guide->'host' as h from vision_board.settings where id = 1`;
+        const h = row.h || {};
+        const parts = String(h.name || "Jennifer Schumacher").split(/\s+/);
+        const links = [h.instagram ? "Instagram: " + ig(h.instagram) : "", h.facebook ? "Facebook: " + fb(h.facebook) : "", h.linkedin ? "LinkedIn: " + h.linkedin : "", h.youtube ? "YouTube: " + h.youtube : ""].filter(Boolean).join("\n");
+        return vcf(card({ first_name: parts[0], last_name: parts.slice(1).join(" "), name: h.name || "Jennifer Schumacher",
+          company: "Russ Lyon Sotheby's International Realty", title: "Global Real Estate Advisor", phone: h.phone, email: h.email,
+          website: h.website, instagram: h.instagram, facebook: h.facebook, linkedin: h.linkedin, youtube: h.youtube,
+          note: "Host of Vision Board Crew 2027." + (links ? "\n" + links : ""), photo: await photoLine(h.photo_url) }), "Jennifer-Schumacher.vcf");
+      }
+      const id = clean(url.searchParams.get("r"), 40);
+      if (!UUID.test(id)) return json({ ok: false }, 404);
+      const [row] = await sql`select vision_board.guide_for_guest(${id}::uuid) as g`;
+      if (!row.g.ok) return json({ ok: false }, 403);
+      const crew = (row.g.crew || []) as any[];
+      const toP = (c: any): P => ({ first_name: c.first_name, last_name: c.last_name, name: c.name, company: c.company, phone: c.phone,
+        city: c.city, state: c.state, instagram: c.instagram, facebook: c.facebook, note: MET + (c.my_note ? "\n" + c.my_note : "") });
+      if (url.searchParams.get("all")) {
+        const others = crew.filter((c) => !c.me);
+        return vcf(others.map((c) => card(toP(c))).join("\r\n"), "Vision-Board-Crew-2027.vcf");
+      }
+      const pid = clean(url.searchParams.get("p"), 40);
+      const c = crew.find((x) => x.id === pid);
+      if (!c) return json({ ok: false }, 404);
+      return vcf(card({ ...toP(c), photo: await photoLine(c.photo_url) }), (String(c.name).replace(/[^\w ]/g, "").replace(/\s+/g, "-") || "contact") + ".vcf");
+    }
+
     // Event agenda, opened with a paid guest's personal link (?r=<their id>)
     if (req.method === "POST" && action === "agenda") {
       const b = await req.json().catch(() => ({}));
@@ -218,6 +287,10 @@ Deno.serve(async (req) => {
       const fb = clean(b.facebook, 200);
       const [row] = await sql`select vision_board.guest_update_profile(${id}::uuid, ${b.directory_opt_in === true}, ${ig}, ${fb}) as r`;
       if (!row.r.ok) return json({ ok: false }, 403);
+      // Company / city / state as shown in the app (the registration on file is left alone)
+      if ("company" in b || "city" in b || "state" in b) {
+        await sql`select vision_board.guest_update_details(${id}::uuid, ${clean(b.company, 120)}, ${clean(b.city, 80)}, ${clean(b.state, 40)})`;
+      }
 
       if (b.remove_photo || typeof b.photo === "string") {
         let url: string | null = null;
