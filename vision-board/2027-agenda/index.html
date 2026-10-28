@@ -136,6 +136,7 @@
   /* crew */
   .save-all{ background:var(--paper); border:1px solid var(--line); padding:14px 16px; margin-bottom:14px; display:grid; gap:10px; }
   .save-all p{ font-size:14px; color:var(--muted); }
+  .save-all p b{ color:var(--ink); font-weight:500; }
   .search{ width:100%; font-size:16px; padding:12px 14px; border:1px solid #cfcbc2; background:var(--paper); margin-bottom:8px; border-radius:0; -webkit-appearance:none; }
   .search:focus{ outline:0; border-color:var(--navy); box-shadow:0 0 0 1px var(--navy); }
   .person{ border-top:1px solid var(--line); }
@@ -272,8 +273,7 @@
         <button class="btn solid" type="button" id="nudgeBtn">Show me in the Crew</button>
       </div>
       <div class="save-all">
-        <p id="saveAllTxt">Save everyone to your phone's contacts, with their email, company, socials and your notes. Do this before the app closes.</p>
-        <button class="btn solid" type="button" id="saveAll">Save all to my contacts</button>
+        <p id="saveAllTxt"><b>Heads up:</b> this app closes after the event. Save the contacts and connections that matter to you before then.</p>
       </div>
       <div class="crew-tools">
         <input class="search" id="crewSearch" type="search" placeholder="Search name, company, city or state" aria-label="Search the Crew by name, company, city or state">
@@ -420,7 +420,7 @@
     $('countdown').hidden = days < 1; $('countdown').textContent = days === 1 ? 'Tomorrow!' : days + ' days to go';
     var closeLabel = azDate(data.closes_at, { month:'long', day:'numeric', year:'numeric' });
     $('closes').textContent = 'App open until ' + closeLabel;
-    $('saveAllTxt').textContent = 'Save everyone to your phone\u2019s contacts, with their email, company, socials and your notes. This app closes ' + closeLabel + ', so save what you need before then.';
+    $('saveAllTxt').innerHTML = '<b>Heads up:</b> this app closes ' + esc(closeLabel) + '. Tap anyone below and use <b>Save contact</b> to keep their info and your notes on your phone before then.';
     renderDays(); renderVenue(); renderCrew(); renderNotes();
   }
   function renderDays(){
@@ -478,7 +478,6 @@
     var crew = data.crew || [], me = data.me || {}, raw = ($('crewSearch').value || '').trim(), q = raw.toLowerCase();
     $('crewSub').textContent = crew.length + ' confirmed guests are in the Crew list. Tap someone to text, connect or jot a note.';
     $('optinNudge').hidden = !!me.directory_opt_in;
-    $('saveAll').disabled = !crew.length;
     // state filter: one entry per state, with counts
     var counts = {}; crew.forEach(function(p){ var c = stateCode(p.state); if (c) counts[c] = (counts[c]||0) + 1; });
     var sel = $('crewState'), cur = sel.value, codes = Object.keys(counts).sort(function(a,b){ return stateLabel(a).localeCompare(stateLabel(b)); });
@@ -554,11 +553,6 @@
     var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
     document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
   }
-  $('saveAll').addEventListener('click', function(){
-    var others = (data.crew||[]).filter(function(p){ return !p.me; });
-    if (!others.length) return;
-    location.href = API + '?action=vcard&all=1&r=' + encodeURIComponent(R);
-  });
 
   // ---- private notes (autosave) ----
   var noteTimers = {};
