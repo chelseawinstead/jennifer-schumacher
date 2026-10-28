@@ -500,7 +500,6 @@
       var place = [p.city, stateCode(p.state)].filter(Boolean).join(', '), tel = digits(p.phone), open = openId === p.id;
       var realTel = tel && /[1-9]/.test(tel), main = '', icons = '';
       if (realTel) main += '<a class="ic solid" href="sms:' + esc(tel) + '" aria-label="Text" title="Text">' + ICON.text + '</a><a class="ic" href="tel:' + esc(tel) + '" aria-label="Call" title="Call">' + ICON.call + '</a>';
-      if (p.email) main += '<a class="ic" href="mailto:' + esc(p.email) + '" aria-label="Email" title="Email">' + ICON.mail + '</a>';
       var save = '<a class="save" href="' + API + '?action=vcard&r=' + encodeURIComponent(R) + '&p=' + encodeURIComponent(p.id) + '">' + ICON.save + 'Save contact</a>';
       if (p.instagram) icons += '<a class="ic" href="' + esc(igUrl(p.instagram)) + '" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">' + ICON.ig + '</a>';
       if (p.facebook) icons += '<a class="ic" href="' + esc(fbUrl(p.facebook)) + '" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook">' + ICON.fb + '</a>';
