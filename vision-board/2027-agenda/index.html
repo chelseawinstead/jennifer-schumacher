@@ -302,6 +302,7 @@
       <div><b>Show me in the Crew list</b><span>On for everyone. Shows your name, photo, company, city, cell number, email and socials to confirmed guests only. Turn it off to hide.</span></div>
       <label class="switch"><input type="checkbox" id="pfOptin" aria-label="Show me in the Crew list"><i></i></label>
     </div>
+    <label class="fld">Email others see<input id="pfEmail" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="you@example.com"></label>
     <label class="fld">Company<input id="pfCo" autocomplete="organization" placeholder="e.g. Russ Lyon Sotheby's"></label>
     <div style="display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:10px">
       <label class="fld">City<input id="pfCity" autocomplete="address-level2" placeholder="e.g. Scottsdale"></label>
@@ -582,6 +583,7 @@
     var me = data.me || {}; pendingPhoto = null; removePhoto = false;
     $('pfAv').innerHTML = avatar(me); $('pfRemove').hidden = !me.photo_url;
     $('pfOptin').checked = !!me.directory_opt_in; $('pfIg').value = me.instagram ? '@' + me.instagram : ''; $('pfFb').value = me.facebook || '';
+    $('pfEmail').value = me.email || '';
     $('pfCo').value = me.company || ''; $('pfCity').value = me.city || ''; $('pfState').value = me.state || '';
     $('pfMsg').textContent = ''; $('pfMsg').className = 'msg'; $('sheet').hidden = false;
   }
@@ -611,11 +613,11 @@
   $('pfSave').addEventListener('click', function(){
     var btn = $('pfSave'); btn.disabled = true; btn.textContent = 'Saving\u2026';
     var body = { r:R, directory_opt_in: $('pfOptin').checked, instagram: $('pfIg').value, facebook: $('pfFb').value,
-      company: $('pfCo').value, city: $('pfCity').value, state: $('pfState').value };
+      email: $('pfEmail').value.trim(), company: $('pfCo').value, city: $('pfCity').value, state: $('pfState').value };
     if (pendingPhoto) body.photo = pendingPhoto; else if (removePhoto) body.remove_photo = true;
     post('profile', body).then(function(d){
       btn.disabled = false; btn.textContent = 'Save my profile';
-      if (!d.ok){ $('pfMsg').className = 'msg err'; $('pfMsg').textContent = d.error === 'photo_too_big' ? 'That photo is too large. Try another one.' : 'Didn\u2019t save. Try again in a moment.'; return; }
+      if (!d.ok){ $('pfMsg').className = 'msg err'; $('pfMsg').textContent = d.error === 'photo_too_big' ? 'That photo is too large. Try another one.' : d.error === 'email' ? 'That email doesn\u2019t look right. Check it and try again.' : 'Didn\u2019t save. Try again in a moment.'; return; }
       data = d; render(); closeSheet(); toast(d.me.directory_opt_in ? 'Saved. You\u2019re in the Crew list.' : 'Saved');
     }).catch(function(){ btn.disabled = false; btn.textContent = 'Save my profile'; $('pfMsg').className = 'msg err'; $('pfMsg').textContent = 'Didn\u2019t save. Check your connection.'; });
   });
@@ -671,7 +673,7 @@
     var lines = [h.phone ? prettyPhone(h.phone) : '', h.email || ''].filter(Boolean).join(' \u00b7 ');
     $('hostBody').innerHTML = '<div class="hs-top"><span class="av">' + (h.photo_url ? '<img src="' + esc(h.photo_url) + '" alt="">' : 'JS') + '</span><div><h2 id="hostName">' + esc(name) + '</h2>' +
       (h.title ? '<p>' + esc(h.title) + '</p>' : '') + '</div></div>' + '<div class="hs-acts">' + a + '</div>' + (soc ? '<div class="hs-soc">' + soc + '</div>' : '') +
-      '<a class="hs-save" href="' + API + '?action=vcard&host=1">' + ICON.save + 'Save Jennifer\u2019s contact</a>' + (lines ? '<p class="hs-line">' + esc(lines) + '</p>' : '');
+      '<a class="hs-save" href="' + API + '?action=vcard&host=1">' + ICON.save + 'Save Jennifer\u2019s contact</a>';
     $('hostSheet').hidden = false;
   }
   $('hostBtn').addEventListener('click', function(){ if (data) openHost(); });
@@ -686,7 +688,16 @@
       (document.activeElement && document.activeElement.matches('textarea,input,select')) ||
       Object.keys(noteTimers).some(function(k){ return noteTimers[k]; });
   }
-  function refresh(){ if (!document.hidden && data && !busy()) load(); }
+  // Also notice when a new version of the app itself is published, and reload into it.
+  var pageTag = null;
+  function checkVersion(){
+    return fetch(location.pathname, { method:'HEAD', cache:'no-store' }).then(function(r){
+      var t = r.headers.get('etag'); if (!t) return;
+      if (pageTag && t !== pageTag && !busy()) location.reload(); else pageTag = pageTag || t;
+    }).catch(function(){});
+  }
+  function refresh(){ if (!document.hidden && data && !busy()){ load(); checkVersion(); } }
+  checkVersion();
   document.addEventListener('visibilitychange', refresh);
   setInterval(refresh, 20000);
 

@@ -288,7 +288,10 @@ Deno.serve(async (req) => {
       const [row] = await sql`select vision_board.guest_update_profile(${id}::uuid, ${b.directory_opt_in === true}, ${ig}, ${fb}) as r`;
       if (!row.r.ok) return json({ ok: false }, 403);
       // Company / city / state as shown in the app (the registration on file is left alone)
-      if ("company" in b || "city" in b || "state" in b) {
+      if ("email" in b) {
+        const [d] = await sql`select vision_board.guest_update_details(${id}::uuid, ${clean(b.company, 120)}, ${clean(b.city, 80)}, ${clean(b.state, 40)}, ${clean(b.email, 160)}) as r`;
+        if (!d.r.ok) return json({ ok: false, error: d.r.error || "details" }, 400);
+      } else if ("company" in b || "city" in b || "state" in b) {
         await sql`select vision_board.guest_update_details(${id}::uuid, ${clean(b.company, 120)}, ${clean(b.city, 80)}, ${clean(b.state, 40)})`;
       }
 
