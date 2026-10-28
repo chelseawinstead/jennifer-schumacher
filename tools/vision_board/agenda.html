@@ -503,7 +503,7 @@
       if (p.email) main += '<a href="mailto:' + esc(p.email) + '">' + ICON.mail + 'Email</a>';
       if (p.instagram) icons += '<a class="ic" href="' + esc(igUrl(p.instagram)) + '" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">' + ICON.ig + '</a>';
       if (p.facebook) icons += '<a class="ic" href="' + esc(fbUrl(p.facebook)) + '" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook">' + ICON.fb + '</a>';
-      if (!p.me) icons += '<a class="save" href="' + API + '?action=vcard&r=' + encodeURIComponent(R) + '&p=' + encodeURIComponent(p.id) + '">' + ICON.save + 'Save contact</a>';
+      icons += '<a class="save" href="' + API + '?action=vcard&r=' + encodeURIComponent(R) + '&p=' + encodeURIComponent(p.id) + '">' + ICON.save + 'Save contact</a>';
       var acts = (main ? '<div class="p-main">' + main + '</div>' : '') + (icons ? '<div class="p-icons">' + icons + '</div>' : '');
       return '<div class="person' + (open ? ' open' : '') + '" data-id="' + esc(p.id) + '">' +
         '<button class="p-row" type="button" aria-expanded="' + open + '"><span class="av">' + avatar(p) + '</span><span>' +
