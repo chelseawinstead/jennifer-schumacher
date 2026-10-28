@@ -375,7 +375,10 @@
   function load(){
     return post('agenda', { r: R }).then(function(d){
       if (!d.ok) return showGate(d);
-      if (!PREVIEW) store(R); data = d; $('gate').hidden = true; $('app').hidden = false; render();
+      if (!PREVIEW) store(R);
+      var sig = JSON.stringify(d);
+      if (data && sig === load.sig) return; // nothing changed: leave the screen alone
+      load.sig = sig; data = d; $('gate').hidden = true; $('app').hidden = false; render();
     }).catch(function(){
       if (data) return; // keep what's on screen if a refresh fails
       showGate({ reason:'offline' });
@@ -426,6 +429,7 @@
     $('dayBtns').hidden = days.length < 2;
     var d = days[dayIdx];
     if (!d){ $('dayList').innerHTML = '<div class="empty">The schedule will be posted here soon.</div>'; return; }
+    var wasOpen = [].map.call(document.querySelectorAll('#dayList details.spk'), function(x){ return x.open; });
     $('dayList').innerHTML = '<h2 class="day-title">' + esc(d.label) + '</h2>' + ((d.items||[]).map(function(it){
       var meta = '';
       if (it.location) meta += '<button type="button" class="chip place" data-place="' + esc(it.location) + '"><b>Where</b> ' + esc(it.location) + ' ' + PIN + '</button>';
@@ -433,6 +437,7 @@
       return '<div class="item"><time>' + esc(it.time) + '</time><div><h3>' + esc(it.title) + '</h3>' + speakersHtml(it.speakers) +
         (meta ? '<div class="meta">' + meta + '</div>' : '') + (it.details ? '<p class="det">' + rich(it.details) + '</p>' : '') + '</div></div>';
     }).join('') || '<div class="empty">Details for this day are coming soon.</div>');
+    [].forEach.call(document.querySelectorAll('#dayList details.spk'), function(x, i){ if (wasOpen[i]) x.open = true; });
   }
   function speakersHtml(list){
     if (!list || !list.length) return '';
@@ -674,10 +679,16 @@
   $('hostSheet').addEventListener('click', function(e){
     if (e.target.id === 'hostSheet') { $('hostSheet').hidden = true; return; }
   });
-  document.addEventListener('visibilitychange', function(){
-    if (document.hidden || !data || !$('sheet').hidden || document.activeElement && document.activeElement.matches('textarea,input')) return;
-    load();
-  });
+  // Keep the app current: check for Jennifer's updates every 20 seconds and when the guest comes back to the app.
+  // Waits while someone is typing or has a panel open, so nothing gets wiped mid-edit.
+  function busy(){
+    return !$('sheet').hidden || !$('hostSheet').hidden || !$('mapsSheet').hidden ||
+      (document.activeElement && document.activeElement.matches('textarea,input,select')) ||
+      Object.keys(noteTimers).some(function(k){ return noteTimers[k]; });
+  }
+  function refresh(){ if (!document.hidden && data && !busy()) load(); }
+  document.addEventListener('visibilitychange', refresh);
+  setInterval(refresh, 20000);
 
   // ---- start ----
   var params = new URLSearchParams(location.search);
