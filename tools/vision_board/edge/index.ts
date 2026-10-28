@@ -257,7 +257,7 @@ Deno.serve(async (req) => {
       const [row] = await sql`select vision_board.guide_for_guest(${id}::uuid) as g`;
       if (!row.g.ok) return json({ ok: false }, 403);
       const crew = (row.g.crew || []) as any[];
-      const toP = (c: any): P => ({ first_name: c.first_name, last_name: c.last_name, name: c.name, company: c.company, phone: c.phone,
+      const toP = (c: any): P => ({ first_name: c.first_name, last_name: c.last_name, name: c.name, company: c.company, phone: c.phone, email: c.email,
         city: c.city, state: c.state, instagram: c.instagram, facebook: c.facebook, note: MET + (c.my_note ? "\n" + c.my_note : "") });
       if (url.searchParams.get("all")) {
         const others = crew.filter((c) => !c.me);

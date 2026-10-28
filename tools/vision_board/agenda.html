@@ -262,7 +262,7 @@
         <button class="btn solid" type="button" id="nudgeBtn">Show me in the Crew</button>
       </div>
       <div class="save-all">
-        <p id="saveAllTxt">Save everyone to your phone's contacts, with their company, socials and your notes. Do this before the app closes.</p>
+        <p id="saveAllTxt">Save everyone to your phone's contacts, with their email, company, socials and your notes. Do this before the app closes.</p>
         <button class="btn solid" type="button" id="saveAll">Save all to my contacts</button>
       </div>
       <div class="crew-tools">
@@ -296,7 +296,7 @@
       </div>
     </div>
     <div class="toggle">
-      <div><b>Show me in the Crew list</b><span>On for everyone. Shows your name, photo, company, city, cell number and socials to confirmed guests only. Turn it off to hide.</span></div>
+      <div><b>Show me in the Crew list</b><span>On for everyone. Shows your name, photo, company, city, cell number, email and socials to confirmed guests only. Turn it off to hide.</span></div>
       <label class="switch"><input type="checkbox" id="pfOptin" aria-label="Show me in the Crew list"><i></i></label>
     </div>
     <label class="fld">Company<input id="pfCo" autocomplete="organization" placeholder="e.g. Russ Lyon Sotheby's"></label>
@@ -406,7 +406,7 @@
     $('countdown').hidden = days < 1; $('countdown').textContent = days === 1 ? 'Tomorrow!' : days + ' days to go';
     var closeLabel = azDate(data.closes_at, { month:'long', day:'numeric', year:'numeric' });
     $('closes').textContent = 'App open until ' + closeLabel;
-    $('saveAllTxt').textContent = 'Save everyone to your phone\u2019s contacts, with their company, socials and your notes. This app closes ' + closeLabel + ', so save what you need before then.';
+    $('saveAllTxt').textContent = 'Save everyone to your phone\u2019s contacts, with their email, company, socials and your notes. This app closes ' + closeLabel + ', so save what you need before then.';
     renderDays(); renderVenue(); renderCrew(); renderNotes();
   }
   function renderDays(){
@@ -484,6 +484,7 @@
       var place = [p.city, stateCode(p.state)].filter(Boolean).join(', '), tel = digits(p.phone), open = openId === p.id;
       var acts = '';
       if (tel && !p.me) acts += '<a class="solid" href="sms:' + esc(tel) + '">' + ICON.text + 'Text</a><a href="tel:' + esc(tel) + '">' + ICON.call + 'Call</a>';
+      if (p.email && !p.me) acts += '<a href="mailto:' + esc(p.email) + '">' + ICON.mail + 'Email</a>';
       if (p.instagram) acts += '<a href="' + esc(igUrl(p.instagram)) + '" target="_blank" rel="noopener">' + ICON.ig + 'Instagram</a>';
       if (p.facebook) acts += '<a href="' + esc(fbUrl(p.facebook)) + '" target="_blank" rel="noopener">' + ICON.fb + 'Facebook</a>';
       if (!p.me) acts += '<a href="' + API + '?action=vcard&r=' + encodeURIComponent(R) + '&p=' + encodeURIComponent(p.id) + '">' + ICON.save + 'Save contact</a>';
