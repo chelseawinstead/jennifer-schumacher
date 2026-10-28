@@ -62,14 +62,17 @@
   .host-sheet .hs-save{ margin-top:14px; width:100%; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px; min-height:48px; background:var(--navy); color:#fff; border:0; font-size:14px; }
   .host-sheet .hs-save svg{ width:16px; height:16px; }
   .host-sheet .hs-line{ font-size:14px; color:var(--muted); margin:14px 0 4px; overflow-wrap:anywhere; }
-  .speakers{ display:grid; gap:10px; margin-top:12px; }
-  .spk{ display:grid; grid-template-columns:56px minmax(0,1fr); gap:12px; padding:12px; background:var(--paper); border:1px solid var(--line); }
-  .spk .av{ width:56px; height:56px; font-size:20px; }
-  .spk .nm{ font-weight:500; line-height:1.3; }
-  .spk .ttl{ font-size:13px; color:var(--warm); line-height:1.35; }
-  .spk .bio{ font-size:14px; color:var(--muted); margin-top:6px; white-space:pre-line; }
-  .spk .bio.clamp{ display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
-  .spk .more{ background:none; border:0; padding:0; font-size:13px; color:var(--navy); text-decoration:underline; margin-top:4px; }
+  .speakers{ display:grid; gap:6px; margin-top:8px; }
+  .spk{ background:var(--paper); border:1px solid var(--line); }
+  .spk summary{ list-style:none; display:grid; grid-template-columns:40px minmax(0,1fr) 16px; gap:10px; align-items:center; padding:8px 10px; cursor:pointer; }
+  .spk summary::-webkit-details-marker{ display:none; }
+  .spk .av{ width:40px; height:40px; font-size:15px; }
+  .spk .nm{ font-weight:500; line-height:1.25; }
+  .spk .ttl{ font-size:13px; color:var(--warm); line-height:1.3; }
+  .spk .chev{ color:var(--warm); transition:transform .2s; }
+  .spk[open] .chev{ transform:rotate(90deg); }
+  .spk .body{ padding:0 12px 12px 60px; }
+  .spk .bio{ font-size:14px; color:var(--muted); white-space:pre-line; }
   .spk .links{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
   .spk .links a{ display:inline-flex; align-items:center; gap:5px; font-size:13px; padding:5px 10px; border:1px solid var(--line); color:var(--navy); text-decoration:none; border-radius:999px; }
   .spk .links svg{ width:14px; height:14px; }
@@ -427,8 +430,8 @@
       var meta = '';
       if (it.location) meta += '<button type="button" class="chip place" data-place="' + esc(it.location) + '"><b>Where</b> ' + esc(it.location) + ' ' + PIN + '</button>';
       if (it.dress) meta += '<span class="chip dress"><b>Wear</b> ' + esc(it.dress) + '</span>';
-      return '<div class="item"><time>' + esc(it.time) + '</time><div><h3>' + esc(it.title) + '</h3>' +
-        (meta ? '<div class="meta">' + meta + '</div>' : '') + (it.details ? '<p class="det">' + rich(it.details) + '</p>' : '') + speakersHtml(it.speakers) + '</div></div>';
+      return '<div class="item"><time>' + esc(it.time) + '</time><div><h3>' + esc(it.title) + '</h3>' + speakersHtml(it.speakers) +
+        (meta ? '<div class="meta">' + meta + '</div>' : '') + (it.details ? '<p class="det">' + rich(it.details) + '</p>' : '') + '</div></div>';
     }).join('') || '<div class="empty">Details for this day are coming soon.</div>');
   }
   function speakersHtml(list){
@@ -439,11 +442,11 @@
       if (sp.instagram) links += '<a href="' + esc(igUrl(sp.instagram)) + '" target="_blank" rel="noopener">' + ICON.ig + 'Instagram</a>';
       if (sp.facebook) links += '<a href="' + esc(fbUrl(sp.facebook)) + '" target="_blank" rel="noopener">' + ICON.fb + 'Facebook</a>';
       if (sp.linkedin) links += '<a href="' + esc(sp.linkedin) + '" target="_blank" rel="noopener">' + ICON.li + 'LinkedIn</a>';
-      var long = (sp.bio || '').length > 160;
-      return '<div class="spk"><span class="av">' + avatar(sp) + '</span><div>' +
-        '<div class="nm">' + esc(sp.name) + '</div>' + (sp.title ? '<div class="ttl">' + esc(sp.title) + '</div>' : '') +
-        (sp.bio ? '<p class="bio' + (long ? ' clamp' : '') + '">' + rich(sp.bio) + '</p>' + (long ? '<button type="button" class="more" data-more>Read more</button>' : '') : '') +
-        (links ? '<div class="links">' + links + '</div>' : '') + '</div></div>';
+      var more = (sp.bio ? '<p class="bio">' + rich(sp.bio) + '</p>' : '') + (links ? '<div class="links">' + links + '</div>' : '');
+      var head = '<span class="av">' + avatar(sp) + '</span><span><span class="nm" style="display:block">' + esc(sp.name) + '</span>' +
+        (sp.title ? '<span class="ttl" style="display:block">' + esc(sp.title) + '</span>' : '') + '</span>';
+      return more ? '<details class="spk"><summary>' + head + '<span class="chev" aria-hidden="true">\u203a</span></summary><div class="body">' + more + '</div></details>'
+                  : '<div class="spk"><div style="display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px;align-items:center;padding:8px 10px">' + head + '</div></div>';
     }).join('') + '</div>';
   }
   function renderVenue(){
@@ -646,7 +649,6 @@
   $('dayBtns').addEventListener('click', function(e){ var b = e.target.closest('[data-day]'); if (!b) return; dayIdx = +b.dataset.day; renderDays(); });
   $('crewSearch').addEventListener('input', renderCrew);
   $('crewState').addEventListener('change', renderCrew);
-  $('dayList').addEventListener('click', function(e){ var m = e.target.closest('[data-more]'); if (!m) return; var b = m.previousElementSibling; b.classList.toggle('clamp'); m.textContent = b.classList.contains('clamp') ? 'Read more' : 'Show less'; });
 
   // ---- host card ----
   function openHost(){
