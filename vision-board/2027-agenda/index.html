@@ -47,10 +47,13 @@
   .host-sheet .hs-top .av{ width:96px; height:96px; font-size:34px; }
   .host-sheet .hs-top h2{ font-size:28px; line-height:1.1; }
   .host-sheet .hs-top p{ font-size:14px; color:var(--muted); margin-top:4px; }
-  .host-sheet .hs-acts{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-  .host-sheet .hs-acts a, .host-sheet .hs-acts button{ display:flex; align-items:center; justify-content:center; gap:8px; min-height:46px; padding:8px 12px; border:1px solid var(--navy); color:var(--navy); background:var(--paper); text-decoration:none; font-size:14px; }
+  .host-sheet .hs-acts{ display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; }
+  .host-sheet .hs-acts > *{ grid-column:span 2; }
+  .host-sheet .hs-acts > .half{ grid-column:span 3; }
+  .host-sheet .hs-acts a, .host-sheet .hs-acts button{ display:flex; align-items:center; justify-content:center; gap:6px; min-height:46px; padding:8px 6px; white-space:nowrap; border:1px solid var(--navy); color:var(--navy); background:var(--paper); text-decoration:none; font-size:14px; }
   .host-sheet .hs-acts .solid{ background:var(--navy); color:#fff; }
   .host-sheet .hs-acts .full{ grid-column:1/-1; }
+  @media (max-width:380px){ .host-sheet .hs-acts a, .host-sheet .hs-acts button{ font-size:13px; } .host-sheet .hs-acts svg{ display:none; } .host-sheet .hs-acts .full svg{ display:inline; } }
   .host-sheet .hs-acts svg{ width:16px; height:16px; flex:none; }
   .host-sheet .hs-line{ font-size:14px; color:var(--muted); margin:14px 0 4px; overflow-wrap:anywhere; }
   .speakers{ display:grid; gap:10px; margin-top:12px; }
@@ -636,12 +639,18 @@
     var h = (data.guide && data.guide.host) || {}, tel = digits(h.phone), a = '';
     var name = h.name || 'Jennifer Schumacher';
     if (tel) a += '<a class="solid" href="sms:' + esc(tel) + '">' + ICON.text + 'Text</a><a href="tel:' + esc(tel) + '">' + ICON.call + 'Call</a>';
-    if (h.email) a += '<a class="full" href="mailto:' + esc(h.email) + '">' + ICON.mail + 'Email</a>';
-    if (h.website) a += '<a href="' + esc(h.website) + '" target="_blank" rel="noopener">' + ICON.web + 'Website</a>';
-    if (h.instagram) a += '<a href="' + esc(igUrl(h.instagram)) + '" target="_blank" rel="noopener">' + ICON.ig + 'Instagram</a>';
-    if (h.facebook) a += '<a href="' + esc(fbUrl(h.facebook)) + '" target="_blank" rel="noopener">' + ICON.fb + 'Facebook</a>';
-    if (h.linkedin) a += '<a href="' + esc(h.linkedin) + '" target="_blank" rel="noopener">' + ICON.li + 'LinkedIn</a>';
-    if (h.youtube) a += '<a href="' + esc(h.youtube) + '" target="_blank" rel="noopener">' + ICON.yt + 'YouTube</a>';
+    if (h.email) a += '<a href="mailto:' + esc(h.email) + '">' + ICON.mail + 'Email</a>';
+    var soc = '';
+    if (h.website) soc += '<a href="' + esc(h.website) + '" target="_blank" rel="noopener">' + ICON.web + 'Website</a>';
+    if (h.instagram) soc += '<a href="' + esc(igUrl(h.instagram)) + '" target="_blank" rel="noopener">' + ICON.ig + 'Instagram</a>';
+    if (h.facebook) soc += '<a href="' + esc(fbUrl(h.facebook)) + '" target="_blank" rel="noopener">' + ICON.fb + 'Facebook</a>';
+    if (h.linkedin) soc += '<a href="' + esc(h.linkedin) + '" target="_blank" rel="noopener">' + ICON.li + 'LinkedIn</a>';
+    if (h.youtube) soc += '<a href="' + esc(h.youtube) + '" target="_blank" rel="noopener">' + ICON.yt + 'YouTube</a>';
+    // three per row; if two are left over on the last row, they split it evenly
+    var socList = soc.match(/<a [\s\S]*?<\/a>/g) || [];
+    if (socList.length % 3 === 2) socList = socList.map(function(x, i){ return i >= socList.length - 2 ? x.replace('<a ', '<a class="half" ') : x; });
+    if (socList.length % 3 === 1) socList[socList.length - 1] = socList[socList.length - 1].replace('<a ', '<a class="full" ');
+    a += socList.join('');
     a += '<button type="button" class="full solid" id="hostSave">' + ICON.save + 'Save Jennifer\u2019s contact</button>';
     var lines = [h.phone ? prettyPhone(h.phone) : '', h.email || ''].filter(Boolean).join(' \u00b7 ');
     $('hostBody').innerHTML = '<div class="hs-top"><span class="av">' + (h.photo_url ? '<img src="' + esc(h.photo_url) + '" alt="">' : 'JS') + '</span><div><h2 id="hostName">' + esc(name) + '</h2>' +
