@@ -72,6 +72,11 @@
   .chip{ display:inline-flex; align-items:center; gap:6px; font-size:13px; line-height:1.3; padding:4px 10px; border-radius:999px; background:var(--paper); border:1px solid var(--line); }
   .chip b{ font-weight:500; color:var(--warm); }
   .chip.dress{ background:#f6efe1; border-color:#ead9b8; }
+  .chip.place{ cursor:pointer; color:var(--navy); text-decoration:underline; text-decoration-color:var(--line); text-underline-offset:3px; }
+  .chip.place svg{ width:13px; height:13px; flex:none; }
+  .chip.place:active{ background:var(--stone); }
+  .maps-sheet .btn{ width:100%; margin-bottom:8px; }
+  .maps-sheet .where{ font-size:14px; color:var(--muted); margin-bottom:16px; }
   .item .det{ margin-top:8px; font-size:14px; color:var(--muted); white-space:pre-line; }
 
   /* venue */
@@ -256,6 +261,14 @@
     <p class="msg" id="pfMsg" role="status"></p>
   </div>
 </div>
+<div class="sheet-wrap" id="mapsSheet" hidden>
+  <div class="sheet maps-sheet" role="dialog" aria-modal="true" aria-labelledby="mapsTitle">
+    <div class="sheet-head"><h2 id="mapsTitle">Get directions</h2><button class="x" type="button" id="mapsClose">Close</button></div>
+    <p class="where" id="mapsWhere"></p>
+    <a class="btn solid" id="mapsApple" href="#" target="_blank" rel="noopener">Open in Apple Maps</a>
+    <a class="btn" id="mapsGoogle" href="#" target="_blank" rel="noopener">Open in Google Maps</a>
+  </div>
+</div>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
@@ -263,6 +276,7 @@
   var API = 'https://agnpwmdwofrdyqzttmlv.supabase.co/functions/v1/vision-board';
   var $ = function(id){ return document.getElementById(id); };
   var KEY = 'vbAgendaR';
+  var PIN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>';
   var PREVIEW = new URLSearchParams(location.search).get('preview') === '1';
   var R = '', data = null, dayIdx = null, openId = null, pendingPhoto = null, removePhoto = false;
   var ICON = {
@@ -345,7 +359,7 @@
     if (!d){ $('dayList').innerHTML = '<div class="empty">The schedule will be posted here soon.</div>'; return; }
     $('dayList').innerHTML = '<h2 class="day-title">' + esc(d.label) + '</h2>' + ((d.items||[]).map(function(it){
       var meta = '';
-      if (it.location) meta += '<span class="chip"><b>Where</b> ' + esc(it.location) + '</span>';
+      if (it.location) meta += '<button type="button" class="chip place" data-place="' + esc(it.location) + '"><b>Where</b> ' + esc(it.location) + ' ' + PIN + '</button>';
       if (it.dress) meta += '<span class="chip dress"><b>Wear</b> ' + esc(it.dress) + '</span>';
       return '<div class="item"><time>' + esc(it.time) + '</time><div><h3>' + esc(it.title) + '</h3>' +
         (meta ? '<div class="meta">' + meta + '</div>' : '') + (it.details ? '<p class="det">' + rich(it.details) + '</p>' : '') + '</div></div>';
@@ -514,6 +528,20 @@
     var top = document.querySelector('.tabs').offsetTop; if (window.scrollY > top) window.scrollTo({ top: top });
   }
   document.querySelector('.tabs').addEventListener('click', function(e){ var b = e.target.closest('[data-tab]'); if (b) showTab(b.dataset.tab); });
+  // tap a "Where" tag -> choose Apple or Google Maps. A place like "Hotel Lobby Lounge" is searched together with the venue so it lands at the resort.
+  function openMaps(place){
+    var v = (data.guide && data.guide.venue) || {};
+    var looksLikeAddress = /\d+\s+\S+/.test(place) && /,|\b(rd|road|st|street|ave|avenue|blvd|dr|drive|ln|lane|way|pkwy|hwy)\b/i.test(place);
+    var q = looksLikeAddress ? place : [place, v.name, v.address].filter(Boolean).join(', ');
+    $('mapsTitle').textContent = place;
+    $('mapsWhere').textContent = looksLikeAddress ? '' : [v.name, v.address].filter(Boolean).join(' \u00b7 ');
+    $('mapsApple').href = 'https://maps.apple.com/?q=' + encodeURIComponent(q);
+    $('mapsGoogle').href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+    $('mapsSheet').hidden = false;
+  }
+  $('dayList').addEventListener('click', function(e){ var b = e.target.closest('[data-place]'); if (b) openMaps(b.dataset.place); });
+  $('mapsClose').addEventListener('click', function(){ $('mapsSheet').hidden = true; });
+  $('mapsSheet').addEventListener('click', function(e){ if (e.target.id === 'mapsSheet' || e.target.closest('#mapsApple,#mapsGoogle')) $('mapsSheet').hidden = true; });
   $('dayBtns').addEventListener('click', function(e){ var b = e.target.closest('[data-day]'); if (!b) return; dayIdx = +b.dataset.day; renderDays(); });
   $('crewSearch').addEventListener('input', renderCrew);
   document.addEventListener('visibilitychange', function(){
