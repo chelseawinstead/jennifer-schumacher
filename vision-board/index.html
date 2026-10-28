@@ -293,6 +293,8 @@ header > div:has(> [data-if="videoOpen"][data-open]) {
   .vb-form .hp{ position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
   .vb-form .actions{ display:flex; align-items:center; gap:24px; flex-wrap:wrap; margin-top:6px; }
   .vb-form .fine{ font-size:13px; line-height:1.6; color:var(--muted); max-width:340px; }
+  .vb-optin{ display:flex; gap:12px; align-items:flex-start; font-size:15px; line-height:1.55; color:var(--muted); cursor:pointer; }
+  .vb-optin input{ width:20px; height:20px; margin-top:3px; flex:none; accent-color:var(--navy); }
   .vb-err{ color:#a3271f; font-size:15px; line-height:1.5; }
   .vb-wait-note{ background:var(--stone); border-left:3px solid var(--navy); padding:18px 22px; font-size:16px; line-height:1.6; }
 
@@ -425,6 +427,7 @@ header > div:has(> [data-if="videoOpen"][data-open]) {
             <div><label for="f-state">State</label><input id="f-state" name="state" autocomplete="address-level1" maxlength="20" required></div>
             <div><label for="f-zip">ZIP code</label><input id="f-zip" name="zip" autocomplete="postal-code" inputmode="numeric" maxlength="10" required></div>
           </div>
+          <label class="full vb-optin"><input type="checkbox" name="directory_opt_in" id="f-optin"> <span>Add me to the Crew list in the event app, so other confirmed guests can see my name, company, city and cell number to connect. You can change this anytime.</span></label>
           <div class="hp" aria-hidden="true"><label for="f-web">Website</label><input id="f-web" name="website" tabindex="-1" autocomplete="off"></div>
           <p class="vb-err full" id="formErr" role="alert" hidden></p>
           <div class="full actions">

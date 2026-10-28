@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#002349">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Vision Board">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Vision Board Crew 2027 | Jennifer Schumacher</title>
+<link rel="icon" href="/images/schumacher-living-navy.png">
+<link rel="apple-touch-icon" href="/images/schumacher-living-navy.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* Layout: a pocket program. Navy cover band, sticky section tabs, one calm column (max 640px) that reads like a printed agenda. */
+  :root{
+    --navy:#002349; --ink:#14181d; --muted:#55585c; --warm:#9a968d;
+    --stone:#f6f5f2; --line:#e4e1da; --paper:#ffffff; --gold:#b8995a; --cream:#e8dcc0; --sky:#c9d3df; --red:#a3271f; --ok:#2f6b4f;
+    --serif:'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    --sans:'Jost', 'Helvetica Neue', Arial, sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{ margin:0; background:var(--stone); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.55; }
+  h1,h2,h3{ font-family:var(--serif); font-weight:400; margin:0; text-wrap:balance; }
+  p{ margin:0; }
+  a{ color:var(--navy); }
+  button{ font:inherit; color:inherit; cursor:pointer; }
+  input,textarea{ font:inherit; }
+  :focus-visible{ outline:2px solid var(--navy); outline-offset:2px; }
+  .wrap{ max-width:640px; margin:0 auto; padding-left:max(18px, env(safe-area-inset-left, 0px)); padding-right:max(18px, env(safe-area-inset-right, 0px)); }
+  [hidden]{ display:none !important; }
+
+  /* cover */
+  .cover{ background:var(--navy); color:#fff; padding-top:calc(env(safe-area-inset-top, 0px) + 26px); padding-bottom:24px; }
+  .cover .top{ display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  .cover .brand{ font-family:var(--serif); font-size:13px; letter-spacing:.24em; color:var(--sky); }
+  .me-btn{ display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.25); color:#fff; border-radius:999px; padding:4px 12px 4px 4px; font-size:13px; }
+  .me-btn .av{ width:28px; height:28px; font-size:12px; }
+  .cover h1{ font-size:42px; line-height:1; margin:16px 0 8px; }
+  .cover h1 em{ font-style:italic; color:var(--cream); }
+  .cover .when{ font-size:15px; color:var(--sky); }
+  .cover .welcome{ margin-top:12px; font-size:15px; color:#e7ecf2; max-width:46ch; }
+  .pills{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+  .pill{ font-size:12px; letter-spacing:.04em; padding:5px 11px; border-radius:999px; background:var(--cream); color:var(--navy); }
+  .pill.ghost{ background:transparent; color:var(--sky); border:1px solid rgba(201,211,223,.45); }
+
+  /* tabs */
+  .tabs{ position:sticky; top:0; z-index:5; background:rgba(255,255,255,.97); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); padding-top:env(safe-area-inset-top, 0px); }
+  .tabs .wrap{ display:grid; grid-template-columns:repeat(4,1fr); }
+  .tabs button{ background:none; border:0; padding:14px 2px 12px; font-size:14px; color:var(--muted); border-bottom:2px solid transparent; }
+  .tabs button[aria-selected="true"]{ color:var(--navy); border-bottom-color:var(--navy); font-weight:500; }
+
+  main{ padding-block:22px 40px; }
+  .sec-title{ font-size:30px; margin-bottom:4px; }
+  .sec-sub{ color:var(--muted); font-size:14px; margin-bottom:16px; }
+
+  /* schedule */
+  .days{ display:flex; gap:8px; margin-bottom:18px; overflow-x:auto; padding-bottom:2px; }
+  .days button{ flex:none; background:var(--paper); border:1px solid var(--line); border-radius:999px; padding:8px 16px; font-size:14px; }
+  .days button[aria-pressed="true"]{ background:var(--navy); border-color:var(--navy); color:#fff; }
+  .day-title{ font-size:24px; margin-bottom:12px; }
+  .item{ display:grid; grid-template-columns:86px minmax(0,1fr); gap:14px; padding:16px 0; border-top:1px solid var(--line); }
+  .item:last-child{ border-bottom:1px solid var(--line); }
+  .item time{ font-size:13px; line-height:1.35; color:var(--warm); font-variant-numeric:tabular-nums; padding-top:3px; }
+  .item h3{ font-size:21px; line-height:1.2; }
+  .meta{ display:flex; flex-wrap:wrap; gap:6px 8px; margin-top:8px; }
+  .chip{ display:inline-flex; align-items:center; gap:6px; font-size:13px; line-height:1.3; padding:4px 10px; border-radius:999px; background:var(--paper); border:1px solid var(--line); }
+  .chip b{ font-weight:500; color:var(--warm); }
+  .chip.dress{ background:#f6efe1; border-color:#ead9b8; }
+  .item .det{ margin-top:8px; font-size:14px; color:var(--muted); white-space:pre-line; }
+
+  /* venue */
+  .card{ background:var(--paper); border:1px solid var(--line); padding:20px; }
+  .venue-name{ font-size:28px; line-height:1.1; margin-bottom:8px; }
+  .addr{ font-size:15px; color:var(--muted); margin-bottom:16px; }
+  .actions{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .btn{ display:flex; align-items:center; justify-content:center; text-align:center; min-height:46px; padding:10px 14px; font-size:14px; letter-spacing:.04em; text-decoration:none; border:1px solid var(--navy); color:var(--navy); background:var(--paper); }
+  .btn.solid{ background:var(--navy); color:#fff; }
+  .btn.full{ grid-column:1/-1; }
+  .btn:disabled{ opacity:.5; }
+  .venue-details{ margin-top:18px; font-size:15px; color:var(--muted); white-space:pre-line; }
+
+  /* crew */
+  .save-all{ background:var(--paper); border:1px solid var(--line); padding:14px 16px; margin-bottom:14px; display:grid; gap:10px; }
+  .save-all p{ font-size:14px; color:var(--muted); }
+  .search{ width:100%; font-size:16px; padding:12px 14px; border:1px solid #cfcbc2; background:var(--paper); margin-bottom:8px; border-radius:0; -webkit-appearance:none; }
+  .search:focus{ outline:0; border-color:var(--navy); box-shadow:0 0 0 1px var(--navy); }
+  .person{ border-top:1px solid var(--line); }
+  .person:last-child{ border-bottom:1px solid var(--line); }
+  .p-row{ width:100%; display:grid; grid-template-columns:48px minmax(0,1fr) 20px; gap:12px; align-items:center; padding:14px 0; background:none; border:0; text-align:left; }
+  .av{ width:48px; height:48px; border-radius:50%; background:var(--navy); color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:19px; overflow:hidden; flex:none; }
+  .av img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .p-row .nm{ font-weight:500; line-height:1.3; }
+  .p-row .sub{ font-size:13px; color:var(--muted); line-height:1.35; overflow-wrap:anywhere; }
+  .p-row .noted{ font-size:12px; color:var(--gold); }
+  .chev{ color:var(--warm); transition:transform .2s; }
+  .person.open .chev{ transform:rotate(90deg); }
+  .p-more{ padding:0 0 18px 60px; display:grid; gap:12px; }
+  .p-acts{ display:flex; flex-wrap:wrap; gap:8px; }
+  .p-acts a, .p-acts button{ display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:8px 14px; border:1px solid var(--navy); color:var(--navy); background:var(--paper); text-decoration:none; font-size:14px; }
+  .p-acts .solid{ background:var(--navy); color:#fff; }
+  .p-acts svg{ width:16px; height:16px; }
+  .note-lbl{ font-size:13px; color:var(--warm); display:flex; justify-content:space-between; }
+  .note-box{ width:100%; min-height:84px; padding:10px 12px; border:1px solid #cfcbc2; background:#fffdf8; font-size:15px; line-height:1.5; resize:vertical; border-radius:0; }
+  .note-box:focus{ outline:0; border-color:var(--navy); box-shadow:0 0 0 1px var(--navy); }
+  .you-tag{ font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); margin-left:6px; }
+  .crew-foot{ font-size:13px; color:var(--muted); margin-top:16px; }
+  .empty{ padding:26px 18px; text-align:center; color:var(--muted); background:var(--paper); border:1px dashed var(--line); font-size:15px; }
+  .optin-nudge{ background:#f6efe1; border:1px solid #ead9b8; padding:14px 16px; margin-bottom:14px; font-size:14px; display:grid; gap:10px; }
+
+  /* notes */
+  .jnote{ background:var(--paper); border:1px solid var(--line); padding:20px; margin-bottom:12px; }
+  .jnote .date{ font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--warm); margin-bottom:6px; }
+  .jnote h3{ font-size:24px; line-height:1.15; margin-bottom:8px; }
+  .jnote .body{ font-size:15px; color:var(--muted); white-space:pre-line; }
+
+  /* sheet (my profile) */
+  .sheet-wrap{ position:fixed; inset:0; background:rgba(20,24,29,.45); z-index:20; display:flex; align-items:flex-end; justify-content:center; }
+  .sheet{ background:var(--paper); width:100%; max-width:640px; max-height:92vh; overflow:auto; padding:22px max(18px, env(safe-area-inset-left, 0px)) calc(22px + env(safe-area-inset-bottom, 0px)); border-radius:14px 14px 0 0; }
+  .sheet-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+  .sheet-head h2{ font-size:28px; }
+  .x{ background:none; border:0; font-size:15px; color:var(--muted); padding:8px; }
+  .photo-row{ display:flex; align-items:center; gap:16px; margin-bottom:18px; }
+  .photo-row .av{ width:84px; height:84px; font-size:30px; }
+  .photo-row .btns{ display:grid; gap:8px; }
+  .lnk{ background:none; border:0; padding:0; color:var(--navy); text-decoration:underline; font-size:14px; text-align:left; }
+  .fld{ display:block; font-size:13px; color:var(--warm); margin-bottom:14px; }
+  .fld input{ display:block; width:100%; margin-top:6px; font-size:16px; padding:12px; border:1px solid #cfcbc2; border-radius:0; -webkit-appearance:none; color:var(--ink); }
+  .fld input:focus{ outline:0; border-color:var(--navy); box-shadow:0 0 0 1px var(--navy); }
+  .toggle{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; align-items:center; padding:14px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin-bottom:16px; }
+  .toggle b{ font-weight:500; display:block; }
+  .toggle span{ font-size:13px; color:var(--muted); }
+  .switch{ position:relative; width:52px; height:30px; }
+  .switch input{ position:absolute; opacity:0; width:100%; height:100%; margin:0; cursor:pointer; z-index:1; }
+  .switch i{ position:absolute; inset:0; background:#cfcbc2; border-radius:999px; transition:background .2s; }
+  .switch i::after{ content:""; position:absolute; top:3px; left:3px; width:24px; height:24px; border-radius:50%; background:#fff; transition:transform .2s; box-shadow:0 1px 2px rgba(0,0,0,.2); }
+  .switch input:checked + i{ background:var(--ok); }
+  .switch input:checked + i::after{ transform:translateX(22px); }
+  .switch input:focus-visible + i{ outline:2px solid var(--navy); outline-offset:2px; }
+  .msg{ font-size:14px; min-height:1.3em; margin-top:8px; }
+  .msg.err{ color:var(--red); }
+
+  /* gate / states */
+  .gate form, .gate .state{ padding-block:26px 40px; display:grid; gap:12px; }
+  .gate label{ font-size:15px; color:var(--muted); }
+  .gate input{ font-size:17px; padding:14px; border:1px solid #cfcbc2; border-radius:0; -webkit-appearance:none; }
+  .gate input:focus{ outline:0; border-color:var(--navy); box-shadow:0 0 0 1px var(--navy); }
+  .gate h2{ font-size:28px; }
+  .gate .help{ font-size:14px; color:var(--muted); }
+
+  .toast{ position:fixed; left:50%; bottom:calc(20px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%); background:var(--ink); color:#fff; padding:10px 18px; font-size:14px; border-radius:999px; opacity:0; transition:opacity .2s; pointer-events:none; z-index:30; white-space:nowrap; }
+  .toast.on{ opacity:1; }
+  footer{ text-align:center; font-size:12px; color:var(--warm); padding-block:6px 30px; }
+  @media (min-width:600px){ .cover h1{ font-size:54px; } .item{ grid-template-columns:110px minmax(0,1fr); } .sheet-wrap{ align-items:center; } .sheet{ border-radius:10px; } }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; scroll-behavior:auto !important; } }
+</style>
+</head>
+<body>
+
+<!-- No personal link / problems -->
+<div id="gate" class="gate" hidden>
+  <header class="cover"><div class="wrap">
+    <div class="brand">JENNIFER SCHUMACHER</div>
+    <h1>Vision Board Crew <em>2027</em></h1>
+    <div class="when">January 8–9, 2027 · ANdAZ Scottsdale</div>
+  </div></header>
+  <div class="wrap">
+    <div class="state" id="gateState"></div>
+    <form id="linkForm">
+      <label for="gEmail">Enter the email you registered with and we'll send you your personal agenda link.</label>
+      <input id="gEmail" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
+      <button class="btn solid" type="submit" id="gBtn">Email me my link</button>
+      <p class="msg" id="gMsg" role="status"></p>
+      <p class="help">Still stuck? Text Jennifer at (480) 322-2593.</p>
+    </form>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <div id="previewBar" hidden style="background:#b8995a;color:#14181d;text-align:center;font-size:13px;padding:calc(env(safe-area-inset-top,0px) + 6px) 12px 6px">Team preview. This is what confirmed guests see.</div>
+  <header class="cover"><div class="wrap">
+    <div class="top">
+      <div class="brand">JENNIFER SCHUMACHER</div>
+      <button class="me-btn" type="button" id="meBtn"><span class="av" id="meAv"></span><span>My profile</span></button>
+    </div>
+    <h1>Vision Board Crew <em>2027</em></h1>
+    <div class="when">Friday &amp; Saturday, January 8–9, 2027</div>
+    <p class="welcome" id="welcome"></p>
+    <div class="pills"><span class="pill" id="countdown" hidden></span><span class="pill ghost" id="closes"></span></div>
+  </div></header>
+
+  <nav class="tabs" aria-label="Sections"><div class="wrap" role="tablist">
+    <button role="tab" data-tab="schedule" aria-selected="true">Schedule</button>
+    <button role="tab" data-tab="venue" aria-selected="false">Venue</button>
+    <button role="tab" data-tab="crew" aria-selected="false">The Crew</button>
+    <button role="tab" data-tab="notes" aria-selected="false">Notes</button>
+  </div></nav>
+
+  <main class="wrap">
+    <section id="tab-schedule">
+      <div class="days" id="dayBtns"></div>
+      <div id="dayList"></div>
+    </section>
+
+    <section id="tab-venue" hidden><div class="card" id="venueCard"></div></section>
+
+    <section id="tab-crew" hidden>
+      <h2 class="sec-title">The Crew</h2>
+      <p class="sec-sub" id="crewSub"></p>
+      <div class="optin-nudge" id="optinNudge" hidden>
+        <span>You're not in the Crew list yet. Add yourself so everyone can text you and find you on Instagram and Facebook.</span>
+        <button class="btn solid" type="button" id="nudgeBtn">Add me to the Crew</button>
+      </div>
+      <div class="save-all">
+        <p id="saveAllTxt">Save everyone to your phone's contacts, with their company, socials and your notes. Do this before the app closes.</p>
+        <button class="btn solid" type="button" id="saveAll">Save all to my contacts</button>
+      </div>
+      <input class="search" id="crewSearch" type="search" placeholder="Search name, company or city" aria-label="Search the Crew">
+      <div id="crewList"></div>
+      <p class="crew-foot">Your notes are private. Only you can see what you write about someone.</p>
+    </section>
+
+    <section id="tab-notes" hidden>
+      <h2 class="sec-title">Notes from Jennifer</h2>
+      <p class="sec-sub">Updates and reminders before and during the weekend.</p>
+      <div id="noteList"></div>
+    </section>
+  </main>
+  <footer>Jennifer Schumacher · Russ Lyon Sotheby's International Realty</footer>
+</div>
+
+<!-- My profile -->
+<div class="sheet-wrap" id="sheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="sheet-head"><h2 id="sheetTitle">My profile</h2><button class="x" type="button" id="sheetClose">Close</button></div>
+    <div class="photo-row">
+      <span class="av" id="pfAv"></span>
+      <div class="btns">
+        <label class="btn" for="pfFile" style="min-height:40px">Add a photo</label>
+        <input id="pfFile" type="file" accept="image/*" hidden>
+        <button class="lnk" type="button" id="pfRemove" hidden>Remove photo</button>
+      </div>
+    </div>
+    <div class="toggle">
+      <div><b>Show me in the Crew list</b><span>Your name, photo, company, city, cell number and socials, visible only to confirmed guests.</span></div>
+      <label class="switch"><input type="checkbox" id="pfOptin" aria-label="Show me in the Crew list"><i></i></label>
+    </div>
+    <label class="fld">Instagram handle<input id="pfIg" placeholder="@yourhandle" autocapitalize="none" autocomplete="off" spellcheck="false"></label>
+    <label class="fld">Facebook profile link or username<input id="pfFb" placeholder="facebook.com/yourname" autocapitalize="none" autocomplete="off" spellcheck="false"></label>
+    <button class="btn solid" type="button" id="pfSave" style="width:100%">Save my profile</button>
+    <p class="msg" id="pfMsg" role="status"></p>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  var API = 'https://agnpwmdwofrdyqzttmlv.supabase.co/functions/v1/vision-board';
+  var $ = function(id){ return document.getElementById(id); };
+  var KEY = 'vbAgendaR';
+  var PREVIEW = new URLSearchParams(location.search).get('preview') === '1';
+  var R = '', data = null, dayIdx = null, openId = null, pendingPhoto = null, removePhoto = false;
+  var ICON = {
+    text:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/></svg>',
+    call:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6.5 3h3l1.5 4.5-2 1.5a12 12 0 0 0 6 6l1.5-2L21 14.5v3A2.5 2.5 0 0 1 18.5 20 15.5 15.5 0 0 1 4 5.5 2.5 2.5 0 0 1 6.5 3z"/></svg>',
+    ig:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>',
+    fb:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z"/></svg>',
+    save:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6M18 14v6M15 17h6"/></svg>'
+  };
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function rich(s){ return esc(s).replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>'); }
+  function digits(p){ return String(p||'').replace(/[^\d+]/g,''); }
+  function prettyPhone(p){ var d = String(p||'').replace(/\D/g,''); if (d.length===11 && d[0]==='1') d=d.slice(1); return d.length===10 ? '('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6) : p; }
+  function initials(name){ return String(name||'?').split(/\s+/).map(function(w){ return w[0]||''; }).slice(0,2).join('').toUpperCase(); }
+  function avatar(p){ return p.photo_url ? '<img src="' + esc(p.photo_url) + '" alt="" loading="lazy">' : esc(initials(p.name || ((p.first_name||'') + ' ' + (p.last_name||'')))); }
+  function igUrl(h){ return 'https://www.instagram.com/' + encodeURIComponent(String(h).replace(/^@/,'')) + '/'; }
+  function fbUrl(f){ return /^https?:\/\//i.test(f) ? f : 'https://www.facebook.com/' + encodeURIComponent(String(f).replace(/^@/,'')); }
+  function toast(t){ var el=$('toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(function(){ el.classList.remove('on'); }, 2400); }
+  function store(v){ try { v ? localStorage.setItem(KEY, v) : localStorage.removeItem(KEY); } catch(e){} }
+  function stored(){ try { return localStorage.getItem(KEY) || ''; } catch(e){ return ''; } }
+  function post(action, body){
+    return fetch(API + '?action=' + action, { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify(body), cache:'no-store' })
+      .then(function(r){ return r.json(); });
+  }
+  function azDate(iso, opts){ return new Date(iso).toLocaleDateString('en-US', Object.assign({ timeZone:'America/Phoenix' }, opts)); }
+
+  // ---- load ----
+  function load(){
+    return post('agenda', { r: R }).then(function(d){
+      if (!d.ok) return showGate(d);
+      if (!PREVIEW) store(R); data = d; $('gate').hidden = true; $('app').hidden = false; render();
+    }).catch(function(){
+      if (data) return; // keep what's on screen if a refresh fails
+      showGate({ reason:'offline' });
+    });
+  }
+  function showGate(d){
+    $('app').hidden = true; $('gate').hidden = false;
+    var r = d && d.reason, n = d && d.first_name ? ', ' + esc(d.first_name) : '';
+    var msg = {
+      pending: '<h2>Almost there' + n + '.</h2><p class="help">The agenda opens once your payment is received. Check your registration email for your Zelle details.</p>',
+      waitlist: '<h2>You\u2019re on the waitlist' + n + '.</h2><p class="help">The agenda is for confirmed guests. If a seat opens up, we\u2019ll contact you.</p>',
+      expired: '<h2>This seat hold has ended.</h2><p class="help">Contact Jennifer if you think this is a mistake.</p>',
+      cancelled: '<h2>This registration was cancelled.</h2><p class="help">Contact Jennifer if you think this is a mistake.</p>',
+      closed: '<h2>The Vision Board Crew 2027 app has closed.</h2><p class="help">Thank you for an amazing weekend' + n + '! Questions? Text Jennifer at (480) 322-2593.</p>',
+      offline: '<h2>Couldn\u2019t load the agenda.</h2><p class="help">Check your connection and refresh the page.</p>',
+      not_found: '<h2>Open your personal agenda</h2>'
+    }[r] || '<h2>Open your personal agenda</h2>';
+    $('gateState').innerHTML = msg;
+    $('linkForm').hidden = (r === 'closed' || r === 'offline' || r === 'pending' || r === 'waitlist');
+    if (r === 'not_found' || r === 'closed') store('');
+  }
+
+  // ---- render ----
+  function render(){
+    var g = data.guide || {}, me = data.me || {};
+    $('welcome').textContent = g.welcome || ''; $('welcome').hidden = !g.welcome;
+    $('meAv').innerHTML = avatar(me);
+    var start = new Date('2027-01-08T15:30:00-07:00'), days = Math.ceil((start - new Date()) / 864e5);
+    $('countdown').hidden = days < 1; $('countdown').textContent = days === 1 ? 'Tomorrow!' : days + ' days to go';
+    var closeLabel = azDate(data.closes_at, { month:'long', day:'numeric', year:'numeric' });
+    $('closes').textContent = 'App open until ' + closeLabel;
+    $('saveAllTxt').textContent = 'Save everyone to your phone\u2019s contacts, with their company, socials and your notes. This app closes ' + closeLabel + ', so save what you need before then.';
+    renderDays(); renderVenue(); renderCrew(); renderNotes();
+  }
+  function renderDays(){
+    var days = (data.guide && data.guide.days) || [];
+    if (dayIdx === null){
+      dayIdx = 0;
+      var today = new Date().toLocaleDateString('en-US', { timeZone:'America/Phoenix', month:'long', day:'numeric' });
+      days.forEach(function(d, i){ if ((d.label||'').indexOf(today) > -1) dayIdx = i; });
+    }
+    if (dayIdx >= days.length) dayIdx = 0;
+    $('dayBtns').innerHTML = days.map(function(d, i){
+      return '<button type="button" data-day="'+i+'" aria-pressed="'+(i===dayIdx)+'">'+esc((d.label||'Day '+(i+1)).split(',')[0])+'</button>';
+    }).join('');
+    $('dayBtns').hidden = days.length < 2;
+    var d = days[dayIdx];
+    if (!d){ $('dayList').innerHTML = '<div class="empty">The schedule will be posted here soon.</div>'; return; }
+    $('dayList').innerHTML = '<h2 class="day-title">' + esc(d.label) + '</h2>' + ((d.items||[]).map(function(it){
+      var meta = '';
+      if (it.location) meta += '<span class="chip"><b>Where</b> ' + esc(it.location) + '</span>';
+      if (it.dress) meta += '<span class="chip dress"><b>Wear</b> ' + esc(it.dress) + '</span>';
+      return '<div class="item"><time>' + esc(it.time) + '</time><div><h3>' + esc(it.title) + '</h3>' +
+        (meta ? '<div class="meta">' + meta + '</div>' : '') + (it.details ? '<p class="det">' + rich(it.details) + '</p>' : '') + '</div></div>';
+    }).join('') || '<div class="empty">Details for this day are coming soon.</div>');
+  }
+  function renderVenue(){
+    var v = (data.guide && data.guide.venue) || {};
+    var q = encodeURIComponent((v.name ? v.name + ', ' : '') + (v.address || ''));
+    var h = '<h2 class="venue-name">' + esc(v.name || 'Venue') + '</h2>' + (v.address ? '<p class="addr">' + esc(v.address) + '</p>' : '') + '<div class="actions">';
+    if (v.address){
+      h += '<a class="btn" href="https://maps.apple.com/?q=' + q + '" target="_blank" rel="noopener">Apple Maps</a>';
+      h += '<a class="btn" href="https://www.google.com/maps/search/?api=1&query=' + q + '" target="_blank" rel="noopener">Google Maps</a>';
+    }
+    if (v.phone) h += '<a class="btn full" href="tel:' + esc(digits(v.phone)) + '">Call the resort · ' + esc(v.phone) + '</a>';
+    if (v.booking_url) h += '<a class="btn solid full" href="' + esc(v.booking_url) + '" target="_blank" rel="noopener">' + esc(v.booking_label || 'Book your room') + '</a>';
+    $('venueCard').innerHTML = h + '</div>' + (v.details ? '<p class="venue-details">' + rich(v.details) + '</p>' : '');
+  }
+  function renderCrew(){
+    var crew = data.crew || [], me = data.me || {}, q = ($('crewSearch').value || '').trim().toLowerCase();
+    $('crewSub').textContent = crew.length + ' of ' + data.crew_total + ' confirmed guests are in the Crew list. Tap someone to text, connect or jot a note.';
+    $('optinNudge').hidden = !!me.directory_opt_in;
+    $('saveAll').disabled = !crew.length;
+    var list = crew.filter(function(p){ return !q || [p.name, p.company, p.city, p.state].join(' ').toLowerCase().indexOf(q) > -1; });
+    if (!crew.length){ $('crewList').innerHTML = '<div class="empty">No one has joined the Crew list yet. Be the first: tap My profile.</div>'; return; }
+    if (!list.length){ $('crewList').innerHTML = '<div class="empty">No one matches \u201c' + esc(q) + '\u201d.</div>'; return; }
+    $('crewList').innerHTML = list.map(function(p){
+      var place = [p.city, p.state].filter(Boolean).join(', '), tel = digits(p.phone), open = openId === p.id;
+      var acts = '';
+      if (tel && !p.me) acts += '<a class="solid" href="sms:' + esc(tel) + '">' + ICON.text + 'Text</a><a href="tel:' + esc(tel) + '">' + ICON.call + 'Call</a>';
+      if (p.instagram) acts += '<a href="' + esc(igUrl(p.instagram)) + '" target="_blank" rel="noopener">' + ICON.ig + 'Instagram</a>';
+      if (p.facebook) acts += '<a href="' + esc(fbUrl(p.facebook)) + '" target="_blank" rel="noopener">' + ICON.fb + 'Facebook</a>';
+      if (!p.me) acts += '<button type="button" data-save="' + esc(p.id) + '">' + ICON.save + 'Save contact</button>';
+      return '<div class="person' + (open ? ' open' : '') + '" data-id="' + esc(p.id) + '">' +
+        '<button class="p-row" type="button" aria-expanded="' + open + '"><span class="av">' + avatar(p) + '</span><span>' +
+          '<span class="nm">' + esc(p.name) + (p.me ? '<span class="you-tag">You</span>' : '') + '</span>' +
+          (p.company ? '<span class="sub" style="display:block">' + esc(p.company) + '</span>' : '') +
+          '<span class="sub" style="display:block">' + esc(place) + (place && p.phone ? ' · ' : '') + esc(prettyPhone(p.phone)) + '</span>' +
+          (p.my_note && !open ? '<span class="noted" style="display:block">Your note: ' + esc(p.my_note.slice(0, 60)) + (p.my_note.length > 60 ? '\u2026' : '') + '</span>' : '') +
+        '</span><span class="chev" aria-hidden="true">\u203a</span></button>' +
+        (open ? '<div class="p-more">' + (acts ? '<div class="p-acts">' + acts + '</div>' : '') +
+          (p.me ? '<p class="sub" style="font-size:14px;color:var(--muted)">This is you. Edit your photo and socials in My profile.</p>' :
+          '<div><label class="note-lbl" for="nt-' + esc(p.id) + '"><span>My private note</span><span data-status></span></label>' +
+          '<textarea class="note-box" id="nt-' + esc(p.id) + '" data-note="' + esc(p.id) + '" placeholder="What did you talk about? Who should you follow up with?">' + esc(p.my_note || '') + '</textarea></div>') +
+        '</div>' : '') + '</div>';
+    }).join('');
+  }
+  function renderNotes(){
+    var notes = (data.guide && data.guide.notes) || [];
+    $('noteList').innerHTML = notes.length ? notes.map(function(n){
+      return '<article class="jnote">' + (n.date ? '<div class="date">' + esc(n.date) + '</div>' : '') +
+        (n.title ? '<h3>' + esc(n.title) + '</h3>' : '') + '<p class="body">' + rich(n.body) + '</p></article>';
+    }).join('') : '<div class="empty">Jennifer\u2019s notes will appear here as the event gets closer.</div>';
+  }
+
+  // ---- contacts (.vcf) ----
+  function vEsc(s){ return String(s||'').replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;'); }
+  function vcard(p){
+    var lines = ['BEGIN:VCARD','VERSION:3.0',
+      'N:' + vEsc(p.last_name) + ';' + vEsc(p.first_name) + ';;;', 'FN:' + vEsc(p.name)];
+    if (p.company) lines.push('ORG:' + vEsc(p.company));
+    if (p.phone) lines.push('TEL;TYPE=CELL:' + digits(p.phone));
+    if (p.city || p.state) lines.push('ADR;TYPE=WORK:;;;' + vEsc(p.city) + ';' + vEsc(p.state) + ';;');
+    if (p.instagram) lines.push('URL;TYPE=Instagram:' + igUrl(p.instagram));
+    if (p.facebook) lines.push('URL;TYPE=Facebook:' + fbUrl(p.facebook));
+    var note = 'Met at Vision Board Crew 2027 (Jan 8\u20139, Scottsdale).' + (p.my_note ? '\n' + p.my_note : '');
+    lines.push('NOTE:' + vEsc(note), 'CATEGORIES:Vision Board Crew 2027', 'END:VCARD');
+    return lines.join('\r\n');
+  }
+  function download(name, text){
+    var blob = new Blob([text], { type:'text/vcard;charset=utf-8' });
+    var file = (typeof File === 'function') ? new File([blob], name, { type:'text/vcard' }) : null;
+    if (file && navigator.canShare && navigator.canShare({ files:[file] }) && /iPhone|iPad|Android/i.test(navigator.userAgent)){
+      navigator.share({ files:[file], title:name }).catch(function(){});
+      return;
+    }
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+  $('saveAll').addEventListener('click', function(){
+    var others = (data.crew||[]).filter(function(p){ return !p.me; });
+    if (!others.length) return;
+    download('Vision-Board-Crew-2027.vcf', others.map(vcard).join('\r\n'));
+  });
+
+  // ---- private notes (autosave) ----
+  var noteTimers = {};
+  function saveNote(id, el){
+    var status = el.closest('.p-more').querySelector('[data-status]');
+    status.textContent = 'Saving\u2026';
+    post('note', { r:R, person:id, body:el.value }).then(function(res){
+      status.textContent = res.ok ? 'Saved' : 'Didn\u2019t save';
+      var p = (data.crew||[]).filter(function(x){ return x.id === id; })[0]; if (p) p.my_note = el.value.trim() || null;
+    }).catch(function(){ status.textContent = 'Didn\u2019t save. Check your connection.'; });
+  }
+  $('crewList').addEventListener('input', function(e){
+    var el = e.target.closest('[data-note]'); if (!el) return;
+    var id = el.dataset.note; clearTimeout(noteTimers[id]);
+    el.closest('.p-more').querySelector('[data-status]').textContent = '';
+    noteTimers[id] = setTimeout(function(){ saveNote(id, el); }, 900);
+  });
+  $('crewList').addEventListener('click', function(e){
+    var sv = e.target.closest('[data-save]');
+    if (sv){ var p = (data.crew||[]).filter(function(x){ return x.id === sv.dataset.save; })[0]; if (p) download(p.name.replace(/[^\w ]/g,'').replace(/\s+/g,'-') + '.vcf', vcard(p)); return; }
+    var row = e.target.closest('.p-row'); if (!row) return;
+    var id = row.closest('.person').dataset.id;
+    // flush a pending note before closing
+    Object.keys(noteTimers).forEach(function(k){ var el = document.querySelector('[data-note="'+k+'"]'); if (el && noteTimers[k]){ clearTimeout(noteTimers[k]); noteTimers[k] = null; saveNote(k, el); } });
+    openId = openId === id ? null : id; renderCrew();
+  });
+
+  // ---- my profile ----
+  function openSheet(){
+    var me = data.me || {}; pendingPhoto = null; removePhoto = false;
+    $('pfAv').innerHTML = avatar(me); $('pfRemove').hidden = !me.photo_url;
+    $('pfOptin').checked = !!me.directory_opt_in; $('pfIg').value = me.instagram ? '@' + me.instagram : ''; $('pfFb').value = me.facebook || '';
+    $('pfMsg').textContent = ''; $('pfMsg').className = 'msg'; $('sheet').hidden = false;
+  }
+  function closeSheet(){ $('sheet').hidden = true; }
+  $('meBtn').addEventListener('click', openSheet);
+  $('nudgeBtn').addEventListener('click', function(){ openSheet(); $('pfOptin').checked = true; });
+  $('sheetClose').addEventListener('click', closeSheet);
+  $('sheet').addEventListener('click', function(e){ if (e.target.id === 'sheet') closeSheet(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !$('sheet').hidden) closeSheet(); });
+  $('pfFile').addEventListener('change', function(){
+    var f = this.files && this.files[0]; this.value = ''; if (!f) return;
+    var img = new Image(), url = URL.createObjectURL(f);
+    img.onload = function(){
+      var s = Math.min(img.naturalWidth, img.naturalHeight), size = Math.min(600, s);
+      var c = document.createElement('canvas'); c.width = c.height = size;
+      c.getContext('2d').drawImage(img, (img.naturalWidth - s)/2, (img.naturalHeight - s)/2, s, s, 0, 0, size, size);
+      pendingPhoto = c.toDataURL('image/jpeg', 0.85); removePhoto = false; URL.revokeObjectURL(url);
+      $('pfAv').innerHTML = '<img src="' + pendingPhoto + '" alt="">'; $('pfRemove').hidden = false;
+      $('pfMsg').className = 'msg'; $('pfMsg').textContent = 'Looks great. Tap Save my profile to keep it.';
+    };
+    img.onerror = function(){ $('pfMsg').className = 'msg err'; $('pfMsg').textContent = 'That photo couldn\u2019t be opened. Try a different one.'; };
+    img.src = url;
+  });
+  $('pfRemove').addEventListener('click', function(){
+    pendingPhoto = null; removePhoto = true; $('pfAv').innerHTML = esc(initials((data.me.first_name||'') + ' ' + (data.me.last_name||''))); $('pfRemove').hidden = true;
+  });
+  $('pfSave').addEventListener('click', function(){
+    var btn = $('pfSave'); btn.disabled = true; btn.textContent = 'Saving\u2026';
+    var body = { r:R, directory_opt_in: $('pfOptin').checked, instagram: $('pfIg').value, facebook: $('pfFb').value };
+    if (pendingPhoto) body.photo = pendingPhoto; else if (removePhoto) body.remove_photo = true;
+    post('profile', body).then(function(d){
+      btn.disabled = false; btn.textContent = 'Save my profile';
+      if (!d.ok){ $('pfMsg').className = 'msg err'; $('pfMsg').textContent = d.error === 'photo_too_big' ? 'That photo is too large. Try another one.' : 'Didn\u2019t save. Try again in a moment.'; return; }
+      data = d; render(); closeSheet(); toast(d.me.directory_opt_in ? 'Saved. You\u2019re in the Crew list.' : 'Saved');
+    }).catch(function(){ btn.disabled = false; btn.textContent = 'Save my profile'; $('pfMsg').className = 'msg err'; $('pfMsg').textContent = 'Didn\u2019t save. Check your connection.'; });
+  });
+
+  // ---- email me my link ----
+  $('linkForm').addEventListener('submit', function(e){
+    e.preventDefault(); $('gBtn').disabled = true; $('gMsg').className = 'msg'; $('gMsg').textContent = '';
+    post('agenda-link', { email: $('gEmail').value.trim() }).then(function(){
+      $('gBtn').disabled = false;
+      $('gMsg').textContent = 'If that email belongs to a confirmed guest, your link is on its way from jennifer@schumacherliving.com. Check your inbox (and spam) in a minute.';
+    }).catch(function(){ $('gBtn').disabled = false; $('gMsg').className = 'msg err'; $('gMsg').textContent = 'Couldn\u2019t send. Check your connection and try again.'; });
+  });
+
+  // ---- tabs ----
+  function showTab(t){
+    document.querySelectorAll('.tabs [role=tab]').forEach(function(b){ b.setAttribute('aria-selected', String(b.dataset.tab === t)); });
+    ['schedule','venue','crew','notes'].forEach(function(k){ $('tab-' + k).hidden = k !== t; });
+    try { history.replaceState(null, '', location.pathname + location.search + '#' + t); } catch(e){}
+    var top = document.querySelector('.tabs').offsetTop; if (window.scrollY > top) window.scrollTo({ top: top });
+  }
+  document.querySelector('.tabs').addEventListener('click', function(e){ var b = e.target.closest('[data-tab]'); if (b) showTab(b.dataset.tab); });
+  $('dayBtns').addEventListener('click', function(e){ var b = e.target.closest('[data-day]'); if (!b) return; dayIdx = +b.dataset.day; renderDays(); });
+  $('crewSearch').addEventListener('input', renderCrew);
+  document.addEventListener('visibilitychange', function(){
+    if (document.hidden || !data || !$('sheet').hidden || document.activeElement && document.activeElement.matches('textarea,input')) return;
+    load();
+  });
+
+  // ---- start ----
+  var params = new URLSearchParams(location.search);
+  R = (params.get('r') || stored() || '').trim();
+  var hash = (location.hash || '').slice(1);
+  $('previewBar').hidden = !PREVIEW;
+  if (R){ load().then(function(){ if (['venue','crew','notes'].indexOf(hash) > -1) showTab(hash); }); }
+  else showGate({ reason:'not_found' });
+})();
+</script>
+</body>
+</html>

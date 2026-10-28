@@ -141,3 +141,8 @@ Sources are in `tools/vision_board/`. After any `refresh.py`, rebuild them so th
 The backend (Supabase edge function `vision-board`) source is kept in `tools/vision_board/edge/index.ts`; it sends the welcome email through Resend once a `RESEND_API_KEY` secret is set on the function.
 
 Registrations live in the `vision_board` schema of the NAMB CRM Supabase project, reached only through the `vision-board` edge function. Capacity (50), the 72-hour hold, the price, the Zelle recipient, the hotel discount code and the team password are all in `vision_board.settings`.
+
+### Event agenda app (/vision-board/2027-agenda)
+
+A phone-first app for confirmed (paid) guests: schedule with location and dress code, venue, notes from Jennifer, and the Crew list (opt-in contacts with photo, Instagram, Facebook, tap to text or call, private notes, save to phone contacts). Each guest opens it with their own private link (`?r=<registration id>`), emailed from the team page (Event agenda -> Email agenda links). Anyone else can ask for their link by email; it only goes to paid guests. The app closes on the date set under Event agenda -> App settings (default Feb 8, 2027). Jennifer edits everything under Event agenda on the team page. "Preview as a guest" uses a separate preview account (code PREVIEW, event_year 1) so the team never opens a real guest's private notes. Photos live in the public Supabase storage bucket `vision-board-photos`.
+

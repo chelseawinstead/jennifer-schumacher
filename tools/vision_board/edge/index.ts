@@ -26,7 +26,7 @@ function corsFor(origin: string | null) {
 const clean = (v: unknown, max = 200) => String(v ?? "").trim().slice(0, max);
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const KINDS = ["hold", "waitlist", "offer", "paid"] as const;
+const KINDS = ["hold", "waitlist", "offer", "paid", "agenda"] as const;
 type Kind = typeof KINDS[number];
 const esc = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 
@@ -38,7 +38,7 @@ function azTime(iso: string | null) {
 // ---------- email rendering ----------
 type Tpl = { subject: string; heading: string; body: string };
 type Guest = { id: string; first_name: string; last_name: string; email: string; code: string; amount: number; hold_expires_at: string | null };
-type Settings = { zelle_to: string | null; hotel_code: string | null; email_templates: Record<string, Tpl>; mailer_url: string | null; mailer_token: string | null };
+type Settings = { zelle_to: string | null; hotel_code: string | null; email_templates: Record<string, Tpl>; mailer_url: string | null; mailer_token: string | null; guide_passcode?: string | null };
 
 function fill(s: string, g: Guest, st: Settings) {
   const v: Record<string, string> = {
@@ -47,6 +47,7 @@ function fill(s: string, g: Guest, st: Settings) {
     zelle_to: st.zelle_to || "info@schumacherliving.com",
     hotel_code: st.hotel_code || "[hotel discount code]",
     payment_link: `${SITE}/vision-board/pay?r=${g.id}`,
+    agenda_link: `${SITE}/vision-board/2027-agenda?r=${g.id}`,
   };
   return String(s || "").replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m));
 }
@@ -108,7 +109,7 @@ export function renderEmail(kind: Kind, g: Guest, st: Settings, override?: Parti
 }
 
 async function loadSettings(): Promise<Settings> {
-  const [s] = await sql`select zelle_to, hotel_code, email_templates, mailer_url, mailer_token from vision_board.settings where id = 1`;
+  const [s] = await sql`select zelle_to, hotel_code, email_templates, mailer_url, mailer_token, guide_passcode from vision_board.settings where id = 1`;
   return s as Settings;
 }
 async function loadGuest(where: { id?: string; code?: string }): Promise<(Guest & { status: string }) | null> {
@@ -137,7 +138,28 @@ async function logEmail(id: string, kind: string, by: string, result: { ok: bool
   await sql`update vision_board.registrations set email_log = email_log || ${sql.json([entry])}::jsonb
     ${kind === "paid" && result.ok ? sql`, confirmation_sent_at = now()` : sql``}
     ${(kind === "hold" || kind === "waitlist") && by === "auto" && result.ok ? sql`, welcome_email_sent_at = now()` : sql``}
+    ${kind === "agenda" && result.ok ? sql`, agenda_link_sent_at = now()` : sql``}
     where id = ${id}`;
+}
+
+async function sendKind(id: string, kind: Kind, by: string) {
+  try {
+    const g = await loadGuest({ id });
+    if (!g) return { ok: false, error: "not_found" };
+    const st = await loadSettings();
+    const result = await sendViaGmail(st, g.email, renderEmail(kind, g, st));
+    await logEmail(g.id, kind, by, result);
+    return result;
+  } catch (e) {
+    console.error("send " + kind, e);
+    return { ok: false, error: String(e).slice(0, 120) };
+  }
+}
+
+// Storage accepts the newer sb_secret_ keys only in the apikey header; older JWT keys go in both.
+function storageAuth(): Record<string, string> {
+  const k = Deno.env.get("SUPABASE_SECRET_KEY") || Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+  return k.startsWith("sb_") ? { apikey: k } : { apikey: k, Authorization: `Bearer ${k}` };
 }
 
 async function sendWelcome(code: string) {
@@ -178,6 +200,85 @@ Deno.serve(async (req) => {
       return json(row.g, row.g.ok ? 200 : 404);
     }
 
+    // Event agenda, opened with a paid guest's personal link (?r=<their id>)
+    if (req.method === "POST" && action === "agenda") {
+      const b = await req.json().catch(() => ({}));
+      const id = clean(b.r, 40);
+      if (!UUID.test(id)) return json({ ok: false, reason: "not_found" }, 404);
+      const [row] = await sql`select vision_board.guide_for_guest(${id}::uuid) as g`;
+      return json(row.g, row.g.ok ? 200 : 403);
+    }
+
+    // A paid guest updates their own Crew profile: listing on/off, Instagram, Facebook, photo
+    if (req.method === "POST" && action === "profile") {
+      const b = await req.json().catch(() => ({}));
+      const id = clean(b.r, 40);
+      if (!UUID.test(id)) return json({ ok: false }, 404);
+      const ig = clean(b.instagram, 80).replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/^@/, "").replace(/[/?#].*$/, "");
+      const fb = clean(b.facebook, 200);
+      const [row] = await sql`select vision_board.guest_update_profile(${id}::uuid, ${b.directory_opt_in === true}, ${ig}, ${fb}) as r`;
+      if (!row.r.ok) return json({ ok: false }, 403);
+
+      if (b.remove_photo || typeof b.photo === "string") {
+        let url: string | null = null;
+        if (typeof b.photo === "string") {
+          const m = /^data:image\/jpeg;base64,([A-Za-z0-9+/=]+)$/.exec(b.photo);
+          if (!m) return json({ ok: false, error: "photo" }, 400);
+          const bytes = Uint8Array.from(atob(m[1]), (c) => c.charCodeAt(0));
+          if (bytes.length > 1_500_000) return json({ ok: false, error: "photo_too_big" }, 400);
+          const path = `${id}-${Date.now()}.jpg`;
+          const up = await fetch(`${Deno.env.get("SUPABASE_URL")}/storage/v1/object/vision-board-photos/${path}`, {
+            method: "POST",
+            headers: { ...storageAuth(), "Content-Type": "image/jpeg", "x-upsert": "true", "cache-control": "31536000" },
+            body: bytes,
+          });
+          if (!up.ok) { console.error("photo upload", up.status, await up.text()); return json({ ok: false, error: "upload" }, 502); }
+          url = `${Deno.env.get("SUPABASE_URL")}/storage/v1/object/public/vision-board-photos/${path}`;
+        }
+        const [ph] = await sql`select vision_board.guest_set_photo(${id}::uuid, ${url}) as r`;
+        const old = ph.r.old as string | null;
+        const prefix = `${Deno.env.get("SUPABASE_URL")}/storage/v1/object/public/vision-board-photos/`;
+        if (old && old.startsWith(prefix)) {
+          await fetch(`${Deno.env.get("SUPABASE_URL")}/storage/v1/object/vision-board-photos/${old.slice(prefix.length)}`, {
+            method: "DELETE", headers: storageAuth(),
+          }).catch(() => {});
+        }
+      }
+      const [g] = await sql`select vision_board.guide_for_guest(${id}::uuid) as g`;
+      return json(g.g);
+    }
+
+    // A guest's private note about someone they met (only the author ever sees it)
+    if (req.method === "POST" && action === "note") {
+      const b = await req.json().catch(() => ({}));
+      const id = clean(b.r, 40), subject = clean(b.person, 40);
+      if (!UUID.test(id) || !UUID.test(subject)) return json({ ok: false }, 404);
+      const [row] = await sql`select vision_board.guest_save_note(${id}::uuid, ${subject}::uuid, ${String(b.body ?? "").slice(0, 4000)}) as r`;
+      return json(row.r, row.r.ok ? 200 : 403);
+    }
+
+    // "Email me my link": always the same reply, so it can't be used to check who registered
+    if (req.method === "POST" && action === "agenda-link") {
+      const b = await req.json().catch(() => ({}));
+      const email = clean(b.email, 160);
+      if (EMAIL.test(email)) {
+        const [row] = await sql`select vision_board.agenda_link_request(${email}) as r`;
+        // @ts-ignore EdgeRuntime is provided by Supabase
+        if (row.r.send) EdgeRuntime.waitUntil(sendKind(row.r.id, "agenda", "guest"));
+      }
+      await new Promise((r) => setTimeout(r, 600));
+      return json({ ok: true });
+    }
+
+    // A guest turns their own directory listing on or off from their private payment page
+    if (req.method === "POST" && action === "guest-optin") {
+      const b = await req.json().catch(() => ({}));
+      const id = clean(b.r, 40);
+      if (!UUID.test(id)) return json({ ok: false }, 404);
+      const rows = await sql`select vision_board.guest_set_optin(${id}::uuid, ${b.on === true}) as r`;
+      return rows.length && rows[0].r ? json(rows[0].r) : json({ ok: false }, 404);
+    }
+
     if (req.method === "POST" && action === "register") {
       const b = await req.json().catch(() => ({}));
       if (clean(b.website)) return json({ ok: true, ignored: true }); // honeypot
@@ -187,12 +288,13 @@ Deno.serve(async (req) => {
         city: clean(b.city, 80), state: clean(b.state, 40), zip: clean(b.zip, 12),
         company: clean(b.company, 120),
       };
+      const optin = b.directory_opt_in === true || b.directory_opt_in === "on" || b.directory_opt_in === "true";
       const missing = Object.entries(f).filter(([k, v]) => k !== "street2" && !v).map(([k]) => k);
       if (missing.length) return json({ ok: false, error: "missing", fields: missing }, 400);
       if (!EMAIL.test(f.email)) return json({ ok: false, error: "email" }, 400);
       if (f.phone.replace(/\D/g, "").length < 10) return json({ ok: false, error: "phone" }, 400);
       const [row] = await sql`select vision_board.register(${f.first}, ${f.last}, ${f.email}, ${f.phone},
-        ${f.street}, ${f.street2}, ${f.city}, ${f.state}, ${f.zip}, ${f.company}) as r`;
+        ${f.street}, ${f.street2}, ${f.city}, ${f.state}, ${f.zip}, ${f.company}, ${optin}) as r`;
       _status = null;
       if (row.r.ok && !row.r.duplicate) {
         // send after responding so the guest never waits on Gmail
@@ -259,6 +361,49 @@ Deno.serve(async (req) => {
         const result = await sendViaGmail(st, g.email, m);
         await logEmail(g.id, kind, "team", result);
         return json(result, result.ok ? 200 : 502);
+      }
+
+      if (action === "team-guide-save" && req.method === "POST") {
+        const g = b.guide;
+        if (!g || typeof g !== "object") return json({ ok: false, error: "guide" }, 400);
+        const str = (v: unknown, n = 500) => clean(v, n);
+        const guide = {
+          welcome: str(g.welcome, 1000),
+          venue: {
+            name: str(g.venue?.name, 200), address: str(g.venue?.address, 300), phone: str(g.venue?.phone, 60),
+            booking_label: str(g.venue?.booking_label, 120), booking_url: /^https?:\/\//.test(str(g.venue?.booking_url, 1000)) ? str(g.venue?.booking_url, 1000) : "",
+            details: str(g.venue?.details, 3000),
+          },
+          days: (Array.isArray(g.days) ? g.days : []).slice(0, 6).map((d: any) => ({
+            label: str(d?.label, 120),
+            items: (Array.isArray(d?.items) ? d.items : []).slice(0, 40).map((i: any) => ({
+              time: str(i?.time, 60), title: str(i?.title, 200), location: str(i?.location, 200), dress: str(i?.dress, 200), details: str(i?.details, 1500),
+            })),
+          })),
+          notes: (Array.isArray(g.notes) ? g.notes : []).slice(0, 50).map((n: any) => ({
+            title: str(n?.title, 200), body: str(n?.body, 5000), date: str(n?.date, 40),
+          })),
+        };
+        const closes = b.closes_at && !isNaN(Date.parse(b.closes_at)) ? new Date(b.closes_at).toISOString() : null;
+        await sql`update vision_board.settings set guide = ${sql.json(guide)},
+          agenda_closes_at = coalesce(${closes}::timestamptz, agenda_closes_at), updated_at = now() where id = 1`;
+        return json({ ok: true });
+      }
+
+      // Email every paid guest their personal agenda link (only those not sent yet, unless resend_all)
+      if (action === "team-agenda-send" && req.method === "POST") {
+        const rows = b.resend_all
+          ? await sql`select id from vision_board.registrations where event_year = (select event_year from vision_board.settings where id = 1) and status = 'paid' order by created_at`
+          : await sql`select id from vision_board.registrations where event_year = (select event_year from vision_board.settings where id = 1) and status = 'paid' and agenda_link_sent_at is null order by created_at`;
+        const ids = rows.map((r: { id: string }) => r.id);
+        // @ts-ignore EdgeRuntime is provided by Supabase
+        EdgeRuntime.waitUntil((async () => { for (const id of ids) { await sendKind(id, "agenda", "team"); await new Promise((r) => setTimeout(r, 400)); } })());
+        return json({ ok: true, queued: ids.length });
+      }
+
+      if (action === "team-optin" && req.method === "POST") {
+        await sql`select vision_board.team_set_optin(${clean(b.id, 40)}::uuid, ${b.on === true})`;
+        return json({ ok: true });
       }
 
       if (action === "team-mailer-check") {

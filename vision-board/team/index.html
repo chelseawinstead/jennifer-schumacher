@@ -101,6 +101,33 @@
   .mail-help{ color:var(--muted); font-size:13px; margin:8px 0 16px; }
   .mail-acts{ display:flex; flex-wrap:wrap; gap:8px; }
   .mail.tpl{ max-width:1100px; }
+  .mail.ag{ max-width:900px; }
+  .ag-send{ display:flex; flex-wrap:wrap; gap:12px 20px; justify-content:space-between; align-items:center; background:var(--stone); padding:14px 16px; margin-bottom:18px; }
+  .ag-send b{ font-weight:500; }
+  .ag-tabs{ margin-bottom:14px; }
+  .ag-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0 16px; }
+  .ag-grid .wide{ grid-column:1/-1; }
+  .ag-day{ border:1px solid var(--line); padding:14px; margin-bottom:14px; }
+  .ag-day-head{ display:flex; gap:10px; align-items:end; margin-bottom:8px; }
+  .ag-day-head .fld{ flex:1; margin:0; }
+  .ag-item{ display:grid; grid-template-columns:130px 1fr 1fr 1fr auto; gap:8px; align-items:start; padding:10px 0; border-top:1px solid var(--line); }
+  .ag-item input,.ag-item textarea,.ag-note input,.ag-note textarea{ width:100%; font:inherit; font-size:14px; padding:8px 10px; border:1px solid #cfcbc2; }
+  .ag-item textarea{ grid-column:1/-2; min-height:38px; resize:vertical; }
+  .ag-item .tools,.ag-note .tools{ display:flex; gap:4px; }
+  .ag-item .tools button,.ag-note .tools button{ background:#fff; border:1px solid #cfcbc2; padding:6px 9px; font-size:13px; }
+  .ag-item .tools button:hover,.ag-note .tools button:hover{ border-color:var(--navy); color:var(--navy); }
+  .ag-cap{ font-size:11px; color:var(--warm); letter-spacing:.04em; display:grid; grid-template-columns:130px 1fr 1fr 1fr auto; gap:8px; padding-bottom:4px; }
+  .ag-note{ border:1px solid var(--line); padding:12px; margin-bottom:10px; display:grid; grid-template-columns:150px 1fr auto; gap:8px; }
+  .ag-note textarea{ grid-column:1/-1; min-height:90px; resize:vertical; }
+  .add{ background:none; border:1px dashed var(--navy); color:var(--navy); padding:8px 14px; font-size:14px; }
+  .ag-foot{ position:sticky; bottom:-28px; background:#fff; padding:14px 0 4px; display:flex; gap:14px; align-items:center; border-top:1px solid var(--line); margin-top:10px; }
+  @media (max-width:760px){
+    .ag-grid{ grid-template-columns:1fr; }
+    .ag-cap{ display:none; }
+    .ag-item{ grid-template-columns:1fr 1fr; }
+    .ag-item textarea{ grid-column:1/-1; }
+    .ag-note{ grid-template-columns:1fr; }
+  }
   .tpl-grid{ display:grid; grid-template-columns:1fr 1fr; gap:28px; }
   .fld{ display:block; font-size:13px; color:var(--warm); margin-bottom:12px; }
   .fld input,.fld textarea{ display:block; width:100%; margin-top:6px; font:inherit; font-size:15px; color:var(--ink); padding:10px 12px; border:1px solid #cfcbc2; resize:vertical; line-height:1.55; }
@@ -139,6 +166,7 @@
   <div class="bar-actions" id="barActions" hidden>
     <span class="updated" id="updated"></span>
     <button class="ghost" id="refreshBtn">Refresh</button>
+    <button class="ghost" id="agBtn">Event agenda</button>
     <button class="ghost" id="tplBtn">Email templates</button>
     <button class="ghost" id="csvBtn">Download spreadsheet</button>
     <button class="ghost" id="logoutBtn">Sign out</button>
@@ -206,6 +234,22 @@
         <div class="mail-help" style="margin:0 0 6px">Preview with a sample guest</div>
         <iframe id="tPreview" title="Email preview"></iframe>
       </div>
+    </div>
+  </div>
+</div>
+<div class="mail-wrap" id="agBox" hidden>
+  <div class="mail ag" role="dialog" aria-modal="true" aria-labelledby="agTitle">
+    <div class="mail-head"><h2 id="agTitle">Event agenda</h2><button type="button" class="ghost" id="agClose">Close</button></div>
+    <p class="mail-help">This is what paid guests see in their personal agenda app at schumacherliving.com/vision-board/2027-agenda. Changes show up for guests as soon as you save.</p>
+    <div class="ag-send">
+      <div><b id="agSendTitle"></b><div class="mail-help" style="margin:2px 0 0" id="agSendSub"></div></div>
+      <div class="mail-acts"><button type="button" class="solid" id="agSend">Email agenda links</button><button type="button" class="ghost" id="agPreview">Preview as a guest</button></div>
+    </div>
+    <div class="ag-tabs tabs" id="agTabs"></div>
+    <div id="agBody"></div>
+    <div class="ag-foot">
+      <button type="button" class="solid" id="agSave">Save agenda</button>
+      <span class="mail-help" id="agStatus" style="margin:0"></span>
     </div>
   </div>
 </div>
@@ -294,17 +338,18 @@
         var hrs = (new Date(r.hold_expires_at) - Date.now())/36e5;
         extra = '<div class="due' + (hrs < 12 ? ' soon' : '') + '">Hold ends ' + short(r.hold_expires_at) + '</div>';
       }
-      if (r.status==='paid' && r.paid_at) extra = '<div class="sub" style="margin-top:6px">Paid ' + short(r.paid_at) + '</div>';
+      if (r.status==='paid' && r.paid_at) extra = '<div class="sub" style="margin-top:6px">Paid ' + short(r.paid_at) + '</div>' +
+        '<div class="sub">' + (r.directory_opt_in ? 'In the Crew list' : 'Not in the Crew list') + (r.agenda_link_sent_at ? ' \u00b7 agenda link sent' : '') + '</div>';
       if (r.status==='waitlist') extra = '<div class="sub" style="margin-top:6px">#' + (waitOrder.indexOf(r.id)+1) + ' in line</div>';
       var log = r.email_log || [], last = log[log.length-1];
-      var KL = { hold:'Payment email', waitlist:'Waitlist email', offer:'Seat-offer email', paid:'Confirmation' };
+      var KL = { hold:'Payment email', waitlist:'Waitlist email', offer:'Seat-offer email', paid:'Confirmation', agenda:'Agenda link' };
       if (last && last.ok) extra += '<div class="sent">' + KL[last.kind] + ' sent ' + short(last.at) + (last.by==='auto' ? ' (automatic)' : '') + '</div>';
       else if (last && !last.ok) extra += '<div class="mailfail">' + KL[last.kind] + ' didn\u2019t send: ' + esc(last.error) + '</div>';
       else if (r.confirmation_sent_at) extra += '<div class="sent">Confirmation marked sent ' + short(r.confirmation_sent_at) + '</div>';
 
       var b = [];
       if (r.status==='pending'){ b.push('<button class="pay" data-act="paid">Mark paid</button>'); b.push('<button data-act="email-pay">Email payment details</button>'); b.push('<button data-act="extend">Extend 24 hrs</button>'); b.push('<button class="danger" data-act="cancel">Cancel</button>'); }
-      if (r.status==='paid'){ b.push('<button data-act="email-confirm">Email confirmation</button>'); b.push('<button data-act="unpaid">Undo paid</button>'); b.push('<button class="danger" data-act="cancel">Cancel</button>'); }
+      if (r.status==='paid'){ b.push('<button data-act="email-confirm">Email confirmation</button>'); b.push('<button data-act="email-agenda">Email agenda link</button>'); b.push('<button data-act="unpaid">Undo paid</button>'); b.push('<button class="danger" data-act="cancel">Cancel</button>'); }
       if (r.status==='waitlist'){ b.push('<button class="pay" data-act="offer">Offer seat</button>'); b.push('<button data-act="email-wait">Email</button>'); b.push('<button class="danger" data-act="cancel">Remove</button>'); }
       if (r.status==='expired' || r.status==='cancelled'){ b.push('<button data-act="offer">Re-open hold</button>'); b.push('<button data-act="paid">Mark paid</button>'); }
 
@@ -325,7 +370,8 @@
   var KINDS = [['hold','Payment request','Sent automatically the moment someone registers and gets a seat.'],
                ['paid','Payment received','Sent when the team clicks “Email confirmation” after marking someone paid.'],
                ['waitlist','Waitlist','Sent automatically when someone registers after all seats are taken.'],
-               ['offer','Seat opened up','Sent when the team offers a waitlisted guest a seat.']];
+               ['offer','Seat opened up','Sent when the team offers a waitlisted guest a seat.'],
+               ['agenda','Agenda link','Each paid guest\u2019s personal link to the event app. Sent from Event agenda, the guest\u2019s row, or when a guest asks for their link.']];
   var mailState = null;
   function setMailFields(m){ $('mSubject').value = m.subject; $('mHeading').value = m.heading; $('mBody').value = m.body; }
   function mail(r, kind, onSent){
@@ -373,7 +419,7 @@
 
   // ---- template editor ----
   var tpl = null, tKind = 'hold', tTimer = null;
-  var CHIPS = [['{first_name}','First name'],['{code}','Their code'],['{amount}','Amount'],['{deadline}','Pay-by deadline'],['{zelle_to}','Zelle address'],['{hotel_code}','Hotel code'],['{payment_link}','Payment page link']];
+  var CHIPS = [['{first_name}','First name'],['{code}','Their code'],['{amount}','Amount'],['{deadline}','Pay-by deadline'],['{zelle_to}','Zelle address'],['{hotel_code}','Hotel code'],['{payment_link}','Payment page link'],['{agenda_link}','Agenda link']];
   function openTemplates(){
     tpl = JSON.parse(JSON.stringify(data.settings.email_templates || {}));
     $('tHotel').value = data.settings.hotel_code || '';
@@ -399,6 +445,146 @@
     }, 400);
   }
   $('tplBtn').addEventListener('click', openTemplates);
+
+  // ---- event agenda editor ----
+  var SITE = 'https://www.schumacherliving.com';
+  var ag = null, agTab = 'schedule', agDirty = false;
+  function agTabs(){
+    var T = [['schedule','Schedule'],['venue','Venue & welcome'],['notes','Notes from Jennifer'],['settings','App settings']];
+    $('agTabs').innerHTML = T.map(function(t){ return '<button type="button" data-agt="'+t[0]+'" aria-pressed="'+(agTab===t[0])+'">'+t[1]+'</button>'; }).join('');
+  }
+  function fld(label, path, val, opts){
+    opts = opts || {};
+    var tag = opts.area ? '<textarea data-p="'+path+'" rows="'+(opts.rows||3)+'" placeholder="'+esc(opts.ph||'')+'">'+esc(val||'')+'</textarea>'
+                        : '<input data-p="'+path+'" type="'+(opts.type||'text')+'" value="'+esc(val||'')+'" placeholder="'+esc(opts.ph||'')+'">';
+    return '<label class="fld'+(opts.wide?' wide':'')+'">'+label+tag+'</label>';
+  }
+  function agRender(){
+    agTabs();
+    var h = '';
+    if (agTab === 'schedule'){
+      h += '<p class="mail-help">Each line is one block of the weekend. Location and dress code are optional, and show as small tags under the title.</p>';
+      (ag.days||[]).forEach(function(d, di){
+        h += '<div class="ag-day"><div class="ag-day-head">' + fld('Day', 'days.'+di+'.label', d.label, { ph:'Friday, January 8' }) +
+          '<div class="tools ag-note" style="border:0;padding:0;margin:0;display:flex"><button type="button" data-ag="day-up" data-d="'+di+'">↑</button><button type="button" data-ag="day-down" data-d="'+di+'">↓</button><button type="button" data-ag="day-del" data-d="'+di+'">Remove day</button></div></div>' +
+          '<div class="ag-cap"><span>Time</span><span>What</span><span>Where</span><span>Dress code</span><span></span></div>';
+        (d.items||[]).forEach(function(it, ii){
+          var p = 'days.'+di+'.items.'+ii+'.';
+          h += '<div class="ag-item">' +
+            '<input data-p="'+p+'time" value="'+esc(it.time)+'" placeholder="3:30 – 4:30pm" aria-label="Time">' +
+            '<input data-p="'+p+'title" value="'+esc(it.title)+'" placeholder="e.g. Welcome toast" aria-label="What">' +
+            '<input data-p="'+p+'location" value="'+esc(it.location)+'" placeholder="e.g. Lobby lounge" aria-label="Where">' +
+            '<input data-p="'+p+'dress" value="'+esc(it.dress)+'" placeholder="e.g. Cocktail casual" aria-label="Dress code">' +
+            '<div class="tools"><button type="button" data-ag="up" data-d="'+di+'" data-i="'+ii+'" aria-label="Move up">↑</button><button type="button" data-ag="down" data-d="'+di+'" data-i="'+ii+'" aria-label="Move down">↓</button><button type="button" data-ag="del" data-d="'+di+'" data-i="'+ii+'" aria-label="Remove">✕</button></div>' +
+            '<textarea data-p="'+p+'details" rows="1" placeholder="Extra details (optional)" aria-label="Details">'+esc(it.details||'')+'</textarea>' +
+          '</div>';
+        });
+        h += '<button type="button" class="add" data-ag="add-item" data-d="'+di+'">+ Add to this day</button></div>';
+      });
+      h += '<button type="button" class="add" data-ag="add-day">+ Add a day</button>';
+    }
+    if (agTab === 'venue'){
+      var v = ag.venue || {};
+      h += '<div class="ag-grid">' +
+        fld('Welcome line at the top of the app', 'welcome', ag.welcome, { wide:true, ph:'Everything you need for the weekend, in one place.' }) +
+        fld('Venue name', 'venue.name', v.name) + fld('Phone (optional)', 'venue.phone', v.phone, { ph:'(480) 555-0100' }) +
+        fld('Address', 'venue.address', v.address, { wide:true }) +
+        fld('Booking button text', 'venue.booking_label', v.booking_label, { ph:'Book your room at the group rate' }) +
+        fld('Booking link', 'venue.booking_url', v.booking_url, { ph:'https://' }) +
+        fld('Details (parking, check-in, Wi-Fi, anything else)', 'venue.details', v.details, { area:true, rows:5, wide:true }) +
+      '</div>';
+    }
+    if (agTab === 'notes'){
+      h += '<p class="mail-help">Notes show newest first, in this order. To add a clickable link, type <code>[words](https://web address)</code>.</p>' +
+        '<button type="button" class="add" data-ag="add-note" style="margin-bottom:12px">+ New note</button>';
+      (ag.notes||[]).forEach(function(n, ni){
+        h += '<div class="ag-note"><input data-p="notes.'+ni+'.date" value="'+esc(n.date)+'" placeholder="Date, e.g. Dec 15" aria-label="Date">' +
+          '<input data-p="notes.'+ni+'.title" value="'+esc(n.title)+'" placeholder="Title" aria-label="Title">' +
+          '<div class="tools"><button type="button" data-ag="note-up" data-n="'+ni+'">↑</button><button type="button" data-ag="note-down" data-n="'+ni+'">↓</button><button type="button" data-ag="note-del" data-n="'+ni+'">✕</button></div>' +
+          '<textarea data-p="notes.'+ni+'.body" placeholder="Write your note to the Crew" aria-label="Note">'+esc(n.body)+'</textarea></div>';
+      });
+      if (!(ag.notes||[]).length) h += '<p class="mail-help">No notes yet. Guests see “Jennifer’s notes will appear here” until you post one.</p>';
+    }
+    if (agTab === 'settings'){
+      h += '<div class="ag-grid">' + fld('App closes on (Arizona time, end of day)', '_closes', ag._closes, { type:'date' }) + '</div>' +
+        '<p class="mail-help">After this date guests see “The app has closed.” Their notes and the Crew list go away with it, which is why the Crew tab reminds them to save contacts first.</p>';
+    }
+    $('agBody').innerHTML = h;
+  }
+  function agSetPath(path, val){
+    var ks = path.split('.'), o = ag;
+    for (var i=0;i<ks.length-1;i++){ var k = /^\d+$/.test(ks[i]) ? +ks[i] : ks[i]; if (o[k]==null) o[k] = {}; o = o[k]; }
+    o[ks[ks.length-1]] = val;
+  }
+  function agSendInfo(){
+    var paid = data.registrations.filter(function(r){ return r.status==='paid'; });
+    var notSent = paid.filter(function(r){ return !r.agenda_link_sent_at; }).length;
+    $('agSendTitle').textContent = notSent ? notSent + ' of ' + paid.length + ' paid guests haven’t been sent their agenda link' : 'All ' + paid.length + ' paid guests have their agenda link';
+    $('agSendSub').textContent = 'Each guest gets their own private link from Jennifer’s Gmail. Edit the wording under Email templates → Agenda link.';
+    $('agSend').textContent = notSent ? 'Email ' + notSent + ' agenda links' : 'Resend to everyone';
+    $('agSend').dataset.all = notSent ? '' : '1';
+  }
+  function openAgenda(){
+    ag = JSON.parse(JSON.stringify(data.settings.guide || {}));
+    ag.days = ag.days || []; ag.notes = ag.notes || []; ag.venue = ag.venue || {};
+    ag._closes = new Date(new Date(data.settings.agenda_closes_at).getTime() - 7*36e5).toISOString().slice(0,10);
+    agDirty = false; $('agStatus').textContent = ''; agSendInfo(); agRender(); $('agBox').hidden = false;
+  }
+  function closeAgenda(){ if (agDirty && !confirm('Close without saving your agenda changes?')) return; $('agBox').hidden = true; }
+  $('agBtn').addEventListener('click', openAgenda);
+  $('agClose').addEventListener('click', closeAgenda);
+  $('agBox').addEventListener('click', function(e){ if (e.target.id === 'agBox') closeAgenda(); });
+  $('agTabs').addEventListener('click', function(e){ var b = e.target.closest('[data-agt]'); if (b){ agTab = b.dataset.agt; agRender(); } });
+  $('agBody').addEventListener('input', function(e){
+    var el = e.target.closest('[data-p]'); if (!el) return;
+    agSetPath(el.dataset.p, el.value); agDirty = true; $('agStatus').textContent = 'Unsaved changes';
+  });
+  $('agBody').addEventListener('click', function(e){
+    var b = e.target.closest('[data-ag]'); if (!b) return;
+    var a = b.dataset.ag, d = +b.dataset.d, i = +b.dataset.i, n = +b.dataset.n;
+    function swap(arr, x, y){ if (y < 0 || y >= arr.length) return; var t = arr[x]; arr[x] = arr[y]; arr[y] = t; }
+    if (a==='add-item') ag.days[d].items = (ag.days[d].items||[]).concat([{ time:'', title:'', location:'', dress:'', details:'' }]);
+    if (a==='del' && confirm('Remove this line from the schedule?')) ag.days[d].items.splice(i,1);
+    if (a==='up') swap(ag.days[d].items, i, i-1);
+    if (a==='down') swap(ag.days[d].items, i, i+1);
+    if (a==='add-day') ag.days.push({ label:'', items:[] });
+    if (a==='day-del' && confirm('Remove this whole day and everything in it?')) ag.days.splice(d,1);
+    if (a==='day-up') swap(ag.days, d, d-1);
+    if (a==='day-down') swap(ag.days, d, d+1);
+    if (a==='add-note') ag.notes.unshift({ date: new Date().toLocaleDateString('en-US', { month:'short', day:'numeric' }), title:'', body:'' });
+    if (a==='note-del' && confirm('Delete this note?')) ag.notes.splice(n,1);
+    if (a==='note-up') swap(ag.notes, n, n-1);
+    if (a==='note-down') swap(ag.notes, n, n+1);
+    agDirty = true; $('agStatus').textContent = 'Unsaved changes'; agRender();
+  });
+  $('agSave').addEventListener('click', function(){
+    var btn = $('agSave'); btn.disabled = true;
+    var closes = ag._closes ? new Date(ag._closes + 'T23:59:00-07:00').toISOString() : null;
+    var guide = { welcome: ag.welcome, venue: ag.venue, days: ag.days, notes: ag.notes };
+    api('team-guide-save', { guide: guide, closes_at: closes }).then(function(r){
+      btn.disabled = false;
+      if (r.ok){ agDirty = false; $('agStatus').textContent = 'Saved. Guests see it the next time they open the app.'; load(); }
+      else $('agStatus').textContent = 'Didn’t save. Try again.';
+    });
+  });
+  $('agSend').addEventListener('click', function(){
+    var all = $('agSend').dataset.all === '1';
+    var paid = data.registrations.filter(function(r){ return r.status==='paid'; });
+    var count = all ? paid.length : paid.filter(function(r){ return !r.agenda_link_sent_at; }).length;
+    if (agDirty){ alert('Save your agenda changes first, then send the links.'); return; }
+    if (!confirm((all ? 'Resend' : 'Send') + ' agenda links to ' + count + ' paid guests from Jennifer’s Gmail?')) return;
+    $('agSend').disabled = true;
+    api('team-agenda-send', { resend_all: all }).then(function(r){
+      $('agSend').disabled = false;
+      if (r.ok){ toast('Sending ' + r.queued + ' agenda links. This takes about a minute.'); setTimeout(function(){ load().then(agSendInfo); }, 30000); }
+      else toast('Didn’t send. Try again.');
+    });
+  });
+  $('agPreview').addEventListener('click', function(){
+    if (agDirty){ alert('Save your agenda changes first, then preview.'); return; }
+    if (!data.settings.preview_id){ toast('Preview isn’t set up.'); return; }
+    window.open(SITE + '/vision-board/2027-agenda?r=' + data.settings.preview_id + '&preview=1', '_blank', 'noopener');
+  });
   $('tTabs').addEventListener('click', function(e){ var b = e.target.closest('button[data-k]'); if (b) showKind(b.dataset.k); });
   ['tSubject','tHeading','tBody','tHotel'].forEach(function(id){ $(id).addEventListener('input', function(){ $('tStatus').textContent = 'Unsaved changes'; preview(); }); });
   var lastField = 'tBody';
@@ -423,7 +609,7 @@
   $('tplBox').addEventListener('click', function(e){ if (e.target.id==='tplBox') closeTpl(); });
   document.addEventListener('keydown', function(e){
     if (e.key !== 'Escape') return;
-    if (!$('mailBox').hidden) closeMail(); else if (!$('tplBox').hidden) closeTpl();
+    if (!$('mailBox').hidden) closeMail(); else if (!$('agBox').hidden) closeAgenda(); else if (!$('tplBox').hidden) closeTpl();
   });
 
   // ---- actions ----
@@ -441,6 +627,7 @@
 
     if (a==='email-pay'){ mail(r, 'hold'); return; }
     if (a==='email-wait'){ mail(r, 'waitlist'); return; }
+    if (a==='email-agenda'){ mail(r, 'agenda'); return; }
     if (a==='email-confirm'){ mail(r, 'paid', function(){ act(id,'emailed').then(function(){ toast('Marked as sent'); load(); }); }); return; }
 
     if (a==='cancel' && !confirm((r.status==='waitlist' ? 'Remove ' + who + ' from the waitlist?' : 'Cancel ' + who + '’s seat? It will open up on the public page right away.'))) return;

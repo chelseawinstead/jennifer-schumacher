@@ -68,6 +68,12 @@ def main():
     with open(os.path.join(out_dir, "pay", "index.html"), "w", encoding="utf-8") as f:
         f.write(pay_head + nav + pay + "\n" + footer)
 
+    # attendee agenda app (opened with each paid guest's personal link)
+    agenda = open(os.path.join(HERE, "agenda.html"), encoding="utf-8").read()
+    os.makedirs(os.path.join(out_dir, "2027-agenda"), exist_ok=True)
+    with open(os.path.join(out_dir, "2027-agenda", "index.html"), "w", encoding="utf-8") as f:
+        f.write(agenda)
+
     team = open(os.path.join(HERE, "team.html"), encoding="utf-8").read()
     os.makedirs(os.path.join(out_dir, "team"), exist_ok=True)
     with open(os.path.join(out_dir, "team", "index.html"), "w", encoding="utf-8") as f:
