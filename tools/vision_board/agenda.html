@@ -155,10 +155,11 @@
   .p-acts{ display:grid !important; gap:10px; }
   .p-main{ display:grid; grid-template-columns:repeat(auto-fit,minmax(0,1fr)); grid-auto-flow:column; gap:8px; }
   .p-main a{ justify-content:center; padding:8px 6px !important; white-space:nowrap; }
-  .p-icons{ display:flex; align-items:center; gap:10px; }
+  .p-save{ display:flex; justify-content:center; }
+  .p-save a{ min-width:60%; justify-content:center; }
+  .p-icons{ display:flex; align-items:center; justify-content:center; gap:12px; }
   .p-icons a.ic{ width:42px; min-height:42px !important; height:42px; padding:0 !important; border-radius:50%; justify-content:center; }
   .p-icons a.ic svg{ width:19px; height:19px; }
-  .p-icons a.ic ~ a.save{ margin-left:auto; }
   .p-acts .solid{ background:var(--navy); color:#fff; }
   .p-acts svg{ width:16px; height:16px; }
   .note-lbl{ font-size:13px; color:var(--warm); display:flex; justify-content:space-between; }
@@ -500,15 +501,14 @@
       var realTel = tel && /[1-9]/.test(tel), main = '', icons = '';
       if (realTel) main += '<a class="solid" href="sms:' + esc(tel) + '">' + ICON.text + 'Text</a><a href="tel:' + esc(tel) + '">' + ICON.call + 'Call</a>';
       if (p.email) main += '<a href="mailto:' + esc(p.email) + '">' + ICON.mail + 'Email</a>';
+      var save = '<a class="save" href="' + API + '?action=vcard&r=' + encodeURIComponent(R) + '&p=' + encodeURIComponent(p.id) + '">' + ICON.save + 'Save contact</a>';
       if (p.instagram) icons += '<a class="ic" href="' + esc(igUrl(p.instagram)) + '" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">' + ICON.ig + '</a>';
       if (p.facebook) icons += '<a class="ic" href="' + esc(fbUrl(p.facebook)) + '" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook">' + ICON.fb + '</a>';
-      icons += '<a class="save" href="' + API + '?action=vcard&r=' + encodeURIComponent(R) + '&p=' + encodeURIComponent(p.id) + '">' + ICON.save + 'Save contact</a>';
-      var acts = (main ? '<div class="p-main">' + main + '</div>' : '') + (icons ? '<div class="p-icons">' + icons + '</div>' : '');
+      var acts = (main ? '<div class="p-main">' + main + '</div>' : '') + '<div class="p-save">' + save + '</div>' + (icons ? '<div class="p-icons">' + icons + '</div>' : '');
       return '<div class="person' + (open ? ' open' : '') + '" data-id="' + esc(p.id) + '">' +
         '<button class="p-row" type="button" aria-expanded="' + open + '"><span class="av">' + avatar(p) + '</span><span>' +
           '<span class="nm">' + esc(p.name) + (p.me ? '<span class="you-tag">You</span>' : '') + '</span>' +
-          (p.company ? '<span class="sub" style="display:block">' + esc(p.company) + '</span>' : '') +
-          '<span class="sub" style="display:block">' + esc(place) + (place && /[1-9]/.test(p.phone||'') ? ' · ' : '') + (/[1-9]/.test(p.phone||'') ? esc(prettyPhone(p.phone)) : '') + '</span>' +
+          '<span class="sub" style="display:block">' + esc([place, p.company].filter(Boolean).join(' | ')) + '</span>' +
           (p.my_note && !open ? '<span class="noted" style="display:block">Your note: ' + esc(p.my_note.slice(0, 60)) + (p.my_note.length > 60 ? '\u2026' : '') + '</span>' : '') +
         '</span><span class="chev" aria-hidden="true">\u203a</span></button>' +
         (open ? '<div class="p-more">' + (acts ? '<div class="p-acts">' + acts + '</div>' : '') +
