@@ -508,7 +508,8 @@
       return '<div class="person' + (open ? ' open' : '') + '" data-id="' + esc(p.id) + '">' +
         '<button class="p-row" type="button" aria-expanded="' + open + '"><span class="av">' + avatar(p) + '</span><span>' +
           '<span class="nm">' + esc(p.name) + (p.me ? '<span class="you-tag">You</span>' : '') + '</span>' +
-          '<span class="sub" style="display:block">' + esc([place, p.company].filter(Boolean).join(' | ')) + '</span>' +
+          (place ? '<span class="sub" style="display:block">' + esc(place) + '</span>' : '') +
+          (p.company ? '<span class="sub" style="display:block">' + esc(p.company) + '</span>' : '') +
           (p.my_note && !open ? '<span class="noted" style="display:block">Your note: ' + esc(p.my_note.slice(0, 60)) + (p.my_note.length > 60 ? '\u2026' : '') + '</span>' : '') +
         '</span><span class="chev" aria-hidden="true">\u203a</span></button>' +
         (open ? '<div class="p-more">' + (acts ? '<div class="p-acts">' + acts + '</div>' : '') +
