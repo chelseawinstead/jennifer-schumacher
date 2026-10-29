@@ -167,6 +167,7 @@
   .ag-send{ display:flex; flex-wrap:wrap; gap:12px 20px; justify-content:space-between; align-items:center; background:var(--stone); padding:14px 16px; margin-bottom:18px; }
   .ag-send b{ font-weight:500; }
   .ag-tabs{ margin-bottom:14px; }
+  #agSendBar[hidden], #agTabs[hidden]{ display:none; }
   .ag-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0 16px; }
   .ag-grid .wide{ grid-column:1/-1; }
   .ag-day{ border:1px solid var(--line); padding:14px; margin-bottom:14px; }
@@ -291,6 +292,9 @@
     <button type="button" data-view="pages">Live pages</button>
     <button type="button" data-view="templates">Email templates</button>
     <button type="button" data-view="chat">Chat management</button>
+    <button type="button" data-view="host">Jennifer’s card</button>
+    <button type="button" data-view="venue">Venue &amp; welcome</button>
+    <button type="button" data-view="settings">App settings</button>
   </nav>
 </div>
 
@@ -392,18 +396,19 @@
   <div class="mail ag" role="dialog" aria-modal="true" aria-labelledby="chatTitle">
     <div class="mail-head"><h2 id="chatTitle">Chat management</h2><button type="button" class="ghost" id="chatClose">Close</button></div>
     <p class="mail-help">Everything guests have posted in the app's Chat tab, newest first. Remove anything that shouldn't be there; it disappears for everyone right away. Guests can also delete their own posts.</p>
+    <div class="lp-tools" style="margin:0 0 6px"><span class="st-stat" id="chatCount"></span><input class="search" id="chatQ" type="search" placeholder="Search by name or words in a post"></div>
     <div id="chatList"></div>
   </div>
 </div>
 <div class="mail-wrap page" id="agBox" hidden>
   <div class="mail ag" role="dialog" aria-modal="true" aria-labelledby="agTitle">
     <div class="mail-head"><h2 id="agTitle">Agenda</h2><button type="button" class="ghost" id="agClose">Close</button></div>
-    <p class="mail-help">What guests see in their personal app at schumacherliving.com/vision-board/2027-agenda. Use each line’s “Who sees this” boxes to choose paid guests, local guests or both. Changes show up for guests as soon as you save.</p>
-    <div class="ag-send">
+    <p class="mail-help" id="agHelp">What guests see in their personal app at schumacherliving.com/vision-board/2027-agenda. Use each line’s “Who sees this” boxes to choose paid guests, local guests or both. Changes show up for guests as soon as you save.</p>
+    <div class="ag-send" id="agSendBar">
       <div><b id="agSendTitle"></b><div class="mail-help" style="margin:2px 0 0" id="agSendSub"></div></div>
       <div class="mail-acts"><button type="button" class="solid" id="agSend">Email agenda links</button><button type="button" class="ghost" id="agPreview">Preview as a guest</button><button type="button" class="ghost" id="agPreviewLocal">Preview as a local guest</button></div>
     </div>
-    <div class="ag-tabs tabs" id="agTabs"></div>
+    <div class="ag-tabs tabs" id="agTabs" hidden></div>
     <div id="agBody"></div>
     <div class="ag-foot">
       <button type="button" class="solid" id="agSave">Save agenda</button>
@@ -794,6 +799,11 @@
     ag = JSON.parse(JSON.stringify(data.settings.guide || {}));
     ag.days = ag.days || []; ag.notes = ag.notes || []; ag.venue = ag.venue || {}; ag.host = ag.host || {};
     ag._closes = new Date(new Date(data.settings.agenda_closes_at).getTime() - 7*36e5).toISOString().slice(0,10);
+    var T = { schedule:['Agenda', 'What guests see in their personal app at schumacherliving.com/vision-board/2027-agenda. Use each line’s “Who sees this” boxes to choose paid guests, local guests or both. Changes show up for guests as soon as you save.', 'Save agenda'],
+              host:['Jennifer’s card', '', 'Save card'],
+              venue:['Venue & welcome', 'The welcome line at the top of the app and everything on the Venue tab.', 'Save venue & welcome'],
+              settings:['App settings', 'When the app closes, plus Jennifer’s and Natalie’s personal app links.', 'Save settings'] }[agTab];
+    $('agTitle').textContent = T[0]; $('agHelp').textContent = T[1]; $('agHelp').hidden = !T[1]; $('agSave').textContent = T[2]; $('agSendBar').hidden = agTab !== 'schedule';
     agDirty = false; $('agStatus').textContent = ''; agSendInfo(); agRender(); $('agBox').hidden = false;
   }
   function closeAgenda(){ if (agDirty && !confirm('Close without saving your agenda changes?')) return; $('agBox').hidden = true; }
@@ -995,8 +1005,15 @@
     $('chatList').innerHTML = '<p class="mail-help">Loading…</p>';
     api('team-feed', {}).then(function(d){
       if (!d.ok){ $('chatList').innerHTML = '<p class="mail-help">Couldn’t load Chat. Try again.</p>'; return; }
-      var posts = d.posts;
-      if (!posts.length){ $('chatList').innerHTML = '<p class="mail-help">No posts yet.</p>'; return; }
+      chatPosts = d.posts; renderChat();
+    });
+  }
+  var chatPosts = [];
+  function renderChat(){
+      var all = chatPosts, q = ($('chatQ').value || '').trim().toLowerCase();
+      var posts = all.filter(function(p){ return !q || [p.author, p.code, p.body, p.reply_to].join(' ').toLowerCase().indexOf(q) > -1; });
+      $('chatCount').textContent = q ? posts.length + ' of ' + all.length + ' posts' : all.length + (all.length === 1 ? ' post' : ' posts');
+      if (!posts.length){ $('chatList').innerHTML = '<p class="mail-help">' + (all.length ? 'No posts match that search.' : 'No posts yet.') + '</p>'; return; }
       $('chatList').innerHTML = posts.map(function(p){
         var when = new Date(p.created_at).toLocaleString('en-US', { timeZone:'America/Phoenix', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
         return '<div class="chat-row"><div class="chat-meta"><b>' + esc(p.author) + '</b> <span>' + (p.test ? 'Test account (only test accounts see this)' : esc(p.code)) + ' · ' + when + (p.parent_id ? ' · reply to “' + esc(p.reply_to || '') + '”' : '') + '</span></div>' +
@@ -1004,8 +1021,8 @@
           (p.photos && p.photos.length ? '<div class="chat-ph">' + p.photos.map(function(u){ return '<a href="' + esc(u) + '" target="_blank" rel="noopener"><img src="' + esc(u) + '" alt=""></a>'; }).join('') + '</div>' : '') +
           '<button type="button" class="ghost chat-rm" data-rm="' + esc(p.id) + '">Remove</button></div>';
       }).join('');
-    });
   }
+  $('chatQ').addEventListener('input', renderChat);
   $('chatClose').addEventListener('click', function(){ $('chatBox').hidden = true; });
   $('chatBox').addEventListener('click', function(e){
     if (e.target.id === 'chatBox'){ $('chatBox').hidden = true; return; }
@@ -1218,10 +1235,11 @@
   });
 
   // ---- top navigation: each section fills the page ----
-  var view = '', VIEWS = { attendees:'app', agenda:'agBox', seating:'seatBox', pages:'pagesBox', templates:'tplBox', chat:'chatBox' };
+  var view = '', VIEWS = { attendees:'app', agenda:'agBox', seating:'seatBox', pages:'pagesBox', templates:'tplBox', chat:'chatBox', host:'agBox', venue:'agBox', settings:'agBox' };
+  var AGV = { agenda:'schedule', host:'host', venue:'venue', settings:'settings' };
   function viewFromHash(){ var h = location.hash.replace('#',''); return VIEWS[h] ? h : 'attendees'; }
   function unsaved(){
-    if (view === 'agenda' && agDirty) return 'agenda';
+    if (AGV[view] && agDirty) return { agenda:'agenda', host:'Jennifer’s card', venue:'venue', settings:'app settings' }[view];
     if (view === 'seating' && st.dirty) return 'seating';
     if (view === 'templates' && $('tStatus').textContent === 'Unsaved changes') return 'email template';
     return '';
@@ -1232,12 +1250,12 @@
     var u = unsaved();
     if (u && !confirm('Leave without saving your ' + u + ' changes?')){ if (location.hash !== '#' + view) history.replaceState(null, '', '#' + view); return; }
     stClosePop(); view = v;
-    Object.keys(VIEWS).forEach(function(k){ $(VIEWS[k]).hidden = k !== v; });
+    Object.keys(VIEWS).forEach(function(k){ $(VIEWS[k]).hidden = VIEWS[k] !== VIEWS[v]; });
     document.querySelectorAll('#nav [data-view]').forEach(function(b){ if (b.dataset.view === v) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
     if (location.hash !== '#' + v) history.replaceState(null, '', '#' + v);
     window.scrollTo(0, 0);
     if (v === 'attendees') render();
-    if (v === 'agenda') openAgenda();
+    if (AGV[v]){ agTab = AGV[v]; openAgenda(); }
     if (v === 'seating') openSeating();
     if (v === 'templates') openTemplates();
     if (v === 'chat') loadChat();
