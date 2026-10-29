@@ -272,6 +272,7 @@
   .td-revl.minus .td-money{ color:var(--red); }
   .td-revl.sub{ background:#f7f5f0; margin:0 -20px; padding:9px 20px; }
   .td-revin{ width:130px; text-align:right; font:inherit; font-size:14px; padding:6px 8px; border:1px solid #e6dcc0; background:#fbf6e6; font-variant-numeric:tabular-nums; }
+  .td-revin.mini{ width:86px; padding:3px 6px; font-size:12px; margin:0 2px; }
   .td-revin.wide{ width:200px; text-align:left; } .td-revin:focus{ outline:0; border-color:var(--navy); background:#fff; }
   .td-profit{ font-weight:700; font-size:17px; border:0; margin:6px -20px 0; padding:14px 20px; }
   .td-profit.pos{ background:var(--paid-bg); color:var(--paid); } .td-profit.neg{ background:#f7e3e1; color:var(--red); }
@@ -1726,8 +1727,7 @@
       line('Gross ticket sales <small>(' + c.n + ' × ' + tdMoney(c.price) + ')</small>', tdMoney(c.gross)) +
       line('Charity donation per ticket', inp('charity', c.ch, true)) +
       line('Total to charity <small>(' + c.n + ' × ' + tdMoney(c.ch) + ')</small>', '−' + tdMoney(c.charity), 'minus') +
-      (hasEi ? line('Emotional Intelligence Test per ticket', inp('ei', c.ei, true)) +
-      line('Total for EI Tests <small>(' + c.n + ' × ' + tdMoney(c.ei) + ')</small>', '−' + tdMoney(c.eiTot), 'minus') : '') +
+      (hasEi ? line('Emotional Intelligence Tests <small>(' + c.n + ' × <input class="td-revin mini" data-tdrev="ei" value="' + esc(tdMoney(c.ei)) + '" inputmode="decimal" aria-label="EI Test cost per ticket">)</small>', '−' + tdMoney(c.eiTot), 'minus') : '') +
       line('<b>Ticket revenue after charity' + (hasEi ? ' &amp; EI Tests' : '') + '</b>', '<b>' + tdMoney(c.net) + '</b>', 'sub') +
       line('Total expenses <small>(from the list above)</small>', '−' + tdMoney(c.exp), 'minus') +
       '<div class="td-revl td-profit ' + (pos ? 'pos' : 'neg') + '"><span>' + (pos ? 'Profit' : 'Loss') + ' after charity, ' + (hasEi ? 'EI Tests &amp; ' : '') + 'expenses' + '</span><span class="td-money">' + (pos ? '' : '−') + tdMoney(Math.abs(c.profit)) + '</span></div>' +
