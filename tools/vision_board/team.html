@@ -300,12 +300,17 @@
   .ci-acts{ display:flex; flex-wrap:wrap; gap:8px; }
   .ci-vol{ border:1px solid var(--line); padding:16px 20px; display:grid; gap:10px; }
   .ci-vol h3{ font-family:inherit; font-size:16px; font-weight:600; margin:0; }
-  .ci-mode{ display:grid; grid-template-columns:repeat(3,1fr); border:1px solid var(--navy); }
+  .ci-mode{ display:grid; grid-template-columns:repeat(4,1fr); border:1px solid var(--navy); }
   .ci-mode button{ background:#fff; border:0; border-left:1px solid var(--navy); padding:10px 8px; font-size:14px; color:var(--navy); }
   .ci-mode button:first-child{ border-left:0; }
   .ci-mode button[aria-pressed="true"]{ background:var(--navy); color:#fff; font-weight:500; }
   .ci-mode button[data-cimode$=":test"][aria-pressed="true"]{ background:#b8995a; color:#14181d; }
   .ci-mode button[data-cimode$=":on"][aria-pressed="true"]{ background:var(--paid); }
+  .ci-mode button[data-cimode$=":auto"][aria-pressed="true"]{ background:var(--navy); }
+  .ci-auto{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:10px; font-size:14px; }
+  .ci-auto input{ font:inherit; padding:6px 8px; border:1px solid #c9c4b8; }
+  .ci-live{ display:inline-block; font-size:12px; letter-spacing:.06em; padding:3px 8px; margin-left:8px; vertical-align:middle; }
+  .ci-live.on{ background:var(--paid); color:#fff; } .ci-live.off{ background:#ece8df; color:#55585c; }
   .ci-pin{ font-family:'Cormorant Garamond',serif; font-size:34px; letter-spacing:.3em; color:var(--navy); font-variant-numeric:lining-nums tabular-nums; }
   @media (max-width:820px){ .ci-grid{ grid-template-columns:1fr; } }
   .toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 20px; font-size:14px; opacity:0; transition:opacity .2s; pointer-events:none; z-index:30; }
@@ -511,7 +516,7 @@
 <div class="mail-wrap page" id="ciBox" hidden>
   <div class="mail">
     <div class="mail-head"><h2>Check-in</h2></div>
-    <p class="mail-help">Two check-ins: <b>Friday arrival</b> (agents get their name tag) and the <b>Vision Board Party</b> (agents + locals get their gift bag). Set one to <b>On</b> when doors open: guests then see a <b>Check in</b> button in their app, scan the QR sign on the table, and pop up on that day’s volunteers’ page so the team can hand them their name tag or gift bag. Volunteers can also check anyone in by name.</p>
+    <p class="mail-help">Two check-ins: <b>Friday arrival</b> (agents get their name tag) and the <b>Vision Board Party</b> (agents + locals get their gift bag). Each one turns on <b>by itself</b> at its set time (Friday 3:20pm, Saturday 1:40pm Arizona time): guests then see a <b>Check in</b> button in their app, scan the QR sign on the table, and pop up on that day’s volunteers’ page so the team can hand them their name tag or gift bag. Volunteers can also check anyone in by name.</p>
     <div id="ciTeam"><p class="mail-help">Loading…</p></div>
   </div>
 </div>
@@ -1568,22 +1573,32 @@
   var CI_THING = { friday:'name tag', party:'gift bag' };
   function ciTeamRender(){
     $('ciTeam').innerHTML = '<div class="ci-grid">' + ciT.sessions.map(function(s){
-      var mode = s.open ? 'on' : (s.test ? 'test' : 'off'), vol = SITE + '/vision-board/checkin/' + s.session;
-      var note = { off:'Off: guests don’t see a Check in button.', test:'Test: only test accounts (like Chelsea’s) see the button. Real guests see nothing.', on:'On: every eligible guest sees the Check in button now.' }[mode];
+      var mode = s.mode || 'off', vol = SITE + '/vision-board/checkin/' + s.session, when = ciWhen(s.auto_at);
+      var note = { auto:'Auto: the Check in button appears in every eligible guest’s app on its own at ' + when + '. Nobody needs to do anything.',
+        off:'Off: guests don’t see a Check in button, even after the auto time.', test:'Test: only test accounts (like Chelsea’s) see the button. Real guests see nothing.', on:'On: every eligible guest sees the Check in button now.' }[mode];
       return '<div class="ci-card ' + s.session + '"><h3>' + esc(s.label) + '</h3><div class="who">' + (s.session === 'friday' ? 'Paid agents · name tags' : 'Paid agents + confirmed locals · gift bags') + '</div>' +
         '<div class="ci-nums"><div><b>' + s.checked_in + '</b><span>of ' + s.total + ' checked in</span></div><div><b>' + s.gifts + '</b><span>' + CI_THING[s.session] + 's handed</span></div></div>' +
-        '<div class="ci-switch" style="display:block"><b style="margin-bottom:8px">Check in button in the app</b><div class="ci-mode" role="group">' +
-          ['off','test','on'].map(function(m){ return '<button type="button" data-cimode="' + s.session + ':' + m + '" aria-pressed="' + (mode === m) + '">' + { off:'Off', test:'Test', on:'On' }[m] + '</button>'; }).join('') +
-        '</div><small style="display:block;margin-top:8px">' + note + '</small></div>' +
+        '<div class="ci-switch" style="display:block"><b style="margin-bottom:8px">Check in button in the app <span class="ci-live ' + (s.open ? 'on">LIVE NOW' : 'off">NOT LIVE YET') + '</span></b><div class="ci-mode" role="group">' +
+          ['auto','on','test','off'].map(function(m){ return '<button type="button" data-cimode="' + s.session + ':' + m + '" aria-pressed="' + (mode === m) + '">' + { auto:'Auto', off:'Off', test:'Test', on:'On now' }[m] + '</button>'; }).join('') +
+        '</div><small style="display:block;margin-top:8px">' + note + '</small>' +
+        '<div class="ci-auto"><span>Turns on automatically:</span><input type="datetime-local" data-ciat="' + s.session + '" value="' + ciLocal(s.auto_at) + '"><span>Arizona time</span></div></div>' +
         '<div class="ci-acts"><a class="ghost" style="text-decoration:none" href="' + vol + '" target="_blank" rel="noopener">Open volunteers’ page</a><button type="button" class="ghost" data-copy="' + vol + '">Copy volunteers’ link</button></div>' +
         '<div class="ci-acts"><button type="button" class="solid" data-cisign="' + s.session + '">Print the QR sign</button><button type="button" class="ghost" data-cirotate="' + s.session + '">Make a new code</button></div>' +
         '<p class="mail-help" style="margin:0">Volunteers’ link: ' + esc(vol.replace('https://www.', '')) + ' (opens straight to this day). “Make a new code” retires old printed signs, so reprint after.</p></div>';
     }).join('') + '</div>' +
     '<div class="ci-vol"><h3>Volunteers’ PIN</h3><p class="mail-help" style="margin:0">Both volunteers’ pages use this PIN. They only show names and check-in status (no emails, payments or addresses). The team password works there too.</p>' +
       '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><span class="ci-pin">' + esc(ciT.pin || '----') + '</span><button type="button" class="ghost" id="ciPinBtn">Change PIN</button></div>' +
-      '<h3 style="margin-top:8px">Testing</h3><p class="mail-help" style="margin:0">Set a check-in to <b>Test</b>, open Chelsea’s test app on a phone, tap Check in and scan the printed sign. Test accounts show on the volunteers’ page tagged TEST and never count in the numbers. ' +
+      '<h3 style="margin-top:8px">Testing</h3><p class="mail-help" style="margin:0">Set a check-in to <b>Test</b> (then back to <b>Auto</b> when you’re done), open Chelsea’s test app on a phone, tap Check in and scan the printed sign. Test accounts show on the volunteers’ page tagged TEST and never count in the numbers. ' +
       (ciT.tests ? '<b>' + ciT.tests + ' test check-in' + (ciT.tests === 1 ? '' : 's') + '</b> on file.' : 'No test check-ins on file.') + '</p>' +
       '<div class="ci-acts"><button type="button" class="ghost" id="ciClearTests"' + (ciT.tests ? '' : ' disabled') + '>Clear test check-ins</button></div></div>';
+  }
+  // times are stored and shown in Arizona time (always UTC-7, no daylight saving)
+  function ciLocal(iso){ return iso ? String(iso).slice(0, 16) : ''; }
+  function ciWhen(iso){
+    if (!iso) return 'the set time';
+    var m = /^(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d)/.exec(iso); if (!m) return iso;
+    var d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])), h = +m[4], ap = h >= 12 ? 'pm' : 'am'; h = h % 12 || 12;
+    return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getUTCDay()] + ', ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getUTCMonth()] + ' ' + (+m[3]) + ' at ' + h + ':' + m[5] + ap + ' Arizona time';
   }
   function ciSave(body, msg){ return api('team-checkin-save', body).then(function(d){ if (d.ok){ ciT = d; ciTeamRender(); if (msg) toast(msg); } else toast(d.error === 'pin' ? 'PIN must be 4 to 8 digits' : 'Didn’t save. Try again.'); return d; }); }
   function ciSign(s){
@@ -1599,14 +1614,20 @@
       '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"><\/script><script>var q=qrcode(0,"M");q.addData(' + JSON.stringify(url) + ');q.make();document.getElementById("qr").innerHTML=q.createSvgTag({cellSize:8,margin:2,scalable:true});<\/script></body></html>');
     w.document.close();
   }
+  $('ciTeam').addEventListener('change', function(e){
+    var at = e.target.closest('[data-ciat]'); if (!at || !at.value) return;
+    var body = {}; body[at.dataset.ciat + '_auto_at'] = at.value + ':00-07:00';
+    ciSave(body, 'Auto time saved');
+  });
   $('ciTeam').addEventListener('click', function(e){
     var cp = e.target.closest('[data-copy]'); if (cp){ (navigator.clipboard ? navigator.clipboard.writeText(cp.dataset.copy) : Promise.reject()).then(function(){ toast('Link copied'); }, function(){ prompt('Copy this link:', cp.dataset.copy); }); return; }
     var md = e.target.closest('[data-cimode]');
     if (md){
       var parts = md.dataset.cimode.split(':'), ss = parts[0], m = parts[1], label = ss === 'friday' ? 'Friday arrival' : 'Vision Board Party';
-      if (m === 'on' && !confirm('Turn ON check-in for ' + label + '? Every eligible guest will see the Check in button in their app right away.')) return;
-      var body = {}; body[ss + '_open'] = m === 'on'; body[ss + '_test'] = m === 'test';
-      ciSave(body, { off:label + ' check-in is off', test:label + ' is in test mode: only test accounts see it', on:label + ' check-in is ON for guests' }[m]); return;
+      if (m === 'on' && !confirm('Turn ON check-in for ' + label + ' now? Every eligible guest will see the Check in button in their app right away.')) return;
+      if (m === 'off' && !confirm('Turn ' + label + ' check-in OFF? It will NOT turn on by itself at the auto time until you choose Auto again.')) return;
+      var body = {}; body[ss + '_mode'] = m;
+      ciSave(body, { auto:label + ' will turn on by itself at the set time', off:label + ' check-in is off', test:label + ' is in test mode: only test accounts see it', on:label + ' check-in is ON for guests' }[m]); return;
     }
     if (e.target.closest('#ciClearTests')){ if (!confirm('Clear all test check-ins? Real guests aren’t affected.')) return; ciSave({ clear_tests:true }, 'Test check-ins cleared'); return; }
     var sg = e.target.closest('[data-cisign]'); if (sg){ ciSign(ciT.sessions.filter(function(x){ return x.session === sg.dataset.cisign; })[0]); return; }

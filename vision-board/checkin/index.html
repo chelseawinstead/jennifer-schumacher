@@ -183,6 +183,7 @@
       '<div style="min-width:0"><div class="nm">' + esc(p.first_name + ' ' + p.last_name) + (local ? '<span class="tag">LOCAL</span>' : '') + (p.test ? '<span class="tag test">TEST</span>' : '') + '</div><div class="co">' + esc(p.company || '') + '</div></div>' +
       '<div class="act">' + act + '<button type="button" class="sendlink" data-link="' + p.id + '">Resend app link</button></div></div>';
   }
+  function autoWhen(iso){ var m = /T(\d\d):(\d\d)/.exec(iso || ''); if (!m) return 'the set time'; var h = +m[1]; return (h % 12 || 12) + ':' + m[2] + (h >= 12 ? 'pm' : 'am') + ' Arizona time'; }
   function render(fresh){
     var d = data, ppl = d.people;
     var inN = d.checked_in, left = d.total - d.checked_in;
@@ -195,7 +196,7 @@
     $('daySub').textContent = (sess === 'party' ? 'Saturday, January 9 · agents + local guests · hand out gift bags' : 'Friday, January 8 · agents · hand out name tags');
     document.title = $('dayTitle').textContent + ' | Vision Board Crew 2027';
     $('openNote').textContent = d.open ? 'Guests can scan the table’s QR code to check themselves in. They’ll show up under “Ready for a ' + THING[sess] + '.”'
-                                       : 'Guests can’t scan in yet. Jennifer’s team turns self check-in on from the team page. You can still check people in here.';
+                                       : 'Guests can’t scan in yet' + (d.mode === 'auto' && d.auto_at ? ' (it turns on by itself at ' + autoWhen(d.auto_at) + ')' : '') + '. You can still check people in here.';
     document.querySelectorAll('#sess [data-s]').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.s === sess); });
     var ready = ppl.filter(function(p){ return p.checked_in_at && !p.gift_at; }).sort(function(a, b){ return a.checked_in_at.localeCompare(b.checked_in_at); });
     $('ready').hidden = !ready.length; $('readyN').textContent = ready.length + ' waiting';

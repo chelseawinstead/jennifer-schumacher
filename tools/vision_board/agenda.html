@@ -973,9 +973,11 @@
       var before = text.value.slice(0, text.selectionStart || 0), m = /(^|\s)@([^\s@]{0,24})$/.exec(before);
       return m ? m[2].toLowerCase() : null;
     }
+    var blurT = null;
     function showPop(){
+      clearTimeout(blurT);
       var q = query(); if (q === null){ pop.hidden = true; return; }
-      var crew = ((data && data.hosts) || []).concat((data && data.crew || []).filter(function(p){ return !p.me; }));
+      var seen = {}, crew = ((data && data.hosts) || []).concat((data && data.crew) || []).filter(function(p){ if (p.me || seen[p.id]) return false; seen[p.id] = 1; return true; });
       popItems = crew.filter(function(p){ return !q || p.name.toLowerCase().split(/\s+/).some(function(w){ return w.indexOf(q) === 0; }) || p.name.toLowerCase().indexOf(q) === 0; }).slice(0, 6);
       if (!popItems.length){ pop.hidden = true; return; }
       popSel = 0;
@@ -992,11 +994,14 @@
       if (!tags.some(function(t){ return t.id === p.id; })) tags.push({ id:p.id, name:p.name });
       pop.hidden = true; text.focus(); grow();
     }
+    // keep the typing box focused while choosing, so the list doesn't close under your finger
+    pop.addEventListener('pointerdown', function(e){ e.preventDefault(); clearTimeout(blurT); });
     pop.addEventListener('mousedown', function(e){ e.preventDefault(); });
     pop.addEventListener('click', function(e){ var b = e.target.closest('[data-pick]'); if (b) pick(+b.dataset.pick); });
     text.addEventListener('input', function(){ grow(); showPop(); });
     text.addEventListener('click', showPop);
-    text.addEventListener('blur', function(){ setTimeout(function(){ pop.hidden = true; }, 150); });
+    text.addEventListener('focus', function(){ clearTimeout(blurT); });
+    text.addEventListener('blur', function(){ clearTimeout(blurT); blurT = setTimeout(function(){ if (document.activeElement !== text) pop.hidden = true; }, 250); });
     text.addEventListener('keydown', function(e){
       if (pop.hidden) return;
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); popSel = (popSel + (e.key === 'ArrowDown' ? 1 : popItems.length - 1)) % popItems.length;
@@ -1004,7 +1009,9 @@
       else if (e.key === 'Enter' || e.key === 'Tab'){ e.preventDefault(); pick(popSel); }
       else if (e.key === 'Escape'){ pop.hidden = true; }
     });
+    if (o.at) $(o.at).addEventListener('pointerdown', function(e){ if (document.activeElement === text) e.preventDefault(); });
     if (o.at) $(o.at).addEventListener('click', function(){
+      clearTimeout(blurT);
       var pos = text.selectionStart || text.value.length, pre = text.value.slice(0, pos);
       var ins = (pre && !/\s$/.test(pre) ? ' ' : '') + '@';
       text.value = pre + ins + text.value.slice(pos); text.focus(); var c = pos + ins.length; text.setSelectionRange(c, c); showPop();

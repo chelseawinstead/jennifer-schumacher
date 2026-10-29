@@ -678,6 +678,8 @@ Deno.serve(async (req) => {
       if (action === "team-checkin-save" && req.method === "POST") {
         const p: Record<string, unknown> = {};
         for (const k of ["friday_open", "party_open", "friday_test", "party_test", "friday_rotate", "party_rotate", "clear_tests"]) if (k in b) p[k] = b[k] === true;
+        for (const k of ["friday_mode", "party_mode"]) if (k in b) p[k] = clean(b[k], 8);
+        for (const k of ["friday_auto_at", "party_auto_at"]) if (k in b) p[k] = clean(b[k], 40);
         if ("pin" in b) p.pin = clean(b.pin, 8);
         const [row] = await sql`select vision_board.team_checkin_save(${sql.json(p)}) as r`;
         return json(row.r, row.r.ok ? 200 : 400);
