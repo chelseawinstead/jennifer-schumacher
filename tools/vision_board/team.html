@@ -306,6 +306,25 @@
     </div>
   </div>
 </div>
+<div class="mail-wrap" id="editBox" hidden>
+  <div class="mail" role="dialog" aria-modal="true" aria-labelledby="editTitle" style="max-width:640px">
+    <div class="mail-head"><h2 id="editTitle">Edit guest</h2><button type="button" class="ghost" id="editClose">Close</button></div>
+    <p class="mail-help" id="editSub"></p>
+    <div class="ag-grid" id="editForm">
+      <label class="fld">First name<input data-e="first_name" autocomplete="off"></label>
+      <label class="fld">Last name<input data-e="last_name" autocomplete="off"></label>
+      <label class="fld wide">Company<input data-e="company" autocomplete="off"></label>
+      <label class="fld">Email<input data-e="email" type="email" autocomplete="off"></label>
+      <label class="fld">Phone<input data-e="phone" autocomplete="off"></label>
+      <label class="fld wide">Street<input data-e="street" autocomplete="off"></label>
+      <label class="fld wide">Apt / suite (optional)<input data-e="street2" autocomplete="off"></label>
+      <label class="fld">City<input data-e="city" autocomplete="off"></label>
+      <label class="fld" style="display:grid;grid-template-columns:1fr 1fr;gap:0 10px"><span>State<input data-e="state" autocomplete="off"></span><span>ZIP<input data-e="zip" autocomplete="off"></span></label>
+    </div>
+    <p class="mail-help">Changing the email changes where Jennifer’s emails and their personal link go. Their seat, payment and code stay the same.</p>
+    <div style="display:flex;gap:12px;align-items:center;margin-top:8px"><button type="button" class="solid" id="editSave">Save changes</button><span class="mail-help" id="editStatus" style="margin:0"></span></div>
+  </div>
+</div>
 <div class="mail-wrap" id="seatBox" hidden>
   <div class="mail seat" role="dialog" aria-modal="true" aria-labelledby="seatTitle">
     <div class="mail-head"><h2 id="seatTitle">Assigned seating</h2><button type="button" class="ghost" id="seatClose">Close</button></div>
@@ -441,6 +460,7 @@
       if (r.status==='paid'){ b.push('<button data-act="email-confirm">Email confirmation</button>'); b.push('<button data-act="email-agenda">Email agenda link</button>'); b.push('<button data-act="unpaid">Undo paid</button>'); b.push('<button class="danger" data-act="cancel">Cancel</button>'); }
       if (r.status==='waitlist'){ b.push('<button class="pay" data-act="offer">Offer seat</button>'); b.push('<button data-act="email-wait">Email</button>'); b.push('<button class="danger" data-act="cancel">Remove</button>'); }
       if (r.status==='expired' || r.status==='cancelled'){ b.push('<button data-act="offer">Re-open hold</button>'); b.push('<button data-act="paid">Mark paid</button>'); }
+      b.push('<button data-act="edit">Edit info</button>');
 
       return '<tr data-id="'+r.id+'"' + ((r.status==='expired'||r.status==='cancelled') ? ' class="dim"' : '') + '>' +
         '<td data-l="Code"><span class="code">'+esc(r.code)+'</span></td>' +
@@ -973,7 +993,27 @@
   $('tplBox').addEventListener('click', function(e){ if (e.target.id==='tplBox') closeTpl(); });
   document.addEventListener('keydown', function(e){
     if (e.key !== 'Escape') return;
-    if (document.querySelector('.st-pop')) stClosePop(); else if (!$('mailBox').hidden) closeMail(); else if (!$('seatBox').hidden) closeSeating(); else if (!$('chatBox').hidden) $('chatBox').hidden = true; else if (!$('agBox').hidden) closeAgenda(); else if (!$('tplBox').hidden) closeTpl();
+    if (document.querySelector('.st-pop')) stClosePop(); else if (!$('editBox').hidden) closeEdit(); else if (!$('mailBox').hidden) closeMail(); else if (!$('seatBox').hidden) closeSeating(); else if (!$('chatBox').hidden) $('chatBox').hidden = true; else if (!$('agBox').hidden) closeAgenda(); else if (!$('tplBox').hidden) closeTpl();
+  });
+
+  // ---- edit guest info ----
+  var editId = null;
+  function openEdit(r){
+    editId = r.id; $('editSub').textContent = r.code + ' \u00b7 ' + r.first_name + ' ' + r.last_name; $('editStatus').textContent = '';
+    document.querySelectorAll('#editForm [data-e]').forEach(function(el){ el.value = r[el.dataset.e] || ''; });
+    $('editBox').hidden = false; document.querySelector('#editForm [data-e]').focus();
+  }
+  function closeEdit(){ $('editBox').hidden = true; editId = null; }
+  $('editClose').addEventListener('click', closeEdit);
+  $('editBox').addEventListener('click', function(e){ if (e.target.id === 'editBox') closeEdit(); });
+  $('editSave').addEventListener('click', function(){
+    var v = {}; document.querySelectorAll('#editForm [data-e]').forEach(function(el){ v[el.dataset.e] = el.value.trim(); });
+    var btn = this; btn.disabled = true; $('editStatus').textContent = 'Saving\u2026';
+    act(editId, 'edit', JSON.stringify(v)).then(function(res){
+      btn.disabled = false; if (!res) return;
+      if (!res.ok){ $('editStatus').textContent = ({ name:'First and last name are required.', email:'That email doesn\u2019t look right.', phone:'Phone needs at least 10 digits.', address:'Street, city, state and ZIP are required.' })[res.error] || 'Didn\u2019t save. Try again.'; return; }
+      closeEdit(); toast('Saved'); load();
+    });
   });
 
   // ---- actions ----
@@ -989,6 +1029,7 @@
     var r = data.registrations.filter(function(x){ return x.id===id; })[0];
     var a = btn.dataset.act, who = r.first_name + ' ' + r.last_name + ' (' + r.code + ')';
 
+    if (a==='edit'){ openEdit(r); return; }
     if (a==='email-pay'){ mail(r, 'hold'); return; }
     if (a==='email-wait'){ mail(r, 'waitlist'); return; }
     if (a==='email-agenda'){ mail(r, 'agenda'); return; }
