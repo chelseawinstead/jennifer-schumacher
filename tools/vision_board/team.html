@@ -146,6 +146,16 @@
   .st-pop .st-people{ max-height:250px; }
   .st-pop .acts{ display:grid; gap:6px; }
   .st-foot{ position:sticky; bottom:-28px; background:#fff; padding:14px 0 4px; display:flex; gap:14px; align-items:center; border-top:1px solid var(--line); margin-top:14px; }
+  .track-switch{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:0 0 16px; }
+  .track-switch button{ font:inherit; font-size:15px; padding:9px 18px; border:1px solid var(--navy); background:#fff; color:var(--navy); border-radius:999px; cursor:pointer; }
+  .track-switch button[aria-pressed="true"]{ background:var(--navy); color:#fff; }
+  .track-switch button span{ opacity:.7; margin-left:4px; }
+  .track-link{ font-size:13px; color:var(--warm); margin-left:6px; }
+  .track-link a{ color:var(--navy); }
+  .ag-aud{ grid-column:1/-1; display:flex; flex-wrap:wrap; gap:6px 16px; align-items:center; font-size:13px; color:var(--warm); }
+  .ag-aud label{ display:inline-flex; gap:6px; align-items:center; color:var(--ink); cursor:pointer; }
+  .ag-aud input{ width:16px; height:16px; accent-color:var(--navy); }
+  .aud-pill{ display:inline-block; font-size:12px; padding:2px 10px; border-radius:999px; background:#f6efe1; color:#8a6d2f; border:1px solid #ead9b8; margin-right:6px; }
   .seat-limit{ display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between; background:var(--stone); padding:12px 16px; margin:-8px 0 22px; font-size:14px; }
   .seat-limit b{ font-weight:600; }
   .chat-row{ border-top:1px solid var(--line); padding:12px 0; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 12px; }
@@ -253,6 +263,7 @@
 </section>
 
 <main class="wrap" id="app" hidden>
+  <div class="track-switch" id="trackSwitch"></div>
   <div class="summary" id="summary"></div>
   <div class="seat-limit" id="seatLimit"></div>
   <div class="tools">
@@ -328,7 +339,7 @@
 <div class="mail-wrap" id="seatBox" hidden>
   <div class="mail seat" role="dialog" aria-modal="true" aria-labelledby="seatTitle">
     <div class="mail-head"><h2 id="seatTitle">Assigned seating</h2><button type="button" class="ghost" id="seatClose">Close</button></div>
-    <p class="mail-help">Pick a session, set up its tables, then seat people: tap a name on the right, then tap an empty seat (or tap an empty seat and choose someone). Tap a filled seat to move or remove that person. Guests see their table under that session in their app once you save.</p>
+    <p class="mail-help">Who can be seated follows each session’s “Who sees this” boxes in Event agenda (paid guests, local guests, or both). Pick a session, set up its tables, then seat people: tap a name on the right, then tap an empty seat (or tap an empty seat and choose someone). Tap a filled seat to move or remove that person. Guests see their table under that session in their app once you save.</p>
     <div class="st-top"><select id="stSession" aria-label="Session"></select><span class="st-stat" id="stStat"></span></div>
     <div id="stBody"></div>
     <div class="st-foot"><button type="button" class="solid" id="stSave">Save seating</button><span class="mail-help" id="stStatus" style="margin:0"></span></div>
@@ -347,7 +358,7 @@
     <p class="mail-help">This is what paid guests see in their personal agenda app at schumacherliving.com/vision-board/2027-agenda. Changes show up for guests as soon as you save.</p>
     <div class="ag-send">
       <div><b id="agSendTitle"></b><div class="mail-help" style="margin:2px 0 0" id="agSendSub"></div></div>
-      <div class="mail-acts"><button type="button" class="solid" id="agSend">Email agenda links</button><button type="button" class="ghost" id="agPreview">Preview as a guest</button></div>
+      <div class="mail-acts"><button type="button" class="solid" id="agSend">Email agenda links</button><button type="button" class="ghost" id="agPreview">Preview as a guest</button><button type="button" class="ghost" id="agPreviewLocal">Preview as a local guest</button></div>
     </div>
     <div class="ag-tabs tabs" id="agTabs"></div>
     <div id="agBody"></div>
@@ -365,7 +376,9 @@
   var $ = function(id){ return document.getElementById(id); };
   var pw = '';
   try { pw = sessionStorage.getItem('vbTeamPw') || ''; } catch(e){}
-  var data = null, filter = 'all', query = '';
+  var data = null, filter = 'all', query = '', track = 'paid';
+  try { track = sessionStorage.getItem('vbTrack') === 'local' ? 'local' : 'paid'; } catch(e){}
+  function isLocal(r){ return r.track === 'local'; }
 
   function toast(t){ var el=$('toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(function(){ el.classList.remove('on'); }, 2600); }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
@@ -401,7 +414,13 @@
   function inTab(r, t){ return t==='all' || (t==='closed' ? (r.status==='expired'||r.status==='cancelled') : r.status===t); }
 
   function render(){
-    var s = data.settings, regs = data.registrations;
+    var s = data.settings, allRegs = data.registrations, L = track === 'local';
+    var regs = allRegs.filter(function(r){ return (r.track || 'paid') === track; });
+    var nPaid = allRegs.filter(function(r){ return !isLocal(r); }).length, nLocal = allRegs.filter(isLocal).length;
+    $('trackSwitch').innerHTML = '<button type="button" data-track="paid" aria-pressed="' + !L + '">Paid guests <span>' + nPaid + '</span></button>' +
+      '<button type="button" data-track="local" aria-pressed="' + L + '">Local guests <span>' + nLocal + '</span></button>' +
+      (L ? '<span class="track-link">Sign-up page: <a href="' + SITE + '/vision-board/local" target="_blank" rel="noopener">schumacherliving.com/vision-board/local</a></span>' : '');
+    if (L) return renderLocal(s, regs);
     var count = function(st){ return regs.filter(function(r){ return r.status===st; }).length; };
     var paid = count('paid'), pend = count('pending'), wait = count('waitlist');
     var left = Math.max(s.capacity - paid - pend, 0);
@@ -475,12 +494,63 @@
     $('updated').textContent = 'Updated ' + az(new Date().toISOString(), { hour:'numeric', minute:'2-digit' }) + ' AZ';
   }
 
+  function renderLocal(s, regs){
+    var count = function(st){ return regs.filter(function(r){ return r.status===st; }).length; };
+    var conf = count('paid'), off = count('pending'), wait = count('waitlist');
+    var cap = s.local_capacity, left = Math.max(cap - conf - off, 0), addr = regs.filter(function(r){ return r.status==='paid' && r.address_confirmed_at; }).length;
+    var tile = function(tab, cls, big, lbl, extra){ return '<button type="button" class="tile ' + cls + '" data-tab="' + tab + '" aria-pressed="' + (filter===tab) + '"><div class="big">' + big + '</div><div class="lbl">' + lbl + '</div>' + (extra||'') + '</button>'; };
+    $('summary').innerHTML =
+      tile('all', 'seats', left, 'of ' + cap + ' spots open on the local sign-up page', '<div class="meter"><i style="width:' + (100*conf/cap) + '%;background:#fff"></i><i style="width:' + (100*off/cap) + '%;background:#d6b77a"></i></div>') +
+      tile('paid', '', conf, 'Confirmed') +
+      tile('pending', '', off, 'Spot offered, waiting for them to accept') +
+      tile('waitlist', '', wait, 'On the waitlist') +
+      tile('paid', '', addr + '<span style="font-size:.5em"> / ' + conf + '</span>', 'Gift addresses confirmed');
+    var tcap = s.local_team_capacity || cap, taken = conf + off;
+    $('seatLimit').innerHTML = '<span><b>Team spot limit: ' + tcap + '</b> · ' + taken + (taken === 1 ? ' spot' : ' spots') + ' in use (confirmed + offered) · ' +
+      (tcap > taken ? (tcap - taken) + ' more you can offer from the waitlist' : 'no room left to offer spots') + '. The sign-up page always stays capped at ' + cap + '.</span><button type="button" class="ghost" id="seatLimitBtn">Change limit</button>';
+    var LT = [['all','All'], ['paid','Confirmed'], ['pending','Offered'], ['waitlist','Waitlist'], ['closed','Expired & cancelled']];
+    $('tabs').innerHTML = LT.map(function(t){ var n = regs.filter(function(r){ return inTab(r, t[0]); }).length; return '<button data-tab="'+t[0]+'" aria-pressed="'+(filter===t[0])+'">'+t[1]+'<span class="n">'+n+'</span></button>'; }).join('');
+    var q = query.toLowerCase();
+    var list = regs.filter(function(r){ return inTab(r, filter); }).filter(function(r){ return !q || [r.code, r.first_name+' '+r.last_name, r.company||'', r.email, r.phone, (r.phone||'').replace(/\D/g,'')].join(' ').toLowerCase().indexOf(q) > -1; });
+    list.sort(function(a,b){ return (a.status==='waitlist' && b.status==='waitlist') ? a.created_at.localeCompare(b.created_at) : b.created_at.localeCompare(a.created_at); });
+    var waitOrder = regs.filter(function(r){ return r.status==='waitlist'; }).sort(function(a,b){ return a.created_at.localeCompare(b.created_at); }).map(function(r){ return r.id; });
+    if (!list.length){ $('rows').innerHTML = '<tr><td colspan="7" class="empty">' + (regs.length ? 'No one matches this view.' : 'No local guests yet. Share the sign-up page and they’ll appear here as people sign up.') + '</td></tr>'; $('updated').textContent = 'Updated ' + az(new Date().toISOString(), { hour:'numeric', minute:'2-digit' }) + ' AZ'; return; }
+    var KL = { local_confirm:'Confirmation + app link', local_waitlist:'Waitlist email', local_offer:'Spot-offer email' };
+    $('rows').innerHTML = list.map(function(r){
+      var status = { paid:'Confirmed', pending:'Offer sent', waitlist:'Waitlist', expired:'Offer expired', cancelled:'Cancelled' }[r.status], extra = '';
+      if (r.status==='pending' && r.hold_expires_at){ var hrs = (new Date(r.hold_expires_at) - Date.now())/36e5; extra = '<div class="due' + (hrs < 12 ? ' soon' : '') + '">Must accept by ' + short(r.hold_expires_at) + '</div>'; }
+      if (r.status==='paid') extra = '<div class="sub" style="margin-top:6px">Confirmed ' + short(r.paid_at || r.created_at) + '</div><div class="sub">' + (r.address_confirmed_at ? 'Gift address confirmed ✓' : 'Gift address not confirmed yet') + '</div>';
+      if (r.status==='waitlist') extra = '<div class="sub" style="margin-top:6px">#' + (waitOrder.indexOf(r.id)+1) + ' in line</div>';
+      var log = r.email_log || [], last = log[log.length-1];
+      if (last && last.ok) extra += '<div class="sent">' + (KL[last.kind] || 'Email') + ' sent ' + short(last.at) + (last.by==='auto' ? ' (automatic)' : '') + '</div>';
+      else if (last && !last.ok) extra += '<div class="mailfail">' + (KL[last.kind] || 'Email') + ' didn’t send: ' + esc(last.error) + '</div>';
+      var b = [];
+      if (r.status==='pending'){ b.push('<button data-act="email-loffer">Email offer again</button>'); b.push('<button data-act="extend">Extend 24 hrs</button>'); b.push('<button class="pay" data-act="paid">Mark confirmed</button>'); b.push('<button class="danger" data-act="cancel">Cancel</button>'); }
+      if (r.status==='paid'){ b.push('<button data-act="email-lconfirm">Email app link</button>'); b.push('<button class="danger" data-act="cancel">Cancel</button>'); }
+      if (r.status==='waitlist'){ b.push('<button class="pay" data-act="offer">Offer spot</button>'); b.push('<button data-act="email-lwait">Email</button>'); b.push('<button class="danger" data-act="cancel">Remove</button>'); }
+      if (r.status==='expired' || r.status==='cancelled'){ b.push('<button data-act="offer">Offer spot again</button>'); b.push('<button data-act="paid">Mark confirmed</button>'); }
+      b.push('<button data-act="edit">Edit info</button>');
+      return '<tr data-id="'+r.id+'"' + ((r.status==='expired'||r.status==='cancelled') ? ' class="dim"' : '') + '>' +
+        '<td data-l="Code"><span class="code">'+esc(r.code)+'</span></td>' +
+        '<td data-l="Guest"><div class="name">'+esc(r.first_name)+' '+esc(r.last_name)+'</div>'+(r.company?'<div class="sub co">'+esc(r.company)+'</div>':'')+'<div class="sub">Signed up '+short(r.created_at)+'</div></td>' +
+        '<td data-l="Contact"><a href="mailto:'+esc(r.email)+'">'+esc(r.email)+'</a><div><a href="tel:'+esc((r.phone||'').replace(/[^\d+]/g,''))+'">'+esc(r.phone)+'</a></div></td>' +
+        '<td data-l="Mailing address">'+esc(r.street)+(r.street2?'<br>'+esc(r.street2):'')+'<br>'+esc(r.city)+', '+esc(r.state)+' '+esc(r.zip)+'</td>' +
+        '<td data-l="Status"><span class="pill '+r.status+'">'+status+'</span>'+extra+'</td>' +
+        '<td data-l="Actions"><div class="acts">'+b.join('')+'</div></td>' +
+        '<td data-l="Notes"><textarea class="notes" rows="1" placeholder="Add a note" aria-label="Notes for '+esc(r.code)+'">'+esc(r.notes||'')+'</textarea></td></tr>';
+    }).join('');
+    $('updated').textContent = 'Updated ' + az(new Date().toISOString(), { hour:'numeric', minute:'2-digit' }) + ' AZ';
+  }
+
   // ---- emails ----
   var KINDS = [['hold','Payment request','Sent automatically the moment someone registers and gets a seat.'],
                ['paid','Payment received','Sent when the team clicks “Email confirmation” after marking someone paid.'],
                ['waitlist','Waitlist','Sent automatically when someone registers after all seats are taken.'],
                ['offer','Seat opened up','Sent when the team offers a waitlisted guest a seat.'],
-               ['agenda','Agenda link','Each paid guest\u2019s personal link to the event app. Sent from Event agenda, the guest\u2019s row, or when a guest asks for their link.']];
+               ['agenda','Agenda link','Each paid guest\u2019s personal link to the event app. Sent from Event agenda, the guest\u2019s row, or when a guest asks for their link.'],
+               ['local_confirm','Local: confirmed + app link','Sent automatically when a local guest signs up and gets a spot (or accepts an offered spot). Includes their personal app link.'],
+               ['local_waitlist','Local: waitlist','Sent automatically when a local guest signs up after all spots are taken.'],
+               ['local_offer','Local: spot opened up','Sent when the team offers a waitlisted local guest a spot. The link lets them accept within 72 hours.']];
   var mailState = null;
   function setMailFields(m){ $('mSubject').value = m.subject; $('mHeading').value = m.heading; $('mBody').value = m.body; }
   function mail(r, kind, onSent){
@@ -584,6 +654,9 @@
             '<input data-p="'+p+'title" value="'+esc(it.title)+'" placeholder="e.g. Welcome toast" aria-label="What">' +
             '<input data-p="'+p+'location" value="'+esc(it.location)+'" placeholder="e.g. Lobby lounge" aria-label="Where">' +
             '<input data-p="'+p+'dress" value="'+esc(it.dress)+'" placeholder="e.g. Cocktail casual" aria-label="Dress code">' +
+            (function(){ var au = it.audience && it.audience.length ? it.audience : ['paid'];
+              return '<div class="ag-aud">Who sees this:<label><input type="checkbox" data-aud="paid" data-d="'+di+'" data-i="'+ii+'"' + (au.indexOf('paid')>-1?' checked':'') + '> Paid guests</label>' +
+                '<label><input type="checkbox" data-aud="local" data-d="'+di+'" data-i="'+ii+'"' + (au.indexOf('local')>-1?' checked':'') + '> Local guests</label></div>'; })() +
             '<div class="tools"><button type="button" data-ag="up" data-d="'+di+'" data-i="'+ii+'" aria-label="Move up">↑</button><button type="button" data-ag="down" data-d="'+di+'" data-i="'+ii+'" aria-label="Move down">↓</button><button type="button" data-ag="del" data-d="'+di+'" data-i="'+ii+'" aria-label="Remove">✕</button></div>' +
             '<textarea data-p="'+p+'details" rows="1" placeholder="Extra details (optional)" aria-label="Details">'+esc(it.details||'')+'</textarea>' +
             '<div class="ag-spk-wrap">' + (it.speakers||[]).map(function(sp, si){
@@ -661,7 +734,7 @@
     o[ks[ks.length-1]] = val;
   }
   function agSendInfo(){
-    var paid = data.registrations.filter(function(r){ return r.status==='paid'; });
+    var paid = data.registrations.filter(function(r){ return r.status==='paid' && r.track !== 'local'; });
     var notSent = paid.filter(function(r){ return !r.agenda_link_sent_at; }).length;
     $('agSendTitle').textContent = notSent ? notSent + ' of ' + paid.length + ' paid guests haven’t been sent their agenda link' : 'All ' + paid.length + ' paid guests have their agenda link';
     $('agSendSub').textContent = 'Each guest gets their own private link from Jennifer’s Gmail. Edit the wording under Email templates → Agenda link.';
@@ -678,13 +751,13 @@
   $('agBtn').addEventListener('click', openAgenda);
   document.addEventListener('click', function(e){
     if (!e.target.closest('#seatLimitBtn')) return;
-    var s = data.settings, cur = s.team_capacity || s.capacity;
-    var v = prompt('Total seats the team can fill (the public page stays at ' + s.capacity + ').\nUse this when Jennifer wants to offer extra seats from the waitlist.', cur);
+    var s = data.settings, L = track === 'local', base = L ? s.local_capacity : s.capacity, cur = L ? (s.local_team_capacity || base) : (s.team_capacity || base);
+    var v = prompt((L ? 'Total local spots the team can fill (the local sign-up page stays at ' : 'Total seats the team can fill (the public page stays at ') + base + ').\nUse this when Jennifer wants to offer extra ' + (L ? 'spots' : 'seats') + ' from the waitlist.', cur);
     if (v === null) return;
     var n = parseInt(v, 10);
-    if (!(n >= s.capacity)) { alert('Enter a number of ' + s.capacity + ' or more.'); return; }
-    api('team-seat-limit', { limit:n }).then(function(r){
-      if (r.ok){ toast('Team seat limit is now ' + n); load(); }
+    if (!(n >= base)) { alert('Enter a number of ' + base + ' or more.'); return; }
+    api('team-seat-limit', { limit:n, track:track }).then(function(r){
+      if (r.ok){ toast((L ? 'Team spot limit is now ' : 'Team seat limit is now ') + n); load(); }
       else if (r.error === 'below_taken') alert(r.taken + ' seats are already in use, so the limit can’t go below ' + r.taken + '.');
       else alert('Couldn’t save that number.');
     });
@@ -695,10 +768,13 @@
   function stSessions(){
     var out = [];
     ((data.settings.guide || {}).days || []).forEach(function(d){
-      (d.items || []).forEach(function(it){ if (it.id) out.push({ id:it.id, label:(d.label || '').split(',')[0] + ' · ' + (it.time || '') + ' · ' + (it.title || 'Untitled') }); });
+      (d.items || []).forEach(function(it){ if (it.id) out.push({ id:it.id, audience:(it.audience && it.audience.length ? it.audience : ['paid']), label:(d.label || '').split(',')[0] + ' · ' + (it.time || '') + ' · ' + (it.title || 'Untitled') }); });
     });
     return out;
   }
+  // who can be seated in this session: follows the session's "Who sees this" checkboxes; Jennifer & Natalie always
+  function stAud(){ var x = st.sessions.filter(function(z){ return z.id === st.cur; })[0]; return x ? x.audience : ['paid']; }
+  function stPeople(){ var a = stAud(); return st.people.filter(function(p){ return p.role || a.indexOf(p.track || 'paid') > -1; }); }
   function stInit(p){ return String(p.name || '?').split(/\s+/).map(function(w){ return w[0] || ''; }).slice(0,2).join('').toUpperCase(); }
   function stLayout(){ return st.layouts[st.cur] || (st.layouts[st.cur] = { tables:[], assign:{} }); }
   function stSeatedIds(L){ return Object.keys(L.assign); }
@@ -727,9 +803,10 @@
     });
   }
   function stRender(){
-    var L = stLayout(), seated = stSeatedIds(L), total = st.people.length;
+    var L = stLayout(), seated = stSeatedIds(L), total = stPeople().length;
     var cap = L.tables.reduce(function(a, t){ return a + t.seats; }, 0);
-    $('stStat').innerHTML = L.tables.length ? '<b>' + seated.length + '</b> of ' + total + ' seated · ' + L.tables.length + ' tables · ' + cap + ' seats' + (total - seated.length ? ' · <b style="color:#b3261e">' + (total - seated.length) + ' not seated</b>' : ' · everyone has a seat ✓') : '';
+    var aud = stAud(), audTxt = aud.indexOf('local') > -1 && aud.indexOf('paid') > -1 ? 'Paid + local guests' : aud.indexOf('local') > -1 ? 'Local guests' : 'Paid guests';
+    $('stStat').innerHTML = '<span class="aud-pill">' + audTxt + '</span> ' + (L.tables.length ? '<b>' + seated.length + '</b> of ' + total + ' seated · ' + L.tables.length + ' tables · ' + cap + ' seats' + (total - seated.length ? ' · <b style="color:#b3261e">' + (total - seated.length) + ' not seated</b>' : ' · everyone has a seat ✓') : '');
     if (!L.tables.length){
       var others = st.sessions.filter(function(x){ return x.id !== st.cur && st.layouts[x.id] && st.layouts[x.id].tables.length; });
       $('stBody').innerHTML = '<div class="st-setup"><p style="margin:0 0 14px">No seating for this session yet. Total guests: <b>' + total + '</b></p>' +
@@ -753,17 +830,17 @@
         '<div class="st-names">' + (names.length ? names.join(', ') : '<i>Empty</i>') + '</div></div>';
     }).join('');
     var q = st.q.toLowerCase();
-    var unseated = st.people.filter(function(p){ return !L.assign[p.id]; }).filter(function(p){ return !q || (p.name + ' ' + (p.company || '')).toLowerCase().indexOf(q) > -1; });
+    var unseated = stPeople().filter(function(p){ return !L.assign[p.id]; }).filter(function(p){ return !q || (p.name + ' ' + (p.company || '')).toLowerCase().indexOf(q) > -1; });
     $('stBody').innerHTML = '<div class="st-tools"><button type="button" class="ghost" data-st="add">+ Add table</button><button type="button" class="ghost" data-st="fill">Auto-fill empty seats</button><button type="button" class="ghost" data-st="clear">Clear everyone</button><button type="button" class="ghost" data-st="reset">Start over</button></div>' +
       (st.sel ? '<div class="st-hint">Seating <b>' + esc(st.byId[st.sel.id].name) + '</b>: tap an empty seat' + (L.assign[st.sel.id] ? ' to move them, or a filled seat to swap' : '') + '. <a href="#" data-st="unsel">Cancel</a></div>' : '') +
       '<div class="st-wrap"><div class="st-map">' + map + '</div>' +
-      '<div class="st-side"><h3>Not seated (' + st.people.filter(function(p){ return !L.assign[p.id]; }).length + ')</h3><input id="stQ" placeholder="Search" value="' + esc(st.q) + '">' +
+      '<div class="st-side"><h3>Not seated (' + stPeople().filter(function(p){ return !L.assign[p.id]; }).length + ')</h3><input id="stQ" placeholder="Search" value="' + esc(st.q) + '">' +
       '<div class="st-people">' + (unseated.length ? unseated.map(function(p){ return stPersonBtn(p, 'pick'); }).join('') : '<p class="mail-help">' + (q ? 'No match.' : 'Everyone has a seat. ✓') + '</p>') + '</div></div></div>';
     var qi = $('stQ'); if (qi && st._focusQ){ qi.focus(); qi.setSelectionRange(qi.value.length, qi.value.length); st._focusQ = false; }
   }
   function stPersonBtn(p, kind){
     return '<button type="button" class="st-person' + (st.sel && st.sel.id === p.id ? ' sel' : '') + '" data-' + kind + '="' + esc(p.id) + '"><span class="pav">' + (p.photo ? '<img src="' + esc(p.photo) + '" alt="">' : esc(stInit(p))) + '</span><span>' + esc(p.name) +
-      (p.role ? ' <b style="color:#b8995a;font-size:11px">' + (p.role === 'host' ? 'HOST' : 'COHOST') + '</b>' : '') + '<small>' + esc([p.company, [p.city, p.state].filter(Boolean).join(', ')].filter(Boolean).join(' · ')) + '</small></span></button>';
+      (p.role ? ' <b style="color:#b8995a;font-size:11px">' + (p.role === 'host' ? 'HOST' : 'COHOST') + '</b>' : (p.track === 'local' ? ' <b style="color:#5a7d5a;font-size:11px">LOCAL</b>' : '')) + '<small>' + esc([p.company, [p.city, p.state].filter(Boolean).join(', ')].filter(Boolean).join(' · ')) + '</small></span></button>';
   }
   function stClosePop(){ var p = document.querySelector('.st-pop'); if (p) p.remove(); }
   function stPop(anchor, html){
@@ -789,7 +866,7 @@
   document.addEventListener('input', function(e){
     if (!e.target.closest('.st-pop') || e.target.tagName !== 'INPUT') return;
     var q = e.target.value.toLowerCase(), L = stLayout(), box = e.target.closest('.st-pop').querySelector('.st-people');
-    box.innerHTML = st.people.filter(function(p){ return !L.assign[p.id] && (!q || p.name.toLowerCase().indexOf(q) > -1); }).map(function(p){ return stPersonBtn(p, 'popick'); }).join('') || '<p class="mail-help">No one left to seat.</p>';
+    box.innerHTML = stPeople().filter(function(p){ return !L.assign[p.id] && (!q || p.name.toLowerCase().indexOf(q) > -1); }).map(function(p){ return stPersonBtn(p, 'popick'); }).join('') || '<p class="mail-help">No one left to seat.</p>';
   });
   document.addEventListener('click', function(e){
     var b = e.target.closest('.st-pop [data-popick]'); if (!b) return;
@@ -819,7 +896,7 @@
       if (a === 'add'){ var next = L.tables.reduce(function(m, x){ return Math.max(m, x.no); }, 0) + 1; var sz = L.tables.length ? L.tables[L.tables.length - 1].seats : 8; L.tables.push({ no:next, seats:sz, label:'' }); stMark(); stRender(); }
       if (a === 'fill'){
         var open = []; L.tables.forEach(function(x){ for (var n = 1; n <= x.seats; n++) if (!stOccupant(L, x.no, n)) open.push([x.no, n]); });
-        var left = st.people.filter(function(p){ return !L.assign[p.id]; });
+        var left = stPeople().filter(function(p){ return !L.assign[p.id]; });
         if (!left.length) return toast('Everyone already has a seat');
         if (!confirm('Place ' + Math.min(left.length, open.length) + ' unseated people into empty seats, in random order? You can move anyone afterward.')) return;
         left.sort(function(){ return Math.random() - .5; });
@@ -846,7 +923,7 @@
         pop2.dataset.id = occ; return;
       }
       var pop3 = stPop(t, '<h4>Seat ' + sn + ' · ' + esc((L.tables.filter(function(x){ return x.no === tn; })[0].label) || 'Table ' + tn) + '</h4><input placeholder="Search name" style="font:inherit;font-size:14px;padding:8px 10px;border:1px solid #cfcbc2;margin-bottom:6px"><div class="st-people">' +
-        (st.people.filter(function(p){ return !L.assign[p.id]; }).map(function(p){ return stPersonBtn(p, 'popick'); }).join('') || '<p class="mail-help">No one left to seat.</p>') + '</div>');
+        (stPeople().filter(function(p){ return !L.assign[p.id]; }).map(function(p){ return stPersonBtn(p, 'popick'); }).join('') || '<p class="mail-help">No one left to seat.</p>') + '</div>');
       pop3.dataset.t = tn; pop3.dataset.n = sn;
     }
   });
@@ -894,6 +971,12 @@
   $('agClose').addEventListener('click', closeAgenda);
   $('agBox').addEventListener('click', function(e){ if (e.target.id === 'agBox') closeAgenda(); });
   $('agTabs').addEventListener('click', function(e){ var b = e.target.closest('[data-agt]'); if (b){ agTab = b.dataset.agt; agRender(); } });
+  $('agBody').addEventListener('change', function(e){
+    var c = e.target.closest('[data-aud]'); if (!c) return;
+    var it = ag.days[+c.dataset.d].items[+c.dataset.i], au = (it.audience && it.audience.length ? it.audience : ['paid']).slice();
+    if (c.checked){ if (au.indexOf(c.dataset.aud) < 0) au.push(c.dataset.aud); } else au = au.filter(function(x){ return x !== c.dataset.aud; });
+    it.audience = au; agDirty = true; $('agStatus').textContent = au.length ? 'Unsaved changes' : 'Unsaved changes \u00b7 nobody will see that line';
+  });
   $('agBody').addEventListener('input', function(e){
     var el = e.target.closest('[data-p]'); if (!el) return;
     agSetPath(el.dataset.p, el.value); agDirty = true; $('agStatus').textContent = 'Unsaved changes';
@@ -922,7 +1005,7 @@
     var b = e.target.closest('[data-ag]'); if (!b) return;
     var a = b.dataset.ag, d = +b.dataset.d, i = +b.dataset.i, n = +b.dataset.n;
     function swap(arr, x, y){ if (y < 0 || y >= arr.length) return; var t = arr[x]; arr[x] = arr[y]; arr[y] = t; }
-    if (a==='add-item') ag.days[d].items = (ag.days[d].items||[]).concat([{ time:'', title:'', location:'', dress:'', details:'' }]);
+    if (a==='add-item') ag.days[d].items = (ag.days[d].items||[]).concat([{ time:'', title:'', location:'', dress:'', details:'', audience:['paid'] }]);
     if (a==='del' && confirm('Remove this line from the schedule?')) ag.days[d].items.splice(i,1);
     if (a==='up') swap(ag.days[d].items, i, i-1);
     if (a==='down') swap(ag.days[d].items, i, i+1);
@@ -953,7 +1036,7 @@
   });
   $('agSend').addEventListener('click', function(){
     var all = $('agSend').dataset.all === '1';
-    var paid = data.registrations.filter(function(r){ return r.status==='paid'; });
+    var paid = data.registrations.filter(function(r){ return r.status==='paid' && r.track !== 'local'; });
     var count = all ? paid.length : paid.filter(function(r){ return !r.agenda_link_sent_at; }).length;
     if (agDirty){ alert('Save your agenda changes first, then send the links.'); return; }
     if (!confirm((all ? 'Resend' : 'Send') + ' agenda links to ' + count + ' paid guests from Jennifer’s Gmail?')) return;
@@ -963,6 +1046,10 @@
       if (r.ok){ toast('Sending ' + r.queued + ' agenda links. This takes about a minute.'); setTimeout(function(){ load().then(agSendInfo); }, 30000); }
       else toast('Didn’t send. Try again.');
     });
+  });
+  $('agPreviewLocal').addEventListener('click', function(){
+    var id = data.settings.local_preview_id; if (!id) return toast('Preview not set up');
+    window.open(SITE + '/vision-board/2027-agenda?r=' + id + '&preview=1', '_blank');
   });
   $('agPreview').addEventListener('click', function(){
     if (agDirty){ alert('Save your agenda changes first, then preview.'); return; }
@@ -1033,25 +1120,31 @@
     if (a==='email-pay'){ mail(r, 'hold'); return; }
     if (a==='email-wait'){ mail(r, 'waitlist'); return; }
     if (a==='email-agenda'){ mail(r, 'agenda'); return; }
+    if (a==='email-loffer'){ mail(r, 'local_offer'); return; }
+    if (a==='email-lconfirm'){ mail(r, 'local_confirm'); return; }
+    if (a==='email-lwait'){ mail(r, 'local_waitlist'); return; }
     if (a==='email-confirm'){ mail(r, 'paid', function(){ act(id,'emailed').then(function(){ toast('Marked as sent'); load(); }); }); return; }
 
-    if (a==='cancel' && !confirm((r.status==='waitlist' ? 'Remove ' + who + ' from the waitlist?' : 'Cancel ' + who + '’s seat? It will open up on the public page right away.'))) return;
+    if (a==='cancel' && !confirm((r.status==='waitlist' ? 'Remove ' + who + ' from the waitlist?' : 'Cancel ' + who + '’s ' + (isLocal(r) ? 'spot? It opens up on the local sign-up page right away.' : 'seat? It will open up on the public page right away.')))) return;
     if (a==='unpaid' && !confirm('Undo the payment for ' + who + '? They’ll go back to a 72-hour hold.')) return;
 
     btn.disabled = true;
     act(id, a).then(function(res){
       if (!res) return;
       if (!res.ok && res.error==='full'){
-        alert('All ' + (data.settings.team_capacity || data.settings.capacity) + ' seats in the team seat limit are taken, so ' + who + ' can\u2019t be given a seat right now. Cancel someone else first if this person should get a seat.');
+        alert(isLocal(r) ? 'All ' + (data.settings.local_team_capacity || data.settings.local_capacity) + ' local spots in the team limit are taken, so ' + who + ' can\u2019t be given a spot right now. Raise the team spot limit or cancel someone first.'
+          : 'All ' + (data.settings.team_capacity || data.settings.capacity) + ' seats in the team seat limit are taken, so ' + who + ' can\u2019t be given a seat right now. Cancel someone else first if this person should get a seat.');
         btn.disabled=false; return load();
       }
       if (!res.ok){ toast('That didn’t save. Refresh and try again.'); btn.disabled=false; return; }
-      var done = { paid:'Marked paid', unpaid:'Moved back to awaiting payment', cancel: r.status==='waitlist' ? 'Removed from waitlist' : 'Seat cancelled', extend:'Hold extended 24 hours', offer:'Seat offered with a new 72-hour hold' }[a];
+      var done = isLocal(r) ? { paid:'Marked confirmed', cancel: r.status==='waitlist' ? 'Removed from waitlist' : 'Spot cancelled', extend:'Accept window extended 24 hours', offer:'Spot offered: they have 72 hours to accept' }[a]
+        : { paid:'Marked paid', unpaid:'Moved back to awaiting payment', cancel: r.status==='waitlist' ? 'Removed from waitlist' : 'Seat cancelled', extend:'Hold extended 24 hours', offer:'Seat offered with a new 72-hour hold' }[a];
       toast(done);
       return load().then(function(){
         if (a==='offer'){
           var nr = data.registrations.filter(function(x){ return x.id===id; })[0];
-          if (nr && confirm('Email ' + nr.first_name + ' now to tell them the seat is theirs?')) mail(nr, 'offer');
+          if (nr && isLocal(nr)) { if (confirm('Email ' + nr.first_name + ' now with the link to accept their spot?')) mail(nr, 'local_offer'); }
+          else if (nr && confirm('Email ' + nr.first_name + ' now to tell them the seat is theirs?')) mail(nr, 'offer');
         }
       });
     });
@@ -1062,13 +1155,14 @@
     act(id, 'notes', e.target.value).then(function(r){ if (r && r.ok){ toast('Note saved'); var x = data.registrations.filter(function(y){ return y.id===id; })[0]; if (x) x.notes = e.target.value; } });
   });
   function pickTab(e){ var b=e.target.closest('button[data-tab]'); if (!b) return; filter=b.dataset.tab; render(); }
+  $('trackSwitch').addEventListener('click', function(e){ var b = e.target.closest('[data-track]'); if (!b) return; track = b.dataset.track; filter = 'all'; try { sessionStorage.setItem('vbTrack', track); } catch(x){} render(); });
   $('tabs').addEventListener('click', pickTab);
   $('summary').addEventListener('click', pickTab);
   $('search').addEventListener('input', function(e){ query=e.target.value.trim(); render(); });
   $('refreshBtn').addEventListener('click', function(){ load().then(function(){ toast('Up to date'); }); });
   $('logoutBtn').addEventListener('click', function(){ pw=''; try{ sessionStorage.removeItem('vbTeamPw'); }catch(e){} location.reload(); });
   $('csvBtn').addEventListener('click', function(){
-    var cols = ['code','status','first_name','last_name','company','email','phone','street','street2','city','state','zip','amount','created_at','hold_expires_at','paid_at','confirmation_sent_at','notes'];
+    var cols = ['code','track','status','first_name','last_name','company','email','phone','street','street2','city','state','zip','amount','created_at','hold_expires_at','paid_at','confirmation_sent_at','notes'];
     var lines = [cols.join(',')].concat(data.registrations.map(function(r){
       return cols.map(function(c){ var v = r[c]==null ? '' : String(r[c]); return /[",\n]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; }).join(',');
     }));

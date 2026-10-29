@@ -68,6 +68,15 @@ def main():
     with open(os.path.join(out_dir, "pay", "index.html"), "w", encoding="utf-8") as f:
         f.write(pay_head + nav + pay + "\n" + footer)
 
+    # local guests' free sign-up page (Vision Board Party, Saturday only)
+    loc = open(os.path.join(HERE, "local-content.html"), encoding="utf-8").read()
+    loc_head = fix_head(head, "https://www.schumacherliving.com/vision-board/local", noindex=True)
+    loc_head = loc_head.replace('<base href="../">', '<base href="../../">', 1)
+    loc_head = re.sub(r"<title>.*?</title>", "<title>Vision Board Party | Jennifer Schumacher</title>", loc_head, flags=re.S)
+    os.makedirs(os.path.join(out_dir, "local"), exist_ok=True)
+    with open(os.path.join(out_dir, "local", "index.html"), "w", encoding="utf-8") as f:
+        f.write(loc_head + nav + loc + "\n" + footer)
+
     # attendee agenda app (opened with each paid guest's personal link)
     agenda = open(os.path.join(HERE, "agenda.html"), encoding="utf-8").read()
     os.makedirs(os.path.join(out_dir, "2027-agenda"), exist_ok=True)

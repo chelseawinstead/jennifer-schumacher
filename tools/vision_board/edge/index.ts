@@ -26,7 +26,7 @@ function corsFor(origin: string | null) {
 const clean = (v: unknown, max = 200) => String(v ?? "").trim().slice(0, max);
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const KINDS = ["hold", "waitlist", "offer", "paid", "agenda"] as const;
+const KINDS = ["hold", "waitlist", "offer", "paid", "agenda", "local_confirm", "local_waitlist", "local_offer"] as const;
 type Kind = typeof KINDS[number];
 const esc = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 
@@ -93,7 +93,7 @@ export function renderEmail(kind: Kind, g: Guest, st: Settings, override?: Parti
         ${paras}${details}
       </td></tr>
       <tr><td style="padding:24px 36px;border-top:1px solid #e4e1da;font:14px/1.7 ${sans};color:#55585c">
-        <strong style="color:#14181d">Friday &amp; Saturday, January 8&ndash;9, 2027</strong><br>
+        <strong style="color:#14181d">${kind.startsWith("local") ? "Vision Board Party &middot; Saturday, January 9, 2027 &middot; 2:00&ndash;6:00pm" : "Friday &amp; Saturday, January 8&ndash;9, 2027"}</strong><br>
         ANdAZ Resort, 6114 N Scottsdale Rd, Scottsdale, AZ 85253<br><br>
         Questions? Reply to this email or call Jennifer at (480) 322-2593.
       </td></tr>
@@ -103,7 +103,7 @@ export function renderEmail(kind: Kind, g: Guest, st: Settings, override?: Parti
 
   const text = [heading, body.replace(LINK, "$1 ($2)"),
     wantsPayment ? `Your code: ${g.code}\nAmount: $${Number(g.amount).toLocaleString()}\nZelle to: ${st.zelle_to || "info@schumacherliving.com"}\nZelle memo: ${g.code}\nPay by: ${azTime(g.hold_expires_at)}\nYour payment details: ${link}` : "",
-    "Friday & Saturday, January 8-9, 2027\nANdAZ Resort, 6114 N Scottsdale Rd, Scottsdale, AZ 85253\nQuestions? Reply to this email or call Jennifer at (480) 322-2593."]
+    (kind.startsWith("local") ? "Vision Board Party - Saturday, January 9, 2027, 2:00-6:00pm" : "Friday & Saturday, January 8-9, 2027") + "\nANdAZ Resort, 6114 N Scottsdale Rd, Scottsdale, AZ 85253\nQuestions? Reply to this email or call Jennifer at (480) 322-2593."]
     .filter(Boolean).join("\n\n");
   return { subject, heading, body, html, text };
 }
@@ -114,8 +114,8 @@ async function loadSettings(): Promise<Settings> {
 }
 async function loadGuest(where: { id?: string; code?: string }): Promise<(Guest & { status: string }) | null> {
   const rows = where.id
-    ? await sql`select id, first_name, last_name, email, code, amount, hold_expires_at, status from vision_board.registrations where id = ${where.id}`
-    : await sql`select id, first_name, last_name, email, code, amount, hold_expires_at, status from vision_board.registrations where code = ${where.code!}`;
+    ? await sql`select id, first_name, last_name, email, code, amount, hold_expires_at, status, track from vision_board.registrations where id = ${where.id}`
+    : await sql`select id, first_name, last_name, email, code, amount, hold_expires_at, status, track from vision_board.registrations where code = ${where.code!}`;
   if (!rows.length) return null;
   const r = rows[0];
   return { ...r, hold_expires_at: r.hold_expires_at ? new Date(r.hold_expires_at).toISOString() : null } as Guest & { status: string };
@@ -138,7 +138,8 @@ async function logEmail(id: string, kind: string, by: string, result: { ok: bool
   await sql`update vision_board.registrations set email_log = email_log || ${sql.json([entry])}::jsonb
     ${kind === "paid" && result.ok ? sql`, confirmation_sent_at = now()` : sql``}
     ${(kind === "hold" || kind === "waitlist") && by === "auto" && result.ok ? sql`, welcome_email_sent_at = now()` : sql``}
-    ${kind === "agenda" && result.ok ? sql`, agenda_link_sent_at = now()` : sql``}
+    ${(kind === "agenda" || kind === "local_confirm") && result.ok ? sql`, agenda_link_sent_at = now()` : sql``}
+    ${(kind === "local_confirm" || kind === "local_waitlist") && by === "auto" && result.ok ? sql`, welcome_email_sent_at = now()` : sql``}
     where id = ${id}`;
 }
 
@@ -167,7 +168,8 @@ async function sendWelcome(code: string) {
     const g = await loadGuest({ code });
     if (!g) return;
     const st = await loadSettings();
-    const kind: Kind = g.status === "waitlist" ? "waitlist" : "hold";
+    const local = (g as any).track === "local";
+    const kind: Kind = local ? (g.status === "waitlist" ? "local_waitlist" : "local_confirm") : (g.status === "waitlist" ? "waitlist" : "hold");
     const m = renderEmail(kind, g, st);
     const result = await sendViaGmail(st, g.email, m);
     await logEmail(g.id, kind, "auto", result);
@@ -393,7 +395,7 @@ Deno.serve(async (req) => {
       if (EMAIL.test(email)) {
         const [row] = await sql`select vision_board.agenda_link_request(${email}) as r`;
         // @ts-ignore EdgeRuntime is provided by Supabase
-        if (row.r.send) EdgeRuntime.waitUntil(sendKind(row.r.id, "agenda", "guest"));
+        if (row.r.send) EdgeRuntime.waitUntil(sendKind(row.r.id, row.r.kind === "local_confirm" ? "local_confirm" : "agenda", "guest"));
       }
       await new Promise((r) => setTimeout(r, 600));
       return json({ ok: true });
@@ -406,6 +408,47 @@ Deno.serve(async (req) => {
       if (!UUID.test(id)) return json({ ok: false }, 404);
       const rows = await sql`select vision_board.guest_set_optin(${id}::uuid, ${b.on === true}) as r`;
       return rows.length && rows[0].r ? json(rows[0].r) : json({ ok: false }, 404);
+    }
+
+    // ---------- Local guests (free, 30 spots, own waitlist) ----------
+    if (req.method === "GET" && action === "local-status") {
+      const [row] = await sql`select vision_board.local_public_status() as s`;
+      return json(row.s);
+    }
+    if (req.method === "POST" && action === "register-local") {
+      const b = await req.json().catch(() => ({}));
+      if (clean(b.website)) return json({ ok: true, ignored: true }); // honeypot
+      const f = {
+        first: clean(b.first_name, 80), last: clean(b.last_name, 80), email: clean(b.email, 160),
+        phone: clean(b.phone, 40), street: clean(b.street), street2: clean(b.street2),
+        city: clean(b.city, 80), state: clean(b.state, 40), zip: clean(b.zip, 12), company: clean(b.company, 120),
+      };
+      const missing = Object.entries(f).filter(([k, v]) => k !== "street2" && !v).map(([k]) => k);
+      if (missing.length) return json({ ok: false, error: "missing", fields: missing }, 400);
+      if (!EMAIL.test(f.email)) return json({ ok: false, error: "email" }, 400);
+      if (f.phone.replace(/\D/g, "").length < 10) return json({ ok: false, error: "phone" }, 400);
+      const [row] = await sql`select vision_board.register_local(${f.first}, ${f.last}, ${f.email}, ${f.phone},
+        ${f.street}, ${f.street2}, ${f.city}, ${f.state}, ${f.zip}, ${f.company}) as r`;
+      // @ts-ignore EdgeRuntime is provided by Supabase
+      if (row.r.ok && !row.r.duplicate) EdgeRuntime.waitUntil(sendWelcome(row.r.code));
+      return json(row.r, row.r.ok ? 200 : 409);
+    }
+    if (req.method === "POST" && action === "local-accept") {
+      const b = await req.json().catch(() => ({}));
+      const id = clean(b.r, 40);
+      if (!UUID.test(id)) return json({ ok: false }, 404);
+      const [row] = await sql`select vision_board.local_accept(${id}::uuid) as r`;
+      // @ts-ignore EdgeRuntime is provided by Supabase
+      if (row.r.ok && !row.r.already) EdgeRuntime.waitUntil(sendKind(id, "local_confirm", "guest"));
+      return json(row.r, row.r.ok ? 200 : 409);
+    }
+    if (req.method === "POST" && action === "confirm-address") {
+      const b = await req.json().catch(() => ({}));
+      const id = clean(b.r, 40);
+      if (!UUID.test(id)) return json({ ok: false }, 404);
+      const a = b.address || {};
+      const [row] = await sql`select vision_board.guest_confirm_address(${id}::uuid, ${sql.json({ street: clean(a.street), street2: clean(a.street2), city: clean(a.city, 80), state: clean(a.state, 40), zip: clean(a.zip, 12) })}) as r`;
+      return json(row.r, row.r.ok ? 200 : 400);
     }
 
     if (req.method === "POST" && action === "register") {
@@ -466,7 +509,7 @@ Deno.serve(async (req) => {
 
       // Render an email: for a real guest (id) or a sample guest for the template preview
       if (action === "team-email-render" && req.method === "POST") {
-        const kind = clean(b.kind, 12) as Kind;
+        const kind = clean(b.kind, 20) as Kind;
         if (!KINDS.includes(kind)) return json({ ok: false, error: "kind" }, 400);
         const st = await loadSettings();
         if (b.hotel_code != null) st.hotel_code = clean(b.hotel_code, 100) || null;
@@ -481,7 +524,7 @@ Deno.serve(async (req) => {
 
       // Send an email to one guest from Jennifer's Gmail, using the template (optionally edited for just this send)
       if (action === "team-email-send" && req.method === "POST") {
-        const kind = clean(b.kind, 12) as Kind;
+        const kind = clean(b.kind, 20) as Kind;
         if (!KINDS.includes(kind)) return json({ ok: false, error: "kind" }, 400);
         const g = await loadGuest({ id: clean(b.id, 40) });
         if (!g) return json({ ok: false, error: "not_found" }, 404);
@@ -516,6 +559,7 @@ Deno.serve(async (req) => {
             label: str(d?.label, 120),
             items: (Array.isArray(d?.items) ? d.items : []).slice(0, 40).map((i: any) => ({
               id: /^[A-Za-z0-9_-]{1,64}$/.test(str(i?.id, 64)) ? str(i?.id, 64) : crypto.randomUUID(),
+              audience: (Array.isArray(i?.audience) ? i.audience : ["paid"]).filter((a: unknown) => a === "paid" || a === "local"),
               time: str(i?.time, 60), title: str(i?.title, 200), location: str(i?.location, 200), dress: str(i?.dress, 200), details: str(i?.details, 1500),
               speakers: (Array.isArray(i?.speakers) ? i.speakers : []).slice(0, 12).map((sp: any) => ({
                 name: str(sp?.name, 120), title: str(sp?.title, 200), bio: str(sp?.bio, 1500),
@@ -537,12 +581,14 @@ Deno.serve(async (req) => {
 
       // Email every paid guest their personal agenda link (only those not sent yet, unless resend_all)
       if (action === "team-agenda-send" && req.method === "POST") {
+        const track = b.track === "local" ? "local" : "paid";
         const rows = b.resend_all
-          ? await sql`select id from vision_board.registrations where event_year = (select event_year from vision_board.settings where id = 1) and status = 'paid' order by created_at`
-          : await sql`select id from vision_board.registrations where event_year = (select event_year from vision_board.settings where id = 1) and status = 'paid' and agenda_link_sent_at is null order by created_at`;
+          ? await sql`select id from vision_board.registrations where event_year = (select event_year from vision_board.settings where id = 1) and status = 'paid' and track = ${track} order by created_at`
+          : await sql`select id from vision_board.registrations where event_year = (select event_year from vision_board.settings where id = 1) and status = 'paid' and track = ${track} and agenda_link_sent_at is null order by created_at`;
         const ids = rows.map((r: { id: string }) => r.id);
+        const kind: Kind = track === "local" ? "local_confirm" : "agenda";
         // @ts-ignore EdgeRuntime is provided by Supabase
-        EdgeRuntime.waitUntil((async () => { for (const id of ids) { await sendKind(id, "agenda", "team"); await new Promise((r) => setTimeout(r, 400)); } })());
+        EdgeRuntime.waitUntil((async () => { for (const id of ids) { await sendKind(id, kind, "team"); await new Promise((r) => setTimeout(r, 400)); } })());
         return json({ ok: true, queued: ids.length });
       }
 
@@ -562,7 +608,7 @@ Deno.serve(async (req) => {
 
       // Seat limit for the team (public page stays at the regular capacity)
       if (action === "team-seat-limit" && req.method === "POST") {
-        const [row] = await sql`select vision_board.team_set_seat_limit(${Number(b.limit) | 0}) as r`;
+        const [row] = await sql`select vision_board.team_set_seat_limit(${Number(b.limit) | 0}, ${b.track === "local" ? "local" : "paid"}) as r`;
         return json(row.r, row.r.ok ? 200 : 400);
       }
       // Assigned seating

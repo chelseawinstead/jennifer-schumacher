@@ -199,6 +199,8 @@
   .post-del{ background:none; border:0; color:var(--warm); font-size:13px; padding:6px; }
   .post-body{ margin-top:10px; font-size:15px; line-height:1.5; white-space:pre-wrap; overflow-wrap:anywhere; }
   .post-body a{ color:var(--navy); }
+  body.local [data-tab="crew"], body.local [data-tab="chat"], body.local #meBtn{ display:none !important; }
+  body.local .tabs .wrap{ grid-template-columns:repeat(2,1fr); }
   .host-row{ background:#f6efe1; border-left:4px solid #b8995a; padding:0 12px; }
   .host-row + .host-row{ border-top:1px solid #ead9b8; }
   .host-band{ font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#8a6d2f; padding-top:10px; }
@@ -342,8 +344,8 @@
       <button class="host-btn" type="button" id="hostBtn" aria-label="Contact Jennifer Schumacher"><span class="av" id="hostAv">JS</span><span><span class="brand">JENNIFER SCHUMACHER</span><small>Your host · tap to contact</small></span></button>
       <button class="me-btn" type="button" id="meBtn"><span class="av" id="meAv"></span><span>My profile</span></button>
     </div>
-    <h1>Vision Board Crew <em>2027</em></h1>
-    <div class="when">Friday &amp; Saturday, January 8–9, 2027</div>
+    <h1 id="appTitle">Vision Board Crew <em>2027</em></h1>
+    <div class="when" id="appWhen">Friday &amp; Saturday, January 8–9, 2027</div>
     <p class="welcome" id="welcome"></p>
     <div class="pills"><span class="pill" id="countdown" hidden></span><span class="pill ghost" id="closes"></span></div>
   </div></header>
@@ -472,6 +474,21 @@
     <div id="tableBody"></div>
   </div>
 </div>
+<div class="sheet-wrap" id="addrSheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="addrTitle">
+    <div class="sheet-head"><h2 id="addrTitle">Confirm your address</h2></div>
+    <p class="sec-sub" style="margin-bottom:16px">Jennifer has a little something to send you after the party. Is this the best address for it?</p>
+    <label class="fld">Street<input id="adStreet" autocomplete="address-line1"></label>
+    <label class="fld">Apartment, suite, etc. (optional)<input id="adStreet2" autocomplete="address-line2"></label>
+    <label class="fld">City<input id="adCity" autocomplete="address-level2"></label>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <label class="fld">State<input id="adState" autocomplete="address-level1" maxlength="20"></label>
+      <label class="fld">ZIP code<input id="adZip" autocomplete="postal-code" inputmode="numeric" maxlength="10"></label>
+    </div>
+    <button type="button" class="btn solid" id="adSave" style="width:100%">Yes, that’s my address</button>
+    <p class="msg" id="adMsg" role="status"></p>
+  </div>
+</div>
 <div class="lightbox" id="lightbox" hidden><img id="lightImg" alt=""><button type="button" id="lightClose">Close</button></div>
 <button type="button" class="live-bar" id="liveBar" aria-live="polite"><span class="av" id="liveAv"></span><span class="t" id="liveText"></span><span class="go">View</span></button>
 <div class="toast" id="toast" role="status"></div>
@@ -535,6 +552,10 @@
   function showGate(d){
     $('app').hidden = true; $('gate').hidden = false;
     var r = d && d.reason, n = d && d.first_name ? ', ' + esc(d.first_name) : '';
+    if (d && d.track === 'local') {
+      $('gate').querySelector('h1').innerHTML = 'Vision Board <em>Party</em>';
+      $('gate').querySelector('.when').textContent = 'Saturday, January 9, 2027 · 2:00–6:00pm · ANdAZ Scottsdale';
+    }
     var msg = {
       pending: '<h2>Almost there' + n + '.</h2><p class="help">The agenda opens once your payment is received. Check your registration email for your Zelle details.</p>',
       waitlist: '<h2>You\u2019re on the waitlist' + n + '.</h2><p class="help">The agenda is for confirmed guests. If a seat opens up, we\u2019ll contact you.</p>',
@@ -544,19 +565,44 @@
       offline: '<h2>Couldn\u2019t load the agenda.</h2><p class="help">Check your connection and refresh the page.</p>',
       not_found: '<h2>Open your personal agenda</h2>'
     }[r] || '<h2>Open your personal agenda</h2>';
+    if (d && d.track === 'local'){
+      msg = {
+        offer: '<h2>A spot is yours' + n + '!</h2><p class="help">A spot opened up for Jennifer\u2019s Vision Board Party on <b>Saturday, January 9, 2:00\u20136:00pm</b> at the ANdAZ Scottsdale.' +
+          (d.deadline ? ' Please accept by <b>' + esc(new Date(d.deadline).toLocaleString('en-US', { timeZone:'America/Phoenix', weekday:'long', month:'long', day:'numeric', hour:'numeric', minute:'2-digit' })) + ' Arizona time</b>.' : '') +
+          '</p><button type="button" class="btn solid" id="acceptBtn" style="width:100%">Accept my spot</button><p class="msg" id="acceptMsg" role="status"></p>',
+        waitlist: '<h2>You\u2019re on the waitlist' + n + '.</h2><p class="help">If a spot opens up for the Vision Board Party, we\u2019ll email you a link to accept it.</p>',
+        expired: '<h2>This offer has expired.</h2><p class="help">The spot went to the next person on the waitlist. Text Jennifer at (480) 322-2593 if you have questions.</p>',
+        cancelled: '<h2>This spot was cancelled.</h2><p class="help">Text Jennifer at (480) 322-2593 if you think this is a mistake.</p>'
+      }[r] || msg;
+    }
     $('gateState').innerHTML = msg;
-    $('linkForm').hidden = (r === 'closed' || r === 'offline' || r === 'pending' || r === 'waitlist');
+    $('linkForm').hidden = (r === 'closed' || r === 'offline' || r === 'pending' || r === 'waitlist' || (d && d.track === 'local' && r !== 'not_found'));
+    var ab = $('acceptBtn');
+    if (ab) ab.addEventListener('click', function(){
+      ab.disabled = true; ab.textContent = 'Accepting\u2026';
+      post('local-accept', { r:R }).then(function(x){
+        if (x.ok){ load.sig = null; load(); return; }
+        ab.disabled = false; ab.textContent = 'Accept my spot';
+        $('acceptMsg').className = 'msg err'; $('acceptMsg').textContent = x.error === 'expired' ? 'Sorry, this offer has expired.' : 'That didn\u2019t go through. Try again, or text Jennifer at (480) 322-2593.';
+      }).catch(function(){ ab.disabled = false; ab.textContent = 'Accept my spot'; });
+    });
     if (r === 'not_found' || r === 'closed') store('');
   }
 
   // ---- render ----
   function render(){
-    var g = data.guide || {}, me = data.me || {};
+    var g = data.guide || {}, me = data.me || {}, LOCAL = data.track === 'local';
+    document.body.classList.toggle('local', LOCAL);
+    if (LOCAL){
+      $('appTitle').innerHTML = 'Vision Board <em>Party</em>';
+      $('appWhen').textContent = 'Saturday, January 9, 2027 \u00b7 2:00\u20136:00pm';
+      if (!PREVIEW && !data.address_confirmed && $('addrSheet').hidden && !render.askedAddr){ render.askedAddr = true; openAddr(); }
+    }
     $('welcome').textContent = g.welcome || ''; $('welcome').hidden = !g.welcome;
     $('meAv').innerHTML = avatar(me);
     var host = g.host || {};
     $('hostAv').innerHTML = host.photo_url ? '<img src="' + esc(host.photo_url) + '" alt="">' : 'JS';
-    var start = new Date('2027-01-08T15:30:00-07:00'), days = Math.ceil((start - new Date()) / 864e5);
+    var start = new Date(LOCAL ? '2027-01-09T14:00:00-07:00' : '2027-01-08T15:30:00-07:00'), days = Math.ceil((start - new Date()) / 864e5);
     $('countdown').hidden = days < 1; $('countdown').textContent = days === 1 ? 'Tomorrow!' : days + ' days to go';
     var closeLabel = azDate(data.closes_at, { month:'long', day:'numeric', year:'numeric' });
     $('closes').textContent = 'App open until ' + closeLabel;
@@ -565,7 +611,10 @@
     $('cmpAv').innerHTML = avatar(me);
   }
   function renderDays(){
-    var days = (data.guide && data.guide.days) || [];
+    var tr = data.track === 'local' ? 'local' : 'paid';
+    var days = ((data.guide && data.guide.days) || []).map(function(d){
+      return Object.assign({}, d, { items:(d.items || []).filter(function(it){ return (it.audience && it.audience.length ? it.audience : ['paid']).indexOf(tr) > -1; }) });
+    }).filter(function(d){ return d.items.length; });
     if (dayIdx === null){
       dayIdx = 0;
       var today = new Date().toLocaleDateString('en-US', { timeZone:'America/Phoenix', month:'long', day:'numeric' });
@@ -1032,7 +1081,7 @@
     $('liveBar').classList.remove('on'); showTab('chat'); if (this.dataset.post) openThread(this.dataset.post, false);
   });
   function feedPoll(){
-    if (!R || !data || document.hidden) return;
+    if (!R || !data || document.hidden || data.track === 'local') return;
     post('feed-poll', { r:R, since:pollSince }).then(function(d){
       if (!d.ok) return;
       var first = pollSince === null; pollSince = d.now;
@@ -1056,6 +1105,23 @@
   setInterval(function(){ if (chatTab || threadId) feedPoll(); }, 6000);
   setInterval(function(){ if (!chatTab && !threadId) feedPoll(); }, 15000);
   document.addEventListener('visibilitychange', function(){ if (!document.hidden) feedPoll(); });
+
+  // ---- local guests: confirm gift address ----
+  function openAddr(){
+    var a = (data.me && data.me.address) || {};
+    $('adStreet').value = a.street || ''; $('adStreet2').value = a.street2 || ''; $('adCity').value = a.city || ''; $('adState').value = a.state || ''; $('adZip').value = a.zip || '';
+    $('adMsg').textContent = ''; $('addrSheet').hidden = false;
+  }
+  $('adSave').addEventListener('click', function(){
+    var addr = { street:$('adStreet').value.trim(), street2:$('adStreet2').value.trim(), city:$('adCity').value.trim(), state:$('adState').value.trim(), zip:$('adZip').value.trim() };
+    if (!addr.street || !addr.city || !addr.state || !addr.zip){ $('adMsg').className = 'msg err'; $('adMsg').textContent = 'Please fill in street, city, state and ZIP.'; return; }
+    var b = this; b.disabled = true;
+    post('confirm-address', { r:R, address:addr }).then(function(x){
+      b.disabled = false;
+      if (!x.ok){ $('adMsg').className = 'msg err'; $('adMsg').textContent = 'That didn\u2019t save. Try again.'; return; }
+      data.address_confirmed = true; data.me.address = addr; $('addrSheet').hidden = true; toast('Thank you! Address saved.');
+    }).catch(function(){ b.disabled = false; $('adMsg').className = 'msg err'; $('adMsg').textContent = 'Check your connection and try again.'; });
+  });
 
   // ---- tabs ----
   function showTab(t){
@@ -1122,7 +1188,7 @@
   // Keep the app current: check for Jennifer's updates every 20 seconds and when the guest comes back to the app.
   // Waits while someone is typing or has a panel open, so nothing gets wiped mid-edit.
   function busy(){
-    return !$('sheet').hidden || !$('hostSheet').hidden || !$('mapsSheet').hidden || !$('threadSheet').hidden || !$('lightbox').hidden ||
+    return !$('sheet').hidden || !$('hostSheet').hidden || !$('addrSheet').hidden || !$('mapsSheet').hidden || !$('threadSheet').hidden || !$('lightbox').hidden ||
       composers.some(function(c){ return c.dirty(); }) ||
       (document.activeElement && document.activeElement.matches('textarea,input,select')) ||
       Object.keys(noteTimers).some(function(k){ return noteTimers[k]; });
