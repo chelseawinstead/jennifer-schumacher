@@ -40,6 +40,10 @@
   .sess button{ background:rgba(255,255,255,.08); border:0; border-bottom:3px solid transparent; color:#c9d3df; padding:12px 8px; font-size:15px; }
   .sess button[aria-pressed="true"]{ background:#fff; color:var(--navy); border-bottom-color:var(--gold); font-weight:500; }
 
+  .day-title{ text-align:center; padding:26px 0 6px; }
+  .day-title h1{ font-size:44px; line-height:1.05; color:var(--navy); }
+  .day-title p{ margin:8px 0 0; font-size:15px; color:var(--muted); letter-spacing:.02em; }
+  @media (max-width:520px){ .day-title h1{ font-size:34px; } }
   .stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:16px 0 10px; }
   .stat{ background:#fff; border:1px solid var(--line); padding:12px 14px; }
   .stat b{ display:block; font-family:"Cormorant Garamond",serif; font-size:38px; font-weight:400; line-height:1; color:var(--navy); font-variant-numeric:lining-nums tabular-nums; }
@@ -105,6 +109,7 @@
   </div></header>
 
   <main class="wrap">
+    <div class="day-title"><h1 id="dayTitle">Check-In</h1><p id="daySub"></p></div>
     <div class="stats">
       <div class="stat"><b id="stIn">0</b><span>checked in</span></div>
       <div class="stat"><b id="stLeft">0</b><span>not here yet</span></div>
@@ -186,6 +191,9 @@
     $('openNote').className = 'open-note ' + (d.open ? 'on' : 'off');
     $('stGiftLbl').textContent = THING[sess] + 's handed'; $('readyT').textContent = 'Ready for a ' + THING[sess];
     $('sess').hidden = !!LOCK;
+    $('dayTitle').textContent = sess === 'party' ? 'Vision Board Party Check-In' : 'Friday Check-In';
+    $('daySub').textContent = (sess === 'party' ? 'Saturday, January 9 · agents + local guests · hand out gift bags' : 'Friday, January 8 · agents · hand out name tags');
+    document.title = $('dayTitle').textContent + ' | Vision Board Crew 2027';
     $('openNote').textContent = d.open ? 'Guests can scan the table’s QR code to check themselves in. They’ll show up under “Ready for a ' + THING[sess] + '.”'
                                        : 'Guests can’t scan in yet. Jennifer’s team turns self check-in on from the team page. You can still check people in here.';
     document.querySelectorAll('#sess [data-s]').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.s === sess); });

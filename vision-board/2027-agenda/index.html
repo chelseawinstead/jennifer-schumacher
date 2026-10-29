@@ -93,7 +93,9 @@
   .pill.ghost{ background:transparent; color:var(--sky); border:1px solid rgba(201,211,223,.45); }
 
   /* tabs */
-  .tabs{ position:sticky; top:0; z-index:5; background:rgba(255,255,255,.97); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); padding-top:env(safe-area-inset-top, 0px); }
+  .tabs{ position:sticky; top:env(safe-area-inset-top, 0px); z-index:5; background:rgba(255,255,255,.97); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); }
+  /* navy strip behind the phone's status bar, so the tabs never leave a gap */
+  body::before{ content:""; position:fixed; top:0; left:0; right:0; height:env(safe-area-inset-top, 0px); background:var(--navy); z-index:6; pointer-events:none; }
   .tabs .wrap{ display:grid; grid-template-columns:repeat(4,1fr); }
   .tabs button{ background:none; border:0; padding:14px 2px 12px; font-size:14px; color:var(--muted); border-bottom:2px solid transparent; }
   .tabs button[aria-selected="true"]{ color:var(--navy); border-bottom-color:var(--navy); font-weight:500; }
@@ -263,7 +265,8 @@
   .lightbox button{ position:absolute; top:calc(env(safe-area-inset-top,0px) + 12px); right:14px; background:rgba(255,255,255,.15); color:#fff; border:0; border-radius:999px; padding:8px 14px; font-size:14px; }
   .live-bar{ position:fixed; left:50%; bottom:calc(14px + env(safe-area-inset-bottom,0px)); transform:translate(-50%, 140%); transition:transform .3s ease; z-index:35; width:min(560px, calc(100% - 24px));
     display:grid; grid-template-columns:36px minmax(0,1fr) auto; gap:10px; align-items:center; background:var(--ink); color:#fff; border-radius:16px; padding:10px 12px; box-shadow:0 10px 30px rgba(0,0,0,.3); border:0; text-align:left; font:inherit; }
-  .live-bar.on{ transform:translate(-50%, 0); }
+  .live-bar:not(.on){ visibility:hidden; opacity:0; transform:translate(-50%, 200%); }
+  .live-bar.on{ transform:translate(-50%, 0); visibility:visible; opacity:1; }
   .live-bar .av{ width:36px; height:36px; font-size:13px; background:#38424d; }
   .live-bar .t{ font-size:14px; line-height:1.3; }
   .live-bar .t b{ font-weight:600; }
