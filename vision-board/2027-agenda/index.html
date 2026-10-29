@@ -199,6 +199,14 @@
   .post-del{ background:none; border:0; color:var(--warm); font-size:13px; padding:6px; }
   .post-body{ margin-top:10px; font-size:15px; line-height:1.5; white-space:pre-wrap; overflow-wrap:anywhere; }
   .post-body a{ color:var(--navy); }
+  .host-row{ background:#f6efe1; border-left:4px solid #b8995a; padding:0 12px; }
+  .host-row + .host-row{ border-top:1px solid #ead9b8; }
+  .host-band{ font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#8a6d2f; padding-top:10px; }
+  .host-row .p-row{ padding-top:6px; }
+  .chip.seat{ background:#b8995a; border-color:#b8995a; color:#fff; cursor:pointer; font:inherit; font-size:13px; }
+  .chip.seat b{ color:#fff; opacity:.85; }
+  .mates{ list-style:none; padding:0; margin:0 0 12px; }
+  .mates li{ padding:8px 0; border-bottom:1px solid var(--line); font-size:15px; }
   .host-tag{ display:inline-block; margin-left:6px; padding:1px 7px; border-radius:999px; background:var(--gold,#b8995a); color:#fff; font-size:10px; letter-spacing:.08em; text-transform:uppercase; vertical-align:2px; font-weight:600; }
   .mention{ background:none; border:0; padding:0; font:inherit; color:var(--navy); font-weight:600; cursor:pointer; }
   .photos{ display:grid; gap:4px; margin-top:10px; }
@@ -458,6 +466,12 @@
     </div>
   </div>
 </div>
+<div class="sheet-wrap" id="tableSheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="tableTitle">
+    <div class="sheet-head"><h2 id="tableTitle">Your seat</h2><button class="x" type="button" id="tableClose">Close</button></div>
+    <div id="tableBody"></div>
+  </div>
+</div>
 <div class="lightbox" id="lightbox" hidden><img id="lightImg" alt=""><button type="button" id="lightClose">Close</button></div>
 <button type="button" class="live-bar" id="liveBar" aria-live="polite"><span class="av" id="liveAv"></span><span class="t" id="liveText"></span><span class="go">View</span></button>
 <div class="toast" id="toast" role="status"></div>
@@ -569,6 +583,8 @@
       var meta = '';
       if (it.location) meta += '<button type="button" class="chip place" data-place="' + esc(it.location) + '"><b>Where</b> ' + esc(it.location) + ' ' + PIN + '</button>';
       if (it.dress) meta += '<span class="chip dress"><b>Wear</b> ' + esc(it.dress) + '</span>';
+      var seat = (data.seats || []).filter(function(x){ return x.session === it.id; })[0];
+      if (seat) meta += '<button type="button" class="chip seat" data-mytable="' + esc(it.id) + '"><b>Your seat</b> ' + esc(seat.label) + ' \u203a</button>';
       return '<div class="item"><time>' + esc(it.time) + '</time><div><h3>' + esc(it.title) + '</h3>' + speakersHtml(it.speakers) +
         (meta ? '<div class="meta">' + meta + '</div>' : '') + (it.details ? '<p class="det">' + rich(it.details) + '</p>' : '') + '</div></div>';
     }).join('') || '<div class="empty">Details for this day are coming soon.</div>');
@@ -603,7 +619,7 @@
   }
   function renderCrew(){
     var crew = data.crew || [], me = data.me || {}, raw = ($('crewSearch').value || '').trim(), q = raw.toLowerCase();
-    $('crewSub').textContent = crew.length + ' confirmed guests are in the Crew list. Tap someone to text, connect or jot a note.';
+    $('crewSub').textContent = crew.filter(function(p){ return !p.role; }).length + ' confirmed guests are in the Crew list. Tap someone to text, connect or jot a note.';
     $('optinNudge').hidden = !!me.directory_opt_in;
     // state filter: one entry per state, with counts
     var counts = {}; crew.forEach(function(p){ var c = stateCode(p.state); if (c) counts[c] = (counts[c]||0) + 1; });
@@ -634,7 +650,8 @@
           (main ? '<div><div class="p-lbl">Contact</div><div class="p-icons">' + main + '</div></div>' : '') +
           (icons ? '<div><div class="p-lbl">Connect</div><div class="p-icons">' + icons + '</div></div>' : '') +
         '</div><div class="p-save">' + save + '</div>';
-      return '<div class="person' + (open ? ' open' : '') + '" data-id="' + esc(p.id) + '">' +
+      return '<div class="person' + (open ? ' open' : '') + (p.role ? ' host-row' : '') + '" data-id="' + esc(p.id) + '">' +
+        (p.role ? '<div class="host-band">' + (p.role === 'host' ? 'Host' : 'Cohost') + '</div>' : '') +
         '<button class="p-row" type="button" aria-expanded="' + open + '"><span class="av">' + avatar(p) + '</span><span>' +
           '<span class="nm">' + esc(p.name) + (p.me ? '<span class="you-tag">You</span>' : '') + '</span>' +
           (place ? '<span class="sub" style="display:block">' + esc(place) + '</span>' : '') +
@@ -792,7 +809,7 @@
         (p.reply_count ? p.reply_count + (p.reply_count === 1 ? ' reply' : ' replies') : 'Reply') + '</button>';
     }
     return '<article class="post" data-post="' + esc(p.id) + '"><div class="post-head"><span class="av">' + avatar({ photo_url:a.photo, name:a.name }) + '</span>' +
-      '<div><b>' + esc(a.name) + (a.host ? '<span class="host-tag">Host</span>' : '') + '</b><span class="meta">' + esc([a.company, ago(p.created_at)].filter(Boolean).join(' · ')) + '</span></div>' +
+      '<div><b>' + esc(a.name) + (a.host ? '<span class="host-tag">' + (a.role === 'cohost' ? 'Cohost' : 'Host') + '</span>' : '') + '</b><span class="meta">' + esc([a.company, ago(p.created_at)].filter(Boolean).join(' · ')) + '</span></div>' +
       (p.mine ? '<button type="button" class="post-del" data-del="' + esc(p.id) + '">Delete</button>' : '<span></span>') + '</div>' +
       (p.body ? '<div class="post-body">' + chatText(p.body) + '</div>' : '') + photosHtml(p.photos) +
       '<div class="rx-row">' + rxHtml(p) + replies + '</div></article>';
@@ -800,7 +817,7 @@
   function replyHtml(p){
     var a = p.author || {};
     return '<div class="reply' + (p.mine ? ' mine' : '') + '" data-post="' + esc(p.id) + '"><span class="av">' + avatar({ photo_url:a.photo, name:a.name }) + '</span><div>' +
-      '<div class="bubble">' + (p.mine ? '' : '<div class="who">' + esc(a.name) + (a.host ? '<span class="host-tag">Host</span>' : '') + '</div>') + (p.body ? '<div class="post-body">' + chatText(p.body) + '</div>' : '') + photosHtml(p.photos) + '</div>' +
+      '<div class="bubble">' + (p.mine ? '' : '<div class="who">' + esc(a.name) + (a.host ? '<span class="host-tag">' + (a.role === 'cohost' ? 'Cohost' : 'Host') + '</span>' : '') + '</div>') + (p.body ? '<div class="post-body">' + chatText(p.body) + '</div>' : '') + photosHtml(p.photos) + '</div>' +
       '<div class="sub-row"><span>' + ago(p.created_at) + '</span>' + rxHtml(p) + (p.mine ? '<button type="button" class="post-del" data-del="' + esc(p.id) + '">Delete</button>' : '') + '</div></div></div>';
   }
   function renderFeed(){
@@ -1060,7 +1077,18 @@
     $('mapsGoogle').href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
     $('mapsSheet').hidden = false;
   }
-  $('dayList').addEventListener('click', function(e){ var b = e.target.closest('[data-place]'); if (b) openMaps(b.dataset.place); });
+  $('dayList').addEventListener('click', function(e){
+    var b = e.target.closest('[data-place]'); if (b) return openMaps(b.dataset.place);
+    var m = e.target.closest('[data-mytable]'); if (!m) return;
+    var seat = (data.seats || []).filter(function(x){ return x.session === m.dataset.mytable; })[0]; if (!seat) return;
+    var item = null; ((data.guide && data.guide.days) || []).forEach(function(d){ (d.items || []).forEach(function(it){ if (it.id === seat.session) item = it; }); });
+    $('tableTitle').textContent = seat.label;
+    $('tableBody').innerHTML = '<p class="sec-sub" style="margin-bottom:14px">' + esc(item ? [item.title, item.time, item.location].filter(Boolean).join(' \u00b7 ') : '') + '</p>' +
+      (seat.mates.length ? '<p style="font-weight:500;margin-bottom:6px">At your table</p><ul class="mates">' + seat.mates.map(function(n){ return '<li>' + esc(n) + '</li>'; }).join('') + '</ul>' : '<p class="sec-sub">You\u2019re the first one seated at this table.</p>');
+    $('tableSheet').hidden = false;
+  });
+  $('tableClose').addEventListener('click', function(){ $('tableSheet').hidden = true; });
+  $('tableSheet').addEventListener('click', function(e){ if (e.target.id === 'tableSheet') $('tableSheet').hidden = true; });
   $('mapsClose').addEventListener('click', function(){ $('mapsSheet').hidden = true; });
   $('mapsSheet').addEventListener('click', function(e){ if (e.target.id === 'mapsSheet' || e.target.closest('#mapsApple,#mapsGoogle')) $('mapsSheet').hidden = true; });
   $('dayBtns').addEventListener('click', function(e){ var b = e.target.closest('[data-day]'); if (!b) return; dayIdx = +b.dataset.day; renderDays(); });

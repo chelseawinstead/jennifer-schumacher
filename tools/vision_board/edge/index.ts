@@ -515,6 +515,7 @@ Deno.serve(async (req) => {
           days: (Array.isArray(g.days) ? g.days : []).slice(0, 6).map((d: any) => ({
             label: str(d?.label, 120),
             items: (Array.isArray(d?.items) ? d.items : []).slice(0, 40).map((i: any) => ({
+              id: /^[A-Za-z0-9_-]{1,64}$/.test(str(i?.id, 64)) ? str(i?.id, 64) : crypto.randomUUID(),
               time: str(i?.time, 60), title: str(i?.title, 200), location: str(i?.location, 200), dress: str(i?.dress, 200), details: str(i?.details, 1500),
               speakers: (Array.isArray(i?.speakers) ? i.speakers : []).slice(0, 12).map((sp: any) => ({
                 name: str(sp?.name, 120), title: str(sp?.title, 200), bio: str(sp?.bio, 1500),
@@ -557,6 +558,21 @@ Deno.serve(async (req) => {
         });
         if (!up.ok) { console.error("speaker upload", up.status, await up.text()); return json({ ok: false, error: "upload" }, 502); }
         return json({ ok: true, url: `${Deno.env.get("SUPABASE_URL")}/storage/v1/object/public/vision-board-photos/${path}` });
+      }
+
+      // Seat limit for the team (public page stays at the regular capacity)
+      if (action === "team-seat-limit" && req.method === "POST") {
+        const [row] = await sql`select vision_board.team_set_seat_limit(${Number(b.limit) | 0}) as r`;
+        return json(row.r, row.r.ok ? 200 : 400);
+      }
+      // Assigned seating
+      if (action === "team-seating") {
+        const [row] = await sql`select vision_board.team_seating() as r`;
+        return json(row.r);
+      }
+      if (action === "team-seating-save" && req.method === "POST") {
+        const [row] = await sql`select vision_board.team_seating_save(${clean(b.session, 64)}, ${sql.json(Array.isArray(b.tables) ? b.tables.slice(0, 60) : [])}, ${sql.json(Array.isArray(b.assignments) ? b.assignments.slice(0, 600) : [])}) as r`;
+        return json(row.r, row.r.ok ? 200 : 400);
       }
 
       if (action === "team-feed") {
