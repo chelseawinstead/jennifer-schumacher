@@ -85,9 +85,11 @@ def main():
 
     # volunteers' check-in table page (its own PIN)
     ci = open(os.path.join(HERE, "checkin.html"), encoding="utf-8").read()
-    os.makedirs(os.path.join(out_dir, "checkin"), exist_ok=True)
-    with open(os.path.join(out_dir, "checkin", "index.html"), "w", encoding="utf-8") as f:
-        f.write(ci)
+    for sub in ("", "friday", "party"):  # /checkin/friday and /checkin/party open straight to that day
+        d = os.path.join(out_dir, "checkin", sub)
+        os.makedirs(d, exist_ok=True)
+        with open(os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
+            f.write(ci)
 
     team = open(os.path.join(HERE, "team.html"), encoding="utf-8").read()
     os.makedirs(os.path.join(out_dir, "team"), exist_ok=True)

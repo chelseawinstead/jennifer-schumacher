@@ -1237,14 +1237,17 @@
   var TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   var ci = { session:null, stream:null, timer:null, busy:false, clock:null };
   function azClock(iso){ return new Date(iso || Date.now()).toLocaleTimeString('en-US', { timeZone:'America/Phoenix', hour:'numeric', minute:'2-digit' }); }
+  var CI_THING = { friday:'name tag', party:'gift bag' };
+  function ciThing(s){ return CI_THING[s] || 'welcome gift'; }
   function ciItem(s){ return (data.checkins || []).filter(function(c){ return c.session === s; })[0]; }
   function renderCi(){
     var list = data.checkins || [];
     $('ciBar').hidden = !list.length;
     $('ciBar').innerHTML = list.map(function(c){
       return c.checked_in_at
-        ? '<div class="ci-done">' + TICK.replace('<svg', '<svg style="width:22px;height:22px;flex:none"') + '<div><b>Checked in · ' + esc(c.label) + '</b><br><span>' + azClock(c.checked_in_at) + (c.gift_at ? ' · gift bag picked up' : ' · grab your gift bag at the table') + '</span></div></div>'
-        : '<button type="button" class="ci-go" data-ci="' + esc(c.session) + '">' + CI_ICON + 'Check in for ' + esc(c.label) + '</button>';
+        ? '<div class="ci-done">' + TICK.replace('<svg', '<svg style="width:22px;height:22px;flex:none"') + '<div><b>Checked in · ' + esc(c.label) + '</b><br><span>' + azClock(c.checked_in_at) + (c.gift_at ? ' · ' + ciThing(c.session) + ' picked up' : ' · grab your ' + ciThing(c.session) + ' at the table') + '</span></div></div>'
+        : '<button type="button" class="ci-go" data-ci="' + esc(c.session) + '">' + CI_ICON + 'Check in for ' + esc(c.label) + '</button>' +
+          (c.test ? '<div style="font-size:12px;color:#c9d3df;text-align:center;margin-top:-2px">Test mode: only test accounts see this until the team turns check-in on.</div>' : '');
     }).join('');
     if (!$('ciSheet').hidden && ci.session){ var it = ciItem(ci.session); if (it && it.checked_in_at && !ci.shownOk) ciShowOk(it); }
   }
@@ -1259,7 +1262,7 @@
     $('ciTitle').textContent = 'Check in';
     if (it.checked_in_at) { $('ciSheet').hidden = false; return ciShowOk(it); }
     $('ciBody').innerHTML = '<p style="margin:0 0 12px;color:var(--muted);font-size:15px">' + esc(it.label) + '</p>' +
-      '<ol class="ci-steps"><li><span>Head to the check-in table.</span></li><li><span>Tap <b>Scan the check-in code</b> and point your camera at the QR code on the table.</span></li><li><span>That’s it! You’re checked in. Grab your gift bag.</span></li></ol>' +
+      '<ol class="ci-steps"><li><span>Head to the check-in table.</span></li><li><span>Tap <b>Scan the check-in code</b> and point your camera at the QR code on the table.</span></li><li><span>That’s it! You’re checked in. Grab your ' + ciThing(s) + '.</span></li></ol>' +
       '<div class="ci-cam" id="ciCam" hidden><video id="ciVideo" playsinline muted></video><i></i></div>' +
       '<p class="ci-msg" id="ciMsg" role="status"></p>' +
       '<button type="button" class="btn solid" id="ciScan" style="width:100%">' + CI_ICON.replace('<svg', '<svg style="width:20px;height:20px;margin-right:8px"') + 'Scan the check-in code</button>' + ciPass();
@@ -1330,7 +1333,7 @@
     ci.shownOk = true; var me = data.me || {};
     $('ciTitle').textContent = it.label;
     $('ciBody').innerHTML = '<div class="ci-ok"><div class="tick">' + TICK + '</div><h3>You’re checked in' + (me.first_name ? ', ' + esc(me.first_name) : '') + '!</h3>' +
-      '<p>' + (it.gift_at ? 'Enjoy! Your gift bag is marked as picked up.' : 'Grab your gift bag at the check-in table.') + '</p><p style="font-size:14px">' + azClock(it.checked_in_at) + ' · ' + esc(it.label) + '</p></div>' +
+      '<p>' + (it.gift_at ? 'Enjoy! Your ' + ciThing(it.session) + ' is marked as picked up.' : 'Grab your ' + ciThing(it.session) + ' at the check-in table.') + '</p><p style="font-size:14px">' + azClock(it.checked_in_at) + ' · ' + esc(it.label) + '</p></div>' +
       '<button type="button" class="btn solid" id="ciDone" style="width:100%;margin-top:14px">Done</button>';
   }
   $('ciBar').addEventListener('click', function(e){ var b = e.target.closest('[data-ci]'); if (b) openCi(b.dataset.ci); });

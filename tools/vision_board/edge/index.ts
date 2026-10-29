@@ -316,6 +316,15 @@ Deno.serve(async (req) => {
         const [row] = await sql`select vision_board.checkin_mark(${id}::uuid, ${sess}, ${clean(b.do, 10)}) as r`;
         return json(row.r, row.r.ok ? 200 : 409);
       }
+      // Re-send a guest their personal app link from Jennifer's Gmail (for someone at the table without it)
+      if (action === "checkin-sendlink" && req.method === "POST") {
+        const id = clean(b.id, 40);
+        if (!UUID.test(id)) return json({ ok: false }, 404);
+        const g = await loadGuest({ id });
+        if (!g || g.status !== "paid") return json({ ok: false, error: "not_found" }, 404);
+        const result = await sendKind(id, (g as any).track === "local" ? "local_confirm" : "agenda", "checkin");
+        return json({ ok: !!result.ok, email: g.email.replace(/^(.).*?(@.*)$/, "$1•••$2"), error: result.ok ? undefined : result.error }, result.ok ? 200 : 502);
+      }
       return json({ ok: false, error: "not_found" }, 404);
     }
 
@@ -668,7 +677,7 @@ Deno.serve(async (req) => {
       }
       if (action === "team-checkin-save" && req.method === "POST") {
         const p: Record<string, unknown> = {};
-        for (const k of ["friday_open", "party_open", "friday_rotate", "party_rotate"]) if (k in b) p[k] = b[k] === true;
+        for (const k of ["friday_open", "party_open", "friday_test", "party_test", "friday_rotate", "party_rotate", "clear_tests"]) if (k in b) p[k] = b[k] === true;
         if ("pin" in b) p.pin = clean(b.pin, 8);
         const [row] = await sql`select vision_board.team_checkin_save(${sql.json(p)}) as r`;
         return json(row.r, row.r.ok ? 200 : 400);

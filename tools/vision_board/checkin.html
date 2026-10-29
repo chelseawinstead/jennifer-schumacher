@@ -71,12 +71,14 @@
   .av img{ width:100%; height:100%; object-fit:cover; }
   .nm{ font-size:17px; font-weight:500; line-height:1.25; }
   .co{ font-size:13px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tag.test{ background:#fdeee0; color:#a0521b; }
   .tag{ display:inline-block; font-size:11px; letter-spacing:.06em; padding:1px 7px; border-radius:20px; background:#eef4ee; color:#4f7a5a; margin-left:6px; vertical-align:2px; font-weight:400; }
   .act{ display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
   .go{ background:var(--navy); color:#fff; border:0; padding:12px 16px; font-size:15px; min-width:150px; }
   .gift{ background:var(--gold); color:#14181d; border:0; padding:12px 16px; font-size:15px; min-width:150px; font-weight:500; }
   .done{ color:var(--ok); font-size:15px; font-weight:500; white-space:nowrap; }
   .meta{ font-size:12px; color:var(--warm); white-space:nowrap; }
+  .sendlink{ background:none; border:0; color:var(--navy); font-size:12px; text-decoration:underline; padding:2px 0; white-space:nowrap; }
   .undo{ background:none; border:0; color:var(--warm); font-size:12px; text-decoration:underline; padding:2px 0; }
   .empty{ padding:28px 14px; text-align:center; color:var(--muted); }
   .toast{ position:fixed; left:50%; bottom:calc(20px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 18px; font-size:15px; opacity:0; transition:opacity .2s; pointer-events:none; z-index:20; max-width:90vw; text-align:center; }
@@ -106,13 +108,13 @@
     <div class="stats">
       <div class="stat"><b id="stIn">0</b><span>checked in</span></div>
       <div class="stat"><b id="stLeft">0</b><span>not here yet</span></div>
-      <div class="stat"><b id="stGift">0</b><span>gift bags handed</span></div>
+      <div class="stat"><b id="stGift">0</b><span id="stGiftLbl">gift bags handed</span></div>
     </div>
     <div class="bar"><i id="stBar" style="width:0"></i></div>
     <div class="open-note" id="openNote"></div>
 
     <section class="ready" id="ready" hidden>
-      <h2>Ready for a gift bag <span id="readyN"></span></h2>
+      <h2><span id="readyT" style="font:inherit;color:inherit">Ready for a gift bag</span> <span id="readyN"></span></h2>
       <div id="readyList"></div>
     </section>
 
@@ -131,6 +133,10 @@
   var $ = function(id){ return document.getElementById(id); };
   var pin = '', sess = 'friday', data = null, filter = 'all', q = '', seen = {}, first = true;
   try { pin = sessionStorage.getItem('vbCiPin') || ''; sess = localStorage.getItem('vbCiSess') === 'party' ? 'party' : 'friday'; } catch(e){}
+  // /vision-board/checkin/friday and /checkin/party are each locked to their own day
+  var LOCK = (location.pathname.match(/checkin\/(friday|party)/) || [])[1] || null;
+  if (LOCK) sess = LOCK;
+  var THING = { friday:'name tag', party:'gift bag' }, LABEL = { friday:'Friday arrival', party:'Vision Board Party' };
 
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function toast(t){ var el = $('toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(function(){ el.classList.remove('on'); }, 2200); }
@@ -166,11 +172,11 @@
     var local = p.track === 'local';
     var act;
     if (p.checked_in_at && p.gift_at) act = '<span class="done">✓ Checked in</span><span class="meta">' + clock(p.checked_in_at) + (p.method === 'self' ? ' · scanned' : '') + '</span><button type="button" class="undo" data-do="undo" data-id="' + p.id + '">Undo</button>';
-    else if (p.checked_in_at) act = '<button type="button" class="gift" data-do="gift" data-id="' + p.id + '">Hand gift bag ✓</button><span class="meta">Scanned in ' + clock(p.checked_in_at) + '</span>';
-    else act = '<button type="button" class="go" data-do="checkin" data-id="' + p.id + '">Check in &amp; gift bag</button>';
+    else if (p.checked_in_at) act = '<button type="button" class="gift" data-do="gift" data-id="' + p.id + '">Hand ' + THING[sess] + ' ✓</button><span class="meta">Scanned in ' + clock(p.checked_in_at) + '</span>';
+    else act = '<button type="button" class="go" data-do="checkin" data-id="' + p.id + '">Check in &amp; ' + THING[sess] + '</button>';
     return '<div class="row' + (fresh && fresh.indexOf(p.id) > -1 ? ' flash' : '') + '"><div class="av">' + (p.photo_url ? '<img src="' + esc(p.photo_url) + '" alt="">' : esc(ini(p))) + '</div>' +
-      '<div style="min-width:0"><div class="nm">' + esc(p.first_name + ' ' + p.last_name) + (local ? '<span class="tag">LOCAL</span>' : '') + '</div><div class="co">' + esc(p.company || '') + '</div></div>' +
-      '<div class="act">' + act + '</div></div>';
+      '<div style="min-width:0"><div class="nm">' + esc(p.first_name + ' ' + p.last_name) + (local ? '<span class="tag">LOCAL</span>' : '') + (p.test ? '<span class="tag test">TEST</span>' : '') + '</div><div class="co">' + esc(p.company || '') + '</div></div>' +
+      '<div class="act">' + act + '<button type="button" class="sendlink" data-link="' + p.id + '">Resend app link</button></div></div>';
   }
   function render(fresh){
     var d = data, ppl = d.people;
@@ -178,7 +184,9 @@
     $('stIn').textContent = inN; $('stLeft').textContent = left; $('stGift').textContent = d.gifts;
     $('stBar').style.width = (d.total ? 100 * inN / d.total : 0) + '%';
     $('openNote').className = 'open-note ' + (d.open ? 'on' : 'off');
-    $('openNote').textContent = d.open ? 'Guests can scan the table’s QR code to check themselves in. They’ll show up under “Ready for a gift bag.”'
+    $('stGiftLbl').textContent = THING[sess] + 's handed'; $('readyT').textContent = 'Ready for a ' + THING[sess];
+    $('sess').hidden = !!LOCK;
+    $('openNote').textContent = d.open ? 'Guests can scan the table’s QR code to check themselves in. They’ll show up under “Ready for a ' + THING[sess] + '.”'
                                        : 'Guests can’t scan in yet. Jennifer’s team turns self check-in on from the team page. You can still check people in here.';
     document.querySelectorAll('#sess [data-s]').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.s === sess); });
     var ready = ppl.filter(function(p){ return p.checked_in_at && !p.gift_at; }).sort(function(a, b){ return a.checked_in_at.localeCompare(b.checked_in_at); });
@@ -190,10 +198,21 @@
     var list = ppl.filter(function(p){ return filter === 'all' || (filter === 'in' ? !!p.checked_in_at : !p.checked_in_at); })
       .filter(function(p){ return !qq || (p.first_name + ' ' + p.last_name + ' ' + (p.company || '') + ' ' + (p.code || '')).toLowerCase().indexOf(qq) > -1; });
     $('list').innerHTML = list.length ? list.map(function(p){ return rowHtml(p, fresh); }).join('') : '<div class="empty">' + (qq ? 'No one matches “' + esc(q) + '”.' : filter === 'out' ? 'Everyone’s here! 🎉' : 'No one yet.') + '</div>';
-    $('updated').textContent = (sess === 'party' ? 'Vision Board Party' : 'Friday arrival') + ' · updated ' + clock(new Date().toISOString());
+    $('updated').textContent = LABEL[sess] + ' check-in · updated ' + clock(new Date().toISOString());
   }
 
   document.addEventListener('click', function(e){
+    var sl = e.target.closest('[data-link]');
+    if (sl){
+      var pp = data.people.filter(function(x){ return x.id === sl.dataset.link; })[0];
+      if (!confirm('Email ' + pp.first_name + ' ' + pp.last_name + ' their personal app link from Jennifer’s email?')) return;
+      sl.disabled = true; sl.textContent = 'Sending…';
+      api('checkin-sendlink', { id:pp.id }).then(function(r){
+        sl.disabled = false; sl.textContent = 'Resend app link';
+        toast(r.ok ? 'App link sent to ' + r.email + '. Have them check their inbox.' : 'Didn’t send. Try again, or ask Jennifer’s team.');
+      }).catch(function(){ sl.disabled = false; sl.textContent = 'Resend app link'; toast('No connection. Try again.'); });
+      return;
+    }
     var b = e.target.closest('[data-do]');
     if (b){
       var id = b.dataset.id, a = b.dataset.do, p = data.people.filter(function(x){ return x.id === id; })[0];
@@ -201,7 +220,7 @@
       b.disabled = true;
       api('checkin-mark', { s:sess, id:id, do:a }).then(function(r){
         if (!r.ok){ b.disabled = false; toast('That didn’t save. Try again.'); return; }
-        toast(a === 'undo' ? 'Undone' : (p.first_name + (a === 'gift' ? ' has their gift bag' : ' is checked in. Hand them a gift bag!')));
+        toast(a === 'undo' ? 'Undone' : (p.first_name + (a === 'gift' ? ' has their ' + THING[sess] : ' is checked in. Hand them their ' + THING[sess] + '!')));
         seen[id] = 1; load();
       }).catch(function(){ b.disabled = false; toast('No connection. Try again.'); });
       return;
