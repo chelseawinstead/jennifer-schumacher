@@ -627,7 +627,7 @@
     <div class="td-dhead"><span class="td-saved" id="tdSaved"></span><button type="button" class="ghost" id="tdClose">Close</button></div>
     <textarea class="td-title" id="tdTitle" rows="1" maxlength="300"></textarea>
     <div class="td-fields">
-      <label>Status<select id="tdStatus"><option value="todo">To do</option><option value="doing">In progress</option><option value="waiting">Waiting on someone</option><option value="done">Done</option></select></label>
+      <label>Status<select id="tdStatus"><option value="todo">To do</option><option value="doing">In progress</option><option value="waiting">Waiting</option><option value="done">Done</option></select></label>
       <label>Due date<input type="date" id="tdDue"></label>
       <label>Who’s on it<input id="tdOwner" maxlength="120" placeholder="e.g. Chelsea"></label>
       <label>Category<select id="tdCat"></select></label>
@@ -1703,7 +1703,7 @@
 
   // ---- To Do: event tasks (status, due date, who, notes, links, receipts & images) ----
   var td = { list:null, cats:[], rev:{}, catf:'', year:2027, filter:'all', q:'', open:null, timers:{} };
-  var TD_ST = { todo:'To do', doing:'In progress', waiting:'Waiting on someone', done:'Done' };
+  var TD_ST = { todo:'To do', doing:'In progress', waiting:'Waiting', done:'Done' };
   function tdToday(){ return new Date().toLocaleDateString('en-CA', { timeZone:'America/Phoenix' }); }
   function tdDate(d){ if (!d) return ''; var x = new Date(d + 'T12:00:00Z'); return x.toLocaleDateString('en-US', { timeZone:'UTC', weekday:'short', month:'short', day:'numeric' }); }
   function tdMoney(n){ return n == null || n === '' ? '' : '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
