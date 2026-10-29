@@ -170,7 +170,11 @@
   #agSendBar[hidden], #agTabs[hidden]{ display:none; }
   .ag-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0 16px; }
   .ag-grid .wide{ grid-column:1/-1; }
-  .ag-day{ border:1px solid var(--line); padding:14px; margin-bottom:14px; }
+  .ag-day{ border:1px solid var(--rule, var(--line)); border-left:6px solid var(--c, var(--line)); background:var(--bg, #fff); padding:14px 16px; margin-bottom:20px; }
+  .ag-day .ag-item{ border-top-color:var(--rule, var(--line)); }
+  .ag-day .ag-day-head .fld{ color:var(--c); font-weight:500; }
+  .ag-day .ag-day-head .fld input{ font-family:'Cormorant Garamond',serif; font-size:22px; border-color:var(--rule); background:#fff; }
+  .ag-day .ag-item input, .ag-day .ag-item textarea{ background:#fff; }
   .ag-day-head{ display:flex; gap:10px; align-items:end; margin-bottom:8px; }
   .ag-day-head .fld{ flex:1; margin:0; }
   .ag-item{ display:grid; grid-template-columns:170px 1fr 1fr 1fr auto; gap:8px; align-items:start; padding:10px 0; border-top:1px solid var(--line); }
@@ -698,7 +702,8 @@
     if (agTab === 'schedule'){
       h += '<p class="mail-help">Each line is one block of the weekend. Location and dress code are optional, and show as small tags under the title. Use “+ Add speaker” to show a speaker’s photo, bio and links under that line.</p>';
       (ag.days||[]).forEach(function(d, di){
-        h += '<div class="ag-day"><div class="ag-day-head">' + fld('Day', 'days.'+di+'.label', d.label, { ph:'Friday, January 8' }) +
+        var DC = [['#2c5aa0','#f1f5fb','#d9e3f2'], ['#b8995a','#fbf7ee','#ece0c6'], ['#2f6b4f','#f1f7f3','#d5e6dc'], ['#7a4a7e','#f8f2f8','#e8d9e9']][di % 4];
+        h += '<div class="ag-day" style="--c:' + DC[0] + ';--bg:' + DC[1] + ';--rule:' + DC[2] + '"><div class="ag-day-head">' + fld('Day', 'days.'+di+'.label', d.label, { ph:'Friday, January 8' }) +
           '<div class="tools ag-note" style="border:0;padding:0;margin:0;display:flex"><button type="button" data-ag="day-up" data-d="'+di+'" title="Move this day up">↑ Day</button><button type="button" data-ag="day-down" data-d="'+di+'" title="Move this day down">↓ Day</button><button type="button" data-ag="day-del" data-d="'+di+'">Remove day</button></div></div>' +
           '<div class="ag-cap"><span>Time</span><span>What</span><span>Where</span><span>Dress code</span><span></span></div>';
         (d.items||[]).forEach(function(it, ii){
