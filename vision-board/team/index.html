@@ -438,7 +438,7 @@
       <label class="fld">Last name<input data-e="last_name" autocomplete="off"></label>
       <label class="fld wide">Company<input data-e="company" autocomplete="off"></label>
       <label class="fld">Email<input data-e="email" type="email" autocomplete="off"></label>
-      <label class="fld">Phone<input data-e="phone" autocomplete="off"></label>
+      <label class="fld">Phone<input data-e="phone" autocomplete="off" inputmode="tel" maxlength="14" placeholder="(480) 555-0123"></label>
       <label class="fld wide">Street<input data-e="street" autocomplete="off"></label>
       <label class="fld wide">Apt / suite (optional)<input data-e="street2" autocomplete="off"></label>
       <label class="fld">City<input data-e="city" autocomplete="off"></label>
@@ -1370,6 +1370,9 @@
     document.querySelectorAll('#editForm [data-e]').forEach(function(el){ el.value = r[el.dataset.e] || ''; });
     $('editBox').hidden = false; document.querySelector('#editForm [data-e]').focus();
   }
+  function fmtPhone(v){ var d = String(v || '').replace(/\D/g, ''); if (d.charAt(0) === '1') d = d.slice(1); d = d.slice(0, 10);
+    return d.length < 4 ? (d.length ? '(' + d : '') : d.length < 7 ? '(' + d.slice(0,3) + ') ' + d.slice(3) : '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6); }
+  document.querySelector('#editForm [data-e="phone"]').addEventListener('input', function(e){ if (e.inputType && e.inputType.indexOf('delete') === 0 && !/\d$/.test(this.value)) return; this.value = fmtPhone(this.value); });
   function closeEdit(){ $('editBox').hidden = true; editId = null; }
   $('editClose').addEventListener('click', closeEdit);
   $('editBox').addEventListener('click', function(e){ if (e.target.id === 'editBox') closeEdit(); });

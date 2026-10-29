@@ -559,6 +559,27 @@ header > div:has(> [data-if="videoOpen"][data-open]) {
   });
 })();
 </script>
+<script>
+// Phone numbers: formats as people type, e.g. (480) 322-2593. A leading 1 / +1 is dropped.
+(function(){
+  function fmt(v){
+    var d = String(v || '').replace(/\D/g, '');
+    if (d.charAt(0) === '1') d = d.slice(1);
+    d = d.slice(0, 10);
+    if (d.length < 4) return d.length ? '(' + d : '';
+    if (d.length < 7) return '(' + d.slice(0,3) + ') ' + d.slice(3);
+    return '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6);
+  }
+  document.querySelectorAll('input[name="phone"]').forEach(function(el){
+    el.setAttribute('placeholder', '(480) 555-0123'); el.setAttribute('inputmode', 'tel'); el.setAttribute('maxlength', '14');
+    el.addEventListener('input', function(e){
+      if (e.inputType && e.inputType.indexOf('delete') === 0 && !/\d$/.test(el.value)) return; // let backspace work past ") " and "-"
+      el.value = fmt(el.value);
+    });
+    el.addEventListener('blur', function(){ el.value = fmt(el.value); });
+  });
+})();
+</script>
 
 <footer style="background: #0b1620; color: #8ca0b3; padding: 72px 64px 40px;">
 <div class="footgrid" style="display: grid; grid-template-columns: 340px 150px minmax(180px, 1fr) 420px; gap: 32px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,.1);">
