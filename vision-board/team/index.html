@@ -155,6 +155,10 @@
   .ag-aud{ grid-column:1/-1; display:flex; flex-wrap:wrap; gap:6px 16px; align-items:center; font-size:13px; color:var(--warm); }
   .ag-aud label{ display:inline-flex; gap:6px; align-items:center; color:var(--ink); cursor:pointer; }
   .ag-item .ag-aud input{ width:16px; height:16px; padding:0; accent-color:var(--navy); }
+  .ag-time{ display:grid; grid-template-columns:1fr auto 1fr; gap:6px; align-items:center; }
+  .ag-time select{ font:inherit; font-size:14px; padding:8px 6px; border:1px solid #cfcbc2; background:#fff; width:100%; min-width:0; cursor:pointer; }
+  .ag-time select:focus{ outline:0; border-color:var(--navy); box-shadow:0 0 0 1px var(--navy); }
+  .ag-time span{ font-size:12px; color:var(--warm); }
   .ag-item .tools{ justify-content:flex-end; margin:0; gap:4px; }
   .ag-item .tools button{ width:36px; height:38px; padding:0; }
   .ag-day-head{ align-items:flex-end; }
@@ -181,13 +185,13 @@
   .ag-day .ag-item input, .ag-day .ag-item textarea{ background:#fff; }
   .ag-day-head{ display:flex; gap:10px; align-items:end; margin-bottom:8px; }
   .ag-day-head .fld{ flex:1; margin:0; }
-  .ag-item{ display:grid; grid-template-columns:170px 1fr 1fr 1fr 118px; gap:8px 10px; align-items:center; padding:14px 0; border-top:1px solid var(--line); }
+  .ag-item{ display:grid; grid-template-columns:236px 1fr 1fr 1fr 118px; gap:8px 10px; align-items:center; padding:14px 0; border-top:1px solid var(--line); }
   .ag-item input,.ag-item textarea,.ag-note input,.ag-note textarea{ width:100%; font:inherit; font-size:14px; padding:8px 10px; border:1px solid #cfcbc2; }
   .ag-item textarea{ grid-column:1/-1; min-height:38px; resize:vertical; }
   .ag-item .tools,.ag-note .tools{ display:flex; gap:4px; }
   .ag-item .tools button,.ag-note .tools button{ background:#fff; border:1px solid #cfcbc2; padding:6px 9px; font-size:13px; }
   .ag-item .tools button:hover,.ag-note .tools button:hover{ border-color:var(--navy); color:var(--navy); }
-  .ag-cap{ font-size:11px; color:var(--warm); letter-spacing:.08em; text-transform:uppercase; display:grid; grid-template-columns:170px 1fr 1fr 1fr 118px; gap:8px 10px; padding:4px 0 6px; }
+  .ag-cap{ font-size:11px; color:var(--warm); letter-spacing:.08em; text-transform:uppercase; display:grid; grid-template-columns:236px 1fr 1fr 1fr 118px; gap:8px 10px; padding:4px 0 6px; }
   .ag-spk-wrap{ grid-column:1/-1; display:grid; gap:8px; }
   .ag-spk{ display:grid; grid-template-columns:72px 1fr 1fr auto; gap:8px; align-items:start; background:var(--stone); padding:10px; }
   .ag-spk input,.ag-spk textarea{ width:100%; font:inherit; font-size:14px; padding:8px 10px; border:1px solid #cfcbc2; background:#fff; }
@@ -925,7 +929,7 @@
         (d.items||[]).forEach(function(it, ii){
           var p = 'days.'+di+'.items.'+ii+'.';
           h += '<div class="ag-item">' +
-            '<input data-p="'+p+'time" value="'+esc(it.time)+'" placeholder="3:30 – 4:30pm" aria-label="Time">' +
+            agTimePicker(it.time, di, ii) +
             '<input data-p="'+p+'title" value="'+esc(it.title)+'" placeholder="e.g. Welcome toast" aria-label="What">' +
             '<input data-p="'+p+'location" value="'+esc(it.location)+'" placeholder="e.g. Lobby lounge" aria-label="Where">' +
             '<input data-p="'+p+'dress" value="'+esc(it.dress)+'" placeholder="e.g. Cocktail casual" aria-label="Dress code">' +
@@ -991,6 +995,35 @@
         '<p class="mail-help">After this date guests see “The app has closed.” Their notes and the Crew list go away with it, which is why the Crew tab reminds them to save contacts first.</p>';
     }
     $('agBody').innerHTML = h;
+  }
+  // ---- start / end time pickers (saved as text like "3:30 – 4:30pm", which is what guests see) ----
+  function tmLabel(m, withAp){ var h = Math.floor(m / 60), mm = m % 60, ap = h >= 12 ? 'pm' : 'am', h12 = h % 12 || 12; return h12 + ':' + (mm < 10 ? '0' : '') + mm + (withAp ? ap : ''); }
+  function tmParse(str){
+    var re = /(\d{1,2})(?::(\d{2}))?\s*(am|pm|a\.m\.|p\.m\.)?/gi, out = [], m;
+    while ((m = re.exec(String(str || ''))) && out.length < 2){ var h = +m[1], mi = +(m[2] || 0); if (h > 12 || mi > 59) continue; out.push({ h:h, m:mi, ap:m[3] ? m[3].charAt(0).toLowerCase() : '' }); }
+    if (!out.length) return null;
+    var toMin = function(t, ap){ var h = t.h % 12; if (ap === 'p') h += 12; return h * 60 + t.m; };
+    var last = out[out.length - 1], apEnd = last.ap || (last.h >= 7 && last.h <= 11 ? 'a' : 'p');
+    if (out.length === 1) return { s: toMin(out[0], out[0].ap || apEnd), e: null };
+    var e = toMin(out[1], apEnd), apS = out[0].ap || apEnd, st = toMin(out[0], apS);
+    if (!out[0].ap && st > e) st = toMin(out[0], apS === 'p' ? 'a' : 'p');
+    return { s: st, e: e };
+  }
+  function tmFormat(s, e){
+    if (s == null) return '';
+    if (e == null) return tmLabel(s, true);
+    var same = (s < 720) === (e < 720);
+    return tmLabel(s, !same) + ' – ' + tmLabel(e, true);
+  }
+  function tmOptions(sel, blank){
+    var h = blank ? '<option value="">' + blank + '</option>' : '';
+    for (var m = 5 * 60; m <= 23 * 60 + 45; m += 15) h += '<option value="' + m + '"' + (m === sel ? ' selected' : '') + '>' + tmLabel(m, true).replace(/(am|pm)$/, ' $1') + '</option>';
+    return h;
+  }
+  function agTimePicker(text, di, ii){
+    var t = tmParse(text) || { s:null, e:null };
+    return '<div class="ag-time" aria-label="Time"><select data-tm="s" data-d="' + di + '" data-i="' + ii + '" aria-label="Start time">' + tmOptions(t.s, 'Start') + '</select>' +
+      '<span>to</span><select data-tm="e" data-d="' + di + '" data-i="' + ii + '" aria-label="End time">' + tmOptions(t.e, 'No end') + '</select></div>';
   }
   function photoPicker(path, url){
     var id = 'ph-' + path.replace(/\W/g,'-');
@@ -1251,6 +1284,14 @@
   $('agClose').addEventListener('click', closeAgenda);
   $('agBox').addEventListener('click', function(e){ if (e.target.id === 'agBox') closeAgenda(); });
   $('agTabs').addEventListener('click', function(e){ var b = e.target.closest('[data-agt]'); if (b){ agTab = b.dataset.agt; agRender(); } });
+  $('agBody').addEventListener('change', function(e){
+    var tp = e.target.closest('[data-tm]'); if (!tp) return;
+    var row = tp.closest('.ag-time'), sv = row.querySelector('[data-tm="s"]').value, ev = row.querySelector('[data-tm="e"]').value;
+    var s = sv === '' ? null : +sv, en = ev === '' ? null : +ev;
+    if (s != null && en != null && en <= s){ en = null; row.querySelector('[data-tm="e"]').value = ''; toast('End time has to be after the start time'); }
+    ag.days[+tp.dataset.d].items[+tp.dataset.i].time = tmFormat(s, en);
+    agDirty = true; $('agStatus').textContent = 'Unsaved changes';
+  });
   $('agBody').addEventListener('change', function(e){
     var c = e.target.closest('[data-aud]'); if (!c) return;
     var it = ag.days[+c.dataset.d].items[+c.dataset.i], au = (it.audience && it.audience.length ? it.audience : ['paid']).slice();
