@@ -1725,8 +1725,7 @@
       line('Attendees', inp('attendees', c.n)) +
       line('Ticket price per attendee', inp('price', c.price, true)) +
       line('Gross ticket sales <small>(' + c.n + ' × ' + tdMoney(c.price) + ')</small>', tdMoney(c.gross)) +
-      line('Charity donation per ticket', inp('charity', c.ch, true)) +
-      line('Total to charity <small>(' + c.n + ' × ' + tdMoney(c.ch) + ')</small>', '−' + tdMoney(c.charity), 'minus') +
+      line('Charity donation <small>(' + c.n + ' × <input class="td-revin mini" data-tdrev="charity" value="' + esc(tdMoney(c.ch)) + '" inputmode="decimal" aria-label="Charity donation per ticket">)</small>', '−' + tdMoney(c.charity), 'minus') +
       (hasEi ? line('Emotional Intelligence Tests <small>(' + c.n + ' × <input class="td-revin mini" data-tdrev="ei" value="' + esc(tdMoney(c.ei)) + '" inputmode="decimal" aria-label="EI Test cost per ticket">)</small>', '−' + tdMoney(c.eiTot), 'minus') : '') +
       line('<b>Ticket revenue after charity' + (hasEi ? ' &amp; EI Tests' : '') + '</b>', '<b>' + tdMoney(c.net) + '</b>', 'sub') +
       line('Total expenses <small>(from the list above)</small>', '−' + tdMoney(c.exp), 'minus') +
