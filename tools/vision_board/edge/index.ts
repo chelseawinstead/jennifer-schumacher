@@ -66,6 +66,7 @@ export function renderEmail(kind: Kind, g: Guest, st: Settings, override?: Parti
   const paras = body.split(/\n\s*\n/).map((p) =>
     `<p style="margin:0 0 16px;font:16px/1.7 ${sans};color:#55585c">${linkify(esc(p)).replace(/\n/g, "<br>")}</p>`).join("");
   const wantsPayment = kind === "hold" || kind === "offer";
+  const isCustom = String(kind).endsWith("custom"); // custom emails: Jennifer writes everything, no event footer
   const row = (k: string, v: string) =>
     `<tr><td style="padding:10px 0;border-bottom:1px solid #e4e1da;font:14px ${sans};color:#9a968d;width:130px;vertical-align:top">${k}</td><td style="padding:10px 0;border-bottom:1px solid #e4e1da;font:16px ${sans};color:#14181d">${v}</td></tr>`;
   const details = wantsPayment ? `
@@ -92,18 +93,18 @@ export function renderEmail(kind: Kind, g: Guest, st: Settings, override?: Parti
         ${heading ? `<h1 style="margin:0 0 20px;font:400 34px/1.15 ${serif};color:#14181d">${esc(heading)}</h1>` : ""}
         ${paras}${details}
       </td></tr>
-      <tr><td style="padding:24px 36px;border-top:1px solid #e4e1da;font:14px/1.7 ${sans};color:#55585c">
+      ${isCustom ? "" : `<tr><td style="padding:24px 36px;border-top:1px solid #e4e1da;font:14px/1.7 ${sans};color:#55585c">
         <strong style="color:#14181d">${kind.startsWith("local") ? "Vision Board Party &middot; Saturday, January 9, 2027 &middot; 2:00&ndash;6:00pm" : "Friday &amp; Saturday, January 8&ndash;9, 2027"}</strong><br>
         ANdAZ Resort, 6114 N Scottsdale Rd, Scottsdale, AZ 85253<br><br>
         Questions? Reply to this email or call Jennifer at (480) 322-2593.
-      </td></tr>
+      </td></tr>`}
     </table>
     <div style="font:11px/1.6 ${sans};color:#9a968d;max-width:600px;margin-top:16px">Jennifer Schumacher · Russ Lyon Sotheby's International Realty · 6900 E. Camelback Rd., Suite 110, Scottsdale, AZ 85251</div>
   </td></tr></table></body></html>`;
 
   const text = [heading, body.replace(LINK, "$1 ($2)"),
     wantsPayment ? `Your code: ${g.code}\nAmount: $${Number(g.amount).toLocaleString()}\nZelle to: ${st.zelle_to || "info@schumacherliving.com"}\nZelle memo: ${g.code}\nPay by: ${azTime(g.hold_expires_at)}\nYour payment details: ${link}` : "",
-    (kind.startsWith("local") ? "Vision Board Party - Saturday, January 9, 2027, 2:00-6:00pm" : "Friday & Saturday, January 8-9, 2027") + "\nANdAZ Resort, 6114 N Scottsdale Rd, Scottsdale, AZ 85253\nQuestions? Reply to this email or call Jennifer at (480) 322-2593."]
+    isCustom ? "" : (kind.startsWith("local") ? "Vision Board Party - Saturday, January 9, 2027, 2:00-6:00pm" : "Friday & Saturday, January 8-9, 2027") + "\nANdAZ Resort, 6114 N Scottsdale Rd, Scottsdale, AZ 85253\nQuestions? Reply to this email or call Jennifer at (480) 322-2593."]
     .filter(Boolean).join("\n\n");
   return { subject, heading, body, html, text };
 }
