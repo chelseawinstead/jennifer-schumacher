@@ -251,6 +251,12 @@
   .td-cathead h3 small{ font-size:12px; color:var(--warm); letter-spacing:0; text-transform:none; font-weight:400; margin-left:8px; }
   .td-catbtns{ display:flex; gap:2px; } .td-catbtns button{ background:none; border:0; color:var(--warm); font-size:14px; padding:2px 7px; cursor:pointer; } .td-catbtns button:hover{ color:var(--navy); }
   .td-sum{ display:grid; grid-template-columns:150px minmax(0,1fr) 120px 110px 130px var(--lastw, 0px); gap:14px; align-items:center; padding:10px 14px; background:#f7f5f0; border:1px solid var(--line); border-top:0; font-weight:600; font-size:14px; }
+  .td-yr{ font-weight:400; font-size:13px; color:var(--warm); margin-right:16px; }
+  .td-sum .lbl{ display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  .td-addbtn{ background:#fff; border:1px solid var(--navy); color:var(--navy); font-size:13px; font-weight:500; padding:6px 12px; cursor:pointer; }
+  .td-addbtn:hover{ background:var(--navy); color:#fff; }
+  .td-inline{ display:flex; gap:8px; padding:10px 14px; background:#fff; border:1px solid var(--line); border-top:0; border-left:5px solid var(--navy); }
+  .td-inline input{ font:inherit; font-size:14px; padding:8px 10px; border:1px solid #cfcbc2; } .td-inline input[name=t]{ flex:1; min-width:0; } .td-inline input[name=c]{ width:120px; }
   .td-sum .lbl{ grid-column:1 / 5; text-align:right; color:var(--muted); font-weight:500; }
   .td-money{ text-align:right; font-variant-numeric:tabular-nums; }
   .td-last{ text-align:right; font-size:13px; color:var(--warm); font-variant-numeric:tabular-nums; }
@@ -294,7 +300,7 @@
   .td-drawer-wrap[hidden]{ display:none; }
   .td-drawer{ background:#fff; width:100%; max-width:560px; height:100%; overflow:auto; padding:22px 28px 40px; box-shadow:-12px 0 32px rgba(0,0,0,.15); }
   .td-dhead{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
-  .td-saved{ font-size:13px; color:var(--warm); }
+  .td-saved{ font-size:13px; color:var(--paid); }
   .td-title{ width:100%; font-family:'Cormorant Garamond',Georgia,serif; font-size:30px; line-height:1.15; border:0; border-bottom:1px solid var(--line); padding:4px 0 10px; resize:none; overflow:hidden; color:var(--ink); }
   .td-title:focus, .td-notes:focus, .td-fields input:focus, .td-fields select:focus{ outline:0; border-color:var(--navy); }
   .td-fields{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin:16px 0 6px; }
@@ -1713,18 +1719,19 @@
   function tdRevHtml(y){
     var c = tdRevCalc(y), inp = function(k, v, money){ return '<input class="td-revin" data-tdrev="' + k + '" value="' + esc(money ? tdMoney(v) : (v == null ? '' : v)) + '" inputmode="decimal">'; };
     var line = function(lbl, val, cls){ return '<div class="td-revl' + (cls ? ' ' + cls : '') + '"><span>' + lbl + '</span><span class="td-money">' + val + '</span></div>'; };
-    var pos = c.profit >= 0;
+    var pos = c.profit >= 0, hasEi = y !== 2026, oc = tdRevCalc(y === 2027 ? 2026 : 2027);
     return '<div class="td-rev"><h3>Ticket revenue &amp; profit · ' + y + '</h3>' +
       line('Attendees', inp('attendees', c.n)) +
       line('Ticket price per attendee', inp('price', c.price, true)) +
       line('Gross ticket sales <small>(' + c.n + ' × ' + tdMoney(c.price) + ')</small>', tdMoney(c.gross)) +
       line('Charity donation per ticket', inp('charity', c.ch, true)) +
       line('Total to charity <small>(' + c.n + ' × ' + tdMoney(c.ch) + ')</small>', '−' + tdMoney(c.charity), 'minus') +
-      line('Emotional Intelligence Test per ticket', inp('ei', c.ei, true)) +
-      line('Total for EI Tests <small>(' + c.n + ' × ' + tdMoney(c.ei) + ')</small>', '−' + tdMoney(c.eiTot), 'minus') +
-      line('<b>Ticket revenue after charity &amp; EI Tests</b>', '<b>' + tdMoney(c.net) + '</b>', 'sub') +
+      (hasEi ? line('Emotional Intelligence Test per ticket', inp('ei', c.ei, true)) +
+      line('Total for EI Tests <small>(' + c.n + ' × ' + tdMoney(c.ei) + ')</small>', '−' + tdMoney(c.eiTot), 'minus') : '') +
+      line('<b>Ticket revenue after charity' + (hasEi ? ' &amp; EI Tests' : '') + '</b>', '<b>' + tdMoney(c.net) + '</b>', 'sub') +
       line('Total expenses <small>(from the list above)</small>', '−' + tdMoney(c.exp), 'minus') +
-      '<div class="td-revl td-profit ' + (pos ? 'pos' : 'neg') + '"><span>' + (pos ? 'Profit after charity, EI Tests &amp; expenses' : 'Loss after charity, EI Tests &amp; expenses') + '</span><span class="td-money">' + (pos ? '' : '−') + tdMoney(Math.abs(c.profit)) + '</span></div>' +
+      '<div class="td-revl td-profit ' + (pos ? 'pos' : 'neg') + '"><span>' + (pos ? 'Profit' : 'Loss') + ' after charity, ' + (hasEi ? 'EI Tests &amp; ' : '') + 'expenses' + '</span><span class="td-money">' + (pos ? '' : '−') + tdMoney(Math.abs(c.profit)) + '</span></div>' +
+      '<div class="td-revl note"><span>' + (y === 2027 ? 2026 : 2027) + ' ' + (oc.profit >= 0 ? 'profit' : 'loss') + ' for comparison</span><span class="td-money" style="color:var(--muted)">' + (oc.profit >= 0 ? '' : '−') + tdMoney(Math.abs(oc.profit)) + '</span></div>' +
       '</div>';
   }
   function tdYearList(){ return (td.list || []).filter(function(t){ return t.year === td.year; }); }
@@ -1774,24 +1781,30 @@
       var all = yl.filter(function(t){ return t.category === cat; }).sort(tdSort), shown = all.filter(tdMatch);
       if (filtering && !shown.length) return '';
       return '<div class="td-cat"><div class="td-cathead"><h3>' + esc(cat) + '<small>' + all.length + ' item' + (all.length === 1 ? '' : 's') + '</small></h3><div class="td-catbtns">' +
-          '<button type="button" data-tdcat="add" data-c="' + esc(cat) + '" title="Add an item here">+ Item</button>' +
+          '<button type="button" data-tdcat="inline" data-c="' + esc(cat) + '" title="Add an item here">+ Item</button>' +
           (ci > 0 ? '<button type="button" data-tdcat="up" data-c="' + esc(cat) + '" title="Move up">↑</button>' : '') + (ci < cats.length - 1 ? '<button type="button" data-tdcat="down" data-c="' + esc(cat) + '" title="Move down">↓</button>' : '') +
           '<button type="button" data-tdcat="rename" data-c="' + esc(cat) + '" title="Rename">Rename</button>' + (!td.list.some(function(t){ return t.category === cat; }) ? '<button type="button" data-tdcat="delete" data-c="' + esc(cat) + '" title="Delete empty category">×</button>' : '') + '</div></div>' +
         (shown.length ? shown.map(row).join('') : '<div class="td-empty-cat">Nothing here yet. Use “+ Item” to add one.</div>') +
-        '<div class="td-sum"><span class="lbl">' + esc(cat) + ' subtotal</span><span class="td-money">' + tdMoney(tdSumOf(all, 'cost')) + '</span>' + (showLast ? '<span class="td-last">' + tdMoney(tdSumOf(all, 'cost_last')) + '</span>' : '<span></span>') + '</div></div>';
+        (td.adding === cat ? '<form class="td-inline" data-tdinline="' + esc(cat) + '"><input name="t" maxlength="300" placeholder="New item in ' + esc(cat) + '…" autocomplete="off"><input name="c" inputmode="decimal" placeholder="Cost"><button type="submit" class="solid">Add</button><button type="button" class="ghost" data-tdinlinex>Cancel</button></form>' : '') +
+        '<div class="td-sum"><span class="lbl"><button type="button" class="td-addbtn" data-tdcat="inline" data-c="' + esc(cat) + '">+ Add item</button><span>' + (tdOtherSum(cat) || tdSumOf(all, 'cost') ? '<span class="td-yr">' + tdOther() + ': ' + tdMoney(tdOtherSum(cat)) + '</span>' : '') + esc(cat) + ' subtotal</span></span><span class="td-money">' + tdMoney(tdSumOf(all, 'cost')) + '</span>' + (showLast ? '<span class="td-last">' + tdMoney(tdSumOf(all, 'cost_last')) + '</span>' : '<span></span>') + '</div></div>';
     }).join('');
     var tot = tdSumOf(yl, 'cost'), last = tdSumOf(yl, 'cost_last');
     if (td.catf){
       var allTot = tdSumOf(tdYearList(), 'cost');
       html += '<div class="td-total"><span class="lbl">' + esc(td.catf) + ' only · ' + td.year + '</span><span class="td-money">' + tdMoney(tot) + '</span>' + (showLast ? '<span class="td-last" style="color:var(--ink)">' + tdMoney(last) + '</span>' : '<span></span>') +
-        '<span class="chg">' + (allTot ? Math.round(tot / allTot * 1000) / 10 : 0) + '% of the ' + tdMoney(allTot) + ' total · <a href="#" id="tdCatAll">Show all categories</a></span></div>';
+        '<span class="chg">' + tdOther() + ': ' + tdMoney(tdOtherSum(td.catf)) + ' · ' + (allTot ? Math.round(tot / allTot * 1000) / 10 : 0) + '% of the ' + tdMoney(allTot) + ' total · <a href="#" id="tdCatAll">Show all categories</a></span></div>';
       $('tdList').innerHTML = html; return;
     }
-    html += '<div class="td-total"><span class="lbl">Total expenses · ' + td.year + '</span><span class="td-money">' + tdMoney(tot) + '</span>' + (showLast ? '<span class="td-last" style="color:var(--ink)">' + tdMoney(last) + '</span>' : '<span></span>') +
+    var ot = tdOtherSum();
+    html += '<div class="td-total"><span class="lbl">Total expenses · ' + td.year + '</span><span class="td-money">' + tdMoney(tot) + '</span><span></span>' +
+      '<span class="chg">' + tdOther() + ' total expenses: ' + tdMoney(ot) + ' · ' + td.year + ' is ' + (tot === ot ? 'the same' : (tot > ot ? tdMoney(tot - ot) + ' more' : tdMoney(ot - tot) + ' less')) + '</span>' +
       (showLast ? '<span class="chg">2027 vs 2026 cost on these items: ' + (tot - last >= 0 ? '+' : '−') + tdMoney(Math.abs(tot - last)) + '</span>' : '') + '</div>' +
       (showLast ? '<p class="mail-help" style="text-align:right;margin-top:6px">Gray column = what the same item cost in 2026.</p>' : '') + tdRevHtml(td.year);
     $('tdList').innerHTML = yl.length || cats.length ? html : '<p class="empty">No items yet. Add the first one above.</p>';
   }
+  function tdOther(){ return td.year === 2027 ? 2026 : 2027; }
+  function tdOtherSum(cat){ var o = tdOther(); return tdSumOf((td.list || []).filter(function(t){ return t.year === o && (cat == null || t.category === cat); }), 'cost'); }
+  function tdCmp(now, then){ var d = now - then; return then || now ? (d === 0 ? 'same as ' : (d > 0 ? '+' : '−') + tdMoney(Math.abs(d)) + ' vs ') : ''; }
   function tdCsv(){
     var showLast = false, yl = tdYearList(), cats = tdCatList(), out = [];
     if (td.catf){ cats = [td.catf]; yl = yl.filter(function(t){ return t.category === td.catf; }); }
@@ -1811,9 +1824,9 @@
     out.push('');
     out.push(['TICKET REVENUE & PROFIT', td.year].map(q).join(','));
     [['Attendees', rv.n], ['Ticket price per attendee', n(rv.price)], ['Gross ticket sales', n(rv.gross)], ['Charity donation per ticket', n(rv.ch)],
-     ['Total to charity', n(-rv.charity)], ['Emotional Intelligence Test per ticket', n(rv.ei)], ['Total for EI Tests', n(-rv.eiTot)],
+     ['Total to charity', n(-rv.charity)]].concat(td.year === 2026 ? [] : [['Emotional Intelligence Test per ticket', n(rv.ei)], ['Total for EI Tests', n(-rv.eiTot)]]).concat([
      ['Ticket revenue after charity & EI Tests', n(rv.net)], ['Total expenses', n(-rv.exp)],
-     [rv.profit >= 0 ? 'Profit after charity, EI Tests & expenses' : 'Loss after charity, EI Tests & expenses', n(rv.profit)]]
+     [rv.profit >= 0 ? 'Profit' : 'Loss', n(rv.profit)], [tdOther() + ' total expenses (comparison)', n(tdOtherSum())]])
       .forEach(function(x){ out.push([x[0], x[1]].map(q).join(',')); });
     }
     var blob = new Blob(['﻿' + out.join('\r\n')], { type:'text/csv;charset=utf-8' }), a = document.createElement('a');
@@ -1826,7 +1839,7 @@
     $('tdSaved').textContent = 'Saving…';
     return api('team-todo', Object.assign({ op:'save', id:id }, patch)).then(function(d){
       if (!d.ok){ $('tdSaved').textContent = ''; toast(d.error === 'date' ? 'That date didn’t work' : 'Didn’t save. Try again.'); return d; }
-      tdPut(d.todo, d.categories); $('tdSaved').textContent = 'Saved'; return d;
+      tdPut(d.todo, d.categories); $('tdSaved').textContent = '✓ Saved'; return d;
     }).catch(function(){ $('tdSaved').textContent = ''; toast('Check your connection and try again.'); });
   }
   function tdLater(field, fn){ clearTimeout(td.timers[field]); td.timers[field] = setTimeout(fn, 700); $('tdSaved').textContent = 'Typing…'; }
@@ -1856,7 +1869,7 @@
         '<button type="button" class="td-x" data-tdfilerm="' + esc(f.path) + '" aria-label="Remove file">×</button></div>';
     }).join('') + (td.uploading ? '<div class="td-file up">Uploading ' + td.uploading + '…</div>' : '');
     $('tdMeta').textContent = 'Added ' + short(t.created_at) + (t.done_at ? ' · Done ' + short(t.done_at) : '');
-    if (!refresh){ $('tdSaved').textContent = ''; $('tdWrap').hidden = false; document.body.style.overflow = 'hidden'; }
+    if (!refresh){ $('tdSaved').textContent = 'Changes save automatically'; $('tdWrap').hidden = false; document.body.style.overflow = 'hidden'; }
     tdGrow();
   }
   function tdCloseDrawer(){ if ($('tdWrap').hidden) return; tdFlush(); $('tdWrap').hidden = true; document.body.style.overflow = ''; td.open = null; }
@@ -1902,6 +1915,14 @@
   $('tdAddCat').addEventListener('click', function(){ var n = prompt('Name of the new category:'); if (!n || !n.trim()) return;
     api('team-todo', { op:'category_add', name:n.trim() }).then(function(d){ if (d.ok){ td.cats = d.categories; tdRender(); toast('Category added'); } }); });
   $('tdCsv').addEventListener('click', tdCsv);
+  $('tdList').addEventListener('submit', function(e){ var f = e.target.closest('[data-tdinline]'); if (!f) return; e.preventDefault();
+    var t = f.t.value.trim(); if (!t) return f.t.focus(); var cat = f.dataset.tdinline, cost = f.c.value;
+    f.querySelector('button[type=submit]').disabled = true;
+    api('team-todo', { op:'save', title:t, year:td.year, category:cat, cost:cost }).then(function(d){
+      if (!d.ok){ f.querySelector('button[type=submit]').disabled = false; return toast('Didn’t add. Try again.'); }
+      td.list.push(d.todo); td.cats = d.categories || td.cats; tdRender(); toast('Added to ' + cat);
+      var nf = document.querySelector('[data-tdinline] input[name=t]'); if (nf) nf.focus(); }); });
+  $('tdList').addEventListener('keydown', function(e){ if (e.key === 'Escape' && e.target.closest('[data-tdinline]')){ td.adding = null; tdRender(); } });
   $('tdCatF').addEventListener('change', function(){ td.catf = this.value; tdRender(); });
   $('tdList').addEventListener('click', function(e){ if (e.target.id === 'tdCatAll'){ e.preventDefault(); td.catf = ''; tdRender(); } });
   $('tdList').addEventListener('change', function(e){ var r = e.target.closest('[data-tdrev]'); if (!r) return;
@@ -1920,6 +1941,7 @@
   $('tdList').addEventListener('click', function(e){
     var cb = e.target.closest('[data-tdcat]');
     if (cb){ var cat = cb.dataset.c, act = cb.dataset.tdcat;
+      if (act === 'inline'){ td.adding = cat; tdRender(); var f = document.querySelector('[data-tdinline] input[name=t]'); if (f) f.focus(); return; }
       if (act === 'add'){ $('tdNewCat').value = cat; $('tdNew').focus(); $('tdAddForm').scrollIntoView({ block:'center', behavior:'smooth' }); return; }
       if (act === 'up' || act === 'down') return api('team-todo', { op:'category_move', name:cat, dir:act }).then(function(d){ if (d.ok){ td.cats = d.categories; tdRender(); } });
       if (act === 'rename'){ var n = prompt('Rename “' + cat + '” to:', cat); if (!n || !n.trim() || n.trim() === cat) return;
@@ -1928,7 +1950,8 @@
         return api('team-todo', { op:'category_delete', name:cat }).then(function(d){ if (d.ok){ td.cats = d.categories; tdRender(); } else toast('Move or delete its items first'); }); }
       return;
     }
-    if (e.target.closest('select, input')) return; var r = e.target.closest('[data-tdid]'); if (r){ var t = tdFind(r.dataset.tdid); if (t) tdDrawer(t); } });
+    if (e.target.closest('[data-tdinlinex]')){ td.adding = null; tdRender(); return; }
+    if (e.target.closest('select, input, form')) return; var r = e.target.closest('[data-tdid]'); if (r){ var t = tdFind(r.dataset.tdid); if (t) tdDrawer(t); } });
   $('tdClose').addEventListener('click', tdCloseDrawer);
   $('tdWrap').addEventListener('click', function(e){ if (e.target.id === 'tdWrap') tdCloseDrawer(); });
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !$('tdWrap').hidden) tdCloseDrawer(); });
