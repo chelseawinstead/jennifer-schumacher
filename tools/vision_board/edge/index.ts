@@ -17,7 +17,7 @@ function corsFor(origin: string | null) {
   const ok = origin && (ALLOWED.includes(origin) || /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin) || /^http:\/\/localhost(:\d+)?$/.test(origin));
   return {
     "Access-Control-Allow-Origin": ok ? origin! : ALLOWED[0],
-    "Access-Control-Allow-Headers": "content-type, x-team-password",
+    "Access-Control-Allow-Headers": "content-type, x-team-password, x-checkin-pin",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Vary": "Origin",
   };
@@ -286,7 +286,37 @@ Deno.serve(async (req) => {
       const id = clean(b.r, 40);
       if (!UUID.test(id)) return json({ ok: false, reason: "not_found" }, 404);
       const [row] = await sql`select vision_board.guide_for_guest(${id}::uuid) as g`;
+      if (row.g.ok) { const [ci] = await sql`select vision_board.guest_checkin_state(${id}::uuid) as c`; row.g.checkins = ci.c; }
       return json(row.g, row.g.ok ? 200 : 403);
+    }
+
+    // ---------- Check-in ----------
+    // A guest scans the QR sign at the check-in table (from their app, or their phone camera)
+    if (req.method === "POST" && action === "checkin-self") {
+      const b = await req.json().catch(() => ({}));
+      const id = clean(b.r, 40);
+      if (!UUID.test(id)) return json({ ok: false, error: "not_found" }, 404);
+      const [row] = await sql`select vision_board.checkin_self(${id}::uuid, ${clean(b.s, 10)}, ${clean(b.k, 40)}) as r`;
+      return json(row.r, row.r.ok ? 200 : 409);
+    }
+    // The volunteers' check-in page (its own PIN; the team password works too)
+    if (action.startsWith("checkin-")) {
+      const pin = req.headers.get("x-checkin-pin") || "";
+      const [chk] = await sql`select vision_board.check_checkin_pin(${pin}) as ok`;
+      if (!chk.ok) { await new Promise((r) => setTimeout(r, 900)); return json({ ok: false, error: "pin" }, 401); }
+      const b = req.method === "POST" ? await req.json().catch(() => ({})) : {};
+      const sess = clean(b.s ?? url.searchParams.get("s"), 10) === "party" ? "party" : "friday";
+      if (action === "checkin-list") {
+        const [row] = await sql`select vision_board.checkin_list(${sess}) as r`;
+        return json(row.r);
+      }
+      if (action === "checkin-mark" && req.method === "POST") {
+        const id = clean(b.id, 40);
+        if (!UUID.test(id)) return json({ ok: false }, 404);
+        const [row] = await sql`select vision_board.checkin_mark(${id}::uuid, ${sess}, ${clean(b.do, 10)}) as r`;
+        return json(row.r, row.r.ok ? 200 : 409);
+      }
+      return json({ ok: false, error: "not_found" }, 404);
     }
 
     // A paid guest updates their own Crew profile: listing on/off, Instagram, Facebook, photo
@@ -629,6 +659,19 @@ Deno.serve(async (req) => {
       if (action === "team-feed-remove" && req.method === "POST") {
         const [row] = await sql`select vision_board.team_feed_remove(${clean(b.id, 40)}::uuid) as r`;
         return json(row.r);
+      }
+
+      // Check-in switches, table QR codes and the volunteers' PIN
+      if (action === "team-checkin") {
+        const [row] = await sql`select vision_board.team_checkin() as r`;
+        return json(row.r);
+      }
+      if (action === "team-checkin-save" && req.method === "POST") {
+        const p: Record<string, unknown> = {};
+        for (const k of ["friday_open", "party_open", "friday_rotate", "party_rotate"]) if (k in b) p[k] = b[k] === true;
+        if ("pin" in b) p.pin = clean(b.pin, 8);
+        const [row] = await sql`select vision_board.team_checkin_save(${sql.json(p)}) as r`;
+        return json(row.r, row.r.ok ? 200 : 400);
       }
 
       // ---------- Custom emails: drafts, pick recipients, send now ----------

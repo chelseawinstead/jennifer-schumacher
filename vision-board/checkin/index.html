@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Check-in table | Vision Board Crew 2027</title>
+<meta name="theme-color" content="#002349">
+<link rel="icon" href="/images/schumacher-living-navy.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{ --navy:#002349; --ink:#14181d; --muted:#55585c; --warm:#9a968d; --stone:#f6f5f2; --line:#e4e1da; --gold:#b8995a; --ok:#2f6b4f; --ok-bg:#e7f1eb; --hold:#8a5a14; --hold-bg:#f8efdf; --red:#a3271f; }
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{ margin:0; background:var(--stone); color:var(--ink); font-family:'Jost',system-ui,sans-serif; font-size:16px; }
+  h1,h2,h3{ font-family:'Cormorant Garamond',serif; font-weight:400; margin:0; }
+  button{ font:inherit; cursor:pointer; }
+  [hidden]{ display:none !important; }
+  .wrap{ max-width:880px; margin:0 auto; padding:0 16px; }
+
+  /* sign in */
+  .login{ max-width:380px; margin:14vh auto 0; padding:0 20px; text-align:center; }
+  .login h1{ font-size:40px; margin-bottom:8px; }
+  .login p{ color:var(--muted); line-height:1.6; margin:0 0 22px; }
+  .login input{ width:100%; font:inherit; font-size:28px; letter-spacing:.4em; text-align:center; padding:14px; border:1px solid #cfcbc2; background:#fff; margin-bottom:12px; }
+  .login input:focus{ outline:0; border-color:var(--navy); box-shadow:0 0 0 1px var(--navy); }
+  .solid{ background:var(--navy); color:#fff; border:1px solid var(--navy); padding:14px 18px; font-size:15px; letter-spacing:.06em; }
+  .login .solid{ width:100%; }
+  .err{ color:var(--red); min-height:1.4em; margin-top:10px; font-size:14px; }
+
+  /* top */
+  .top{ background:var(--navy); color:#fff; padding:calc(env(safe-area-inset-top,0px) + 14px) 0 0; position:sticky; top:0; z-index:5; }
+  .top-row{ display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  .brand{ font-family:'Cormorant Garamond',serif; letter-spacing:.18em; font-size:15px; }
+  .brand small{ display:block; font-family:'Jost',sans-serif; letter-spacing:.04em; font-size:12px; color:#9fb0c2; margin-top:2px; }
+  .ghost-w{ background:none; border:1px solid rgba(255,255,255,.5); color:#fff; padding:7px 12px; font-size:13px; }
+  .sess{ display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:14px; }
+  .sess button{ background:rgba(255,255,255,.08); border:0; border-bottom:3px solid transparent; color:#c9d3df; padding:12px 8px; font-size:15px; }
+  .sess button[aria-pressed="true"]{ background:#fff; color:var(--navy); border-bottom-color:var(--gold); font-weight:500; }
+
+  .stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:16px 0 10px; }
+  .stat{ background:#fff; border:1px solid var(--line); padding:12px 14px; }
+  .stat b{ display:block; font-family:"Cormorant Garamond",serif; font-size:38px; font-weight:400; line-height:1; color:var(--navy); font-variant-numeric:lining-nums tabular-nums; }
+  .stat span{ font-size:13px; color:var(--muted); }
+  .bar{ height:6px; background:#e7e3da; margin-bottom:12px; } .bar i{ display:block; height:100%; background:var(--ok); transition:width .5s; }
+  .open-note{ font-size:14px; padding:10px 12px; margin-bottom:14px; border:1px solid; }
+  .open-note.on{ background:var(--ok-bg); border-color:#bcd8c7; color:var(--ok); }
+  .open-note.off{ background:var(--hold-bg); border-color:#ead9b8; color:var(--hold); }
+
+  /* ready for gift bag */
+  .ready{ background:#fff; border:2px solid var(--gold); margin-bottom:16px; }
+  .ready h2{ font-size:22px; padding:12px 14px 4px; display:flex; justify-content:space-between; align-items:baseline; }
+  .ready h2 span{ font-family:'Jost',sans-serif; font-size:13px; color:var(--warm); }
+
+  .tools{ display:grid; grid-template-columns:1fr; gap:10px; margin-bottom:10px; }
+  .search{ width:100%; font:inherit; font-size:18px; padding:14px 14px; border:1px solid #cfcbc2; background:#fff; }
+  .search:focus{ outline:0; border-color:var(--navy); box-shadow:0 0 0 1px var(--navy); }
+  .filters{ display:flex; gap:6px; flex-wrap:wrap; }
+  .filters button{ background:#fff; border:1px solid var(--line); padding:8px 14px; font-size:14px; color:var(--muted); border-radius:999px; }
+  .filters button[aria-pressed="true"]{ background:var(--navy); border-color:var(--navy); color:#fff; }
+  .filters .n{ opacity:.7; margin-left:4px; }
+
+  .list{ background:#fff; border:1px solid var(--line); margin-bottom:40px; }
+  .row{ display:grid; grid-template-columns:44px minmax(0,1fr) auto; gap:12px; align-items:center; padding:12px 14px; border-top:1px solid var(--line); }
+  .row:first-child{ border-top:0; }
+  .row.flash{ animation:flash 2.2s ease-out; }
+  @keyframes flash{ 0%{ background:#f6efe1; } 100%{ background:#fff; } }
+  .av{ width:44px; height:44px; border-radius:50%; background:var(--navy); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Cormorant Garamond',serif; font-size:17px; overflow:hidden; }
+  .av img{ width:100%; height:100%; object-fit:cover; }
+  .nm{ font-size:17px; font-weight:500; line-height:1.25; }
+  .co{ font-size:13px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tag{ display:inline-block; font-size:11px; letter-spacing:.06em; padding:1px 7px; border-radius:20px; background:#eef4ee; color:#4f7a5a; margin-left:6px; vertical-align:2px; font-weight:400; }
+  .act{ display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+  .go{ background:var(--navy); color:#fff; border:0; padding:12px 16px; font-size:15px; min-width:150px; }
+  .gift{ background:var(--gold); color:#14181d; border:0; padding:12px 16px; font-size:15px; min-width:150px; font-weight:500; }
+  .done{ color:var(--ok); font-size:15px; font-weight:500; white-space:nowrap; }
+  .meta{ font-size:12px; color:var(--warm); white-space:nowrap; }
+  .undo{ background:none; border:0; color:var(--warm); font-size:12px; text-decoration:underline; padding:2px 0; }
+  .empty{ padding:28px 14px; text-align:center; color:var(--muted); }
+  .toast{ position:fixed; left:50%; bottom:calc(20px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 18px; font-size:15px; opacity:0; transition:opacity .2s; pointer-events:none; z-index:20; max-width:90vw; text-align:center; }
+  .toast.on{ opacity:1; }
+  @media (max-width:520px){ .row{ grid-template-columns:40px minmax(0,1fr); } .act{ grid-column:1/-1; flex-direction:row; justify-content:flex-end; align-items:center; gap:10px; } .go,.gift{ min-width:0; flex:1; } .stat b{ font-size:30px; } }
+</style>
+</head>
+<body>
+
+<section class="login" id="login">
+  <h1>Check-in table</h1>
+  <p>Vision Board Crew 2027. Enter the check-in PIN from Jennifer’s team.</p>
+  <form id="loginForm" autocomplete="off">
+    <input id="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" placeholder="PIN" aria-label="Check-in PIN" required>
+    <button class="solid" type="submit" id="loginBtn">Open check-in</button>
+    <div class="err" id="loginErr" role="alert"></div>
+  </form>
+</section>
+
+<div id="app" hidden>
+  <header class="top"><div class="wrap">
+    <div class="top-row"><div class="brand">VISION BOARD CREW 2027<small id="updated">Check-in table</small></div><button class="ghost-w" type="button" id="lockBtn">Lock</button></div>
+    <div class="sess" id="sess"><button type="button" data-s="friday" aria-pressed="true">Friday arrival</button><button type="button" data-s="party" aria-pressed="false">Vision Board Party</button></div>
+  </div></header>
+
+  <main class="wrap">
+    <div class="stats">
+      <div class="stat"><b id="stIn">0</b><span>checked in</span></div>
+      <div class="stat"><b id="stLeft">0</b><span>not here yet</span></div>
+      <div class="stat"><b id="stGift">0</b><span>gift bags handed</span></div>
+    </div>
+    <div class="bar"><i id="stBar" style="width:0"></i></div>
+    <div class="open-note" id="openNote"></div>
+
+    <section class="ready" id="ready" hidden>
+      <h2>Ready for a gift bag <span id="readyN"></span></h2>
+      <div id="readyList"></div>
+    </section>
+
+    <div class="tools">
+      <input class="search" id="q" type="search" placeholder="Search a name or company" autocomplete="off" aria-label="Search guests">
+      <div class="filters" id="filters"></div>
+    </div>
+    <div class="list" id="list"></div>
+  </main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  var API = 'https://agnpwmdwofrdyqzttmlv.supabase.co/functions/v1/vision-board';
+  var $ = function(id){ return document.getElementById(id); };
+  var pin = '', sess = 'friday', data = null, filter = 'all', q = '', seen = {}, first = true;
+  try { pin = sessionStorage.getItem('vbCiPin') || ''; sess = localStorage.getItem('vbCiSess') === 'party' ? 'party' : 'friday'; } catch(e){}
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function toast(t){ var el = $('toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(function(){ el.classList.remove('on'); }, 2200); }
+  function clock(iso){ return new Date(iso).toLocaleTimeString('en-US', { timeZone:'America/Phoenix', hour:'numeric', minute:'2-digit' }); }
+  function ini(p){ return ((p.first_name || '?')[0] + (p.last_name || '')[0]).toUpperCase(); }
+  function api(action, body){
+    return fetch(API + '?action=' + action, { method:'POST', cache:'no-store', headers:{ 'content-type':'application/json', 'x-checkin-pin':pin }, body:JSON.stringify(body || {}) })
+      .then(function(r){ return r.json().then(function(j){ j._status = r.status; return j; }); });
+  }
+
+  function signIn(e){
+    if (e) e.preventDefault();
+    if (!pin) pin = $('pin').value.trim();
+    $('loginBtn').disabled = true; $('loginErr').textContent = '';
+    api('checkin-list', { s:sess }).then(function(d){
+      $('loginBtn').disabled = false;
+      if (d._status === 401){ pin = ''; try { sessionStorage.removeItem('vbCiPin'); } catch(x){} $('login').hidden = false; $('app').hidden = true; $('loginErr').textContent = 'That PIN didn’t work. Check with Jennifer’s team.'; return; }
+      try { sessionStorage.setItem('vbCiPin', pin); } catch(x){}
+      $('login').hidden = true; $('app').hidden = false; take(d);
+    }).catch(function(){ $('loginBtn').disabled = false; $('loginErr').textContent = 'No connection. Check the Wi-Fi and try again.'; });
+  }
+  function load(){ return api('checkin-list', { s:sess }).then(function(d){ if (d._status === 401){ pin = ''; location.reload(); return; } take(d); }).catch(function(){ $('updated').textContent = 'Offline. Retrying…'; }); }
+  function take(d){
+    if (!d || !d.ok) return;
+    if (d.session !== sess) return; // a reply for the other tab
+    var fresh = [];
+    if (!first) d.people.forEach(function(p){ if (p.checked_in_at && !seen[p.id]) fresh.push(p.id); });
+    seen = {}; d.people.forEach(function(p){ if (p.checked_in_at) seen[p.id] = 1; });
+    if (fresh.length && !first){ var n = d.people.filter(function(p){ return p.id === fresh[0]; })[0]; toast((n ? n.first_name + ' ' + n.last_name : 'Someone') + ' just checked in' + (fresh.length > 1 ? ' (+' + (fresh.length - 1) + ')' : '')); }
+    first = false; data = d; render(fresh);
+  }
+  function rowHtml(p, fresh){
+    var local = p.track === 'local';
+    var act;
+    if (p.checked_in_at && p.gift_at) act = '<span class="done">✓ Checked in</span><span class="meta">' + clock(p.checked_in_at) + (p.method === 'self' ? ' · scanned' : '') + '</span><button type="button" class="undo" data-do="undo" data-id="' + p.id + '">Undo</button>';
+    else if (p.checked_in_at) act = '<button type="button" class="gift" data-do="gift" data-id="' + p.id + '">Hand gift bag ✓</button><span class="meta">Scanned in ' + clock(p.checked_in_at) + '</span>';
+    else act = '<button type="button" class="go" data-do="checkin" data-id="' + p.id + '">Check in &amp; gift bag</button>';
+    return '<div class="row' + (fresh && fresh.indexOf(p.id) > -1 ? ' flash' : '') + '"><div class="av">' + (p.photo_url ? '<img src="' + esc(p.photo_url) + '" alt="">' : esc(ini(p))) + '</div>' +
+      '<div style="min-width:0"><div class="nm">' + esc(p.first_name + ' ' + p.last_name) + (local ? '<span class="tag">LOCAL</span>' : '') + '</div><div class="co">' + esc(p.company || '') + '</div></div>' +
+      '<div class="act">' + act + '</div></div>';
+  }
+  function render(fresh){
+    var d = data, ppl = d.people;
+    var inN = d.checked_in, left = d.total - d.checked_in;
+    $('stIn').textContent = inN; $('stLeft').textContent = left; $('stGift').textContent = d.gifts;
+    $('stBar').style.width = (d.total ? 100 * inN / d.total : 0) + '%';
+    $('openNote').className = 'open-note ' + (d.open ? 'on' : 'off');
+    $('openNote').textContent = d.open ? 'Guests can scan the table’s QR code to check themselves in. They’ll show up under “Ready for a gift bag.”'
+                                       : 'Guests can’t scan in yet. Jennifer’s team turns self check-in on from the team page. You can still check people in here.';
+    document.querySelectorAll('#sess [data-s]').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.s === sess); });
+    var ready = ppl.filter(function(p){ return p.checked_in_at && !p.gift_at; }).sort(function(a, b){ return a.checked_in_at.localeCompare(b.checked_in_at); });
+    $('ready').hidden = !ready.length; $('readyN').textContent = ready.length + ' waiting';
+    $('readyList').innerHTML = ready.map(function(p){ return rowHtml(p, fresh); }).join('');
+    var F = [['all','Everyone', ppl.length], ['out','Not here yet', left], ['in','Checked in', inN]];
+    $('filters').innerHTML = F.map(function(f){ return '<button type="button" data-f="' + f[0] + '" aria-pressed="' + (filter === f[0]) + '">' + f[1] + '<span class="n">' + f[2] + '</span></button>'; }).join('');
+    var qq = q.toLowerCase();
+    var list = ppl.filter(function(p){ return filter === 'all' || (filter === 'in' ? !!p.checked_in_at : !p.checked_in_at); })
+      .filter(function(p){ return !qq || (p.first_name + ' ' + p.last_name + ' ' + (p.company || '') + ' ' + (p.code || '')).toLowerCase().indexOf(qq) > -1; });
+    $('list').innerHTML = list.length ? list.map(function(p){ return rowHtml(p, fresh); }).join('') : '<div class="empty">' + (qq ? 'No one matches “' + esc(q) + '”.' : filter === 'out' ? 'Everyone’s here! 🎉' : 'No one yet.') + '</div>';
+    $('updated').textContent = (sess === 'party' ? 'Vision Board Party' : 'Friday arrival') + ' · updated ' + clock(new Date().toISOString());
+  }
+
+  document.addEventListener('click', function(e){
+    var b = e.target.closest('[data-do]');
+    if (b){
+      var id = b.dataset.id, a = b.dataset.do, p = data.people.filter(function(x){ return x.id === id; })[0];
+      if (a === 'undo' && !confirm('Undo check-in for ' + p.first_name + ' ' + p.last_name + '?')) return;
+      b.disabled = true;
+      api('checkin-mark', { s:sess, id:id, do:a }).then(function(r){
+        if (!r.ok){ b.disabled = false; toast('That didn’t save. Try again.'); return; }
+        toast(a === 'undo' ? 'Undone' : (p.first_name + (a === 'gift' ? ' has their gift bag' : ' is checked in. Hand them a gift bag!')));
+        seen[id] = 1; load();
+      }).catch(function(){ b.disabled = false; toast('No connection. Try again.'); });
+      return;
+    }
+    var s = e.target.closest('[data-s]');
+    if (s && s.dataset.s !== sess){ sess = s.dataset.s; first = true; filter = 'all'; try { localStorage.setItem('vbCiSess', sess); } catch(x){} $('list').innerHTML = '<div class="empty">Loading…</div>'; load(); return; }
+    var f = e.target.closest('[data-f]'); if (f){ filter = f.dataset.f; render([]); }
+  });
+  $('q').addEventListener('input', function(){ q = this.value.trim(); if (data) render([]); });
+  $('lockBtn').addEventListener('click', function(){ pin = ''; try { sessionStorage.removeItem('vbCiPin'); } catch(e){} location.reload(); });
+  $('loginForm').addEventListener('submit', signIn);
+  setInterval(function(){ if (pin && data && !document.hidden) load(); }, 4000);
+  document.addEventListener('visibilitychange', function(){ if (!document.hidden && pin && data) load(); });
+  if (pin) signIn();
+})();
+</script>
+</body>
+</html>

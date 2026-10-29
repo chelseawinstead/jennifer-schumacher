@@ -286,6 +286,22 @@
   .bc-pill.sent{ background:var(--paid-bg); color:var(--paid); } .bc-pill.cancelled{ background:var(--off-bg); color:var(--off); }
   #tCustom[hidden], #tAuto[hidden], #bcEdit[hidden], #bcListWrap[hidden], #bcDoneActs[hidden], #bcActs[hidden]{ display:none; }
   @media (max-width:760px){ .bc-groups{ grid-template-columns:1fr; } .bc-row{ grid-template-columns:1fr; } }
+  .ci-grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:6px 0 24px; }
+  .ci-card{ border:1px solid var(--line); border-left:6px solid var(--c); background:var(--bg); padding:18px 20px; display:grid; gap:12px; align-content:start; }
+  .ci-card.friday{ --c:#2c5aa0; --bg:#f1f5fb; } .ci-card.party{ --c:#b8995a; --bg:#fbf7ee; }
+  .ci-card h3{ font-family:'Cormorant Garamond',serif; font-weight:400; font-size:26px; margin:0; }
+  .ci-card .who{ font-size:13px; color:var(--warm); margin-top:-8px; }
+  .ci-nums{ display:flex; gap:22px; } .ci-nums b{ display:block; font-family:'Cormorant Garamond',serif; font-size:38px; font-weight:400; line-height:1; font-variant-numeric:lining-nums tabular-nums; } .ci-nums span{ font-size:12px; color:var(--muted); }
+  .ci-switch{ display:flex; align-items:center; justify-content:space-between; gap:12px; background:#fff; border:1px solid var(--line); padding:12px 14px; }
+  .ci-switch b{ font-weight:500; display:block; } .ci-switch small{ color:var(--muted); font-size:13px; }
+  .tgl{ position:relative; width:52px; height:30px; flex:none; } .tgl input{ position:absolute; opacity:0; inset:0; margin:0; cursor:pointer; z-index:1; }
+  .tgl i{ position:absolute; inset:0; background:#cfcbc2; border-radius:30px; transition:background .2s; } .tgl i::after{ content:""; position:absolute; top:3px; left:3px; width:24px; height:24px; border-radius:50%; background:#fff; transition:transform .2s; box-shadow:0 1px 3px rgba(0,0,0,.25); }
+  .tgl input:checked + i{ background:var(--paid); } .tgl input:checked + i::after{ transform:translateX(22px); }
+  .ci-acts{ display:flex; flex-wrap:wrap; gap:8px; }
+  .ci-vol{ border:1px solid var(--line); padding:16px 20px; display:grid; gap:10px; }
+  .ci-vol h3{ font-family:inherit; font-size:16px; font-weight:600; margin:0; }
+  .ci-pin{ font-family:'Cormorant Garamond',serif; font-size:34px; letter-spacing:.3em; color:var(--navy); font-variant-numeric:lining-nums tabular-nums; }
+  @media (max-width:820px){ .ci-grid{ grid-template-columns:1fr; } }
   .toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 20px; font-size:14px; opacity:0; transition:opacity .2s; pointer-events:none; z-index:30; }
   .toast.on{ opacity:1; }
 
@@ -320,6 +336,7 @@
     <button type="button" data-view="attendees">Attendees</button>
     <button type="button" data-view="agenda">Agenda</button>
     <button type="button" data-view="seating">Seating</button>
+    <button type="button" data-view="checkin">Check-in</button>
     <button type="button" data-view="pages">Live pages</button>
     <button type="button" data-view="templates">Email templates</button>
     <button type="button" data-view="chat">Chat management</button>
@@ -483,6 +500,13 @@
       <button type="button" class="solid" id="agSave">Save agenda</button>
       <span class="mail-help" id="agStatus" style="margin:0"></span>
     </div>
+  </div>
+</div>
+<div class="mail-wrap page" id="ciBox" hidden>
+  <div class="mail">
+    <div class="mail-head"><h2>Check-in</h2></div>
+    <p class="mail-help">Two check-ins: <b>Friday arrival</b> (agents) and the <b>Vision Board Party</b> (agents + locals). Turn one on when doors open: guests then see a <b>Check in</b> button in their app, scan the QR sign on the table, and show up on the volunteers’ check-in page under “Ready for a gift bag.” Volunteers can also check anyone in by name.</p>
+    <div id="ciTeam"><p class="mail-help">Loading…</p></div>
   </div>
 </div>
 <div class="mail-wrap page" id="pagesBox" hidden>
@@ -1496,7 +1520,7 @@
   });
 
   // ---- top navigation: each section fills the page ----
-  var view = '', VIEWS = { attendees:'app', agenda:'agBox', seating:'seatBox', pages:'pagesBox', templates:'tplBox', chat:'chatBox', host:'agBox', venue:'agBox', settings:'agBox' };
+  var view = '', VIEWS = { attendees:'app', agenda:'agBox', seating:'seatBox', checkin:'ciBox', pages:'pagesBox', templates:'tplBox', chat:'chatBox', host:'agBox', venue:'agBox', settings:'agBox' };
   var AGV = { agenda:'schedule', host:'host', venue:'venue', settings:'settings' };
   function viewFromHash(){ var h = location.hash.replace('#',''); return VIEWS[h] ? h : 'attendees'; }
   function unsaved(){
@@ -1524,10 +1548,57 @@
     if (v === 'templates') openTemplates();
     if (v === 'chat') loadChat();
     if (v === 'pages') renderPages();
+    if (v === 'checkin') ciTeamLoad();
   }
   $('nav').addEventListener('click', function(e){ var b = e.target.closest('[data-view]'); if (b) go(b.dataset.view); });
   window.addEventListener('hashchange', function(){ if (data) go(viewFromHash()); });
   window.addEventListener('beforeunload', function(e){ if (unsaved()){ e.preventDefault(); e.returnValue = ''; } });
+
+
+  // ---- Check-in controls (switches, QR signs, volunteers' PIN) ----
+  var ciT = null;
+  function ciTeamLoad(){ return api('team-checkin').then(function(d){ if (d.ok){ ciT = d; ciTeamRender(); } else $('ciTeam').innerHTML = '<p class="mail-help">Couldn’t load check-in. Refresh and try again.</p>'; }); }
+  function ciUrl(s){ return SITE + '/vision-board/2027-agenda?ci=' + s.session + '&k=' + s.key; }
+  function ciTeamRender(){
+    var volUrl = SITE + '/vision-board/checkin';
+    $('ciTeam').innerHTML = '<div class="ci-grid">' + ciT.sessions.map(function(s){
+      return '<div class="ci-card ' + s.session + '"><h3>' + esc(s.label) + '</h3><div class="who">' + (s.session === 'friday' ? 'Paid agents' : 'Paid agents + confirmed locals') + '</div>' +
+        '<div class="ci-nums"><div><b>' + s.checked_in + '</b><span>of ' + s.total + ' checked in</span></div><div><b>' + s.gifts + '</b><span>gift bags handed</span></div></div>' +
+        '<label class="ci-switch"><span><b>Guests can check in</b><small>' + (s.open ? 'On: guests see the Check in button and can scan the table sign.' : 'Off: no button in the app. Turn on when doors open.') + '</small></span>' +
+        '<span class="tgl"><input type="checkbox" data-ciopen="' + s.session + '"' + (s.open ? ' checked' : '') + ' aria-label="Guests can check in for ' + esc(s.label) + '"><i></i></span></label>' +
+        '<div class="ci-acts"><button type="button" class="solid" data-cisign="' + s.session + '">Print the QR sign</button><button type="button" class="ghost" data-cirotate="' + s.session + '">Make a new code</button></div>' +
+        '<p class="mail-help" style="margin:0">The sign’s code only works for this check-in. “Make a new code” retires old printed signs (reprint after).</p></div>';
+    }).join('') + '</div>' +
+    '<div class="ci-vol"><h3>Volunteers’ check-in page</h3><p class="mail-help" style="margin:0">Open this on the check-in table’s phone or iPad. It only shows names and check-in status (no emails, payments or addresses). The team password works there too.</p>' +
+      '<div class="ci-acts" style="align-items:center"><a class="ghost" style="text-decoration:none" href="' + volUrl + '" target="_blank" rel="noopener">Open check-in page</a><button type="button" class="ghost" data-copy="' + volUrl + '">Copy link</button></div>' +
+      '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><span class="mail-help" style="margin:0">Check-in PIN</span><span class="ci-pin">' + esc(ciT.pin || '----') + '</span><button type="button" class="ghost" id="ciPinBtn">Change PIN</button></div></div>';
+  }
+  function ciSave(body, msg){ return api('team-checkin-save', body).then(function(d){ if (d.ok){ ciT = d; ciTeamRender(); if (msg) toast(msg); } else toast(d.error === 'pin' ? 'PIN must be 4 to 8 digits' : 'Didn’t save. Try again.'); return d; }); }
+  function ciSign(s){
+    var w = window.open('', '_blank'); if (!w) return toast('Allow pop-ups to print the sign');
+    var url = ciUrl(s);
+    w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Check in here · ' + esc(s.label) + '</title>' +
+      '<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">' +
+      '<style>@page{ size:letter; margin:0.5in; } body{ margin:0; font-family:Jost,sans-serif; color:#14181d; text-align:center; } .s{ border:3px solid #002349; padding:44px 36px; min-height:9.3in; box-sizing:border-box; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; }' +
+      '.k{ letter-spacing:.3em; font-size:14px; color:#002349; } h1{ font-family:"Cormorant Garamond",serif; font-weight:400; font-size:64px; margin:0; line-height:1; } h1 em{ color:#b8995a; } .l{ font-size:22px; color:#55585c; } #qr svg{ width:4.2in; height:4.2in; display:block; } ol{ text-align:left; font-size:19px; line-height:1.6; margin:4px auto 0; max-width:5.6in; } .f{ font-size:14px; color:#9a968d; margin-top:10px; } .p{ margin-top:16px; } @media print{ .p{ display:none; } }</style></head><body>' +
+      '<div class="s"><div class="k">JENNIFER SCHUMACHER · VISION BOARD CREW 2027</div><h1>Check in <em>here</em></h1><div class="l">' + esc(s.label) + '</div><div id="qr"></div>' +
+      '<ol><li>Open your Vision Board app (the link from your email).</li><li>Tap <b>Check in</b> at the top, then scan this code.</li><li>Grab your gift bag!</li></ol><div class="f">You can also scan with your phone’s camera. No phone? Our team will check you in by name.</div>' +
+      '<button class="p" onclick="window.print()" style="font:inherit;font-size:16px;padding:12px 22px;background:#002349;color:#fff;border:0;cursor:pointer">Print this sign</button></div>' +
+      '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"><\/script><script>var q=qrcode(0,"M");q.addData(' + JSON.stringify(url) + ');q.make();document.getElementById("qr").innerHTML=q.createSvgTag({cellSize:8,margin:2,scalable:true});<\/script></body></html>');
+    w.document.close();
+  }
+  $('ciTeam').addEventListener('change', function(e){
+    var t = e.target.closest('[data-ciopen]'); if (!t) return;
+    var s = t.dataset.ciopen, on = t.checked, label = s === 'friday' ? 'Friday arrival' : 'Vision Board Party';
+    if (!confirm((on ? 'Turn ON check-in for ' + label + '? Guests will see a Check in button in their app right away.' : 'Turn OFF guest check-in for ' + label + '? The button disappears from the app (volunteers can still check people in by name).'))){ t.checked = !on; return; }
+    var body = {}; body[s + '_open'] = on; ciSave(body, label + ' check-in is ' + (on ? 'on' : 'off'));
+  });
+  $('ciTeam').addEventListener('click', function(e){
+    var cp = e.target.closest('[data-copy]'); if (cp){ (navigator.clipboard ? navigator.clipboard.writeText(cp.dataset.copy) : Promise.reject()).then(function(){ toast('Link copied'); }, function(){ prompt('Copy this link:', cp.dataset.copy); }); return; }
+    var sg = e.target.closest('[data-cisign]'); if (sg){ ciSign(ciT.sessions.filter(function(x){ return x.session === sg.dataset.cisign; })[0]); return; }
+    var ro = e.target.closest('[data-cirotate]'); if (ro){ if (!confirm('Make a new QR code? Signs already printed for this check-in will stop working, so reprint.')) return; var body = {}; body[ro.dataset.cirotate + '_rotate'] = true; ciSave(body, 'New code made. Print the new sign.'); return; }
+    if (e.target.closest('#ciPinBtn')){ var v = prompt('New check-in PIN for volunteers (4 to 8 digits):', ciT.pin || ''); if (v === null) return; ciSave({ pin:v.trim() }, 'PIN updated'); }
+  });
 
   // ---- Live pages ----
   var lp = { q:'', track:'all', sec:'signup' };

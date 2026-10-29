@@ -277,6 +277,37 @@
 
   /* sheet (my profile) */
   .sheet-wrap{ position:fixed; inset:0; background:rgba(20,24,29,.45); z-index:20; display:flex; align-items:flex-end; justify-content:center; }
+  /* check-in */
+  .ci-bar{ display:grid; gap:8px; margin-top:16px; }
+  .ci-bar[hidden]{ display:none; }
+  .ci-go{ display:flex; align-items:center; justify-content:center; gap:10px; width:100%; min-height:54px; background:var(--gold); color:#14181d; border:0; font:inherit; font-size:16px; font-weight:500; letter-spacing:.04em; cursor:pointer; animation:ciPulse 2.4s ease-in-out infinite; }
+  .ci-go svg{ width:22px; height:22px; }
+  @keyframes ciPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(184,153,90,.55); } 50%{ box-shadow:0 0 0 8px rgba(184,153,90,0); } }
+  .ci-done{ display:flex; align-items:center; gap:10px; padding:12px 14px; background:rgba(47,107,79,.18); border:1px solid rgba(160,214,186,.55); color:#e9f6ef; font-size:15px; }
+  .ci-done b{ font-weight:500; } .ci-done span{ color:#bfe3cf; font-size:13px; }
+  .ci-steps{ list-style:none; margin:4px 0 18px; padding:0; display:grid; gap:12px; counter-reset:c; }
+  .ci-steps li{ counter-increment:c; display:grid; grid-template-columns:30px 1fr; gap:10px; align-items:start; font-size:16px; line-height:1.45; }
+  .ci-steps li::before{ content:counter(c); width:30px; height:30px; border-radius:50%; background:var(--navy); color:#fff; display:flex; align-items:center; justify-content:center; font-size:14px; }
+  .ci-cam{ position:relative; background:#0b1522; aspect-ratio:1; max-height:58vh; margin:0 auto 12px; width:100%; overflow:hidden; }
+  .ci-cam[hidden]{ display:none; }
+  .ci-cam video{ width:100%; height:100%; object-fit:cover; display:block; }
+  .ci-cam i{ position:absolute; inset:16%; border:3px solid rgba(255,255,255,.9); border-radius:14px; box-shadow:0 0 0 999px rgba(0,0,0,.35); }
+  .ci-msg{ min-height:1.4em; font-size:14px; text-align:center; margin:6px 0 12px; color:var(--muted); }
+  .ci-msg.err{ color:var(--red); }
+  .ci-pass{ margin-top:16px; border-top:1px solid var(--line); padding-top:14px; }
+  .ci-pass summary{ cursor:pointer; font-size:14px; color:var(--navy); }
+  .ci-card{ margin-top:12px; background:var(--navy); color:#fff; padding:22px 18px; text-align:center; }
+  .ci-card .av{ width:72px; height:72px; border-radius:50%; margin:0 auto 10px; background:#fff; color:var(--navy); display:flex; align-items:center; justify-content:center; font-family:'Cormorant Garamond',serif; font-size:28px; overflow:hidden; }
+  .ci-card .av img{ width:100%; height:100%; object-fit:cover; }
+  .ci-card b{ display:block; font-family:'Cormorant Garamond',serif; font-weight:400; font-size:30px; line-height:1.1; }
+  .ci-card small{ display:block; color:var(--sky); font-size:14px; margin-top:6px; }
+  .ci-card .clock{ margin-top:12px; font-size:13px; letter-spacing:.12em; color:var(--cream); }
+  .ci-ok{ text-align:center; padding:18px 4px 6px; }
+  .ci-ok .tick{ width:96px; height:96px; border-radius:50%; background:var(--ok); color:#fff; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; animation:ciPop .45s ease-out; }
+  .ci-ok .tick svg{ width:52px; height:52px; }
+  @keyframes ciPop{ from{ transform:scale(.4); opacity:0; } to{ transform:scale(1); opacity:1; } }
+  .ci-ok h3{ font-family:'Cormorant Garamond',serif; font-weight:400; font-size:32px; margin:0 0 8px; }
+  .ci-ok p{ font-size:17px; line-height:1.5; color:var(--muted); margin:0 0 6px; }
   .sheet{ background:var(--paper); width:100%; max-width:640px; max-height:92vh; overflow:auto; padding:22px max(18px, env(safe-area-inset-left, 0px)) calc(22px + env(safe-area-inset-bottom, 0px)); border-radius:14px 14px 0 0; }
   .sheet-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
   .sheet-head h2{ font-size:28px; }
@@ -348,6 +379,7 @@
     <div class="when" id="appWhen">Friday &amp; Saturday, January 8–9, 2027</div>
     <p class="welcome" id="welcome"></p>
     <div class="pills"><span class="pill" id="countdown" hidden></span><span class="pill ghost" id="closes"></span></div>
+    <div class="ci-bar" id="ciBar" hidden></div>
   </div></header>
 
   <nav class="tabs" aria-label="Sections"><div class="wrap" role="tablist">
@@ -472,6 +504,12 @@
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="tableTitle">
     <div class="sheet-head"><h2 id="tableTitle">Your seat</h2><button class="x" type="button" id="tableClose">Close</button></div>
     <div id="tableBody"></div>
+  </div>
+</div>
+<div class="sheet-wrap" id="ciSheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ciTitle">
+    <div class="sheet-head"><h2 id="ciTitle">Check in</h2><button class="x" type="button" id="ciClose">Close</button></div>
+    <div id="ciBody"></div>
   </div>
 </div>
 <div class="sheet-wrap" id="addrSheet" hidden>
@@ -607,7 +645,7 @@
     var closeLabel = azDate(data.closes_at, { month:'long', day:'numeric', year:'numeric' });
     $('closes').textContent = 'App open until ' + closeLabel;
     $('saveAllTxt').innerHTML = '<b>Heads up:</b> this app closes ' + esc(closeLabel) + '. Tap anyone below and use <b>Save contact</b> to keep their info and your notes on your phone before then.';
-    renderDays(); renderVenue(); renderCrew();
+    renderDays(); renderVenue(); renderCrew(); renderCi();
     $('cmpAv').innerHTML = avatar(me);
   }
   function renderDays(){
@@ -1188,11 +1226,120 @@
   // Keep the app current: check for Jennifer's updates every 20 seconds and when the guest comes back to the app.
   // Waits while someone is typing or has a panel open, so nothing gets wiped mid-edit.
   function busy(){
-    return !$('sheet').hidden || !$('hostSheet').hidden || !$('addrSheet').hidden || !$('mapsSheet').hidden || !$('threadSheet').hidden || !$('lightbox').hidden ||
+    return !$('sheet').hidden || !$('hostSheet').hidden || !$('addrSheet').hidden || !$('ciSheet').hidden || !$('mapsSheet').hidden || !$('threadSheet').hidden || !$('lightbox').hidden ||
       composers.some(function(c){ return c.dirty(); }) ||
       (document.activeElement && document.activeElement.matches('textarea,input,select')) ||
       Object.keys(noteTimers).some(function(k){ return noteTimers[k]; });
   }
+
+  // ---- Check-in: guests scan the QR sign at the check-in table ----
+  var CI_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg>';
+  var TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  var ci = { session:null, stream:null, timer:null, busy:false, clock:null };
+  function azClock(iso){ return new Date(iso || Date.now()).toLocaleTimeString('en-US', { timeZone:'America/Phoenix', hour:'numeric', minute:'2-digit' }); }
+  function ciItem(s){ return (data.checkins || []).filter(function(c){ return c.session === s; })[0]; }
+  function renderCi(){
+    var list = data.checkins || [];
+    $('ciBar').hidden = !list.length;
+    $('ciBar').innerHTML = list.map(function(c){
+      return c.checked_in_at
+        ? '<div class="ci-done">' + TICK.replace('<svg', '<svg style="width:22px;height:22px;flex:none"') + '<div><b>Checked in · ' + esc(c.label) + '</b><br><span>' + azClock(c.checked_in_at) + (c.gift_at ? ' · gift bag picked up' : ' · grab your gift bag at the table') + '</span></div></div>'
+        : '<button type="button" class="ci-go" data-ci="' + esc(c.session) + '">' + CI_ICON + 'Check in for ' + esc(c.label) + '</button>';
+    }).join('');
+    if (!$('ciSheet').hidden && ci.session){ var it = ciItem(ci.session); if (it && it.checked_in_at && !ci.shownOk) ciShowOk(it); }
+  }
+  function ciPass(){
+    var me = data.me || {};
+    return '<details class="ci-pass"><summary>Camera not working? Show this screen at the table</summary><div class="ci-card"><div class="av">' + avatar(me) + '</div><b>' + esc((me.first_name || '') + ' ' + (me.last_name || '')) + '</b>' +
+      (me.company ? '<small>' + esc(me.company) + '</small>' : '') + '<div class="clock" id="ciClock">' + azClock() + '</div></div></details>';
+  }
+  function openCi(s){
+    var it = ciItem(s); if (!it) return;
+    ci.session = s; ci.shownOk = false;
+    $('ciTitle').textContent = 'Check in';
+    if (it.checked_in_at) { $('ciSheet').hidden = false; return ciShowOk(it); }
+    $('ciBody').innerHTML = '<p style="margin:0 0 12px;color:var(--muted);font-size:15px">' + esc(it.label) + '</p>' +
+      '<ol class="ci-steps"><li><span>Head to the check-in table.</span></li><li><span>Tap <b>Scan the check-in code</b> and point your camera at the QR code on the table.</span></li><li><span>That’s it! You’re checked in. Grab your gift bag.</span></li></ol>' +
+      '<div class="ci-cam" id="ciCam" hidden><video id="ciVideo" playsinline muted></video><i></i></div>' +
+      '<p class="ci-msg" id="ciMsg" role="status"></p>' +
+      '<button type="button" class="btn solid" id="ciScan" style="width:100%">' + CI_ICON.replace('<svg', '<svg style="width:20px;height:20px;margin-right:8px"') + 'Scan the check-in code</button>' + ciPass();
+    $('ciSheet').hidden = false;
+    clearInterval(ci.clock); ci.clock = setInterval(function(){ var c = $('ciClock'); if (c) c.textContent = azClock(); }, 15000);
+  }
+  function closeCi(){ ciStop(); clearInterval(ci.clock); $('ciSheet').hidden = true; ci.session = null; }
+  function ciMsg(t, err){ var m = $('ciMsg'); if (m){ m.textContent = t; m.className = 'ci-msg' + (err ? ' err' : ''); } }
+  function loadJsQR(){
+    if (window.jsQR) return Promise.resolve();
+    return new Promise(function(res, rej){ var sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js'; sc.onload = res; sc.onerror = rej; document.head.appendChild(sc); });
+  }
+  function ciStart(){
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ ciMsg('This browser can’t open the camera. Use your phone’s camera app on the table’s QR code, or show the screen below to the check-in team.', true); return; }
+    ciMsg('Opening your camera…');
+    var useNative = 'BarcodeDetector' in window, detector = null;
+    var ready = useNative ? Promise.resolve().then(function(){ detector = new BarcodeDetector({ formats:['qr_code'] }); }).catch(function(){ useNative = false; return loadJsQR(); }) : loadJsQR();
+    Promise.all([ready, navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment' }, audio:false })]).then(function(r){
+      ci.stream = r[1]; var v = $('ciVideo'); if (!v){ ciStop(); return; }
+      v.srcObject = ci.stream; v.play().catch(function(){});
+      $('ciCam').hidden = false; $('ciScan').hidden = true; ciMsg('Point your camera at the QR code on the check-in table.');
+      var cv = document.createElement('canvas'), cx = cv.getContext('2d', { willReadFrequently:true });
+      (function tick(){
+        if (!ci.stream) return;
+        if (v.readyState >= 2){
+          if (useNative && detector){
+            detector.detect(v).then(function(codes){ if (codes && codes[0]) ciFound(codes[0].rawValue); }).catch(function(){});
+          } else if (window.jsQR){
+            var w = v.videoWidth, h = v.videoHeight, sz = Math.min(w, h, 720), sx = (w - sz) / 2, sy = (h - sz) / 2;
+            cv.width = cv.height = 360; cx.drawImage(v, sx, sy, sz, sz, 0, 0, 360, 360);
+            var img = cx.getImageData(0, 0, 360, 360), code = window.jsQR(img.data, 360, 360, { inversionAttempts:'dontInvert' });
+            if (code && code.data) ciFound(code.data);
+          }
+        }
+        ci.timer = setTimeout(tick, 180);
+      })();
+    }).catch(function(){
+      ciMsg('Your camera didn’t open. Allow camera access for this site, or use your phone’s camera app on the table’s QR code. You can also show the screen below to the check-in team.', true);
+    });
+  }
+  function ciStop(){ clearTimeout(ci.timer); if (ci.stream){ ci.stream.getTracks().forEach(function(t){ t.stop(); }); ci.stream = null; } }
+  function ciFound(text){
+    if (ci.busy) return;
+    var u; try { u = new URL(text); } catch(e){ u = null; }
+    var s = u && u.searchParams.get('ci'), k = u && u.searchParams.get('k');
+    if (!s || !k){ ciMsg('That’s not the check-in code. Look for the “Check in here” sign on the table.', true); return; }
+    ciStop(); doCheckin(s, k);
+  }
+  function doCheckin(s, k){
+    ci.busy = true; ciMsg('Checking you in…');
+    return post('checkin-self', { r:R, s:s, k:k }).then(function(x){
+      ci.busy = false;
+      if (x.ok){
+        var it = ciItem(x.session);
+        if (it){ it.checked_in_at = x.checked_in_at; it.gift_at = x.gift_at; } else (data.checkins = data.checkins || []).push({ session:x.session, label:x.label, checked_in_at:x.checked_in_at, gift_at:x.gift_at });
+        ci.session = x.session; $('ciSheet').hidden = false; ciShowOk(ciItem(x.session)); renderCi(); load.sig = null;
+        return;
+      }
+      var why = { closed: 'Check-in for ' + (x.label || 'this') + ' isn’t open yet. The team will turn it on when doors open.',
+                  not_eligible: (x.label === 'Friday arrival' ? 'Friday check-in is for the agents’ weekend. You’ll check in at the Vision Board Party on Saturday.' : 'This check-in isn’t part of your registration. Ask the check-in team for help.'),
+                  bad_code: 'That code didn’t work. Ask the check-in team, or show them the screen below.' }[x.error] || 'That didn’t go through. Ask the check-in team for help.';
+      if ($('ciSheet').hidden || !$('ciMsg')){ openCi(s) || 0; }
+      if (!$('ciMsg')){ $('ciTitle').textContent = 'Check in'; $('ciBody').innerHTML = '<p class="ci-msg err" id="ciMsg"></p>' + ciPass(); $('ciSheet').hidden = false; }
+      ciMsg(why, true); var b = $('ciScan'); if (b){ b.hidden = false; b.textContent = 'Try scanning again'; }
+    }).catch(function(){ ci.busy = false; ciMsg('No connection. Move closer to Wi-Fi and try again.', true); var b = $('ciScan'); if (b) b.hidden = false; });
+  }
+  function ciShowOk(it){
+    ci.shownOk = true; var me = data.me || {};
+    $('ciTitle').textContent = it.label;
+    $('ciBody').innerHTML = '<div class="ci-ok"><div class="tick">' + TICK + '</div><h3>You’re checked in' + (me.first_name ? ', ' + esc(me.first_name) : '') + '!</h3>' +
+      '<p>' + (it.gift_at ? 'Enjoy! Your gift bag is marked as picked up.' : 'Grab your gift bag at the check-in table.') + '</p><p style="font-size:14px">' + azClock(it.checked_in_at) + ' · ' + esc(it.label) + '</p></div>' +
+      '<button type="button" class="btn solid" id="ciDone" style="width:100%;margin-top:14px">Done</button>';
+  }
+  $('ciBar').addEventListener('click', function(e){ var b = e.target.closest('[data-ci]'); if (b) openCi(b.dataset.ci); });
+  $('ciClose').addEventListener('click', closeCi);
+  $('ciSheet').addEventListener('click', function(e){
+    if (e.target.id === 'ciSheet' || e.target.closest('#ciDone')) return closeCi();
+    if (e.target.closest('#ciScan')) ciStart();
+  });
+
   // Also notice when a new version of the app itself is published, and reload into it.
   var pageTag = null;
   function checkVersion(){
@@ -1210,9 +1357,17 @@
   var params = new URLSearchParams(location.search);
   R = (params.get('r') || stored() || '').trim();
   var hash = (location.hash || '').slice(1);
+  var ciS = params.get('ci'), ciK = params.get('k');
+  if (ciS){ params.delete('ci'); params.delete('k'); try { history.replaceState(null, '', location.pathname + (params.toString() ? '?' + params : '') + location.hash); } catch(e){} }
   $('previewBar').hidden = !PREVIEW;
-  if (R){ load().then(function(){ if (['venue','crew','chat'].indexOf(hash) > -1) showTab(hash); }); }
-  else showGate({ reason:'not_found' });
+  if (R){ load().then(function(){
+    if (['venue','crew','chat'].indexOf(hash) > -1) showTab(hash);
+    if (ciS && ciK && data) doCheckin(ciS, ciK);
+  }); }
+  else {
+    showGate({ reason:'not_found' });
+    if (ciS) $('gateState').innerHTML = '<h2>Check in from your app</h2><p class="help">This phone hasn’t opened your personal Vision Board link yet. Open the link from your email or text, then tap <b>Check in</b> at the top of the app and scan the code again. Or enter your email below and we’ll send your link.</p>';
+  }
 })();
 </script>
 </body>
