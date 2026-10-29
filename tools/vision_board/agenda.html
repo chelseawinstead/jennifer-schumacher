@@ -435,7 +435,7 @@
     </section>
 
     <section id="tab-chat" hidden>
-      <button type="button" class="tag-btn" id="tagBtn"><span class="at">@</span><span id="tagBtnText">Where you were tagged</span></button>
+      <button type="button" class="tag-btn" id="tagBtn"><span class="at">@</span><span id="tagBtnText">You were tagged! 🎉</span></button>
       <div class="composer">
         <span class="av" id="cmpAv"></span>
         <div>
@@ -1183,7 +1183,7 @@
   function renderTagBtn(){
     var seen = tagSeenAt(), n = tagItems.filter(function(m){ return m.at > seen; }).length, b = $('tagBtn');
     b.classList.toggle('has', tagItems.length > 0);
-    $('tagBtnText').textContent = 'Where you were tagged';
+    $('tagBtnText').textContent = 'You were tagged! 🎉';
     var old = b.querySelector('.nw'); if (old) old.remove(); var g = b.querySelector('.go'); if (g) g.remove();
     if (n) b.insertAdjacentHTML('beforeend', '<span class="nw">' + n + ' new</span>');
     b.insertAdjacentHTML('beforeend', '<span class="go">' + tagItems.length + ' ›</span>');
