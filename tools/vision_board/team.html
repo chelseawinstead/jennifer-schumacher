@@ -263,6 +263,25 @@
   .lp-kind{ display:inline-block; font-size:12px; padding:2px 9px; border-radius:20px; background:#fff; border:1px solid var(--rule, var(--line)); color:var(--muted); margin:4px 0 0 6px; }
   .lp-tools{ display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between; margin:10px 0 4px; }
   @media (max-width:760px){ .lp-row{ grid-template-columns:1fr; } .lp-acts{ justify-content:flex-start; } .mail-wrap.page > .mail{ padding:20px 16px 60px; } }
+  .bc-h{ font-family:inherit; font-size:16px; font-weight:600; margin:22px 0 8px; display:flex; gap:10px; align-items:baseline; }
+  .bc-groups{ display:grid; grid-template-columns:1fr 1fr; gap:6px 18px; margin-bottom:12px; }
+  .bc-groups label{ display:flex; gap:8px; align-items:center; font-size:14px; cursor:pointer; }
+  .bc-groups label span{ color:var(--warm); font-size:13px; }
+  .bc-groups input, .bc-people input{ width:16px; height:16px; accent-color:var(--navy); flex:none; }
+  .bc-pick .search{ width:100%; min-width:0; margin-bottom:6px; }
+  .bc-people{ border:1px solid var(--line); max-height:260px; overflow:auto; }
+  .bc-people label{ display:grid; grid-template-columns:18px minmax(0,1fr) auto; gap:10px; align-items:center; padding:7px 10px; border-top:1px solid var(--line); font-size:14px; cursor:pointer; }
+  .bc-people label:first-child{ border-top:0; }
+  .bc-people label:hover{ background:var(--stone); }
+  .bc-people small{ color:var(--warm); font-size:12px; white-space:nowrap; }
+  .bc-acts{ margin-top:18px; }
+  .bc-row{ display:grid; grid-template-columns:minmax(0,1fr) auto auto; gap:6px 18px; align-items:center; padding:14px 0; border-top:1px solid var(--line); }
+  .bc-row b{ font-weight:500; } .bc-row .sub{ display:block; }
+  .bc-pill{ font-size:12px; padding:3px 10px; border-radius:20px; white-space:nowrap; }
+  .bc-pill.draft{ background:var(--stone); color:var(--muted); } .bc-pill.sending{ background:var(--hold-bg); color:var(--hold); }
+  .bc-pill.sent{ background:var(--paid-bg); color:var(--paid); } .bc-pill.cancelled{ background:var(--off-bg); color:var(--off); }
+  #tCustom[hidden], #tAuto[hidden], #bcEdit[hidden], #bcListWrap[hidden], #bcDoneActs[hidden], #bcActs[hidden]{ display:none; }
+  @media (max-width:760px){ .bc-groups{ grid-template-columns:1fr; } .bc-row{ grid-template-columns:1fr; } }
   .toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 20px; font-size:14px; opacity:0; transition:opacity .2s; pointer-events:none; z-index:30; }
   .toast.on{ opacity:1; }
 
@@ -350,6 +369,43 @@
 <div class="mail-wrap page" id="tplBox" hidden>
   <div class="mail tpl" role="dialog" aria-modal="true" aria-labelledby="tTitle">
     <div class="mail-head"><h2 id="tTitle">Email templates</h2><button type="button" class="ghost" id="tClose">Close</button></div>
+    <div class="track-switch" id="tMode"><button type="button" data-tmode="auto" aria-pressed="true">Automatic emails</button><button type="button" data-tmode="custom" aria-pressed="false">Custom emails</button></div>
+    <div id="tCustom" hidden>
+      <div id="bcListWrap">
+        <div class="lp-tools" style="margin:0 0 10px"><p class="mail-help" style="margin:0;max-width:760px">Write a one-off email from Jennifer, choose exactly who gets it, check it with a test, then send. Each person gets their own copy from Jennifer’s Gmail, with {first_name} and their personal links filled in.</p><button type="button" class="solid" id="bcNew">+ New email</button></div>
+        <div id="bcList"></div>
+      </div>
+      <div id="bcEdit" hidden>
+        <div class="lp-tools" style="margin:0 0 14px"><button type="button" class="ghost" id="bcBack">← All custom emails</button><span class="st-stat" id="bcState"></span></div>
+        <div class="tpl-grid">
+          <div>
+            <label class="fld">Subject<input id="bcSubject" maxlength="200" placeholder="e.g. A few things before Vision Board Crew"></label>
+            <label class="fld">Heading (optional)<input id="bcHeading" maxlength="200" placeholder="Big title at the top of the email"></label>
+            <label class="fld">Message<textarea id="bcBody" rows="11" placeholder="Hi {first_name},"></textarea></label>
+            <p class="mail-help" style="margin:-6px 0 10px">Fill-ins work like the templates. To add a clickable link, type <code>[words](https://web address)</code>.</p>
+            <div class="chips" id="bcChips"></div>
+            <h3 class="bc-h">Who gets it <span class="st-stat" id="bcCount"></span></h3>
+            <div class="bc-groups" id="bcGroups"></div>
+            <div class="bc-pick">
+              <input class="search" id="bcQ" type="search" placeholder="Search to add or remove one person">
+              <div class="bc-people" id="bcPeople"></div>
+            </div>
+            <div class="mail-acts bc-acts" id="bcActs">
+              <button type="button" class="ghost" id="bcSave">Save draft</button>
+              <button type="button" class="ghost" id="bcTest">Send me a test</button>
+              <button type="button" class="solid" id="bcSend">Send now</button>
+              <span class="mail-help" id="bcStatus" style="margin:0;align-self:center"></span>
+            </div>
+            <div class="bc-acts" id="bcDoneActs" hidden><button type="button" class="ghost" id="bcCopy">Use as a new draft</button></div>
+          </div>
+          <div class="tpl-prev">
+            <div class="mail-help" style="margin:0 0 6px">Preview with a sample guest</div>
+            <iframe id="bcPreview" title="Custom email preview"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="tAuto">
     <div class="tabs" id="tTabs"></div>
     <p class="mail-help" id="tWhen"></p>
     <div class="tpl-grid">
@@ -369,6 +425,7 @@
         <div class="mail-help" style="margin:0 0 6px">Preview with a sample guest</div>
         <iframe id="tPreview" title="Email preview"></iframe>
       </div>
+    </div>
     </div>
   </div>
 </div>
@@ -536,7 +593,7 @@
         '<div class="sub">' + (r.directory_opt_in ? 'In the Crew list' : 'Not in the Crew list') + (r.agenda_link_sent_at ? ' \u00b7 agenda link sent' : '') + '</div>';
       if (r.status==='waitlist') extra = '<div class="sub" style="margin-top:6px">#' + (waitOrder.indexOf(r.id)+1) + ' in line</div>';
       var log = r.email_log || [], last = log[log.length-1];
-      var KL = { hold:'Payment email', waitlist:'Waitlist email', offer:'Seat-offer email', paid:'Confirmation', agenda:'Agenda link' };
+      var KL = { hold:'Payment email', waitlist:'Waitlist email', offer:'Seat-offer email', paid:'Confirmation', agenda:'Agenda link', custom:'Custom email' };
       if (last && last.ok) extra += '<div class="sent">' + KL[last.kind] + ' sent ' + short(last.at) + (last.by==='auto' ? ' (automatic)' : '') + '</div>';
       else if (last && !last.ok) extra += '<div class="mailfail">' + KL[last.kind] + ' didn\u2019t send: ' + esc(last.error) + '</div>';
       else if (r.confirmation_sent_at) extra += '<div class="sent">Confirmation marked sent ' + short(r.confirmation_sent_at) + '</div>';
@@ -582,7 +639,7 @@
     list.sort(function(a,b){ return (a.status==='waitlist' && b.status==='waitlist') ? a.created_at.localeCompare(b.created_at) : b.created_at.localeCompare(a.created_at); });
     var waitOrder = regs.filter(function(r){ return r.status==='waitlist'; }).sort(function(a,b){ return a.created_at.localeCompare(b.created_at); }).map(function(r){ return r.id; });
     if (!list.length){ $('rows').innerHTML = '<tr><td colspan="7" class="empty">' + (regs.length ? 'No one matches this view.' : 'No local guests yet. Share the sign-up page and they’ll appear here as people sign up.') + '</td></tr>'; $('updated').textContent = 'Updated ' + az(new Date().toISOString(), { hour:'numeric', minute:'2-digit' }) + ' AZ'; return; }
-    var KL = { local_confirm:'Confirmation + app link', local_waitlist:'Waitlist email', local_offer:'Spot-offer email' };
+    var KL = { local_confirm:'Confirmation + app link', local_waitlist:'Waitlist email', local_offer:'Spot-offer email', custom:'Custom email' };
     $('rows').innerHTML = list.map(function(r){
       var status = { paid:'Confirmed', pending:'Offer sent', waitlist:'Waitlist', expired:'Offer expired', cancelled:'Cancelled' }[r.status], extra = '';
       if (r.status==='pending' && r.hold_expires_at){ var hrs = (new Date(r.hold_expires_at) - Date.now())/36e5; extra = '<div class="due' + (hrs < 12 ? ' soon' : '') + '">Must accept by ' + short(r.hold_expires_at) + '</div>'; }
@@ -671,7 +728,7 @@
     $('tHotel').value = data.settings.hotel_code || '';
     $('tChips').innerHTML = 'Insert: ' + CHIPS.map(function(c){ return '<button type="button" data-ins="'+c[0]+'" title="'+c[0]+'">'+c[1]+'</button>'; }).join('');
     $('tStatus').textContent = '';
-    tKind = null; showKind('hold'); $('tplBox').hidden = false;
+    tKind = null; showKind('hold'); $('tplBox').hidden = false; bcMode(bc.mode);
   }
   function stash(){ tpl[tKind] = { subject:$('tSubject').value, heading:$('tHeading').value, body:$('tBody').value }; }
   function showKind(k){
@@ -690,6 +747,157 @@
         .then(function(m){ if (m.ok) $('tPreview').srcdoc = '<div style="font:13px Helvetica,Arial,sans-serif;color:#55585c;padding:12px 16px;background:#fff;border-bottom:1px solid #e4e1da"><b>Subject:</b> ' + esc(m.subject) + '</div>' + m.html; });
     }, 400);
   }
+
+
+  // ---- Custom emails (one-off emails to people Jennifer picks) ----
+  var BC_GROUPS = [['paid_confirmed','Paid & confirmed', function(r){ return !isLocal(r) && r.status==='paid'; }],
+                   ['paid_pending','Awaiting payment', function(r){ return !isLocal(r) && r.status==='pending'; }],
+                   ['paid_waitlist','Paid waitlist', function(r){ return !isLocal(r) && r.status==='waitlist'; }],
+                   ['local_confirmed','Local: confirmed', function(r){ return isLocal(r) && r.status==='paid'; }],
+                   ['local_offered','Local: spot offered', function(r){ return isLocal(r) && r.status==='pending'; }],
+                   ['local_waitlist','Local: waitlist', function(r){ return isLocal(r) && r.status==='waitlist'; }]];
+  var BC_CHIPS = [['{first_name}','First name'],['{last_name}','Last name'],['{code}','Their code'],['{agenda_link}','Their app link'],['{payment_link}','Payment page link']];
+  var bc = { list:[], cur:null, dirty:false, sending:false, q:'', mode:'auto' };
+  function bcEligible(){ return data.registrations.filter(function(r){ return r.status==='paid' || r.status==='pending' || r.status==='waitlist'; }); }
+  function bcGroupOf(r){ for (var i=0;i<BC_GROUPS.length;i++) if (BC_GROUPS[i][2](r)) return BC_GROUPS[i]; return null; }
+  function bcGets(r){ var c = bc.cur, g = bcGroupOf(r);
+    if (c.exclude_ids.indexOf(r.id) > -1) return false;
+    return c.include_ids.indexOf(r.id) > -1 || !!(g && c.groups.indexOf(g[0]) > -1); }
+  function bcRecipients(){ return bcEligible().filter(bcGets); }
+  function bcMode(m){
+    bc.mode = m; $('tAuto').hidden = m !== 'auto'; $('tCustom').hidden = m !== 'custom';
+    document.querySelectorAll('#tMode [data-tmode]').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.tmode === m); });
+    if (m === 'custom'){ bcShowList(); bcLoad(); }
+  }
+  $('tMode').addEventListener('click', function(e){ var b = e.target.closest('[data-tmode]'); if (!b || b.dataset.tmode === bc.mode) return;
+    if (bc.mode === 'custom' && (bc.dirty || bc.sending) && !confirm(bc.sending ? 'An email is still sending. Leave anyway? It will pause until you come back.' : 'Leave without saving this custom email?')) return;
+    if (bc.mode === 'auto' && $('tStatus').textContent === 'Unsaved changes' && !confirm('Leave without saving your template changes?')) return;
+    bc.dirty = false; bcMode(b.dataset.tmode); });
+  function bcLoad(){
+    $('bcList').innerHTML = '<p class="mail-help">Loading…</p>';
+    return api('team-broadcasts').then(function(d){ if (!d.ok) { $('bcList').innerHTML = '<p class="mail-help">Couldn’t load custom emails. Refresh and try again.</p>'; return; } bc.list = d.broadcasts; bcRenderList(); });
+  }
+  function bcShowList(){ $('bcListWrap').hidden = false; $('bcEdit').hidden = true; bc.cur = null; }
+  function bcRenderList(){
+    if (!bc.list.length){ $('bcList').innerHTML = '<p class="mail-help" style="padding:20px 0">No custom emails yet. Click “+ New email” to write one.</p>'; return; }
+    $('bcList').innerHTML = bc.list.map(function(b){
+      var pill = { draft:'Draft', sending:'Paused mid-send', sent:'Sent', cancelled:'Stopped' }[b.status];
+      var when = b.status==='sent' ? 'Sent ' + short(b.sent_at) : b.status==='draft' ? 'Last edited ' + short(b.updated_at) : 'Started ' + short(b.started_at || b.updated_at);
+      var counts = b.status==='draft' ? b.recipients + (b.recipients===1 ? ' person' : ' people') + ' selected'
+        : b.sent + ' of ' + b.recipients + ' sent' + (b.failed ? ' · <span style="color:var(--red)">' + b.failed + ' didn’t send</span>' : '');
+      var btns = b.status==='draft' ? '<button type="button" class="ghost" data-bc="open" data-id="' + b.id + '">Open</button><button type="button" class="ghost" data-bc="del" data-id="' + b.id + '">Delete</button>'
+        : b.status==='sending' ? '<button type="button" class="solid" data-bc="resume" data-id="' + b.id + '">Finish sending</button><button type="button" class="ghost" data-bc="stop" data-id="' + b.id + '">Stop</button>'
+        : '<button type="button" class="ghost" data-bc="open" data-id="' + b.id + '">View</button><button type="button" class="ghost" data-bc="copy" data-id="' + b.id + '">Use as new draft</button>';
+      return '<div class="bc-row"><div><b>' + esc(b.subject || '(no subject yet)') + '</b><span class="sub">' + when + ' · ' + counts + '</span>' +
+        (b.failures && b.failures.length ? '<span class="sub" style="color:var(--red)">' + b.failures.map(function(f){ return esc(f.name) + ': ' + esc(f.error || 'error'); }).join(' · ') + '</span>' : '') +
+        '</div><span class="bc-pill ' + b.status + '">' + pill + '</span><div class="lp-acts">' + btns + '</div></div>';
+    }).join('');
+  }
+  function bcOpen(b){
+    bc.cur = b ? JSON.parse(JSON.stringify(b)) : { id:'', subject:'', heading:'', body:'', groups:[], include_ids:[], exclude_ids:[], status:'draft' };
+    bc.dirty = false; bc.q = ''; $('bcQ').value = '';
+    $('bcSubject').value = bc.cur.subject; $('bcHeading').value = bc.cur.heading; $('bcBody').value = bc.cur.body;
+    var ro = bc.cur.status !== 'draft';
+    ['bcSubject','bcHeading','bcBody','bcQ'].forEach(function(id){ $(id).disabled = ro; });
+    $('bcActs').hidden = ro; $('bcDoneActs').hidden = !ro; $('bcStatus').textContent = '';
+    $('bcState').textContent = ro ? (bc.cur.status === 'sent' ? 'Sent ' + short(bc.cur.sent_at) + ' · ' + bc.cur.sent + ' delivered' + (bc.cur.failed ? ', ' + bc.cur.failed + ' didn’t send' : '') : 'Stopped part way · ' + bc.cur.sent + ' sent') : (bc.cur.id ? 'Draft' : 'New draft');
+    $('bcChips').innerHTML = ro ? '' : 'Insert: ' + BC_CHIPS.map(function(c){ return '<button type="button" data-bcins="' + c[0] + '">' + c[1] + '</button>'; }).join('');
+    $('bcListWrap').hidden = true; $('bcEdit').hidden = false; bcRenderPick(); bcPreview(); window.scrollTo(0, 0);
+  }
+  function bcRenderPick(){
+    var c = bc.cur, ro = c.status !== 'draft', elig = bcEligible();
+    $('bcGroups').innerHTML = BC_GROUPS.map(function(g){ var n = elig.filter(g[2]).length;
+      return '<label><input type="checkbox" data-bcg="' + g[0] + '"' + (c.groups.indexOf(g[0]) > -1 ? ' checked' : '') + (ro || !n ? ' disabled' : '') + '> ' + g[1] + ' <span>' + n + '</span></label>'; }).join('');
+    var q = bc.q.toLowerCase();
+    var people = elig.filter(function(r){ return !q || [r.first_name + ' ' + r.last_name, r.company || '', r.email, r.code].join(' ').toLowerCase().indexOf(q) > -1; })
+      .sort(function(a, b){ return (a.last_name + a.first_name).localeCompare(b.last_name + b.first_name); });
+    $('bcPeople').innerHTML = people.length ? people.map(function(r){ var g = bcGroupOf(r);
+      return '<label><input type="checkbox" data-bcp="' + r.id + '"' + (bcGets(r) ? ' checked' : '') + (ro ? ' disabled' : '') + '><span>' + esc(r.first_name + ' ' + r.last_name) + (r.company ? ' <small>· ' + esc(r.company) + '</small>' : '') + '</span><small>' + (g ? g[1] : '') + '</small></label>'; }).join('')
+      : '<p class="mail-help" style="padding:10px">No one matches.</p>';
+    var n = ro ? c.recipients : bcRecipients().length;
+    $('bcCount').textContent = n + (n === 1 ? ' person' : ' people');
+    if (!ro) $('bcSend').textContent = n ? 'Send now to ' + n : 'Send now';
+  }
+  var bcTimer = null;
+  function bcPreview(){
+    clearTimeout(bcTimer);
+    bcTimer = setTimeout(function(){
+      api('team-email-render', { kind:'custom', template:{ subject:$('bcSubject').value, heading:$('bcHeading').value, body:$('bcBody').value } })
+        .then(function(m){ if (m.ok) $('bcPreview').srcdoc = '<div style="font:13px Helvetica,Arial,sans-serif;color:#55585c;padding:12px 16px;background:#fff;border-bottom:1px solid #e4e1da"><b>Subject:</b> ' + esc(m.subject) + '</div>' + m.html; });
+    }, 400);
+  }
+  function bcMark(){ bc.dirty = true; $('bcStatus').textContent = 'Unsaved changes'; }
+  ['bcSubject','bcHeading','bcBody'].forEach(function(id){ $(id).addEventListener('input', function(){ bc.cur[id.replace('bc','').toLowerCase()] = $(id).value; bcMark(); bcPreview(); }); });
+  var bcLast = 'bcBody';
+  ['bcSubject','bcHeading','bcBody'].forEach(function(id){ $(id).addEventListener('focus', function(){ bcLast = id; }); });
+  $('bcChips').addEventListener('mousedown', function(e){ if (e.target.closest('button')) e.preventDefault(); });
+  $('bcChips').addEventListener('click', function(e){ var b = e.target.closest('[data-bcins]'); if (!b) return;
+    var el = $(bcLast), a = el.selectionStart || el.value.length, z = el.selectionEnd || a;
+    el.value = el.value.slice(0, a) + b.dataset.bcins + el.value.slice(z); el.focus(); el.selectionStart = el.selectionEnd = a + b.dataset.bcins.length;
+    el.dispatchEvent(new Event('input')); });
+  $('bcGroups').addEventListener('change', function(e){ var c = e.target.closest('[data-bcg]'); if (!c) return; var g = c.dataset.bcg, cur = bc.cur;
+    cur.groups = cur.groups.filter(function(x){ return x !== g; }); if (c.checked) cur.groups.push(g);
+    // a group switched on or off resets any one-off picks inside that group
+    var inG = bcEligible().filter(BC_GROUPS.filter(function(x){ return x[0] === g; })[0][2]).map(function(r){ return r.id; });
+    cur.include_ids = cur.include_ids.filter(function(id){ return inG.indexOf(id) < 0; }); cur.exclude_ids = cur.exclude_ids.filter(function(id){ return inG.indexOf(id) < 0; });
+    bcMark(); bcRenderPick(); });
+  $('bcPeople').addEventListener('change', function(e){ var c = e.target.closest('[data-bcp]'); if (!c) return; var id = c.dataset.bcp, cur = bc.cur;
+    var r = data.registrations.filter(function(x){ return x.id === id; })[0], g = bcGroupOf(r), viaGroup = !!(g && cur.groups.indexOf(g[0]) > -1);
+    cur.include_ids = cur.include_ids.filter(function(x){ return x !== id; }); cur.exclude_ids = cur.exclude_ids.filter(function(x){ return x !== id; });
+    if (c.checked && !viaGroup) cur.include_ids.push(id);
+    if (!c.checked && viaGroup) cur.exclude_ids.push(id);
+    bcMark(); bcRenderPick(); });
+  $('bcQ').addEventListener('input', function(){ bc.q = this.value.trim(); bcRenderPick(); });
+  function bcSaveNow(){
+    var c = bc.cur;
+    return api('team-broadcast-save', { broadcast:{ id:c.id, subject:$('bcSubject').value, heading:$('bcHeading').value, body:$('bcBody').value, groups:c.groups, include_ids:c.include_ids, exclude_ids:c.exclude_ids } })
+      .then(function(r){ if (r.ok){ c.id = r.id; bc.dirty = false; $('bcState').textContent = 'Draft'; } return r; });
+  }
+  $('bcSave').addEventListener('click', function(){ var btn = this; btn.disabled = true; $('bcStatus').textContent = 'Saving…';
+    bcSaveNow().then(function(r){ btn.disabled = false; $('bcStatus').textContent = r.ok ? 'Draft saved' : 'Didn’t save. Try again.'; }); });
+  $('bcTest').addEventListener('click', function(){
+    if (!$('bcSubject').value.trim() || !$('bcBody').value.trim()) return alert('Add a subject and a message first.');
+    var def = ((data.settings.guide || {}).host || {}).email || '';
+    var to = prompt('Send a test copy to which email? (It’s filled in with a sample guest named Sarah.)', def); if (!to) return;
+    $('bcStatus').textContent = 'Sending test…';
+    api('team-broadcast-test', { to:to.trim(), subject:$('bcSubject').value, heading:$('bcHeading').value, body:$('bcBody').value })
+      .then(function(r){ $('bcStatus').textContent = r.ok ? 'Test sent to ' + to.trim() : 'Test didn’t send: ' + (r.error === 'email' ? 'check the email address' : (r.error || 'try again')); });
+  });
+  $('bcSend').addEventListener('click', function(){
+    var n = bcRecipients().length;
+    if (!$('bcSubject').value.trim() || !$('bcBody').value.trim()) return alert('Add a subject and a message first.');
+    if (!n) return alert('Choose who gets it first.');
+    if (!confirm('Send “' + $('bcSubject').value.trim() + '” to ' + n + (n === 1 ? ' person' : ' people') + ' from Jennifer’s Gmail now? This can’t be undone.')) return;
+    $('bcStatus').textContent = 'Saving…';
+    bcSaveNow().then(function(r){ if (!r.ok){ $('bcStatus').textContent = 'Didn’t save. Try again.'; return; } bcRun(r.id); });
+  });
+  function bcRun(id){
+    bc.sending = true; $('bcSend').disabled = $('bcSave').disabled = $('bcTest').disabled = true;
+    var status = function(t){ if (bc.cur && bc.cur.id === id) $('bcStatus').textContent = t; else toast(t); };
+    status('Sending…');
+    (function step(){
+      api('team-broadcast-step', { id:id }).then(function(r){
+        if (!r.ok && !r.done){ bc.sending = false; status('Paused: couldn’t reach the server. Use “Finish sending” to pick up where it left off.'); bcAfter(); return; }
+        status('Sending… ' + (r.sent || 0) + ' of ' + (r.total || 0) + ' sent' + (r.failed ? ', ' + r.failed + ' didn’t send' : '') + '. Keep this page open.');
+        if (r.done){ bc.sending = false; toast(r.status === 'sent' ? 'Sent to ' + r.sent + (r.sent === 1 ? ' person' : ' people') + (r.failed ? ' (' + r.failed + ' didn’t send)' : '') : 'Stopped'); bcAfter(); return; }
+        step();
+      }).catch(function(){ bc.sending = false; status('Paused: connection dropped. Use “Finish sending” to pick up where it left off.'); bcAfter(); });
+    })();
+  }
+  function bcAfter(){ $('bcSend').disabled = $('bcSave').disabled = $('bcTest').disabled = false; bcShowList(); bcLoad(); load(); }
+  $('bcNew').addEventListener('click', function(){ bcOpen(null); });
+  $('bcBack').addEventListener('click', function(){ if (bc.dirty && !confirm('Leave without saving this custom email?')) return; bc.dirty = false; bcShowList(); bcLoad(); });
+  $('bcCopy').addEventListener('click', function(){ var c = bc.cur; bcOpen({ id:'', subject:c.subject, heading:c.heading, body:c.body, groups:c.groups.slice(), include_ids:c.include_ids.slice(), exclude_ids:c.exclude_ids.slice(), status:'draft' }); bcMark(); });
+  $('bcList').addEventListener('click', function(e){
+    var b = e.target.closest('[data-bc]'); if (!b) return;
+    var item = bc.list.filter(function(x){ return x.id === b.dataset.id; })[0]; if (!item) return;
+    var a = b.dataset.bc;
+    if (a === 'open') bcOpen(item);
+    if (a === 'copy'){ bcOpen({ id:'', subject:item.subject, heading:item.heading, body:item.body, groups:item.groups.slice(), include_ids:item.include_ids.slice(), exclude_ids:item.exclude_ids.slice(), status:'draft' }); bcMark(); }
+    if (a === 'del' && confirm('Delete this draft?')) api('team-broadcast-delete', { id:item.id }).then(function(){ toast('Draft deleted'); bcLoad(); });
+    if (a === 'stop' && confirm('Stop sending? People who already got it keep it; nobody else will.')) api('team-broadcast-cancel', { id:item.id }).then(function(){ toast('Stopped'); bcLoad(); });
+    if (a === 'resume' && confirm('Finish sending “' + item.subject + '” to the ' + (item.recipients - item.sent - item.failed) + ' people who haven’t had it yet?')){ b.disabled = true; toast('Sending…'); bcRun(item.id); }
+  });
 
   // ---- event agenda editor ----
   var SITE = 'https://www.schumacherliving.com';
@@ -780,10 +988,6 @@
     }
     if (agTab === 'settings'){
       h += '<div class="ag-grid">' + fld('App closes on (Arizona time, end of day)', '_closes', ag._closes, { type:'date' }) + '</div>' +
-        '<h3 style="font-size:18px;margin:22px 0 6px">Host app links</h3><p class="mail-help">Jennifer’s and Natalie’s personal sign-ins for the app (to post in Chat, see alerts, etc.). Anyone with a link can post as that person, so only send each one to its owner.</p>' +
-        ((data.settings.host_links || []).map(function(h){ var u = SITE + '/vision-board/2027-agenda?r=' + h.id;
-          return '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px"><b style="min-width:170px">' + esc(h.name) + ' <span style="color:#b8995a;font-size:12px">' + (h.role === 'host' ? 'HOST' : 'COHOST') + '</span></b>' +
-            '<input readonly value="' + esc(u) + '" style="flex:1;min-width:220px;font-size:13px;padding:8px;border:1px solid #cfcbc2"><button type="button" class="ghost" data-copy="' + esc(u) + '">Copy</button></div>'; }).join('')) +
         '<p class="mail-help">After this date guests see “The app has closed.” Their notes and the Crew list go away with it, which is why the Crew tab reminds them to save contacts first.</p>';
     }
     $('agBody').innerHTML = h;
@@ -815,7 +1019,7 @@
     var T = { schedule:['Agenda', 'What guests see in their personal app at schumacherliving.com/vision-board/2027-agenda. Use each line’s “Who sees this” boxes to choose paid guests, local guests or both. Changes show up for guests as soon as you save.', 'Save agenda'],
               host:['Jennifer’s card', '', 'Save card'],
               venue:['Venue & welcome', 'The welcome line at the top of the app and everything on the Venue tab.', 'Save venue & welcome'],
-              settings:['App settings', 'When the app closes, plus Jennifer’s and Natalie’s personal app links.', 'Save settings'] }[agTab];
+              settings:['App settings', 'When the guest app closes. Jennifer’s and Natalie’s personal app links are under Live pages → Previews & team.', 'Save settings'] }[agTab];
     $('agTitle').textContent = T[0]; $('agHelp').textContent = T[1]; $('agHelp').hidden = !T[1]; $('agSave').textContent = T[2]; $('agSendBar').hidden = agTab !== 'schedule';
     agDirty = false; $('agStatus').textContent = ''; agSendInfo(); agRender(); $('agBox').hidden = false;
   }
@@ -1255,6 +1459,8 @@
     if (AGV[view] && agDirty) return { agenda:'agenda', host:'Jennifer’s card', venue:'venue', settings:'app settings' }[view];
     if (view === 'seating' && st.dirty) return 'seating';
     if (view === 'templates' && $('tStatus').textContent === 'Unsaved changes') return 'email template';
+    if (view === 'templates' && bc.dirty) return 'custom email';
+    if (view === 'templates' && bc.sending) return 'custom email (it’s still sending — keep this page open until it finishes)';
     return '';
   }
   function go(v, force){

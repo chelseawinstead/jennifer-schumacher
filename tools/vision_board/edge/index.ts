@@ -510,7 +510,7 @@ Deno.serve(async (req) => {
       // Render an email: for a real guest (id) or a sample guest for the template preview
       if (action === "team-email-render" && req.method === "POST") {
         const kind = clean(b.kind, 20) as Kind;
-        if (!KINDS.includes(kind)) return json({ ok: false, error: "kind" }, 400);
+        if (!KINDS.includes(kind) && (kind as string) !== "custom" && (kind as string) !== "local_custom") return json({ ok: false, error: "kind" }, 400);
         const st = await loadSettings();
         if (b.hotel_code != null) st.hotel_code = clean(b.hotel_code, 100) || null;
         const g = b.id ? await loadGuest({ id: clean(b.id, 40) }) : {
@@ -628,6 +628,65 @@ Deno.serve(async (req) => {
       if (action === "team-feed-remove" && req.method === "POST") {
         const [row] = await sql`select vision_board.team_feed_remove(${clean(b.id, 40)}::uuid) as r`;
         return json(row.r);
+      }
+
+      // ---------- Custom emails: drafts, pick recipients, send now ----------
+      if (action === "team-broadcasts") {
+        const [row] = await sql`select vision_board.team_broadcasts() as r`;
+        return json({ ok: true, broadcasts: row.r });
+      }
+      if (action === "team-broadcast-save" && req.method === "POST") {
+        const d = b.broadcast || {};
+        const ids = (v: unknown) => (Array.isArray(v) ? v : []).map((x) => clean(x, 40)).filter((x) => UUID.test(x)).slice(0, 1000);
+        const payload = { id: UUID.test(clean(d.id, 40)) ? clean(d.id, 40) : "", subject: clean(d.subject, 200), heading: clean(d.heading, 200), body: String(d.body ?? "").slice(0, 8000),
+          groups: (Array.isArray(d.groups) ? d.groups : []).map((g: unknown) => clean(g, 30)), include_ids: ids(d.include_ids), exclude_ids: ids(d.exclude_ids) };
+        const [row] = await sql`select vision_board.team_broadcast_save(${sql.json(payload)}) as r`;
+        return json(row.r, row.r.ok ? 200 : 409);
+      }
+      if ((action === "team-broadcast-delete" || action === "team-broadcast-cancel") && req.method === "POST") {
+        const [row] = await sql`select vision_board.team_broadcast_cancel(${clean(b.id, 40)}::uuid, ${action === "team-broadcast-delete"}) as r`;
+        return json(row.r, row.r.ok ? 200 : 409);
+      }
+      // Sends the next few recipients; the team page calls this repeatedly and shows progress
+      if (action === "team-broadcast-step" && req.method === "POST") {
+        const id = clean(b.id, 40);
+        if (!UUID.test(id)) return json({ ok: false }, 404);
+        const [c] = await sql`select vision_board.broadcast_claim(${id}::uuid, 10) as r`;
+        const claim = c.r;
+        if (claim.ok && !claim.done) {
+          const st = await loadSettings();
+          for (const rid of claim.recipients as string[]) {
+            let result: { ok: boolean; error?: string } = { ok: false, error: "not_found" };
+            try {
+              const g = await loadGuest({ id: rid });
+              if (g) {
+                const kind = ((g as any).track === "local" ? "local_custom" : "custom") as Kind;
+                result = await sendViaGmail(st, g.email, renderEmail(kind, g, st, { subject: claim.subject, heading: claim.heading, body: claim.body }));
+                await logEmail(g.id, "custom", "team", result);
+              }
+            } catch (e) { result = { ok: false, error: String(e).slice(0, 160) }; }
+            await sql`update vision_board.broadcast_sends set ok = ${!!result.ok}, error = ${result.ok ? null : String(result.error || "").slice(0, 200)}, at = now()
+              where broadcast_id = ${id}::uuid and registration_id = ${rid}::uuid`;
+            await new Promise((r) => setTimeout(r, 250));
+          }
+        }
+        const [p] = await sql`select status, (select count(*) from vision_board.broadcast_sends s where s.broadcast_id = b.id and s.ok)::int as sent,
+          (select count(*) from vision_board.broadcast_sends s where s.broadcast_id = b.id and s.ok = false)::int as failed,
+          (select count(*) from vision_board.broadcast_recipient_ids(b.id))::int as total from vision_board.broadcasts b where id = ${id}::uuid`;
+        return json({ ok: !!claim.ok, done: !!claim.done || (p && p.status !== "sending"), ...(p || {}) });
+      }
+      // Send one copy to any address (Jennifer's own) to check it, filled in with a real or sample guest
+      if (action === "team-broadcast-test" && req.method === "POST") {
+        const to = clean(b.to, 160);
+        if (!EMAIL.test(to)) return json({ ok: false, error: "email" }, 400);
+        const st = await loadSettings();
+        const g = (UUID.test(clean(b.sample_id, 40)) && await loadGuest({ id: clean(b.sample_id, 40) })) || {
+          id: "00000000-0000-0000-0000-000000000000", first_name: "Sarah", last_name: "Mitchell", email: to, code: "VB-014", amount: 1150, hold_expires_at: null, status: "paid",
+        };
+        const kind = ((g as any).track === "local" ? "local_custom" : "custom") as Kind;
+        const m = renderEmail(kind, g, st, { subject: "[Test] " + clean(b.subject, 200), heading: clean(b.heading, 200), body: String(b.body ?? "").slice(0, 8000) });
+        const result = await sendViaGmail(st, to, m);
+        return json(result, result.ok ? 200 : 502);
       }
 
       if (action === "team-optin" && req.method === "POST") {
