@@ -102,6 +102,11 @@
   .mail-acts{ display:flex; flex-wrap:wrap; gap:8px; }
   .mail.tpl{ max-width:1100px; }
   .mail.ag{ max-width:900px; }
+  .chat-row{ border-top:1px solid var(--line); padding:12px 0; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 12px; }
+  .chat-meta{ font-size:14px; } .chat-meta span{ color:var(--warm); font-size:13px; }
+  .chat-body{ grid-column:1; font-size:15px; white-space:pre-wrap; overflow-wrap:anywhere; }
+  .chat-ph{ grid-column:1; display:flex; gap:6px; flex-wrap:wrap; } .chat-ph img{ width:90px; height:90px; object-fit:cover; display:block; }
+  .chat-rm{ grid-column:2; grid-row:1 / span 3; align-self:start; }
   .ag-send{ display:flex; flex-wrap:wrap; gap:12px 20px; justify-content:space-between; align-items:center; background:var(--stone); padding:14px 16px; margin-bottom:18px; }
   .ag-send b{ font-weight:500; }
   .ag-tabs{ margin-bottom:14px; }
@@ -182,6 +187,7 @@
     <span class="updated" id="updated"></span>
     <button class="ghost" id="refreshBtn">Refresh</button>
     <button class="ghost" id="agBtn">Event agenda</button>
+    <button class="ghost" id="chatBtn">Chat</button>
     <button class="ghost" id="tplBtn">Email templates</button>
     <button class="ghost" id="csvBtn">Download spreadsheet</button>
     <button class="ghost" id="logoutBtn">Sign out</button>
@@ -250,6 +256,13 @@
         <iframe id="tPreview" title="Email preview"></iframe>
       </div>
     </div>
+  </div>
+</div>
+<div class="mail-wrap" id="chatBox" hidden>
+  <div class="mail ag" role="dialog" aria-modal="true" aria-labelledby="chatTitle">
+    <div class="mail-head"><h2 id="chatTitle">Chat</h2><button type="button" class="ghost" id="chatClose">Close</button></div>
+    <p class="mail-help">Everything guests have posted in the app's Chat tab, newest first. Remove anything that shouldn't be there; it disappears for everyone right away. Guests can also delete their own posts.</p>
+    <div id="chatList"></div>
   </div>
 </div>
 <div class="mail-wrap" id="agBox" hidden>
@@ -465,7 +478,7 @@
   var SITE = 'https://www.schumacherliving.com';
   var ag = null, agTab = 'schedule', agDirty = false;
   function agTabs(){
-    var T = [['schedule','Schedule'],['host','Jennifer\u2019s card'],['venue','Venue & welcome'],['notes','Notes from Jennifer'],['settings','App settings']];
+    var T = [['schedule','Schedule'],['host','Jennifer\u2019s card'],['venue','Venue & welcome'],['settings','App settings']];
     $('agTabs').innerHTML = T.map(function(t){ return '<button type="button" data-agt="'+t[0]+'" aria-pressed="'+(agTab===t[0])+'">'+t[1]+'</button>'; }).join('');
   }
   function fld(label, path, val, opts){
@@ -578,6 +591,33 @@
   }
   function closeAgenda(){ if (agDirty && !confirm('Close without saving your agenda changes?')) return; $('agBox').hidden = true; }
   $('agBtn').addEventListener('click', openAgenda);
+
+  // ---- Chat moderation ----
+  function chatTxt(s){ return esc(s || ''); }
+  function loadChat(){
+    $('chatList').innerHTML = '<p class="mail-help">Loading…</p>';
+    api('team-feed', {}).then(function(d){
+      if (!d.ok){ $('chatList').innerHTML = '<p class="mail-help">Couldn’t load Chat. Try again.</p>'; return; }
+      var posts = d.posts;
+      if (!posts.length){ $('chatList').innerHTML = '<p class="mail-help">No posts yet.</p>'; return; }
+      $('chatList').innerHTML = posts.map(function(p){
+        var when = new Date(p.created_at).toLocaleString('en-US', { timeZone:'America/Phoenix', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+        return '<div class="chat-row"><div class="chat-meta"><b>' + esc(p.author) + '</b> <span>' + (p.test ? 'Test account (only test accounts see this)' : esc(p.code)) + ' · ' + when + (p.parent_id ? ' · reply to “' + esc(p.reply_to || '') + '”' : '') + '</span></div>' +
+          (p.body ? '<div class="chat-body">' + chatTxt(p.body) + '</div>' : '') +
+          (p.photos && p.photos.length ? '<div class="chat-ph">' + p.photos.map(function(u){ return '<a href="' + esc(u) + '" target="_blank" rel="noopener"><img src="' + esc(u) + '" alt=""></a>'; }).join('') + '</div>' : '') +
+          '<button type="button" class="ghost chat-rm" data-rm="' + esc(p.id) + '">Remove</button></div>';
+      }).join('');
+    });
+  }
+  $('chatBtn').addEventListener('click', function(){ $('chatBox').hidden = false; loadChat(); });
+  $('chatClose').addEventListener('click', function(){ $('chatBox').hidden = true; });
+  $('chatBox').addEventListener('click', function(e){
+    if (e.target.id === 'chatBox'){ $('chatBox').hidden = true; return; }
+    var b = e.target.closest('[data-rm]'); if (!b) return;
+    if (!confirm('Remove this post for everyone?')) return;
+    b.disabled = true;
+    api('team-feed-remove', { id: b.dataset.rm }).then(function(r){ if (r.ok){ toast('Removed'); loadChat(); } else { b.disabled = false; toast('Couldn’t remove'); } });
+  });
   $('agClose').addEventListener('click', closeAgenda);
   $('agBox').addEventListener('click', function(e){ if (e.target.id === 'agBox') closeAgenda(); });
   $('agTabs').addEventListener('click', function(e){ var b = e.target.closest('[data-agt]'); if (b){ agTab = b.dataset.agt; agRender(); } });
@@ -679,7 +719,7 @@
   $('tplBox').addEventListener('click', function(e){ if (e.target.id==='tplBox') closeTpl(); });
   document.addEventListener('keydown', function(e){
     if (e.key !== 'Escape') return;
-    if (!$('mailBox').hidden) closeMail(); else if (!$('agBox').hidden) closeAgenda(); else if (!$('tplBox').hidden) closeTpl();
+    if (!$('mailBox').hidden) closeMail(); else if (!$('chatBox').hidden) $('chatBox').hidden = true; else if (!$('agBox').hidden) closeAgenda(); else if (!$('tplBox').hidden) closeTpl();
   });
 
   // ---- actions ----

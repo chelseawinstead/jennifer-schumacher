@@ -332,6 +332,51 @@ Deno.serve(async (req) => {
       return json(g.g);
     }
 
+    // ---------- Chat: posts, photos, threads, reactions, @tags ----------
+    if (req.method === "POST" && action.startsWith("feed")) {
+      const b = await req.json().catch(() => ({}));
+      const id = clean(b.r, 40);
+      if (!UUID.test(id)) return json({ ok: false }, 404);
+      const pid = UUID.test(clean(b.post, 40)) ? clean(b.post, 40) : null;
+      let row: any;
+      if (action === "feed") {
+        const before = b.before && !isNaN(Date.parse(b.before)) ? new Date(b.before).toISOString() : null;
+        [row] = await sql`select vision_board.feed_list(${id}::uuid, ${before}::timestamptz) as r`;
+      } else if (action === "feed-thread") {
+        if (!pid) return json({ ok: false }, 404);
+        [row] = await sql`select vision_board.feed_thread(${id}::uuid, ${pid}::uuid) as r`;
+      } else if (action === "feed-post") {
+        const v = await sql`select (vision_board._feed_viewer(${id}::uuid)).id as vid`;
+        if (!v[0].vid) return json({ ok: false }, 403);
+        const photos: string[] = [];
+        for (const d of (Array.isArray(b.photos) ? b.photos : []).slice(0, 4)) {
+          const m = /^data:image\/jpeg;base64,([A-Za-z0-9+/=]+)$/.exec(String(d || ""));
+          if (!m) return json({ ok: false, error: "photo" }, 400);
+          const bytes = Uint8Array.from(atob(m[1]), (c) => c.charCodeAt(0));
+          if (bytes.length > 1_900_000) return json({ ok: false, error: "photo_too_big" }, 400);
+          const path = `chat/${crypto.randomUUID()}.jpg`;
+          const up = await fetch(`${Deno.env.get("SUPABASE_URL")}/storage/v1/object/vision-board-photos/${path}`, {
+            method: "POST", headers: { ...storageAuth(), "Content-Type": "image/jpeg", "cache-control": "31536000" }, body: bytes,
+          });
+          if (!up.ok) { console.error("chat photo upload", up.status, await up.text()); return json({ ok: false, error: "upload" }, 502); }
+          photos.push(`${Deno.env.get("SUPABASE_URL")}/storage/v1/object/public/vision-board-photos/${path}`);
+        }
+        [row] = await sql`select vision_board.feed_create(${id}::uuid, ${pid}::uuid, ${String(b.body ?? "").slice(0, 2000)}, ${photos}::text[]) as r`;
+      } else if (action === "feed-react") {
+        if (!pid) return json({ ok: false }, 404);
+        [row] = await sql`select vision_board.feed_react(${id}::uuid, ${pid}::uuid, ${clean(b.emoji, 16)}) as r`;
+      } else if (action === "feed-delete") {
+        if (!pid) return json({ ok: false }, 404);
+        [row] = await sql`select vision_board.feed_delete(${id}::uuid, ${pid}::uuid) as r`;
+      } else if (action === "feed-poll") {
+        const since = b.since && !isNaN(Date.parse(b.since)) ? new Date(b.since).toISOString() : null;
+        [row] = await sql`select vision_board.feed_poll(${id}::uuid, ${since}::timestamptz) as r`;
+      } else if (action === "feed-seen") {
+        [row] = await sql`select vision_board.feed_seen(${id}::uuid) as r`;
+      } else return json({ ok: false, error: "not_found" }, 404);
+      return json(row.r, row.r.ok ? 200 : (row.r.error === "slow" || row.r.error === "empty" || row.r.error === "emoji" ? 400 : 403));
+    }
+
     // A guest's private note about someone they met (only the author ever sees it)
     if (req.method === "POST" && action === "note") {
       const b = await req.json().catch(() => ({}));
@@ -512,6 +557,15 @@ Deno.serve(async (req) => {
         });
         if (!up.ok) { console.error("speaker upload", up.status, await up.text()); return json({ ok: false, error: "upload" }, 502); }
         return json({ ok: true, url: `${Deno.env.get("SUPABASE_URL")}/storage/v1/object/public/vision-board-photos/${path}` });
+      }
+
+      if (action === "team-feed") {
+        const [row] = await sql`select vision_board.team_feed() as r`;
+        return json({ ok: true, posts: row.r });
+      }
+      if (action === "team-feed-remove" && req.method === "POST") {
+        const [row] = await sql`select vision_board.team_feed_remove(${clean(b.id, 40)}::uuid) as r`;
+        return json(row.r);
       }
 
       if (action === "team-optin" && req.method === "POST") {
