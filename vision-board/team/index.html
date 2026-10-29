@@ -230,7 +230,13 @@
   .mail-wrap.page .st-side{ top:120px; }
   .track-row{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; margin:0 0 16px; }
   .track-row .track-switch{ margin:0; }
-  .lp-sec{ margin:0 0 34px; }
+  .lp-sec{ margin:0 0 28px; border:1px solid var(--line); border-left:6px solid var(--c); background:var(--bg); padding:18px 22px 6px; }
+  .lp-sec .lp-row{ border-top-color:var(--rule); }
+  .lp-sec h3::before{ content:""; display:inline-block; width:10px; height:10px; border-radius:50%; background:var(--c); margin-right:10px; vertical-align:middle; position:relative; top:-2px; }
+  .lp-sec.signup{ --c:#2c5aa0; --bg:#f1f5fb; --rule:#d9e3f2; }
+  .lp-sec.preview{ --c:#b8995a; --bg:#fbf7ee; --rule:#ece0c6; }
+  .lp-sec.personal{ --c:#2f6b4f; --bg:#f1f7f3; --rule:#d5e6dc; }
+  @media (max-width:760px){ .lp-sec{ padding:14px 14px 4px; } }
   .lp-sec h3{ font-family:'Cormorant Garamond',serif; font-weight:400; font-size:24px; margin:0 0 4px; }
   .lp-row{ display:grid; grid-template-columns:minmax(180px,260px) minmax(0,1fr) auto; gap:6px 16px; align-items:center; padding:12px 0; border-top:1px solid var(--line); }
   .lp-row b{ font-weight:500; } .lp-row .sub{ display:block; }
@@ -238,7 +244,7 @@
   .lp-acts{ display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
   .lp-acts button, .lp-acts a{ background:#fff; border:1px solid #cfcbc2; padding:6px 10px; font-size:13px; color:var(--ink); text-decoration:none; }
   .lp-acts button:hover, .lp-acts a:hover{ border-color:var(--navy); color:var(--navy); }
-  .lp-kind{ display:inline-block; font-size:12px; padding:2px 9px; border-radius:20px; background:var(--stone); color:var(--muted); margin-top:4px; }
+  .lp-kind{ display:inline-block; font-size:12px; padding:2px 9px; border-radius:20px; background:#fff; border:1px solid var(--rule, var(--line)); color:var(--muted); margin:4px 0 0 6px; }
   .lp-tools{ display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between; margin:10px 0 4px; }
   @media (max-width:760px){ .lp-row{ grid-template-columns:1fr; } .lp-acts{ justify-content:flex-start; } .mail-wrap.page > .mail{ padding:20px 16px 60px; } }
   .toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 20px; font-size:14px; opacity:0; transition:opacity .2s; pointer-events:none; z-index:30; }
@@ -1254,11 +1260,11 @@
     var s = data.settings, regs = data.registrations;
     var paidLeft = Math.max(s.capacity - regs.filter(function(r){ return !isLocal(r) && (r.status==='paid'||r.status==='pending'); }).length, 0);
     var locLeft = Math.max(s.local_capacity - regs.filter(function(r){ return isLocal(r) && (r.status==='paid'||r.status==='pending'); }).length, 0);
-    var h = '<div class="lp-sec"><h3>Sign-up pages</h3><p class="mail-help">Share these to invite people.</p>' +
+    var h = '<div class="lp-sec signup"><h3>Sign-up pages</h3><p class="mail-help">Share these to invite people.</p>' +
       lpRow('Vision Board Crew 2027', 'Paid registration · ' + (paidLeft ? paidLeft + ' of ' + s.capacity + ' seats open' : 'Full, new sign-ups join the waitlist'), SITE + '/vision-board') +
       lpRow('Vision Board Party (locals)', 'Free, Saturday 2–6pm · ' + (locLeft ? locLeft + ' of ' + s.local_capacity + ' spots open' : 'Full, new sign-ups join the waitlist'), SITE + '/vision-board/local') +
       '</div>';
-    h += '<div class="lp-sec"><h3>Previews &amp; team</h3><p class="mail-help">Preview links show the app exactly as guests see it, without counting as a guest.</p>' +
+    h += '<div class="lp-sec preview"><h3>Previews &amp; team</h3><p class="mail-help">Preview links show the app exactly as guests see it, without counting as a guest.</p>' +
       (s.preview_id ? lpRow('Guest app preview', 'What paid guests see', SITE + '/vision-board/2027-agenda?r=' + s.preview_id + '&preview=1') : '') +
       (s.local_preview_id ? lpRow('Local app preview', 'What local guests see', SITE + '/vision-board/2027-agenda?r=' + s.local_preview_id + '&preview=1') : '') +
       lpRow('Team page', 'This page · needs the team password', SITE + '/vision-board/team', { noOpen:true }) +
@@ -1271,7 +1277,7 @@
       .filter(function(r){ return !q || [r.code, r.first_name + ' ' + r.last_name, r.company || '', r.email, r.phone].join(' ').toLowerCase().indexOf(q) > -1; })
       .sort(function(a, b){ return (a.last_name + a.first_name).localeCompare(b.last_name + b.first_name); });
     var nP = withLink.filter(function(r){ return !isLocal(r); }).length, nL = withLink.length - nP;
-    h += '<div class="lp-sec"><h3>Personal guest links</h3><p class="mail-help">Each confirmed guest’s private app link, plus payment or accept-my-spot links for anyone who still has to finish. Resend opens the email so you can check it before it goes out from Jennifer’s Gmail. These links are private to each guest, so there’s no Open button.</p>' +
+    h += '<div class="lp-sec personal"><h3>Personal guest links</h3><p class="mail-help">Each confirmed guest’s private app link, plus payment or accept-my-spot links for anyone who still has to finish. Resend opens the email so you can check it before it goes out from Jennifer’s Gmail. These links are private to each guest, so there’s no Open button.</p>' +
       '<div class="lp-tools"><div class="tabs" id="lpTrack">' +
         [['all','Everyone', withLink.length], ['paid','Paid guests', nP], ['local','Local guests', nL]].map(function(t){ return '<button type="button" data-lptrack="' + t[0] + '" aria-pressed="' + (lp.track === t[0]) + '">' + t[1] + '<span class="n">' + t[2] + '</span></button>'; }).join('') +
       '</div><input class="search" id="lpQ" type="search" placeholder="Search name, company, code, email or phone" value="' + esc(lp.q) + '"></div>' +
