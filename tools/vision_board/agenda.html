@@ -199,6 +199,7 @@
   .post-del{ background:none; border:0; color:var(--warm); font-size:13px; padding:6px; }
   .post-body{ margin-top:10px; font-size:15px; line-height:1.5; white-space:pre-wrap; overflow-wrap:anywhere; }
   .post-body a{ color:var(--navy); }
+  .host-tag{ display:inline-block; margin-left:6px; padding:1px 7px; border-radius:999px; background:var(--gold,#b8995a); color:#fff; font-size:10px; letter-spacing:.08em; text-transform:uppercase; vertical-align:2px; font-weight:600; }
   .mention{ background:none; border:0; padding:0; font:inherit; color:var(--navy); font-weight:600; cursor:pointer; }
   .photos{ display:grid; gap:4px; margin-top:10px; }
   .photos.n1{ grid-template-columns:1fr; }
@@ -791,7 +792,7 @@
         (p.reply_count ? p.reply_count + (p.reply_count === 1 ? ' reply' : ' replies') : 'Reply') + '</button>';
     }
     return '<article class="post" data-post="' + esc(p.id) + '"><div class="post-head"><span class="av">' + avatar({ photo_url:a.photo, name:a.name }) + '</span>' +
-      '<div><b>' + esc(a.name) + '</b><span class="meta">' + esc([a.company, ago(p.created_at)].filter(Boolean).join(' · ')) + '</span></div>' +
+      '<div><b>' + esc(a.name) + (a.host ? '<span class="host-tag">Host</span>' : '') + '</b><span class="meta">' + esc([a.company, ago(p.created_at)].filter(Boolean).join(' · ')) + '</span></div>' +
       (p.mine ? '<button type="button" class="post-del" data-del="' + esc(p.id) + '">Delete</button>' : '<span></span>') + '</div>' +
       (p.body ? '<div class="post-body">' + chatText(p.body) + '</div>' : '') + photosHtml(p.photos) +
       '<div class="rx-row">' + rxHtml(p) + replies + '</div></article>';
@@ -799,7 +800,7 @@
   function replyHtml(p){
     var a = p.author || {};
     return '<div class="reply' + (p.mine ? ' mine' : '') + '" data-post="' + esc(p.id) + '"><span class="av">' + avatar({ photo_url:a.photo, name:a.name }) + '</span><div>' +
-      '<div class="bubble">' + (p.mine ? '' : '<div class="who">' + esc(a.name) + '</div>') + (p.body ? '<div class="post-body">' + chatText(p.body) + '</div>' : '') + photosHtml(p.photos) + '</div>' +
+      '<div class="bubble">' + (p.mine ? '' : '<div class="who">' + esc(a.name) + (a.host ? '<span class="host-tag">Host</span>' : '') + '</div>') + (p.body ? '<div class="post-body">' + chatText(p.body) + '</div>' : '') + photosHtml(p.photos) + '</div>' +
       '<div class="sub-row"><span>' + ago(p.created_at) + '</span>' + rxHtml(p) + (p.mine ? '<button type="button" class="post-del" data-del="' + esc(p.id) + '">Delete</button>' : '') + '</div></div></div>';
   }
   function renderFeed(){
@@ -867,7 +868,7 @@
     }
     function showPop(){
       var q = query(); if (q === null){ pop.hidden = true; return; }
-      var crew = (data && data.crew || []).filter(function(p){ return !p.me; });
+      var crew = ((data && data.hosts) || []).concat((data && data.crew || []).filter(function(p){ return !p.me; }));
       popItems = crew.filter(function(p){ return !q || p.name.toLowerCase().split(/\s+/).some(function(w){ return w.indexOf(q) === 0; }) || p.name.toLowerCase().indexOf(q) === 0; }).slice(0, 6);
       if (!popItems.length){ pop.hidden = true; return; }
       popSel = 0;
@@ -974,7 +975,8 @@
     if ((t = e.target.closest('[data-thread]'))) return openThread(t.dataset.thread, true);
     if ((t = e.target.closest('[data-light]'))){ $('lightImg').src = t.dataset.light; $('lightbox').hidden = false; return; }
     if ((t = e.target.closest('[data-person]'))){
-      closeThread(); $('crewSearch').value = ''; $('crewState').value = ''; openId = t.dataset.person; showTab('crew'); renderCrew();
+      closeThread();
+      if (((data && data.hosts) || []).some(function(h){ return h.id === t.dataset.person; })){ openHost(); return; } $('crewSearch').value = ''; $('crewState').value = ''; openId = t.dataset.person; showTab('crew'); renderCrew();
       var el = document.querySelector('.person[data-id="' + t.dataset.person + '"]'); if (el) el.scrollIntoView({ block:'center' });
       else toast('They’re not in the Crew list');
       return;
