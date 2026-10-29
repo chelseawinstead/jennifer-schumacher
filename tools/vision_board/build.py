@@ -9,7 +9,7 @@ Re-run it after any refresh.py so the nav and footer match the latest
 Claude Design export. vision-board/ is not in refresh.py's GENERATED list,
 so a refresh never deletes these pages.
 """
-import os
+import os, shutil
 import re
 import sys
 
@@ -77,6 +77,8 @@ def main():
     with open(os.path.join(out_dir, "local", "index.html"), "w", encoding="utf-8") as f:
         f.write(loc_head + nav + loc + "\n" + footer)
 
+    # home-screen icon settings for the guest app (no start_url: each saved icon opens that guest's own link)
+    shutil.copyfile(os.path.join(HERE, "vbc-2027.webmanifest"), os.path.join(out_dir, "vbc-2027.webmanifest"))
     # attendee agenda app (opened with each paid guest's personal link)
     agenda = open(os.path.join(HERE, "agenda.html"), encoding="utf-8").read()
     os.makedirs(os.path.join(out_dir, "2027-agenda"), exist_ok=True)
