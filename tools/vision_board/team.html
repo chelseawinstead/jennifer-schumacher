@@ -259,9 +259,23 @@
   .td-total{ display:grid; grid-template-columns:minmax(0,1fr) 130px var(--lastw, 0px); gap:14px; align-items:center; margin-top:22px; padding:16px 14px; background:#d9cdb5; font-weight:700; font-size:16px; }
   .td-total .lbl{ letter-spacing:.06em; text-transform:uppercase; }
   .td-total .chg{ grid-column:1 / -1; text-align:right; font-size:13px; font-weight:500; color:var(--ink); margin-top:-6px; }
+  .td-rev{ margin:26px 0 0 auto; max-width:620px; background:#fff; border:1px solid var(--line); padding:18px 20px; }
+  .td-rev h3{ font-size:14px; letter-spacing:.1em; text-transform:uppercase; font-weight:600; margin:0 0 10px; font-family:inherit; color:var(--navy); }
+  .td-revl{ display:flex; justify-content:space-between; align-items:center; gap:14px; padding:8px 0; border-bottom:1px solid var(--line); font-size:14px; }
+  .td-revl small{ color:var(--warm); font-size:12px; }
+  .td-revl.minus .td-money{ color:var(--red); }
+  .td-revl.sub{ background:#f7f5f0; margin:0 -20px; padding:9px 20px; }
+  .td-revin{ width:130px; text-align:right; font:inherit; font-size:14px; padding:6px 8px; border:1px solid #e6dcc0; background:#fbf6e6; font-variant-numeric:tabular-nums; }
+  .td-revin.wide{ width:200px; text-align:left; } .td-revin:focus{ outline:0; border-color:var(--navy); background:#fff; }
+  .td-profit{ font-weight:700; font-size:17px; border:0; margin:6px -20px 0; padding:14px 20px; }
+  .td-profit.pos{ background:var(--paid-bg); color:var(--paid); } .td-profit.neg{ background:#f7e3e1; color:var(--red); }
+  .td-revl.note{ border:0; padding-top:12px; }
   .td-empty-cat{ padding:12px 14px; border:1px solid var(--line); border-top:0; font-size:13px; color:var(--warm); background:#fff; }
   .td-tools{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
   .td-filters{ display:flex; flex-wrap:wrap; gap:6px; }
+  #tdLastWrap[hidden]{ display:none; }
+  #tdCatF{ font:inherit; font-size:13px; padding:7px 10px; border:1px solid var(--navy); color:var(--navy); background:#fff; margin-right:6px; max-width:240px; }
+  #tdCatF.on{ background:var(--navy); color:#fff; }
   .td-filters button{ background:#fff; border:1px solid var(--line); padding:7px 12px; font-size:13px; color:var(--muted); }
   .td-filters button span{ color:var(--warm); margin-left:4px; }
   .td-filters button[aria-pressed="true"]{ border-color:var(--navy); color:var(--navy); font-weight:500; }
@@ -598,7 +612,7 @@
     <p class="mail-help">The event checklist and budget in one place. Click any item to set its status and due date, add notes and links, and upload receipts or photos. Totals add up by category and at the bottom. Only the team can see this; uploaded files are private.</p>
     <div class="td-years" id="tdYears"></div>
     <form class="td-add" id="tdAddForm"><select id="tdNewCat" aria-label="Category"></select><input id="tdNew" maxlength="300" placeholder="Add an item… (e.g. Order gift bags)" autocomplete="off"><input id="tdNewCost" inputmode="decimal" placeholder="Cost" aria-label="Cost"><button type="submit" class="solid">Add</button></form>
-    <div class="td-tools"><div class="td-filters" id="tdFilters"></div><div class="td-tools-r"><input class="search" id="tdQ" type="search" placeholder="Search items, notes, people"><button type="button" class="ghost" id="tdAddCat">+ Category</button><button type="button" class="ghost" id="tdCsv">Export .csv</button></div></div>
+    <div class="td-tools"><div class="td-filters"><select id="tdCatF" aria-label="Show category"></select><span id="tdFilters" class="td-filters"></span></div><div class="td-tools-r"><input class="search" id="tdQ" type="search" placeholder="Search items, notes, people"><button type="button" class="ghost" id="tdAddCat">+ Category</button><button type="button" class="ghost" id="tdCsv">Export .csv</button></div></div>
     <div id="tdList"><p class="mail-help">Loading…</p></div>
   </div>
 </div>
@@ -1682,14 +1696,36 @@
 
 
   // ---- To Do: event tasks (status, due date, who, notes, links, receipts & images) ----
-  var td = { list:null, cats:[], year:2027, filter:'all', q:'', open:null, timers:{} };
+  var td = { list:null, cats:[], rev:{}, catf:'', year:2027, filter:'all', q:'', open:null, timers:{} };
   var TD_ST = { todo:'To do', doing:'In progress', waiting:'Waiting on someone', done:'Done' };
   function tdToday(){ return new Date().toLocaleDateString('en-CA', { timeZone:'America/Phoenix' }); }
   function tdDate(d){ if (!d) return ''; var x = new Date(d + 'T12:00:00Z'); return x.toLocaleDateString('en-US', { timeZone:'UTC', weekday:'short', month:'short', day:'numeric' }); }
   function tdMoney(n){ return n == null || n === '' ? '' : '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
   function tdNum(v){ var x = String(v == null ? '' : v).replace(/[^0-9.\-]/g, ''); return x === '' || isNaN(+x) ? null : Math.round(+x * 100) / 100; }
   function tdSumOf(list, k){ return list.reduce(function(a, t){ return a + (t[k] == null ? 0 : Number(t[k])); }, 0); }
-  function tdLoad(){ return api('team-todo', { op:'list' }).then(function(d){ if (!d.ok){ $('tdList').innerHTML = '<p class="mail-help">Couldn’t load the to dos. Refresh and try again.</p>'; return; } td.list = d.todos; td.cats = d.categories || []; tdRender(); }); }
+  function tdLoad(){ return api('team-todo', { op:'list' }).then(function(d){ if (!d.ok){ $('tdList').innerHTML = '<p class="mail-help">Couldn’t load the to dos. Refresh and try again.</p>'; return; } td.list = d.todos; td.cats = d.categories || []; td.rev = d.revenue || {}; tdRender(); }); }
+  function tdRevCalc(y){
+    var r = td.rev[String(y)] || {}, n = Number(r.attendees) || 0, price = Number(r.price) || 0, ch = r.charity == null ? 150 : Number(r.charity) || 0;
+    var exp = tdSumOf((td.list || []).filter(function(t){ return t.year === y; }), 'cost');
+    var gross = n * price, charity = n * ch, net = gross - charity;
+    return { r:r, n:n, price:price, ch:ch, gross:gross, charity:charity, net:net, exp:exp, profit:net - exp };
+  }
+  function tdRevHtml(y){
+    var c = tdRevCalc(y), inp = function(k, v, money){ return '<input class="td-revin" data-tdrev="' + k + '" value="' + esc(money ? tdMoney(v) : (v == null ? '' : v)) + '" inputmode="decimal">'; };
+    var line = function(lbl, val, cls){ return '<div class="td-revl' + (cls ? ' ' + cls : '') + '"><span>' + lbl + '</span><span class="td-money">' + val + '</span></div>'; };
+    var pos = c.profit >= 0;
+    return '<div class="td-rev"><h3>Ticket revenue &amp; profit · ' + y + '</h3>' +
+      line('Attendees', inp('attendees', c.n)) +
+      line('Ticket price per attendee', inp('price', c.price, true)) +
+      line('Gross ticket sales <small>(' + c.n + ' × ' + tdMoney(c.price) + ')</small>', tdMoney(c.gross)) +
+      line('Charity donation per ticket', inp('charity', c.ch, true)) +
+      line('Total to charity <small>(' + c.n + ' × ' + tdMoney(c.ch) + ')</small>', '−' + tdMoney(c.charity), 'minus') +
+      line('<b>Ticket revenue after charity</b>', '<b>' + tdMoney(c.net) + '</b>', 'sub') +
+      line('Total expenses <small>(from the list above)</small>', '−' + tdMoney(c.exp), 'minus') +
+      '<div class="td-revl td-profit ' + (pos ? 'pos' : 'neg') + '"><span>' + (pos ? 'Profit after charity &amp; expenses' : 'Loss after charity &amp; expenses') + '</span><span class="td-money">' + (pos ? '' : '−') + tdMoney(Math.abs(c.profit)) + '</span></div>' +
+      '<div class="td-revl note"><span>Emotional Intelligence Test <small>(note only, not counted above)</small></span><span>' + '<input class="td-revin wide" data-tdrev="ei_note" value="' + esc(c.r.ei_note || '') + '" placeholder="e.g. $125 per person">' + '</span></div>' +
+      '</div>';
+  }
   function tdYearList(){ return (td.list || []).filter(function(t){ return t.year === td.year; }); }
   function tdCatList(){ var c = td.cats.slice(); tdYearList().forEach(function(t){ if (c.indexOf(t.category) < 0) c.push(t.category); }); return c; }
   function tdMatch(t){
@@ -1701,13 +1737,18 @@
   function tdSort(a, b){ return (a.sort - b.sort) || a.created_at.localeCompare(b.created_at); }
   function tdRender(){
     if (!td.list) return;
-    var showLast = td.year === 2027, box = $('todoBox');
+    var showLast = false, box = $('todoBox');
     box.style.setProperty('--lastw', showLast ? '110px' : '0px');
     var yl = tdYearList(), cats = tdCatList();
     $('tdYears').innerHTML = [2027, 2026].map(function(y){ var n = td.list.filter(function(t){ return t.year === y; });
       return '<button type="button" data-tdyear="' + y + '" aria-pressed="' + (td.year === y) + '">' + y + '<span>' + tdMoney(tdSumOf(n, 'cost')) + '</span></button>'; }).join('');
     var sel = $('tdNewCat').value; $('tdNewCat').innerHTML = cats.map(function(c){ return '<option>' + esc(c) + '</option>'; }).join('') + '<option value="__new">+ New category…</option>';
     if (sel && cats.indexOf(sel) > -1) $('tdNewCat').value = sel;
+    if (td.catf && cats.indexOf(td.catf) < 0) td.catf = '';
+    $('tdCatF').innerHTML = '<option value="">All categories</option>' + cats.map(function(c){ var n = yl.filter(function(t){ return t.category === c; });
+      return '<option value="' + esc(c) + '"' + (c === td.catf ? ' selected' : '') + '>' + esc(c) + ' · ' + tdMoney(tdSumOf(n, 'cost')) + '</option>'; }).join('');
+    $('tdCatF').classList.toggle('on', !!td.catf);
+    if (td.catf) yl = yl.filter(function(t){ return t.category === td.catf; });
     var c = { open:0, all:yl.length, todo:0, doing:0, waiting:0, done:0 };
     yl.forEach(function(t){ c[t.status]++; if (t.status !== 'done') c.open++; });
     $('tdFilters').innerHTML = [['all','Everything'],['open','All open'],['todo','To do'],['doing','In progress'],['waiting','Waiting'],['done','Done']].map(function(f){
@@ -1728,6 +1769,7 @@
     }
     var html = '<div class="td-colhead"><span>Status</span><span>Item</span><span>Due</span><span>Who</span><span class="td-money">' + td.year + ' cost</span>' + (showLast ? '<span class="td-money">2026 cost</span>' : '<span></span>') + '</div>';
     html += cats.map(function(cat, ci){
+      if (td.catf && cat !== td.catf) return '';
       var all = yl.filter(function(t){ return t.category === cat; }).sort(tdSort), shown = all.filter(tdMatch);
       if (filtering && !shown.length) return '';
       return '<div class="td-cat"><div class="td-cathead"><h3>' + esc(cat) + '<small>' + all.length + ' item' + (all.length === 1 ? '' : 's') + '</small></h3><div class="td-catbtns">' +
@@ -1738,13 +1780,20 @@
         '<div class="td-sum"><span class="lbl">' + esc(cat) + ' subtotal</span><span class="td-money">' + tdMoney(tdSumOf(all, 'cost')) + '</span>' + (showLast ? '<span class="td-last">' + tdMoney(tdSumOf(all, 'cost_last')) + '</span>' : '<span></span>') + '</div></div>';
     }).join('');
     var tot = tdSumOf(yl, 'cost'), last = tdSumOf(yl, 'cost_last');
+    if (td.catf){
+      var allTot = tdSumOf(tdYearList(), 'cost');
+      html += '<div class="td-total"><span class="lbl">' + esc(td.catf) + ' only · ' + td.year + '</span><span class="td-money">' + tdMoney(tot) + '</span>' + (showLast ? '<span class="td-last" style="color:var(--ink)">' + tdMoney(last) + '</span>' : '<span></span>') +
+        '<span class="chg">' + (allTot ? Math.round(tot / allTot * 1000) / 10 : 0) + '% of the ' + tdMoney(allTot) + ' total · <a href="#" id="tdCatAll">Show all categories</a></span></div>';
+      $('tdList').innerHTML = html; return;
+    }
     html += '<div class="td-total"><span class="lbl">Total expenses · ' + td.year + '</span><span class="td-money">' + tdMoney(tot) + '</span>' + (showLast ? '<span class="td-last" style="color:var(--ink)">' + tdMoney(last) + '</span>' : '<span></span>') +
       (showLast ? '<span class="chg">2027 vs 2026 cost on these items: ' + (tot - last >= 0 ? '+' : '−') + tdMoney(Math.abs(tot - last)) + '</span>' : '') + '</div>' +
-      (showLast ? '<p class="mail-help" style="text-align:right;margin-top:6px">Gray column = what the same item cost in 2026.</p>' : '');
+      (showLast ? '<p class="mail-help" style="text-align:right;margin-top:6px">Gray column = what the same item cost in 2026.</p>' : '') + tdRevHtml(td.year);
     $('tdList').innerHTML = yl.length || cats.length ? html : '<p class="empty">No items yet. Add the first one above.</p>';
   }
   function tdCsv(){
-    var showLast = td.year === 2027, yl = tdYearList(), cats = tdCatList(), out = [];
+    var showLast = false, yl = tdYearList(), cats = tdCatList(), out = [];
+    if (td.catf){ cats = [td.catf]; yl = yl.filter(function(t){ return t.category === td.catf; }); }
     var q = function(v){ v = v == null ? '' : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
     var n = function(v){ return v == null ? '' : Number(v).toFixed(2); };
     out.push(['Category', 'Item', 'Status', 'Due date', 'Who', td.year + ' cost'].concat(showLast ? ['2026 cost'] : []).concat(['Notes', 'Links', 'Files']).map(q).join(','));
@@ -1754,9 +1803,19 @@
         .concat([t.notes, (t.links || []).map(function(l){ return (l.label ? l.label + ': ' : '') + l.url; }).join(' | '), (t.files || []).map(function(f){ return f.name; }).join(' | ')]).map(q).join(',')); });
       out.push([cat + ' subtotal', '', '', '', '', n(tdSumOf(all, 'cost'))].concat(showLast ? [n(tdSumOf(all, 'cost_last'))] : []).map(q).join(','));
     });
-    out.push(['TOTAL EXPENSES', '', '', '', '', n(tdSumOf(yl, 'cost'))].concat(showLast ? [n(tdSumOf(yl, 'cost_last'))] : []).map(q).join(','));
+    out.push([td.catf ? 'TOTAL · ' + td.catf : 'TOTAL EXPENSES', '', '', '', '', n(tdSumOf(yl, 'cost'))].concat(showLast ? [n(tdSumOf(yl, 'cost_last'))] : []).map(q).join(','));
+    var rv = tdRevCalc(td.year);
+    if (td.catf) rv = null;
+    if (rv){
+    out.push('');
+    out.push(['TICKET REVENUE & PROFIT', td.year].map(q).join(','));
+    [['Attendees', rv.n], ['Ticket price per attendee', n(rv.price)], ['Gross ticket sales', n(rv.gross)], ['Charity donation per ticket', n(rv.ch)],
+     ['Total to charity', n(-rv.charity)], ['Ticket revenue after charity', n(rv.net)], ['Total expenses', n(-rv.exp)],
+     [rv.profit >= 0 ? 'Profit after charity & expenses' : 'Loss after charity & expenses', n(rv.profit)], ['Emotional Intelligence Test (note)', rv.r.ei_note || '']]
+      .forEach(function(x){ out.push([x[0], x[1]].map(q).join(',')); });
+    }
     var blob = new Blob(['﻿' + out.join('\r\n')], { type:'text/csv;charset=utf-8' }), a = document.createElement('a');
-    a.href = URL.createObjectURL(blob); a.download = 'VBC-' + td.year + '-checklist-budget.csv'; document.body.appendChild(a); a.click(); a.remove();
+    a.href = URL.createObjectURL(blob); a.download = 'VBC-' + td.year + (td.catf ? '-' + td.catf.replace(/[^A-Za-z0-9]+/g, '-') : '') + '-checklist-budget.csv'; document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
   }
   function tdFind(id){ return (td.list || []).filter(function(t){ return t.id === id; })[0]; }
@@ -1785,7 +1844,7 @@
     $('tdStatus').value = t.status; $('tdDue').value = t.due_date || '';
     var cl = tdCatList(); if (cl.indexOf(t.category) < 0) cl.push(t.category);
     $('tdCat').innerHTML = cl.map(function(c){ return '<option' + (c === t.category ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('');
-    $('tdCostLbl').textContent = t.year + ' cost'; $('tdLastWrap').hidden = t.year !== 2027;
+    $('tdCostLbl').textContent = t.year + ' cost'; $('tdLastWrap').hidden = true;
     if (!refresh || active !== $('tdCost')) $('tdCost').value = tdMoney(t.cost);
     if (!refresh || active !== $('tdLast')) $('tdLast').value = tdMoney(t.cost_last);
     $('tdLinks').innerHTML = (t.links || []).map(function(l, i){ return '<div class="td-link"><a href="' + esc(l.url) + '" target="_blank" rel="noopener">' + esc(l.label || l.url) + '</a><button type="button" class="td-x" data-tdlinkrm="' + i + '" aria-label="Remove link">×</button></div>'; }).join('') || '<p class="mail-help" style="margin:0">No links yet.</p>';
@@ -1841,6 +1900,12 @@
   $('tdAddCat').addEventListener('click', function(){ var n = prompt('Name of the new category:'); if (!n || !n.trim()) return;
     api('team-todo', { op:'category_add', name:n.trim() }).then(function(d){ if (d.ok){ td.cats = d.categories; tdRender(); toast('Category added'); } }); });
   $('tdCsv').addEventListener('click', tdCsv);
+  $('tdCatF').addEventListener('change', function(){ td.catf = this.value; tdRender(); });
+  $('tdList').addEventListener('click', function(e){ if (e.target.id === 'tdCatAll'){ e.preventDefault(); td.catf = ''; tdRender(); } });
+  $('tdList').addEventListener('change', function(e){ var r = e.target.closest('[data-tdrev]'); if (!r) return;
+    var patch = { op:'revenue_save', year:String(td.year) }; patch[r.dataset.tdrev] = r.dataset.tdrev === 'ei_note' ? r.value : String(tdNum(r.value) == null ? 0 : tdNum(r.value));
+    api('team-todo', patch).then(function(d){ if (!d.ok) return toast('Didn’t save. Try again.'); td.rev = d.revenue; tdRender(); toast('Saved'); }); });
+  $('tdList').addEventListener('focusin', function(e){ var r = e.target.closest('[data-tdrev]'); if (r && r.dataset.tdrev !== 'ei_note'){ r.value = r.value.replace(/[$,]/g, ''); r.select(); } });
   $('tdYears').addEventListener('click', function(e){ var b = e.target.closest('[data-tdyear]'); if (b){ td.year = +b.dataset.tdyear; tdRender(); } });
   $('tdList').addEventListener('focusin', function(e){ var c = e.target.closest('[data-tdcost]'); if (c){ c.value = c.value.replace(/[$,]/g, ''); c.select(); } });
   $('tdList').addEventListener('keydown', function(e){ var c = e.target.closest('[data-tdcost]'); if (c && e.key === 'Enter'){ e.preventDefault(); c.blur(); } });
