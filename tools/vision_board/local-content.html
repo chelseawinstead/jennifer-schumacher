@@ -20,7 +20,8 @@
   .vb-seats{ background:var(--navy); color:#fff; padding:120px 64px 80px; display:flex; flex-direction:column; justify-content:center; }
   .vb-seats-num{ font-family:'Cormorant Garamond',serif; font-size:150px; line-height:.85; font-weight:300; font-variant-numeric:lining-nums tabular-nums; }
   .vb-seats-label{ font-size:17px; line-height:1.5; color:#c9d3df; margin:14px 0 40px; max-width:330px; }
-  .vb-grid{ display:grid; grid-template-columns:repeat(10,1fr); gap:7px; max-width:380px; }
+  .vb-grid{ display:grid; grid-template-columns:repeat(20,1fr); gap:8px; width:100%; max-width:none; }
+  @media (max-width:600px){ .vb-grid{ grid-template-columns:repeat(10,1fr); gap:8px; max-width:420px; } }
   .vb-grid i{ aspect-ratio:1; border-radius:50%; border:1px solid rgba(255,255,255,.55); transition:background .6s ease, border-color .6s ease; }
   .vb-grid i.taken{ background:rgba(255,255,255,.88); border-color:transparent; }
   .vb-seats-foot{ margin-top:34px; font-size:13px; line-height:1.6; color:#9fb0c2; max-width:380px; }
