@@ -423,9 +423,9 @@
         <button class="lnk" type="button" id="pfRemove" hidden>Remove photo</button>
       </div>
     </div>
-    <div class="toggle">
-      <div><b>Show me in the Crew list</b><span>On for everyone. Shows your name, photo, company, city, cell number, email and socials to confirmed guests only. Turn it off to hide.</span></div>
-      <label class="switch"><input type="checkbox" id="pfOptin" aria-label="Show me in the Crew list"><i></i></label>
+    <div class="toggle" style="grid-template-columns:1fr">
+      <div><b>You’re in the Crew list</b><span>Your name, photo, company, city, cell number, email and socials show to confirmed guests only, so everyone can connect.</span></div>
+      <input type="checkbox" id="pfOptin" checked hidden>
     </div>
     <label class="fld">Email others see<input id="pfEmail" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="you@example.com"></label>
     <label class="fld">Company<input id="pfCo" autocomplete="organization" placeholder="e.g. Russ Lyon Sotheby's"></label>
@@ -669,7 +669,7 @@
   function renderCrew(){
     var crew = data.crew || [], me = data.me || {}, raw = ($('crewSearch').value || '').trim(), q = raw.toLowerCase();
     $('crewSub').textContent = crew.filter(function(p){ return !p.role; }).length + ' confirmed guests are in the Crew list. Tap someone to text, connect or jot a note.';
-    $('optinNudge').hidden = !!me.directory_opt_in;
+    $('optinNudge').hidden = true;
     // state filter: one entry per state, with counts
     var counts = {}; crew.forEach(function(p){ var c = stateCode(p.state); if (c) counts[c] = (counts[c]||0) + 1; });
     var sel = $('crewState'), cur = sel.value, codes = Object.keys(counts).sort(function(a,b){ return stateLabel(a).localeCompare(stateLabel(b)); });
@@ -773,7 +773,7 @@
   function openSheet(){
     var me = data.me || {}; pendingPhoto = null; removePhoto = false;
     $('pfAv').innerHTML = avatar(me); $('pfRemove').hidden = !me.photo_url;
-    $('pfOptin').checked = !!me.directory_opt_in; $('pfIg').value = me.instagram ? '@' + me.instagram : ''; $('pfFb').value = me.facebook || '';
+    $('pfOptin').checked = true; $('pfIg').value = me.instagram ? '@' + me.instagram : ''; $('pfFb').value = me.facebook || '';
     $('pfEmail').value = me.email || '';
     $('pfCo').value = me.company || ''; $('pfCity').value = me.city || ''; $('pfState').value = me.state || '';
     $('pfMsg').textContent = ''; $('pfMsg').className = 'msg'; $('sheet').hidden = false;
@@ -809,7 +809,7 @@
     post('profile', body).then(function(d){
       btn.disabled = false; btn.textContent = 'Save my profile';
       if (!d.ok){ $('pfMsg').className = 'msg err'; $('pfMsg').textContent = d.error === 'photo_too_big' ? 'That photo is too large. Try another one.' : d.error === 'email' ? 'That email doesn\u2019t look right. Check it and try again.' : 'Didn\u2019t save. Try again in a moment.'; return; }
-      data = d; render(); closeSheet(); toast(d.me.directory_opt_in ? 'Saved. You\u2019re in the Crew list.' : 'Saved');
+      data = d; render(); closeSheet(); toast('Saved');
     }).catch(function(){ btn.disabled = false; btn.textContent = 'Save my profile'; $('pfMsg').className = 'msg err'; $('pfMsg').textContent = 'Didn\u2019t save. Check your connection.'; });
   });
 

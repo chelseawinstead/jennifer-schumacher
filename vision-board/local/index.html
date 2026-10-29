@@ -270,7 +270,7 @@ header > div:has(> [data-if="videoOpen"][data-open]) {
   .vb-stay{ margin-top:48px; font-size:16px; line-height:1.7; color:var(--muted); max-width:640px; }
 
   /* steps */
-  .vb-steps{ background:var(--stone); }
+  .vb-steps{ background:#fff; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
   .vb-steps ol{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(3,1fr); gap:56px; counter-reset:s; }
   .vb-steps li{ counter-increment:s; }
   .vb-steps li::before{ content:counter(s); display:block; font-family:'Cormorant Garamond',serif; font-size:64px; line-height:1; color:var(--navy); margin-bottom:18px; }
@@ -389,7 +389,6 @@ header > div:has(> [data-if="videoOpen"][data-open]) {
           <div><label for="f-last">Last name</label><input id="f-last" name="last_name" autocomplete="family-name" required></div>
           <div><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
           <div><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" required></div>
-          <div class="full"><label for="f-company">Company</label><input id="f-company" name="company" autocomplete="organization" required></div>
           <div class="full"><label for="f-street">Mailing address</label><input id="f-street" name="street" autocomplete="address-line1" required></div>
           <div class="full"><label for="f-street2">Apartment, suite, etc. (optional)</label><input id="f-street2" name="street2" autocomplete="address-line2"></div>
           <div class="full addr">
@@ -487,7 +486,7 @@ header > div:has(> [data-if="videoOpen"][data-open]) {
     e.preventDefault();
     var err = $('formErr'); err.hidden = true;
     var data = {}; new FormData(form).forEach(function(v,k){ data[k] = String(v).trim(); });
-    var missing = ['first_name','last_name','email','phone','company','street','city','state','zip'].filter(function(k){ return !data[k]; });
+    var missing = ['first_name','last_name','email','phone','street','city','state','zip'].filter(function(k){ return !data[k]; });
     if (missing.length){ err.textContent = 'Please fill in every field. Missing: ' + missing.map(function(k){ return labels[k.replace('_name','')] || k; }).join(', ') + '.'; err.hidden = false; return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email)){ err.textContent = 'Check your email address. It should look like name@example.com.'; err.hidden = false; return; }
     if (data.phone.replace(/\D/g,'').length < 10){ err.textContent = 'Enter a 10-digit phone number, including area code.'; err.hidden = false; return; }

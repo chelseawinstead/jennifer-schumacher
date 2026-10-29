@@ -423,7 +423,7 @@ Deno.serve(async (req) => {
         phone: clean(b.phone, 40), street: clean(b.street), street2: clean(b.street2),
         city: clean(b.city, 80), state: clean(b.state, 40), zip: clean(b.zip, 12), company: clean(b.company, 120),
       };
-      const missing = Object.entries(f).filter(([k, v]) => k !== "street2" && !v).map(([k]) => k);
+      const missing = Object.entries(f).filter(([k, v]) => k !== "street2" && k !== "company" && !v).map(([k]) => k);
       if (missing.length) return json({ ok: false, error: "missing", fields: missing }, 400);
       if (!EMAIL.test(f.email)) return json({ ok: false, error: "email" }, 400);
       if (f.phone.replace(/\D/g, "").length < 10) return json({ ok: false, error: "phone" }, 400);

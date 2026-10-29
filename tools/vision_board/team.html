@@ -413,8 +413,8 @@
     <div class="mail-head"><h2 id="agTitle">Agenda</h2><button type="button" class="ghost" id="agClose">Close</button></div>
     <p class="mail-help" id="agHelp">What guests see in their personal app at schumacherliving.com/vision-board/2027-agenda. Use each line’s “Who sees this” boxes to choose paid guests, local guests or both. Changes show up for guests as soon as you save.</p>
     <div class="ag-send" id="agSendBar">
-      <div><b id="agSendTitle"></b><div class="mail-help" style="margin:2px 0 0" id="agSendSub"></div></div>
-      <div class="mail-acts"><button type="button" class="solid" id="agSend">Email agenda links</button><button type="button" class="ghost" id="agPreview">Preview as a guest</button><button type="button" class="ghost" id="agPreviewLocal">Preview as a local guest</button></div>
+      <div><b>See it the way guests do</b><div class="mail-help" style="margin:2px 0 0">Save first, then preview. Emailing guests their links lives under Live pages → Personal guest links.</div></div>
+      <div class="mail-acts"><button type="button" class="ghost" id="agPreview">Preview as a guest</button><button type="button" class="ghost" id="agPreviewLocal">Preview as a local guest</button></div>
     </div>
     <div class="ag-tabs tabs" id="agTabs" hidden></div>
     <div id="agBody"></div>
@@ -429,6 +429,10 @@
     <div class="mail-head"><h2>Live pages</h2></div>
     <p class="mail-help">Every Vision Board page that’s live right now. None of them show up in Google; people only get there with the link.</p>
     <div id="lpBody"></div>
+    <div id="lpHold" hidden><div class="ag-send" id="agSendBlock" style="background:#fff;border:1px solid var(--rule, var(--line));margin:8px 0 14px">
+      <div><b id="agSendTitle"></b><div class="mail-help" style="margin:2px 0 0" id="agSendSub"></div></div>
+      <div class="mail-acts"><button type="button" class="solid" id="agSend">Email agenda links</button></div>
+    </div></div>
   </div>
 </div>
 <div class="toast" id="toast" role="status"></div>
@@ -800,7 +804,7 @@
     var paid = data.registrations.filter(function(r){ return r.status==='paid' && r.track !== 'local'; });
     var notSent = paid.filter(function(r){ return !r.agenda_link_sent_at; }).length;
     $('agSendTitle').textContent = notSent ? notSent + ' of ' + paid.length + ' paid guests haven’t been sent their agenda link' : 'All ' + paid.length + ' paid guests have their agenda link';
-    $('agSendSub').textContent = 'Each guest gets their own private link from Jennifer’s Gmail. Edit the wording under Email templates → Agenda link.';
+    $('agSendSub').textContent = 'Each paid guest gets their own private link from Jennifer’s Gmail (wording under Email templates → Agenda link). Local guests get theirs automatically when they’re confirmed.';
     $('agSend').textContent = notSent ? 'Email ' + notSent + ' agenda links' : 'Resend to everyone';
     $('agSend').dataset.all = notSent ? '' : '1';
   }
@@ -1115,7 +1119,7 @@
     $('agSend').disabled = true;
     api('team-agenda-send', { resend_all: all }).then(function(r){
       $('agSend').disabled = false;
-      if (r.ok){ toast('Sending ' + r.queued + ' agenda links. This takes about a minute.'); setTimeout(function(){ load().then(agSendInfo); }, 30000); }
+      if (r.ok){ toast('Sending ' + r.queued + ' agenda links. This takes about a minute.'); setTimeout(function(){ load(); }, 30000); }
       else toast('Didn’t send. Try again.');
     });
   });
@@ -1258,6 +1262,7 @@
     if (!force && v === view) return;
     var u = unsaved();
     if (u && !confirm('Leave without saving your ' + u + ' changes?')){ if (location.hash !== '#' + view) history.replaceState(null, '', '#' + view); return; }
+    if (AGV[view] && !AGV[v]) agDirty = false;
     stClosePop(); view = v;
     Object.keys(VIEWS).forEach(function(k){ $(VIEWS[k]).hidden = VIEWS[k] !== VIEWS[v]; });
     document.querySelectorAll('#nav [data-view]').forEach(function(b){ if (b.dataset.view === v) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
@@ -1292,6 +1297,7 @@
     return null;
   }
   function renderPages(){
+    $('lpHold').appendChild($('agSendBlock')); // keep the send box alive while the list redraws
     var s = data.settings, regs = data.registrations;
     var paidLeft = Math.max(s.capacity - regs.filter(function(r){ return !isLocal(r) && (r.status==='paid'||r.status==='pending'); }).length, 0);
     var locLeft = Math.max(s.local_capacity - regs.filter(function(r){ return isLocal(r) && (r.status==='paid'||r.status==='pending'); }).length, 0);
@@ -1313,7 +1319,7 @@
       .sort(function(a, b){ return (a.last_name + a.first_name).localeCompare(b.last_name + b.first_name); });
     var nP = withLink.filter(function(r){ return !isLocal(r); }).length, nL = withLink.length - nP;
     h += '<div class="lp-sec personal"><h3>Personal guest links</h3><p class="mail-help">Each confirmed guest’s private app link, plus payment or accept-my-spot links for anyone who still has to finish. Resend opens the email so you can check it before it goes out from Jennifer’s Gmail. These links are private to each guest, so there’s no Open button.</p>' +
-      '<div class="lp-tools"><div class="tabs" id="lpTrack">' +
+      '<div id="lpSendSlot"></div><div class="lp-tools"><div class="tabs" id="lpTrack">' +
         [['all','Everyone', withLink.length], ['paid','Paid guests', nP], ['local','Local guests', nL]].map(function(t){ return '<button type="button" data-lptrack="' + t[0] + '" aria-pressed="' + (lp.track === t[0]) + '">' + t[1] + '<span class="n">' + t[2] + '</span></button>'; }).join('') +
       '</div><input class="search" id="lpQ" type="search" placeholder="Search name, company, code, email or phone" value="' + esc(lp.q) + '"></div>' +
       '<div id="lpList">' + (list.length ? list.map(function(r){
@@ -1326,6 +1332,7 @@
     var SECS = [['signup','Sign-up pages', 2], ['preview','Previews & team', (s.preview_id ? 1 : 0) + (s.local_preview_id ? 1 : 0) + 1 + (s.host_links || []).length], ['personal','Personal guest links', withLink.length]];
     $('lpBody').innerHTML = '<div class="lp-tabs" role="tablist">' + SECS.map(function(t){ return '<button type="button" role="tab" class="' + t[0] + '" data-lpsec="' + t[0] + '" aria-selected="' + (lp.sec === t[0]) + '">' + esc(t[1]) + '<span class="n">' + t[2] + '</span></button>'; }).join('') + '</div>' + h;
     document.querySelectorAll('#lpBody .lp-sec').forEach(function(el){ el.hidden = !el.classList.contains(lp.sec); });
+    var slot = $('lpSendSlot'); if (slot){ slot.appendChild($('agSendBlock')); agSendInfo(); }
     if (hadFocus){ var i = $('lpQ'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }
   }
   $('lpBody').addEventListener('input', function(e){ if (e.target.id === 'lpQ'){ lp.q = e.target.value.trim(); renderPages(); } });
