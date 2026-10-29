@@ -231,6 +231,13 @@
   .track-row{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; margin:0 0 16px; }
   .track-row .track-switch{ margin:0; }
   .lp-sec{ margin:0 0 28px; border:1px solid var(--line); border-left:6px solid var(--c); background:var(--bg); padding:18px 22px 6px; }
+  .lp-sec[hidden]{ display:none; }
+  .lp-tabs{ display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 18px; }
+  .lp-tabs button{ --c:#2c5aa0; --bg:#f1f5fb; display:inline-flex; align-items:center; gap:8px; font:inherit; font-size:15px; padding:10px 18px; border:1px solid var(--line); border-left:4px solid var(--c); background:#fff; color:var(--ink); cursor:pointer; }
+  .lp-tabs button.preview{ --c:#b8995a; --bg:#fbf7ee; } .lp-tabs button.personal{ --c:#2f6b4f; --bg:#f1f7f3; }
+  .lp-tabs button:hover{ background:var(--bg); }
+  .lp-tabs button[aria-selected="true"]{ background:var(--bg); border-color:var(--c); font-weight:500; }
+  .lp-tabs .n{ color:var(--warm); font-size:13px; font-weight:400; }
   .lp-sec .lp-row{ border-top-color:var(--rule); }
   .lp-sec h3::before{ content:""; display:inline-block; width:10px; height:10px; border-radius:50%; background:var(--c); margin-right:10px; vertical-align:middle; position:relative; top:-2px; }
   .lp-sec.signup{ --c:#2c5aa0; --bg:#f1f5fb; --rule:#d9e3f2; }
@@ -1241,7 +1248,8 @@
   window.addEventListener('beforeunload', function(e){ if (unsaved()){ e.preventDefault(); e.returnValue = ''; } });
 
   // ---- Live pages ----
-  var lp = { q:'', track:'all' };
+  var lp = { q:'', track:'all', sec:'signup' };
+  try { lp.sec = sessionStorage.getItem('vbLpSec') || 'signup'; } catch(e){}
   function lpRow(title, sub, url, opts){
     opts = opts || {};
     return '<div class="lp-row"><div><b>' + title + '</b>' + (sub ? '<span class="sub">' + sub + '</span>' : '') + '</div>' +
@@ -1288,13 +1296,16 @@
           k.url, { noOpen:true, extra:'<button type="button" data-lpsend="' + r.id + '" data-kind="' + k.mail + '">Resend</button>' });
       }).join('') : '<p class="mail-help">' + (q ? 'No one matches that search.' : 'No personal links yet.') + '</p>') + '</div></div>';
     var hadFocus = document.activeElement && document.activeElement.id === 'lpQ';
-    $('lpBody').innerHTML = h;
+    var SECS = [['signup','Sign-up pages', 2], ['preview','Previews & team', (s.preview_id ? 1 : 0) + (s.local_preview_id ? 1 : 0) + 1 + (s.host_links || []).length], ['personal','Personal guest links', withLink.length]];
+    $('lpBody').innerHTML = '<div class="lp-tabs" role="tablist">' + SECS.map(function(t){ return '<button type="button" role="tab" class="' + t[0] + '" data-lpsec="' + t[0] + '" aria-selected="' + (lp.sec === t[0]) + '">' + esc(t[1]) + '<span class="n">' + t[2] + '</span></button>'; }).join('') + '</div>' + h;
+    document.querySelectorAll('#lpBody .lp-sec').forEach(function(el){ el.hidden = !el.classList.contains(lp.sec); });
     if (hadFocus){ var i = $('lpQ'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }
   }
   $('lpBody').addEventListener('input', function(e){ if (e.target.id === 'lpQ'){ lp.q = e.target.value.trim(); renderPages(); } });
   $('lpBody').addEventListener('click', function(e){
     var c = e.target.closest('[data-lpcopy]');
     if (c){ (navigator.clipboard ? navigator.clipboard.writeText(c.dataset.lpcopy) : Promise.reject()).then(function(){ toast('Link copied'); }, function(){ prompt('Copy this link:', c.dataset.lpcopy); }); return; }
+    var sc = e.target.closest('[data-lpsec]'); if (sc){ lp.sec = sc.dataset.lpsec; try { sessionStorage.setItem('vbLpSec', lp.sec); } catch(x){} renderPages(); return; }
     var t = e.target.closest('[data-lptrack]'); if (t){ lp.track = t.dataset.lptrack; renderPages(); return; }
     var sbtn = e.target.closest('[data-lpsend]');
     if (sbtn){ var r = data.registrations.filter(function(x){ return x.id === sbtn.dataset.lpsend; })[0]; if (r) mail(r, sbtn.dataset.kind); }
