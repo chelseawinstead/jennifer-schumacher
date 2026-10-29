@@ -20,7 +20,7 @@
   .vb-seats{ background:var(--navy); color:#fff; padding:120px 64px 80px; display:flex; flex-direction:column; justify-content:center; }
   .vb-seats-num{ font-family:'Cormorant Garamond',serif; font-size:150px; line-height:.85; font-weight:300; font-variant-numeric:lining-nums tabular-nums; }
   .vb-seats-label{ font-size:17px; line-height:1.5; color:#c9d3df; margin:14px 0 40px; max-width:330px; }
-  .vb-grid{ display:grid; grid-template-columns:repeat(10,1fr); gap:10px; max-width:430px; }
+  .vb-grid{ display:grid; grid-template-columns:repeat(10,1fr); gap:7px; max-width:380px; }
   .vb-grid i{ aspect-ratio:1; border-radius:50%; border:1px solid rgba(255,255,255,.55); transition:background .6s ease, border-color .6s ease; }
   .vb-grid i.taken{ background:rgba(255,255,255,.88); border-color:transparent; }
   .vb-seats-foot{ margin-top:34px; font-size:13px; line-height:1.6; color:#9fb0c2; max-width:380px; }
@@ -132,7 +132,7 @@
     </div>
     <aside class="vb-seats" aria-live="polite">
       <div class="vb-seats-num" id="seatNum">30</div>
-      <p class="vb-seats-label" id="seatLabel">of 30 spots are still open.</p>
+      <p class="vb-seats-label" id="seatLabel">of 100 spots are still open.</p>
       <div class="vb-grid" id="seatGrid" aria-hidden="true"></div>
       <p class="vb-seats-foot"><span class="vb-live">Updates live</span> as guests sign up.</p>
     </aside>
@@ -190,7 +190,8 @@
 <script>
 (function(){
   var API = 'https://agnpwmdwofrdyqzttmlv.supabase.co/functions/v1/vision-board';
-  var CAP = 30, state = { spots_left:null, capacity:30, open:true };
+  // The party has 100 seats; 70 are already set aside for the agents, so locals see the other 30 counting down out of 100.
+  var SHOW = 100, state = { spots_left:null, capacity:30, open:true };
   var $ = function(id){ return document.getElementById(id); };
 
   // seat marks
@@ -205,10 +206,10 @@
     if (left == null) return;
     $('seatNum').textContent = left;
     $('miniNum').textContent = left;
-    $('seatLabel').textContent = left === 0 ? 'All ' + cap + ' spots are taken. The waitlist is open.' :
-      'of ' + cap + (left === 1 ? ' spots is still open.' : ' spots are still open.');
+    $('seatLabel').textContent = left === 0 ? 'All ' + SHOW + ' spots are taken. The waitlist is open.' :
+      'of ' + SHOW + (left === 1 ? ' spots is still open.' : ' spots are still open.');
     $('miniLabel').textContent = left === 1 ? 'spot left' : 'spots left';
-    drawGrid(cap, left);
+    drawGrid(SHOW, Math.min(left, SHOW));
     var full = left === 0;
     if (!state.open){
       $('regTitle').textContent = 'Registration is closed';
@@ -231,7 +232,7 @@
       if (typeof d.spots_left === 'number'){ state.spots_left=d.spots_left; state.capacity=d.capacity; state.open=d.open; render(); }
     }).catch(function(){});
   }
-  drawGrid(CAP, CAP);
+  drawGrid(SHOW, state.capacity);
   poll();
   setInterval(function(){ if (!document.hidden) poll(); }, 20000 + Math.floor(Math.random()*5000));
   document.addEventListener('visibilitychange', function(){ if (!document.hidden) poll(); });
@@ -248,7 +249,7 @@
     var area = $('regArea'), html;
     if (r.status === 'waitlist'){
       html = '<div class="vb-result"><h3>You’re on the waitlist, ' + esc(r.first_name) + '.</h3>' +
-        '<p>All ' + state.capacity + ' spots are taken right now. If one opens up, we’ll email you in the order you joined, and you’ll have 72 hours to accept it.</p>' +
+        '<p>All the spots are taken right now. If one opens up, we’ll email you in the order you joined, and you’ll have 72 hours to accept it.</p>' +
         '<p>Your waitlist code is <strong>' + esc(r.code) + '</strong>.</p></div>';
     } else if (r.status === 'pending'){
       html = '<div class="vb-result"><h3>A spot is waiting for you, ' + esc(r.first_name) + '.</h3><p>Check your email for the link to accept it.</p></div>';
