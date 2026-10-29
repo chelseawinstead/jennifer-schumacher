@@ -348,7 +348,7 @@
     <button type="button" data-view="agenda">Agenda</button>
     <button type="button" data-view="seating">Seating</button>
     <button type="button" data-view="checkin">Check-in</button>
-    <button type="button" data-view="pages">Live pages</button>
+    <button type="button" data-view="pages">Live Links</button>
     <button type="button" data-view="templates">Email templates</button>
     <button type="button" data-view="chat">Chat management</button>
     <button type="button" data-view="host">Jennifer’s card</button>
@@ -502,7 +502,7 @@
     <div class="mail-head"><h2 id="agTitle">Agenda</h2><button type="button" class="ghost" id="agClose">Close</button></div>
     <p class="mail-help" id="agHelp">What guests see in their personal app at schumacherliving.com/vision-board/2027-agenda. Use each line’s “Who sees this” boxes to choose paid guests, local guests or both. Changes show up for guests as soon as you save.</p>
     <div class="ag-send" id="agSendBar">
-      <div><b>See it the way guests do</b><div class="mail-help" style="margin:2px 0 0">Save first, then preview. Emailing guests their links lives under Live pages → Personal guest links.</div></div>
+      <div><b>See it the way guests do</b><div class="mail-help" style="margin:2px 0 0">Save first, then preview. Emailing guests their links lives under Live Links → Personal guest links.</div></div>
       <div class="mail-acts"><button type="button" class="ghost" id="agPreview">Preview as a guest</button><button type="button" class="ghost" id="agPreviewLocal">Preview as a local guest</button></div>
     </div>
     <div class="ag-tabs tabs" id="agTabs" hidden></div>
@@ -522,8 +522,8 @@
 </div>
 <div class="mail-wrap page" id="pagesBox" hidden>
   <div class="mail">
-    <div class="mail-head"><h2>Live pages</h2></div>
-    <p class="mail-help">Every Vision Board page that’s live right now. None of them show up in Google; people only get there with the link.</p>
+    <div class="mail-head"><h2>Live Links</h2></div>
+    <p class="mail-help">Every Vision Board link that’s live right now. None of them show up in Google; people only get there with the link.</p>
     <div id="lpBody"></div>
     <div id="lpHold" hidden><div class="ag-send" id="agSendBlock" style="background:#fff;border:1px solid var(--rule, var(--line));margin:8px 0 14px">
       <div><b id="agSendTitle"></b><div class="mail-help" style="margin:2px 0 0" id="agSendSub"></div></div>
@@ -1087,7 +1087,7 @@
     var T = { schedule:['Agenda', 'What guests see in their personal app at schumacherliving.com/vision-board/2027-agenda. Use each line’s “Who sees this” boxes to choose paid guests, local guests or both. Changes show up for guests as soon as you save.', 'Save agenda'],
               host:['Jennifer’s card', '', 'Save card'],
               venue:['Venue & welcome', 'The welcome line at the top of the app and everything on the Venue tab.', 'Save venue & welcome'],
-              settings:['App settings', 'When the guest app closes. Jennifer’s and Natalie’s personal app links are under Live pages → Previews & team.', 'Save settings'] }[agTab];
+              settings:['App settings', 'When the guest app closes. Jennifer’s and Natalie’s personal app links are under Live Links → Previews & team.', 'Save settings'] }[agTab];
     $('agTitle').textContent = T[0]; $('agHelp').textContent = T[1]; $('agHelp').hidden = !T[1]; $('agSave').textContent = T[2]; $('agSendBar').hidden = agTab !== 'schedule';
     agDirty = false; $('agStatus').textContent = ''; agSendInfo(); agRender(); $('agBox').hidden = false;
   }
@@ -1635,7 +1635,7 @@
     if (e.target.closest('#ciPinBtn')){ var v = prompt('New check-in PIN for volunteers (4 to 8 digits):', ciT.pin || ''); if (v === null) return; ciSave({ pin:v.trim() }, 'PIN updated'); }
   });
 
-  // ---- Live pages ----
+  // ---- Live Links ----
   var lp = { q:'', track:'all', sec:'signup' };
   try { lp.sec = sessionStorage.getItem('vbLpSec') || 'signup'; } catch(e){}
   function lpRow(title, sub, url, opts){
