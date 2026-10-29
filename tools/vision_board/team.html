@@ -1314,13 +1314,14 @@
       '</div>';
     var withLink = regs.filter(function(r){ return lpLink(r); });
     var q = lp.q.toLowerCase();
-    var list = withLink.filter(function(r){ return lp.track === 'all' || (r.track || 'paid') === lp.track; })
+    var grp = function(r){ return isLocal(r) ? 'local' : (r.status === 'paid' ? 'paid' : 'pending'); };
+    var list = withLink.filter(function(r){ return lp.track === 'all' || grp(r) === lp.track; })
       .filter(function(r){ return !q || [r.code, r.first_name + ' ' + r.last_name, r.company || '', r.email, r.phone].join(' ').toLowerCase().indexOf(q) > -1; })
       .sort(function(a, b){ return (a.last_name + a.first_name).localeCompare(b.last_name + b.first_name); });
-    var nP = withLink.filter(function(r){ return !isLocal(r); }).length, nL = withLink.length - nP;
+    var nP = withLink.filter(function(r){ return grp(r) === 'paid'; }).length, nH = withLink.filter(function(r){ return grp(r) === 'pending'; }).length, nL = withLink.filter(function(r){ return grp(r) === 'local'; }).length;
     h += '<div class="lp-sec personal"><h3>Personal guest links</h3><p class="mail-help">Each confirmed guest’s private app link, plus payment or accept-my-spot links for anyone who still has to finish. Resend opens the email so you can check it before it goes out from Jennifer’s Gmail. These links are private to each guest, so there’s no Open button.</p>' +
       '<div id="lpSendSlot"></div><div class="lp-tools"><div class="tabs" id="lpTrack">' +
-        [['all','Everyone', withLink.length], ['paid','Paid guests', nP], ['local','Local guests', nL]].map(function(t){ return '<button type="button" data-lptrack="' + t[0] + '" aria-pressed="' + (lp.track === t[0]) + '">' + t[1] + '<span class="n">' + t[2] + '</span></button>'; }).join('') +
+        [['all','Everyone', withLink.length], ['paid','Paid & confirmed', nP], ['pending','Awaiting payment', nH], ['local','Local guests', nL]].map(function(t){ return '<button type="button" data-lptrack="' + t[0] + '" aria-pressed="' + (lp.track === t[0]) + '">' + t[1] + '<span class="n">' + t[2] + '</span></button>'; }).join('') +
       '</div><input class="search" id="lpQ" type="search" placeholder="Search name, company, code, email or phone" value="' + esc(lp.q) + '"></div>' +
       '<div id="lpList">' + (list.length ? list.map(function(r){
         var k = lpLink(r);
