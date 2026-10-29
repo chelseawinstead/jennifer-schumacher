@@ -1705,10 +1705,10 @@
   function tdSumOf(list, k){ return list.reduce(function(a, t){ return a + (t[k] == null ? 0 : Number(t[k])); }, 0); }
   function tdLoad(){ return api('team-todo', { op:'list' }).then(function(d){ if (!d.ok){ $('tdList').innerHTML = '<p class="mail-help">Couldn’t load the to dos. Refresh and try again.</p>'; return; } td.list = d.todos; td.cats = d.categories || []; td.rev = d.revenue || {}; tdRender(); }); }
   function tdRevCalc(y){
-    var r = td.rev[String(y)] || {}, n = Number(r.attendees) || 0, price = Number(r.price) || 0, ch = r.charity == null ? 150 : Number(r.charity) || 0;
+    var r = td.rev[String(y)] || {}, n = Number(r.attendees) || 0, price = Number(r.price) || 0, ch = r.charity == null ? 150 : Number(r.charity) || 0, ei = Number(r.ei) || 0;
     var exp = tdSumOf((td.list || []).filter(function(t){ return t.year === y; }), 'cost');
-    var gross = n * price, charity = n * ch, net = gross - charity;
-    return { r:r, n:n, price:price, ch:ch, gross:gross, charity:charity, net:net, exp:exp, profit:net - exp };
+    var gross = n * price, charity = n * ch, eiTot = n * ei, net = gross - charity - eiTot;
+    return { r:r, n:n, price:price, ch:ch, ei:ei, eiTot:eiTot, gross:gross, charity:charity, net:net, exp:exp, profit:net - exp };
   }
   function tdRevHtml(y){
     var c = tdRevCalc(y), inp = function(k, v, money){ return '<input class="td-revin" data-tdrev="' + k + '" value="' + esc(money ? tdMoney(v) : (v == null ? '' : v)) + '" inputmode="decimal">'; };
@@ -1720,10 +1720,11 @@
       line('Gross ticket sales <small>(' + c.n + ' × ' + tdMoney(c.price) + ')</small>', tdMoney(c.gross)) +
       line('Charity donation per ticket', inp('charity', c.ch, true)) +
       line('Total to charity <small>(' + c.n + ' × ' + tdMoney(c.ch) + ')</small>', '−' + tdMoney(c.charity), 'minus') +
-      line('<b>Ticket revenue after charity</b>', '<b>' + tdMoney(c.net) + '</b>', 'sub') +
+      line('Emotional Intelligence Test per ticket', inp('ei', c.ei, true)) +
+      line('Total for EI Tests <small>(' + c.n + ' × ' + tdMoney(c.ei) + ')</small>', '−' + tdMoney(c.eiTot), 'minus') +
+      line('<b>Ticket revenue after charity &amp; EI Tests</b>', '<b>' + tdMoney(c.net) + '</b>', 'sub') +
       line('Total expenses <small>(from the list above)</small>', '−' + tdMoney(c.exp), 'minus') +
-      '<div class="td-revl td-profit ' + (pos ? 'pos' : 'neg') + '"><span>' + (pos ? 'Profit after charity &amp; expenses' : 'Loss after charity &amp; expenses') + '</span><span class="td-money">' + (pos ? '' : '−') + tdMoney(Math.abs(c.profit)) + '</span></div>' +
-      '<div class="td-revl note"><span>Emotional Intelligence Test <small>(note only, not counted above)</small></span><span>' + '<input class="td-revin wide" data-tdrev="ei_note" value="' + esc(c.r.ei_note || '') + '" placeholder="e.g. $125 per person">' + '</span></div>' +
+      '<div class="td-revl td-profit ' + (pos ? 'pos' : 'neg') + '"><span>' + (pos ? 'Profit after charity, EI Tests &amp; expenses' : 'Loss after charity, EI Tests &amp; expenses') + '</span><span class="td-money">' + (pos ? '' : '−') + tdMoney(Math.abs(c.profit)) + '</span></div>' +
       '</div>';
   }
   function tdYearList(){ return (td.list || []).filter(function(t){ return t.year === td.year; }); }
@@ -1810,8 +1811,9 @@
     out.push('');
     out.push(['TICKET REVENUE & PROFIT', td.year].map(q).join(','));
     [['Attendees', rv.n], ['Ticket price per attendee', n(rv.price)], ['Gross ticket sales', n(rv.gross)], ['Charity donation per ticket', n(rv.ch)],
-     ['Total to charity', n(-rv.charity)], ['Ticket revenue after charity', n(rv.net)], ['Total expenses', n(-rv.exp)],
-     [rv.profit >= 0 ? 'Profit after charity & expenses' : 'Loss after charity & expenses', n(rv.profit)], ['Emotional Intelligence Test (note)', rv.r.ei_note || '']]
+     ['Total to charity', n(-rv.charity)], ['Emotional Intelligence Test per ticket', n(rv.ei)], ['Total for EI Tests', n(-rv.eiTot)],
+     ['Ticket revenue after charity & EI Tests', n(rv.net)], ['Total expenses', n(-rv.exp)],
+     [rv.profit >= 0 ? 'Profit after charity, EI Tests & expenses' : 'Loss after charity, EI Tests & expenses', n(rv.profit)]]
       .forEach(function(x){ out.push([x[0], x[1]].map(q).join(',')); });
     }
     var blob = new Blob(['﻿' + out.join('\r\n')], { type:'text/csv;charset=utf-8' }), a = document.createElement('a');
