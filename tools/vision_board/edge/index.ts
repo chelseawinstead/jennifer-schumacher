@@ -744,6 +744,47 @@ Deno.serve(async (req) => {
         return json(result, result.ok ? 200 : 502);
       }
 
+      // ---------- To Do: event tasks with status, due date, notes, links and private files ----------
+      if (action === "team-todo" || action === "team-todo-upload") {
+        const FILES = `${Deno.env.get("SUPABASE_URL")}/storage/v1/object`;
+        const sign = async (todos: any[]) => {
+          const paths = todos.flatMap((t) => (t.files || []).map((f: any) => f.path));
+          if (!paths.length) return todos;
+          const r = await fetch(`${FILES}/sign/vision-board-files`, { method: "POST", headers: { ...storageAuth(), "Content-Type": "application/json" }, body: JSON.stringify({ expiresIn: 21600, paths }) });
+          const list = r.ok ? await r.json() : [];
+          const url: Record<string, string> = {};
+          for (const x of list) if (x.signedURL) url[x.path] = `${Deno.env.get("SUPABASE_URL")}/storage/v1${x.signedURL}`;
+          for (const t of todos) for (const f of (t.files || [])) f.url = url[f.path] || null;
+          return todos;
+        };
+        const drop = async (paths: string[]) => {
+          for (const pth of paths || []) if (/^todos\/[0-9a-f-]{36}\/[A-Za-z0-9._-]+$/.test(pth)) await fetch(`${FILES}/vision-board-files/${pth}`, { method: "DELETE", headers: storageAuth() }).catch(() => {});
+        };
+        if (action === "team-todo-upload" && req.method === "POST") {
+          const id = clean(b.id, 40);
+          if (!UUID.test(id)) return json({ ok: false, error: "id" }, 400);
+          const m = /^data:([\w.+-]+\/[\w.+-]+);base64,([A-Za-z0-9+/=]+)$/.exec(String(b.data || ""));
+          if (!m || !/^(image\/(jpeg|png|gif|webp|heic|heif)|application\/pdf)$/.test(m[1])) return json({ ok: false, error: "type" }, 400);
+          const bytes = Uint8Array.from(atob(m[2]), (c) => c.charCodeAt(0));
+          if (bytes.length > 10_000_000) return json({ ok: false, error: "too_big" }, 400);
+          const name = clean(b.name, 200) || "file";
+          const ext = ({ "image/jpeg": "jpg", "image/png": "png", "image/gif": "gif", "image/webp": "webp", "image/heic": "heic", "image/heif": "heif", "application/pdf": "pdf" } as Record<string, string>)[m[1]];
+          const path = `todos/${id}/${crypto.randomUUID()}.${ext}`;
+          const up = await fetch(`${FILES}/vision-board-files/${path}`, { method: "POST", headers: { ...storageAuth(), "Content-Type": m[1] }, body: bytes });
+          if (!up.ok) { console.error("todo upload", up.status, await up.text()); return json({ ok: false, error: "upload" }, 502); }
+          const [row] = await sql`select vision_board.team_todo(${sql.json({ op: "add_file", id, path, name, type: m[1], size: bytes.length })}) as r`;
+          if (!row.r.ok) { await drop([path]); return json(row.r, 400); }
+          await sign([row.r.todo]);
+          return json(row.r);
+        }
+        const p = (b && typeof b === "object") ? b : {};
+        const [row] = await sql`select vision_board.team_todo(${sql.json(p)}) as r`;
+        if (row.r.removed) await drop(row.r.removed);
+        if (row.r.todos) await sign(row.r.todos);
+        if (row.r.todo) await sign([row.r.todo]);
+        return json(row.r, row.r.ok ? 200 : 400);
+      }
+
       if (action === "team-optin" && req.method === "POST") {
         await sql`select vision_board.team_set_optin(${clean(b.id, 40)}::uuid, ${b.on === true})`;
         return json({ ok: true });

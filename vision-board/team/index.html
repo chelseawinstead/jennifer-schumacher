@@ -235,6 +235,58 @@
   .nav button{ background:none; border:0; border-bottom:3px solid transparent; padding:12px 14px 11px; font-size:14px; color:var(--muted); white-space:nowrap; }
   .nav button:hover{ color:var(--navy); }
   .nav button[aria-current="page"]{ color:var(--navy); border-bottom-color:var(--navy); font-weight:500; }
+  .td-add{ display:flex; gap:10px; margin:0 0 18px; }
+  .td-add input{ flex:1; font:inherit; font-size:15px; padding:11px 14px; border:1px solid #cfcbc2; }
+  .td-tools{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+  .td-filters{ display:flex; flex-wrap:wrap; gap:6px; }
+  .td-filters button{ background:#fff; border:1px solid var(--line); padding:7px 12px; font-size:13px; color:var(--muted); }
+  .td-filters button span{ color:var(--warm); margin-left:4px; }
+  .td-filters button[aria-pressed="true"]{ border-color:var(--navy); color:var(--navy); font-weight:500; }
+  .td-row{ display:grid; grid-template-columns:150px minmax(0,1fr) 130px 120px 120px; gap:14px; align-items:center; padding:12px 14px; background:#fff; border:1px solid var(--line); border-left:5px solid var(--sc, var(--line)); margin-bottom:8px; cursor:pointer; }
+  .td-row:hover{ background:#fbfaf7; }
+  .td-row.done .td-t{ color:var(--warm); text-decoration:line-through; }
+  .td-row select{ font:inherit; font-size:13px; padding:6px 8px; border:1px solid var(--line); background:var(--sb, #fff); color:var(--sc, var(--ink)); font-weight:500; width:100%; }
+  .td-t{ font-size:15px; color:var(--ink); }
+  .td-sub{ display:block; font-size:12px; color:var(--warm); margin-top:3px; }
+  .td-due{ font-size:13px; color:var(--muted); } .td-due.late{ color:var(--red); font-weight:600; } .td-due.soon{ color:var(--hold); font-weight:600; }
+  .td-who{ font-size:13px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .td-ic{ font-size:12px; color:var(--warm); text-align:right; white-space:nowrap; }
+  .td-st-todo{ --sc:#55585c; --sb:#efefef; } .td-st-doing{ --sc:var(--wait); --sb:var(--wait-bg); } .td-st-waiting{ --sc:var(--hold); --sb:var(--hold-bg); } .td-st-done{ --sc:var(--paid); --sb:var(--paid-bg); }
+  .td-drawer-wrap{ position:fixed; inset:0; background:rgba(20,24,29,.35); z-index:30; display:flex; justify-content:flex-end; }
+  .td-drawer-wrap[hidden]{ display:none; }
+  .td-drawer{ background:#fff; width:100%; max-width:560px; height:100%; overflow:auto; padding:22px 28px 40px; box-shadow:-12px 0 32px rgba(0,0,0,.15); }
+  .td-dhead{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .td-saved{ font-size:13px; color:var(--warm); }
+  .td-title{ width:100%; font-family:'Cormorant Garamond',Georgia,serif; font-size:30px; line-height:1.15; border:0; border-bottom:1px solid var(--line); padding:4px 0 10px; resize:none; color:var(--ink); }
+  .td-title:focus, .td-notes:focus, .td-fields input:focus, .td-fields select:focus{ outline:0; border-color:var(--navy); }
+  .td-fields{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin:16px 0 6px; }
+  .td-fields label{ font-size:12px; color:var(--warm); letter-spacing:.04em; display:flex; flex-direction:column; gap:5px; }
+  .td-fields input, .td-fields select{ min-width:0; width:100%; box-sizing:border-box; font:inherit; font-size:14px; color:var(--ink); padding:8px 9px; border:1px solid #cfcbc2; background:#fff; }
+  .td-drawer h4{ font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--navy); font-weight:500; margin:22px 0 8px; }
+  .td-notes{ width:100%; min-height:140px; font:inherit; font-size:14px; line-height:1.55; padding:10px 12px; border:1px solid #cfcbc2; resize:vertical; }
+  .td-link{ display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line); font-size:14px; }
+  .td-link a{ color:var(--navy); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; }
+  .td-x{ background:none; border:0; color:var(--warm); font-size:18px; line-height:1; padding:2px 6px; cursor:pointer; }
+  .td-x:hover{ color:var(--red); }
+  .td-linkadd{ display:grid; grid-template-columns:1fr 1.6fr auto; gap:8px; margin-top:10px; }
+  .td-linkadd input{ font:inherit; font-size:14px; padding:8px 9px; border:1px solid #cfcbc2; min-width:0; }
+  .td-files{ display:grid; grid-template-columns:repeat(auto-fill, minmax(112px, 1fr)); gap:10px; margin-bottom:10px; }
+  .td-file{ position:relative; border:1px solid var(--line); background:var(--stone); }
+  .td-file a{ display:block; text-decoration:none; color:var(--ink); }
+  .td-file img{ display:block; width:100%; height:96px; object-fit:cover; }
+  .td-file .doc{ height:96px; display:flex; align-items:center; justify-content:center; font-size:13px; letter-spacing:.1em; color:var(--navy); font-weight:600; background:#eef1f6; }
+  .td-file .nm{ display:block; font-size:11px; padding:5px 6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--muted); background:#fff; }
+  .td-file .td-x{ position:absolute; top:3px; right:3px; background:rgba(255,255,255,.92); border-radius:50%; width:24px; height:24px; padding:0; font-size:16px; }
+  .td-file.up{ display:flex; align-items:center; justify-content:center; height:120px; font-size:12px; color:var(--warm); }
+  .td-upload{ display:inline-block; cursor:pointer; }
+  .td-dfoot{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:28px; padding-top:14px; border-top:1px solid var(--line); }
+  .td-del{ background:none; border:0; color:var(--red); font-size:13px; text-decoration:underline; cursor:pointer; }
+  @media (max-width: 760px){
+    .td-row{ grid-template-columns:1fr auto; gap:6px 10px; }
+    .td-row .td-sel{ grid-column:1/-1; order:3; } .td-row .td-who, .td-row .td-ic{ display:none; }
+    .td-fields{ grid-template-columns:1fr 1fr; } .td-linkadd{ grid-template-columns:1fr; }
+    .td-drawer{ padding:18px 18px 40px; }
+  }
   .mail-wrap.page{ position:static; inset:auto; background:none; display:block; padding:0; z-index:auto; }
   .mail-wrap.page[hidden]{ display:none; }
   .mail-wrap.page > .mail{ max-width:none; width:auto; max-height:none; overflow:visible; padding:32px 40px 80px; }
@@ -345,6 +397,7 @@
   </div>
   <nav class="nav" id="nav" hidden aria-label="Team sections">
     <button type="button" data-view="attendees">Attendees</button>
+    <button type="button" data-view="todo">To Do</button>
     <button type="button" data-view="agenda">Agenda</button>
     <button type="button" data-view="seating">Seating</button>
     <button type="button" data-view="checkin">Check-in</button>
@@ -512,6 +565,36 @@
       <span class="mail-help" id="agStatus" style="margin:0"></span>
     </div>
   </div>
+</div>
+<div class="mail-wrap page" id="todoBox" hidden>
+  <div class="mail">
+    <div class="mail-head"><h2>To Do</h2></div>
+    <p class="mail-help">Everything for the event in one place. Click a to do to set its status and due date, add notes and links, and upload receipts or photos. Only the team can see this; uploaded files are private.</p>
+    <form class="td-add" id="tdAddForm"><input id="tdNew" maxlength="300" placeholder="Add a to do… (e.g. Order gift bags)" autocomplete="off"><button type="submit" class="solid">Add</button></form>
+    <div class="td-tools"><div class="td-filters" id="tdFilters"></div><input class="search" id="tdQ" type="search" placeholder="Search to dos, notes, people"></div>
+    <div id="tdList"><p class="mail-help">Loading…</p></div>
+  </div>
+</div>
+<div class="td-drawer-wrap" id="tdWrap" hidden>
+  <aside class="td-drawer" role="dialog" aria-modal="true" aria-label="To do details">
+    <div class="td-dhead"><span class="td-saved" id="tdSaved"></span><button type="button" class="ghost" id="tdClose">Close</button></div>
+    <textarea class="td-title" id="tdTitle" rows="1" maxlength="300"></textarea>
+    <div class="td-fields">
+      <label>Status<select id="tdStatus"><option value="todo">To do</option><option value="doing">In progress</option><option value="waiting">Waiting on someone</option><option value="done">Done</option></select></label>
+      <label>Due date<input type="date" id="tdDue"></label>
+      <label>Who’s on it<input id="tdOwner" maxlength="120" placeholder="e.g. Chelsea"></label>
+    </div>
+    <h4>Notes</h4>
+    <textarea class="td-notes" id="tdNotes" placeholder="Details, quotes, phone numbers, what was decided…"></textarea>
+    <h4>Links</h4>
+    <div id="tdLinks"></div>
+    <form class="td-linkadd" id="tdLinkForm"><input id="tdLinkLabel" placeholder="Name (optional)" maxlength="200"><input id="tdLinkUrl" placeholder="Paste a link" maxlength="2000"><button type="submit" class="ghost">Add link</button></form>
+    <h4>Receipts &amp; images</h4>
+    <div class="td-files" id="tdFiles"></div>
+    <label class="ghost td-upload"><input type="file" id="tdFile" accept="image/*,application/pdf" multiple hidden>Upload receipts or images</label>
+    <p class="mail-help" style="margin-top:8px">Photos, screenshots or PDFs, up to 7 MB each.</p>
+    <div class="td-dfoot"><span class="mail-help" id="tdMeta" style="margin:0"></span><button type="button" class="td-del" id="tdDelete">Delete this to do</button></div>
+  </aside>
 </div>
 <div class="mail-wrap page" id="ciBox" hidden>
   <div class="mail">
@@ -1531,7 +1614,7 @@
   });
 
   // ---- top navigation: each section fills the page ----
-  var view = '', VIEWS = { attendees:'app', agenda:'agBox', seating:'seatBox', checkin:'ciBox', pages:'pagesBox', templates:'tplBox', chat:'chatBox', host:'agBox', venue:'agBox', settings:'agBox' };
+  var view = '', VIEWS = { attendees:'app', agenda:'agBox', seating:'seatBox', checkin:'ciBox', pages:'pagesBox', templates:'tplBox', todo:'todoBox', chat:'chatBox', host:'agBox', venue:'agBox', settings:'agBox' };
   var AGV = { agenda:'schedule', host:'host', venue:'venue', settings:'settings' };
   function viewFromHash(){ var h = location.hash.replace('#',''); return VIEWS[h] ? h : 'attendees'; }
   function unsaved(){
@@ -1560,11 +1643,149 @@
     if (v === 'chat') loadChat();
     if (v === 'pages') renderPages();
     if (v === 'checkin') ciTeamLoad();
+    if (v === 'todo') tdLoad();
+    if (v !== 'todo') tdCloseDrawer();
   }
   $('nav').addEventListener('click', function(e){ var b = e.target.closest('[data-view]'); if (b) go(b.dataset.view); });
   window.addEventListener('hashchange', function(){ if (data) go(viewFromHash()); });
   window.addEventListener('beforeunload', function(e){ if (unsaved()){ e.preventDefault(); e.returnValue = ''; } });
 
+
+  // ---- To Do: event tasks (status, due date, who, notes, links, receipts & images) ----
+  var td = { list:null, filter:'open', q:'', open:null, timers:{} };
+  var TD_ST = { todo:'To do', doing:'In progress', waiting:'Waiting on someone', done:'Done' };
+  function tdToday(){ return new Date().toLocaleDateString('en-CA', { timeZone:'America/Phoenix' }); }
+  function tdDate(d){ if (!d) return ''; var x = new Date(d + 'T12:00:00Z'); return x.toLocaleDateString('en-US', { timeZone:'UTC', weekday:'short', month:'short', day:'numeric' }); }
+  function tdLoad(){ return api('team-todo', { op:'list' }).then(function(d){ if (!d.ok){ $('tdList').innerHTML = '<p class="mail-help">Couldn’t load the to dos. Refresh and try again.</p>'; return; } td.list = d.todos; tdRender(); }); }
+  function tdMatch(t){
+    if (td.filter === 'open' && t.status === 'done') return false;
+    if (td.filter !== 'open' && td.filter !== 'all' && t.status !== td.filter) return false;
+    if (td.q){ var hay = (t.title + ' ' + t.notes + ' ' + t.owner + ' ' + (t.links || []).map(function(l){ return l.label + ' ' + l.url; }).join(' ')).toLowerCase(); if (hay.indexOf(td.q) < 0) return false; }
+    return true;
+  }
+  function tdSort(a, b){
+    if ((a.status === 'done') !== (b.status === 'done')) return a.status === 'done' ? 1 : -1;
+    if (a.status === 'done') return (b.done_at || '').localeCompare(a.done_at || '');
+    if (!a.due_date !== !b.due_date) return a.due_date ? -1 : 1;
+    return (a.due_date || '').localeCompare(b.due_date || '') || a.created_at.localeCompare(b.created_at);
+  }
+  function tdRender(){
+    if (!td.list) return;
+    var c = { open:0, all:td.list.length, todo:0, doing:0, waiting:0, done:0 };
+    td.list.forEach(function(t){ c[t.status]++; if (t.status !== 'done') c.open++; });
+    $('tdFilters').innerHTML = [['open','All open'],['todo','To do'],['doing','In progress'],['waiting','Waiting'],['done','Done'],['all','Everything']].map(function(f){
+      return '<button type="button" data-tdf="' + f[0] + '" aria-pressed="' + (td.filter === f[0]) + '">' + f[1] + '<span>' + c[f[0]] + '</span></button>'; }).join('');
+    var today = tdToday(), soon = new Date(Date.now() + 3 * 864e5).toLocaleDateString('en-CA', { timeZone:'America/Phoenix' });
+    var rows = td.list.filter(tdMatch).sort(tdSort);
+    $('tdList').innerHTML = rows.length ? rows.map(function(t){
+      var late = t.status !== 'done' && t.due_date && t.due_date < today, isSoon = !late && t.status !== 'done' && t.due_date && t.due_date <= soon;
+      var bits = []; if (t.notes) bits.push('Notes'); if ((t.links || []).length) bits.push(t.links.length + ' link' + (t.links.length > 1 ? 's' : '')); if ((t.files || []).length) bits.push(t.files.length + ' file' + (t.files.length > 1 ? 's' : ''));
+      return '<div class="td-row td-st-' + t.status + (t.status === 'done' ? ' done' : '') + '" data-tdid="' + t.id + '">' +
+        '<div class="td-sel"><select data-tdstatus="' + t.id + '" aria-label="Status">' + Object.keys(TD_ST).map(function(k){ return '<option value="' + k + '"' + (k === t.status ? ' selected' : '') + '>' + TD_ST[k] + '</option>'; }).join('') + '</select></div>' +
+        '<div><span class="td-t">' + esc(t.title) + '</span>' + (t.notes ? '<span class="td-sub">' + esc(t.notes.split('\n')[0].slice(0, 110)) + '</span>' : '') + '</div>' +
+        '<div class="td-due' + (late ? ' late' : isSoon ? ' soon' : '') + '">' + (t.due_date ? (late ? 'Overdue · ' : '') + tdDate(t.due_date) : '<span style="color:var(--warm)">No due date</span>') + '</div>' +
+        '<div class="td-who">' + esc(t.owner || '') + '</div><div class="td-ic">' + bits.join(' · ') + '</div></div>';
+    }).join('') : '<p class="empty">' + (td.list.length ? 'Nothing here.' : 'No to dos yet. Add the first one above.') + '</p>';
+  }
+  function tdFind(id){ return (td.list || []).filter(function(t){ return t.id === id; })[0]; }
+  function tdPut(t){ var i = td.list.map(function(x){ return x.id; }).indexOf(t.id); if (i < 0) td.list.push(t); else td.list[i] = t; tdRender(); if (td.open === t.id) tdDrawer(t, true); }
+  function tdSave(id, patch, quiet){
+    $('tdSaved').textContent = 'Saving…';
+    return api('team-todo', Object.assign({ op:'save', id:id }, patch)).then(function(d){
+      if (!d.ok){ $('tdSaved').textContent = ''; toast(d.error === 'date' ? 'That date didn’t work' : 'Didn’t save. Try again.'); return d; }
+      tdPut(d.todo); $('tdSaved').textContent = 'Saved'; return d;
+    }).catch(function(){ $('tdSaved').textContent = ''; toast('Check your connection and try again.'); });
+  }
+  function tdLater(field, fn){ clearTimeout(td.timers[field]); td.timers[field] = setTimeout(fn, 700); $('tdSaved').textContent = 'Typing…'; }
+  function tdFlush(){ Object.keys(td.timers).forEach(function(k){ if (td.timers[k]){ clearTimeout(td.timers[k]); td.timers[k] = null; tdFieldSave(k); } }); }
+  function tdFieldSave(k){ var id = td.open; if (!id) return;
+    if (k === 'title'){ var v = $('tdTitle').value.trim(); if (v) tdSave(id, { title:v }); }
+    if (k === 'notes') tdSave(id, { notes:$('tdNotes').value });
+    if (k === 'owner') tdSave(id, { owner:$('tdOwner').value.trim() });
+  }
+  function tdGrow(){ var el = $('tdTitle'); el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
+  function tdDrawer(t, refresh){
+    td.open = t.id;
+    var active = document.activeElement;
+    if (!refresh || active !== $('tdTitle')) $('tdTitle').value = t.title;
+    if (!refresh || active !== $('tdNotes')) $('tdNotes').value = t.notes || '';
+    if (!refresh || active !== $('tdOwner')) $('tdOwner').value = t.owner || '';
+    $('tdStatus').value = t.status; $('tdDue').value = t.due_date || '';
+    $('tdLinks').innerHTML = (t.links || []).map(function(l, i){ return '<div class="td-link"><a href="' + esc(l.url) + '" target="_blank" rel="noopener">' + esc(l.label || l.url) + '</a><button type="button" class="td-x" data-tdlinkrm="' + i + '" aria-label="Remove link">×</button></div>'; }).join('') || '<p class="mail-help" style="margin:0">No links yet.</p>';
+    $('tdFiles').innerHTML = (t.files || []).map(function(f){
+      var img = /^image\//.test(f.type) && !/hei[cf]/.test(f.type);
+      return '<div class="td-file"><a href="' + esc(f.url || '#') + '" target="_blank" rel="noopener">' + (img && f.url ? '<img src="' + esc(f.url) + '" alt="">' : '<span class="doc">' + (f.type === 'application/pdf' ? 'PDF' : 'FILE') + '</span>') + '<span class="nm">' + esc(f.name) + '</span></a>' +
+        '<button type="button" class="td-x" data-tdfilerm="' + esc(f.path) + '" aria-label="Remove file">×</button></div>';
+    }).join('') + (td.uploading ? '<div class="td-file up">Uploading ' + td.uploading + '…</div>' : '');
+    $('tdMeta').textContent = 'Added ' + short(t.created_at) + (t.done_at ? ' · Done ' + short(t.done_at) : '');
+    if (!refresh){ $('tdSaved').textContent = ''; $('tdWrap').hidden = false; document.body.style.overflow = 'hidden'; }
+    tdGrow();
+  }
+  function tdCloseDrawer(){ if ($('tdWrap').hidden) return; tdFlush(); $('tdWrap').hidden = true; document.body.style.overflow = ''; td.open = null; }
+  function tdShrink(file){
+    return new Promise(function(res){
+      if (!/^image\/(jpeg|png|webp)$/.test(file.type) || file.size < 1.5e6) return res(null);
+      var img = new Image(), u = URL.createObjectURL(file);
+      img.onload = function(){ var k = Math.min(1, 2400 / Math.max(img.naturalWidth, img.naturalHeight)), c = document.createElement('canvas');
+        c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u); res(c.toDataURL('image/jpeg', 0.85)); };
+      img.onerror = function(){ URL.revokeObjectURL(u); res(null); }; img.src = u;
+    });
+  }
+  function tdRead(file){ return new Promise(function(res, rej){ var r = new FileReader(); r.onload = function(){ res(r.result); }; r.onerror = rej; r.readAsDataURL(file); }); }
+  function tdUpload(files){
+    var id = td.open; if (!id) return;
+    var list = [].slice.call(files);
+    (function next(){
+      var f = list.shift(); td.uploading = list.length + 1 > 1 ? (list.length + 1) + ' files' : f ? '“' + f.name + '”' : 0;
+      if (!f){ td.uploading = 0; var t = tdFind(id); if (t && td.open === id) tdDrawer(t, true); return; }
+      var t0 = tdFind(id); if (t0 && td.open === id) tdDrawer(t0, true);
+      if (!/^(image\/|application\/pdf$)/.test(f.type)){ toast('“' + f.name + '” isn’t an image or PDF'); return next(); }
+      tdShrink(f).then(function(small){ return small || (f.size > 7e6 ? null : tdRead(f)); }).then(function(dataUrl){
+        if (!dataUrl){ toast('“' + f.name + '” is over 7 MB'); return next(); }
+        var nm = small2name(f.name, dataUrl);
+        return api('team-todo-upload', { id:id, name:nm, data:dataUrl }).then(function(d){
+          if (!d.ok) toast(d.error === 'type' ? 'Only images or PDFs can be uploaded' : d.error === 'too_big' ? '“' + f.name + '” is too big' : 'Upload didn’t work. Try again.');
+          else tdPut(d.todo);
+          next();
+        });
+      }).catch(function(){ toast('Upload didn’t work. Check your connection.'); next(); });
+    })();
+  }
+  function small2name(name, dataUrl){ return /^data:image\/jpeg/.test(dataUrl) && !/\.jpe?g$/i.test(name) ? name.replace(/\.[^.]+$/, '') + '.jpg' : name; }
+
+  $('tdAddForm').addEventListener('submit', function(e){
+    e.preventDefault(); var v = $('tdNew').value.trim(); if (!v) return;
+    $('tdNew').value = '';
+    api('team-todo', { op:'save', title:v }).then(function(d){ if (!d.ok) return toast('Didn’t add. Try again.'); if (td.filter === 'done') td.filter = 'open'; tdPut(d.todo); toast('Added'); });
+  });
+  $('tdFilters').addEventListener('click', function(e){ var b = e.target.closest('[data-tdf]'); if (b){ td.filter = b.dataset.tdf; tdRender(); } });
+  $('tdQ').addEventListener('input', function(){ td.q = this.value.trim().toLowerCase(); tdRender(); });
+  $('tdList').addEventListener('change', function(e){ var s = e.target.closest('[data-tdstatus]'); if (s) tdSave(s.dataset.tdstatus, { status:s.value }).then(function(d){ if (d && d.ok) toast(TD_ST[s.value]); }); });
+  $('tdList').addEventListener('click', function(e){ if (e.target.closest('select')) return; var r = e.target.closest('[data-tdid]'); if (r){ var t = tdFind(r.dataset.tdid); if (t) tdDrawer(t); } });
+  $('tdClose').addEventListener('click', tdCloseDrawer);
+  $('tdWrap').addEventListener('click', function(e){ if (e.target.id === 'tdWrap') tdCloseDrawer(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !$('tdWrap').hidden) tdCloseDrawer(); });
+  $('tdTitle').addEventListener('input', function(){ tdGrow(); tdLater('title', function(){ td.timers.title = null; tdFieldSave('title'); }); });
+  $('tdTitle').addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); this.blur(); } });
+  $('tdNotes').addEventListener('input', function(){ tdLater('notes', function(){ td.timers.notes = null; tdFieldSave('notes'); }); });
+  $('tdOwner').addEventListener('input', function(){ tdLater('owner', function(){ td.timers.owner = null; tdFieldSave('owner'); }); });
+  ['tdTitle','tdNotes','tdOwner'].forEach(function(id){ $(id).addEventListener('blur', tdFlush); });
+  $('tdStatus').addEventListener('change', function(){ tdSave(td.open, { status:this.value }); });
+  $('tdDue').addEventListener('change', function(){ tdSave(td.open, { due_date:this.value }); });
+  $('tdLinkForm').addEventListener('submit', function(e){
+    e.preventDefault(); var t = tdFind(td.open); if (!t) return;
+    var url = $('tdLinkUrl').value.trim(); if (!url) return;
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+    if (!/^https?:\/\/[^\s.]+\.[^\s]+$/i.test(url)) return toast('That doesn’t look like a link');
+    tdSave(t.id, { links:(t.links || []).concat([{ label:$('tdLinkLabel').value.trim(), url:url }]) }).then(function(d){ if (d && d.ok){ $('tdLinkUrl').value = ''; $('tdLinkLabel').value = ''; } });
+  });
+  $('tdLinks').addEventListener('click', function(e){ var b = e.target.closest('[data-tdlinkrm]'); if (!b) return; var t = tdFind(td.open); var l = (t.links || []).slice(); l.splice(+b.dataset.tdlinkrm, 1); tdSave(t.id, { links:l }); });
+  $('tdFile').addEventListener('change', function(){ if (this.files.length) tdUpload(this.files); this.value = ''; });
+  $('tdFiles').addEventListener('click', function(e){ var b = e.target.closest('[data-tdfilerm]'); if (!b) return; e.preventDefault();
+    if (!confirm('Remove this file? It will be deleted.')) return;
+    api('team-todo', { op:'remove_file', id:td.open, path:b.dataset.tdfilerm }).then(function(d){ if (d.ok) tdPut(d.todo); else toast('Didn’t remove. Try again.'); }); });
+  $('tdDelete').addEventListener('click', function(){ var t = tdFind(td.open); if (!t || !confirm('Delete “' + t.title + '”? Its notes, links and files go too.')) return;
+    api('team-todo', { op:'delete', id:t.id }).then(function(d){ if (!d.ok) return toast('Didn’t delete. Try again.'); td.list = td.list.filter(function(x){ return x.id !== t.id; }); td.timers = {}; $('tdWrap').hidden = true; document.body.style.overflow = ''; td.open = null; tdRender(); toast('Deleted'); }); });
 
   // ---- Check-in controls (switches, QR signs, volunteers' PIN) ----
   var ciT = null;
