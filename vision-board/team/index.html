@@ -154,7 +154,8 @@
   .track-link a{ color:var(--navy); }
   .ag-aud{ grid-column:1/-1; display:flex; flex-wrap:wrap; gap:6px 16px; align-items:center; font-size:13px; color:var(--warm); }
   .ag-aud label{ display:inline-flex; gap:6px; align-items:center; color:var(--ink); cursor:pointer; }
-  .ag-aud input{ width:16px; height:16px; accent-color:var(--navy); }
+  .ag-item .ag-aud input{ width:16px; height:16px; padding:0; accent-color:var(--navy); }
+  .ag-item .tools{ justify-content:flex-start; margin:0; }
   .aud-pill{ display:inline-block; font-size:12px; padding:2px 10px; border-radius:999px; background:#f6efe1; color:#8a6d2f; border:1px solid #ead9b8; margin-right:6px; }
   .seat-limit{ display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between; background:var(--stone); padding:12px 16px; margin:-8px 0 22px; font-size:14px; }
   .seat-limit b{ font-weight:600; }
@@ -214,6 +215,32 @@
   .tpl-prev iframe{ width:100%; height:620px; border:1px solid var(--line); background:var(--stone); }
   .mailfail{ font-size:12px; color:var(--red); margin-top:6px; }
   @media (max-width:900px){ .tpl-grid{ grid-template-columns:1fr; } .tpl-prev iframe{ height:480px; } }
+  /* top navigation + full-page sections */
+  .bar{ flex-wrap:wrap; padding-bottom:0; }
+  .nav{ flex-basis:100%; display:flex; gap:2px; overflow-x:auto; margin:0 -4px; scrollbar-width:none; }
+  .nav[hidden]{ display:none; }
+  .nav button{ background:none; border:0; border-bottom:3px solid transparent; padding:12px 14px 11px; font-size:14px; color:var(--muted); white-space:nowrap; }
+  .nav button:hover{ color:var(--navy); }
+  .nav button[aria-current="page"]{ color:var(--navy); border-bottom-color:var(--navy); font-weight:500; }
+  .mail-wrap.page{ position:static; inset:auto; background:none; display:block; padding:0; z-index:auto; }
+  .mail-wrap.page[hidden]{ display:none; }
+  .mail-wrap.page > .mail{ max-width:none; width:auto; max-height:none; overflow:visible; padding:32px 40px 80px; }
+  .mail-wrap.page .mail-head .ghost[id$="Close"]{ display:none; }
+  .mail-wrap.page .ag-foot, .mail-wrap.page .st-foot{ bottom:0; }
+  .mail-wrap.page .st-side{ top:120px; }
+  .track-row{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; margin:0 0 16px; }
+  .track-row .track-switch{ margin:0; }
+  .lp-sec{ margin:0 0 34px; }
+  .lp-sec h3{ font-family:'Cormorant Garamond',serif; font-weight:400; font-size:24px; margin:0 0 4px; }
+  .lp-row{ display:grid; grid-template-columns:minmax(180px,260px) minmax(0,1fr) auto; gap:6px 16px; align-items:center; padding:12px 0; border-top:1px solid var(--line); }
+  .lp-row b{ font-weight:500; } .lp-row .sub{ display:block; }
+  .lp-url{ font-size:13px; color:var(--navy); overflow-wrap:anywhere; }
+  .lp-acts{ display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+  .lp-acts button, .lp-acts a{ background:#fff; border:1px solid #cfcbc2; padding:6px 10px; font-size:13px; color:var(--ink); text-decoration:none; }
+  .lp-acts button:hover, .lp-acts a:hover{ border-color:var(--navy); color:var(--navy); }
+  .lp-kind{ display:inline-block; font-size:12px; padding:2px 9px; border-radius:20px; background:var(--stone); color:var(--muted); margin-top:4px; }
+  .lp-tools{ display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; justify-content:space-between; margin:10px 0 4px; }
+  @media (max-width:760px){ .lp-row{ grid-template-columns:1fr; } .lp-acts{ justify-content:flex-start; } .mail-wrap.page > .mail{ padding:20px 16px 60px; } }
   .toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 20px; font-size:14px; opacity:0; transition:opacity .2s; pointer-events:none; z-index:30; }
   .toast.on{ opacity:1; }
 
@@ -238,17 +265,20 @@
 </head>
 <body>
 <div class="bar">
-  <div class="brand"><b>JENNIFER SCHUMACHER</b><span>Vision Board Crew 2027 · Guest list</span></div>
+  <div class="brand"><b>JENNIFER SCHUMACHER</b><span>Vision Board Crew 2027 · Team</span></div>
   <div class="bar-actions" id="barActions" hidden>
     <span class="updated" id="updated"></span>
     <button class="ghost" id="refreshBtn">Refresh</button>
-    <button class="ghost" id="agBtn">Event agenda</button>
-    <button class="ghost" id="seatBtn">Seating</button>
-    <button class="ghost" id="chatBtn">Chat</button>
-    <button class="ghost" id="tplBtn">Email templates</button>
-    <button class="ghost" id="csvBtn">Download spreadsheet</button>
     <button class="ghost" id="logoutBtn">Sign out</button>
   </div>
+  <nav class="nav" id="nav" hidden aria-label="Team sections">
+    <button type="button" data-view="attendees">Attendees</button>
+    <button type="button" data-view="agenda">Agenda</button>
+    <button type="button" data-view="seating">Seating</button>
+    <button type="button" data-view="pages">Live pages</button>
+    <button type="button" data-view="templates">Email templates</button>
+    <button type="button" data-view="chat">Chat management</button>
+  </nav>
 </div>
 
 <section class="login" id="login">
@@ -263,7 +293,7 @@
 </section>
 
 <main class="wrap" id="app" hidden>
-  <div class="track-switch" id="trackSwitch"></div>
+  <div class="track-row"><div class="track-switch" id="trackSwitch"></div><button type="button" class="ghost" id="csvBtn">Download spreadsheet</button></div>
   <div class="summary" id="summary"></div>
   <div class="seat-limit" id="seatLimit"></div>
   <div class="tools">
@@ -292,7 +322,7 @@
     </div>
   </div>
 </div>
-<div class="mail-wrap" id="tplBox" hidden>
+<div class="mail-wrap page" id="tplBox" hidden>
   <div class="mail tpl" role="dialog" aria-modal="true" aria-labelledby="tTitle">
     <div class="mail-head"><h2 id="tTitle">Email templates</h2><button type="button" class="ghost" id="tClose">Close</button></div>
     <div class="tabs" id="tTabs"></div>
@@ -336,7 +366,7 @@
     <div style="display:flex;gap:12px;align-items:center;margin-top:8px"><button type="button" class="solid" id="editSave">Save changes</button><span class="mail-help" id="editStatus" style="margin:0"></span></div>
   </div>
 </div>
-<div class="mail-wrap" id="seatBox" hidden>
+<div class="mail-wrap page" id="seatBox" hidden>
   <div class="mail seat" role="dialog" aria-modal="true" aria-labelledby="seatTitle">
     <div class="mail-head"><h2 id="seatTitle">Assigned seating</h2><button type="button" class="ghost" id="seatClose">Close</button></div>
     <p class="mail-help">Who can be seated follows each session’s “Who sees this” boxes in Event agenda (paid guests, local guests, or both). Pick a session, set up its tables, then seat people: tap a name on the right, then tap an empty seat (or tap an empty seat and choose someone). Tap a filled seat to move or remove that person. Guests see their table under that session in their app once you save.</p>
@@ -345,17 +375,17 @@
     <div class="st-foot"><button type="button" class="solid" id="stSave">Save seating</button><span class="mail-help" id="stStatus" style="margin:0"></span></div>
   </div>
 </div>
-<div class="mail-wrap" id="chatBox" hidden>
+<div class="mail-wrap page" id="chatBox" hidden>
   <div class="mail ag" role="dialog" aria-modal="true" aria-labelledby="chatTitle">
-    <div class="mail-head"><h2 id="chatTitle">Chat</h2><button type="button" class="ghost" id="chatClose">Close</button></div>
+    <div class="mail-head"><h2 id="chatTitle">Chat management</h2><button type="button" class="ghost" id="chatClose">Close</button></div>
     <p class="mail-help">Everything guests have posted in the app's Chat tab, newest first. Remove anything that shouldn't be there; it disappears for everyone right away. Guests can also delete their own posts.</p>
     <div id="chatList"></div>
   </div>
 </div>
-<div class="mail-wrap" id="agBox" hidden>
+<div class="mail-wrap page" id="agBox" hidden>
   <div class="mail ag" role="dialog" aria-modal="true" aria-labelledby="agTitle">
-    <div class="mail-head"><h2 id="agTitle">Event agenda</h2><button type="button" class="ghost" id="agClose">Close</button></div>
-    <p class="mail-help">This is what paid guests see in their personal agenda app at schumacherliving.com/vision-board/2027-agenda. Changes show up for guests as soon as you save.</p>
+    <div class="mail-head"><h2 id="agTitle">Agenda</h2><button type="button" class="ghost" id="agClose">Close</button></div>
+    <p class="mail-help">What guests see in their personal app at schumacherliving.com/vision-board/2027-agenda. Use each line’s “Who sees this” boxes to choose paid guests, local guests or both. Changes show up for guests as soon as you save.</p>
     <div class="ag-send">
       <div><b id="agSendTitle"></b><div class="mail-help" style="margin:2px 0 0" id="agSendSub"></div></div>
       <div class="mail-acts"><button type="button" class="solid" id="agSend">Email agenda links</button><button type="button" class="ghost" id="agPreview">Preview as a guest</button><button type="button" class="ghost" id="agPreviewLocal">Preview as a local guest</button></div>
@@ -366,6 +396,13 @@
       <button type="button" class="solid" id="agSave">Save agenda</button>
       <span class="mail-help" id="agStatus" style="margin:0"></span>
     </div>
+  </div>
+</div>
+<div class="mail-wrap page" id="pagesBox" hidden>
+  <div class="mail">
+    <div class="mail-head"><h2>Live pages</h2></div>
+    <p class="mail-help">Every Vision Board page that’s live right now. None of them show up in Google; people only get there with the link.</p>
+    <div id="lpBody"></div>
   </div>
 </div>
 <div class="toast" id="toast" role="status"></div>
@@ -400,13 +437,13 @@
     $('loginBtn').disabled = true; $('loginErr').textContent = '';
     api('team-list').then(function(d){
       $('loginBtn').disabled = false;
-      if (d._status === 401){ pw=''; try{ sessionStorage.removeItem('vbTeamPw'); }catch(e){} $('login').hidden=false; $('app').hidden=true; $('barActions').hidden=true; $('loginErr').textContent = 'That password didn’t work. Check with Chelsea for the current one.'; return; }
+      if (d._status === 401){ pw=''; try{ sessionStorage.removeItem('vbTeamPw'); }catch(e){} $('login').hidden=false; $('app').hidden=true; $('barActions').hidden=true; $('nav').hidden=true; $('loginErr').textContent = 'That password didn’t work. Check with Chelsea for the current one.'; return; }
       try { sessionStorage.setItem('vbTeamPw', pw); } catch(e){}
-      $('login').hidden = true; $('app').hidden = false; $('barActions').hidden = false;
-      data = d; render();
+      $('login').hidden = true; $('barActions').hidden = false; $('nav').hidden = false;
+      data = d; render(); go(viewFromHash(), true);
     }).catch(function(){ $('loginBtn').disabled=false; $('loginErr').textContent = 'Couldn’t reach the guest list. Check your connection and try again.'; });
   }
-  function load(){ return api('team-list').then(function(d){ if (d._status===401){ signIn(); return; } data=d; render(); }); }
+  function load(){ return api('team-list').then(function(d){ if (d._status===401){ signIn(); return; } data=d; render(); if (view === 'pages') renderPages(); }); }
 
   var TABS = [
     ['all','All'], ['pending','Awaiting payment'], ['paid','Paid'], ['waitlist','Waitlist'], ['closed','Expired & cancelled']
@@ -604,7 +641,7 @@
     $('tHotel').value = data.settings.hotel_code || '';
     $('tChips').innerHTML = 'Insert: ' + CHIPS.map(function(c){ return '<button type="button" data-ins="'+c[0]+'" title="'+c[0]+'">'+c[1]+'</button>'; }).join('');
     $('tStatus').textContent = '';
-    showKind('hold'); $('tplBox').hidden = false;
+    tKind = null; showKind('hold'); $('tplBox').hidden = false;
   }
   function stash(){ tpl[tKind] = { subject:$('tSubject').value, heading:$('tHeading').value, body:$('tBody').value }; }
   function showKind(k){
@@ -623,7 +660,6 @@
         .then(function(m){ if (m.ok) $('tPreview').srcdoc = '<div style="font:13px Helvetica,Arial,sans-serif;color:#55585c;padding:12px 16px;background:#fff;border-bottom:1px solid #e4e1da"><b>Subject:</b> ' + esc(m.subject) + '</div>' + m.html; });
     }, 400);
   }
-  $('tplBtn').addEventListener('click', openTemplates);
 
   // ---- event agenda editor ----
   var SITE = 'https://www.schumacherliving.com';
@@ -645,7 +681,7 @@
       h += '<p class="mail-help">Each line is one block of the weekend. Location and dress code are optional, and show as small tags under the title. Use “+ Add speaker” to show a speaker’s photo, bio and links under that line.</p>';
       (ag.days||[]).forEach(function(d, di){
         h += '<div class="ag-day"><div class="ag-day-head">' + fld('Day', 'days.'+di+'.label', d.label, { ph:'Friday, January 8' }) +
-          '<div class="tools ag-note" style="border:0;padding:0;margin:0;display:flex"><button type="button" data-ag="day-up" data-d="'+di+'">↑</button><button type="button" data-ag="day-down" data-d="'+di+'">↓</button><button type="button" data-ag="day-del" data-d="'+di+'">Remove day</button></div></div>' +
+          '<div class="tools ag-note" style="border:0;padding:0;margin:0;display:flex"><button type="button" data-ag="day-up" data-d="'+di+'" title="Move this day up">↑ Day</button><button type="button" data-ag="day-down" data-d="'+di+'" title="Move this day down">↓ Day</button><button type="button" data-ag="day-del" data-d="'+di+'">Remove day</button></div></div>' +
           '<div class="ag-cap"><span>Time</span><span>What</span><span>Where</span><span>Dress code</span><span></span></div>';
         (d.items||[]).forEach(function(it, ii){
           var p = 'days.'+di+'.items.'+ii+'.';
@@ -654,10 +690,10 @@
             '<input data-p="'+p+'title" value="'+esc(it.title)+'" placeholder="e.g. Welcome toast" aria-label="What">' +
             '<input data-p="'+p+'location" value="'+esc(it.location)+'" placeholder="e.g. Lobby lounge" aria-label="Where">' +
             '<input data-p="'+p+'dress" value="'+esc(it.dress)+'" placeholder="e.g. Cocktail casual" aria-label="Dress code">' +
+            '<div class="tools"><button type="button" data-ag="up" data-d="'+di+'" data-i="'+ii+'" title="Move this line up" aria-label="Move this line up">↑</button><button type="button" data-ag="down" data-d="'+di+'" data-i="'+ii+'" title="Move this line down" aria-label="Move this line down">↓</button><button type="button" data-ag="del" data-d="'+di+'" data-i="'+ii+'" title="Remove this line" aria-label="Remove this line">✕</button></div>' +
             (function(){ var au = it.audience && it.audience.length ? it.audience : ['paid'];
               return '<div class="ag-aud">Who sees this:<label><input type="checkbox" data-aud="paid" data-d="'+di+'" data-i="'+ii+'"' + (au.indexOf('paid')>-1?' checked':'') + '> Paid guests</label>' +
                 '<label><input type="checkbox" data-aud="local" data-d="'+di+'" data-i="'+ii+'"' + (au.indexOf('local')>-1?' checked':'') + '> Local guests</label></div>'; })() +
-            '<div class="tools"><button type="button" data-ag="up" data-d="'+di+'" data-i="'+ii+'" aria-label="Move up">↑</button><button type="button" data-ag="down" data-d="'+di+'" data-i="'+ii+'" aria-label="Move down">↓</button><button type="button" data-ag="del" data-d="'+di+'" data-i="'+ii+'" aria-label="Remove">✕</button></div>' +
             '<textarea data-p="'+p+'details" rows="1" placeholder="Extra details (optional)" aria-label="Details">'+esc(it.details||'')+'</textarea>' +
             '<div class="ag-spk-wrap">' + (it.speakers||[]).map(function(sp, si){
               var sp_ = p + 'speakers.' + si + '.';
@@ -748,7 +784,6 @@
     agDirty = false; $('agStatus').textContent = ''; agSendInfo(); agRender(); $('agBox').hidden = false;
   }
   function closeAgenda(){ if (agDirty && !confirm('Close without saving your agenda changes?')) return; $('agBox').hidden = true; }
-  $('agBtn').addEventListener('click', openAgenda);
   document.addEventListener('click', function(e){
     if (!e.target.closest('#seatLimitBtn')) return;
     var s = data.settings, L = track === 'local', base = L ? s.local_capacity : s.capacity, cur = L ? (s.local_team_capacity || base) : (s.team_capacity || base);
@@ -857,7 +892,6 @@
     if (other && other !== id){ if (from) L.assign[other] = { table:from.table, seat:from.seat }; else delete L.assign[other]; }
     L.assign[id] = { table:t, seat:n }; st.sel = null; stMark(); stRender();
   }
-  $('seatBtn').addEventListener('click', openSeating);
   function closeSeating(){ if (st.dirty && !confirm('Close without saving your seating changes?')) return; stClosePop(); $('seatBox').hidden = true; }
   $('seatClose').addEventListener('click', closeSeating);
   $('stSession').addEventListener('change', function(){ st.cur = this.value; st.sel = null; st.q = ''; stClosePop(); stRender(); });
@@ -959,7 +993,6 @@
       }).join('');
     });
   }
-  $('chatBtn').addEventListener('click', function(){ $('chatBox').hidden = false; loadChat(); });
   $('chatClose').addEventListener('click', function(){ $('chatBox').hidden = true; });
   $('chatBox').addEventListener('click', function(e){
     if (e.target.id === 'chatBox'){ $('chatBox').hidden = true; return; }
@@ -1080,7 +1113,7 @@
   $('tplBox').addEventListener('click', function(e){ if (e.target.id==='tplBox') closeTpl(); });
   document.addEventListener('keydown', function(e){
     if (e.key !== 'Escape') return;
-    if (document.querySelector('.st-pop')) stClosePop(); else if (!$('editBox').hidden) closeEdit(); else if (!$('mailBox').hidden) closeMail(); else if (!$('seatBox').hidden) closeSeating(); else if (!$('chatBox').hidden) $('chatBox').hidden = true; else if (!$('agBox').hidden) closeAgenda(); else if (!$('tplBox').hidden) closeTpl();
+    if (document.querySelector('.st-pop')) stClosePop(); else if (!$('editBox').hidden) closeEdit(); else if (!$('mailBox').hidden) closeMail();
   });
 
   // ---- edit guest info ----
@@ -1169,6 +1202,96 @@
     var a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([lines.join('\n')], { type:'text/csv' }));
     a.download = 'vision-board-2027-guests.csv'; document.body.appendChild(a); a.click(); a.remove();
+  });
+
+  // ---- top navigation: each section fills the page ----
+  var view = '', VIEWS = { attendees:'app', agenda:'agBox', seating:'seatBox', pages:'pagesBox', templates:'tplBox', chat:'chatBox' };
+  function viewFromHash(){ var h = location.hash.replace('#',''); return VIEWS[h] ? h : 'attendees'; }
+  function unsaved(){
+    if (view === 'agenda' && agDirty) return 'agenda';
+    if (view === 'seating' && st.dirty) return 'seating';
+    if (view === 'templates' && $('tStatus').textContent === 'Unsaved changes') return 'email template';
+    return '';
+  }
+  function go(v, force){
+    if (!VIEWS[v]) v = 'attendees';
+    if (!force && v === view) return;
+    var u = unsaved();
+    if (u && !confirm('Leave without saving your ' + u + ' changes?')){ if (location.hash !== '#' + view) history.replaceState(null, '', '#' + view); return; }
+    stClosePop(); view = v;
+    Object.keys(VIEWS).forEach(function(k){ $(VIEWS[k]).hidden = k !== v; });
+    document.querySelectorAll('#nav [data-view]').forEach(function(b){ if (b.dataset.view === v) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+    if (location.hash !== '#' + v) history.replaceState(null, '', '#' + v);
+    window.scrollTo(0, 0);
+    if (v === 'attendees') render();
+    if (v === 'agenda') openAgenda();
+    if (v === 'seating') openSeating();
+    if (v === 'templates') openTemplates();
+    if (v === 'chat') loadChat();
+    if (v === 'pages') renderPages();
+  }
+  $('nav').addEventListener('click', function(e){ var b = e.target.closest('[data-view]'); if (b) go(b.dataset.view); });
+  window.addEventListener('hashchange', function(){ if (data) go(viewFromHash()); });
+  window.addEventListener('beforeunload', function(e){ if (unsaved()){ e.preventDefault(); e.returnValue = ''; } });
+
+  // ---- Live pages ----
+  var lp = { q:'', track:'all' };
+  function lpRow(title, sub, url, opts){
+    opts = opts || {};
+    return '<div class="lp-row"><div><b>' + title + '</b>' + (sub ? '<span class="sub">' + sub + '</span>' : '') + '</div>' +
+      '<div class="lp-url">' + esc(url.replace('https://www.', '')) + '</div>' +
+      '<div class="lp-acts"><button type="button" data-lpcopy="' + esc(url) + '">Copy link</button>' + (opts.noOpen ? '' : '<a href="' + esc(url) + '" target="_blank" rel="noopener">Open</a>') + (opts.extra || '') + '</div></div>';
+  }
+  // the one live link each guest has right now, and the email that resends it
+  function lpLink(r){
+    var L = isLocal(r);
+    if (r.status === 'paid') return { url: SITE + '/vision-board/2027-agenda?r=' + r.id, kind: L ? 'Party app' : 'Event app', mail: L ? 'local_confirm' : 'agenda', sent: r.agenda_link_sent_at };
+    if (r.status === 'pending') return L ? { url: SITE + '/vision-board/2027-agenda?r=' + r.id, kind:'Accept-my-spot page', mail:'local_offer' }
+                                         : { url: SITE + '/vision-board/pay?r=' + r.id, kind:'Payment page', mail:'hold' };
+    return null;
+  }
+  function renderPages(){
+    var s = data.settings, regs = data.registrations;
+    var paidLeft = Math.max(s.capacity - regs.filter(function(r){ return !isLocal(r) && (r.status==='paid'||r.status==='pending'); }).length, 0);
+    var locLeft = Math.max(s.local_capacity - regs.filter(function(r){ return isLocal(r) && (r.status==='paid'||r.status==='pending'); }).length, 0);
+    var h = '<div class="lp-sec"><h3>Sign-up pages</h3><p class="mail-help">Share these to invite people.</p>' +
+      lpRow('Vision Board Crew 2027', 'Paid registration · ' + (paidLeft ? paidLeft + ' of ' + s.capacity + ' seats open' : 'Full, new sign-ups join the waitlist'), SITE + '/vision-board') +
+      lpRow('Vision Board Party (locals)', 'Free, Saturday 2–6pm · ' + (locLeft ? locLeft + ' of ' + s.local_capacity + ' spots open' : 'Full, new sign-ups join the waitlist'), SITE + '/vision-board/local') +
+      '</div>';
+    h += '<div class="lp-sec"><h3>Previews &amp; team</h3><p class="mail-help">Preview links show the app exactly as guests see it, without counting as a guest.</p>' +
+      (s.preview_id ? lpRow('Guest app preview', 'What paid guests see', SITE + '/vision-board/2027-agenda?r=' + s.preview_id + '&preview=1') : '') +
+      (s.local_preview_id ? lpRow('Local app preview', 'What local guests see', SITE + '/vision-board/2027-agenda?r=' + s.local_preview_id + '&preview=1') : '') +
+      lpRow('Team page', 'This page · needs the team password', SITE + '/vision-board/team', { noOpen:true }) +
+      (s.host_links || []).map(function(x){ return lpRow(esc(x.name) + ' <span style="color:#b8995a;font-size:12px">' + (x.role === 'host' ? 'HOST' : 'COHOST') + '</span>',
+        'Personal app sign-in · only send it to ' + esc(x.name.split(' ')[0]), SITE + '/vision-board/2027-agenda?r=' + x.id, { noOpen:true }); }).join('') +
+      '</div>';
+    var withLink = regs.filter(function(r){ return lpLink(r); });
+    var q = lp.q.toLowerCase();
+    var list = withLink.filter(function(r){ return lp.track === 'all' || (r.track || 'paid') === lp.track; })
+      .filter(function(r){ return !q || [r.code, r.first_name + ' ' + r.last_name, r.company || '', r.email, r.phone].join(' ').toLowerCase().indexOf(q) > -1; })
+      .sort(function(a, b){ return (a.last_name + a.first_name).localeCompare(b.last_name + b.first_name); });
+    var nP = withLink.filter(function(r){ return !isLocal(r); }).length, nL = withLink.length - nP;
+    h += '<div class="lp-sec"><h3>Personal guest links</h3><p class="mail-help">Each confirmed guest’s private app link, plus payment or accept-my-spot links for anyone who still has to finish. Resend opens the email so you can check it before it goes out from Jennifer’s Gmail. These links are private to each guest, so there’s no Open button.</p>' +
+      '<div class="lp-tools"><div class="tabs" id="lpTrack">' +
+        [['all','Everyone', withLink.length], ['paid','Paid guests', nP], ['local','Local guests', nL]].map(function(t){ return '<button type="button" data-lptrack="' + t[0] + '" aria-pressed="' + (lp.track === t[0]) + '">' + t[1] + '<span class="n">' + t[2] + '</span></button>'; }).join('') +
+      '</div><input class="search" id="lpQ" type="search" placeholder="Search name, company, code, email or phone" value="' + esc(lp.q) + '"></div>' +
+      '<div id="lpList">' + (list.length ? list.map(function(r){
+        var k = lpLink(r);
+        return lpRow(esc(r.first_name + ' ' + r.last_name) + ' <span class="code" style="font-size:16px;margin-left:4px">' + esc(r.code) + '</span>',
+          esc(r.company || '') + '<span class="lp-kind">' + k.kind + '</span>' + (k.sent ? ' <span class="sub" style="display:inline">· sent ' + short(k.sent) + '</span>' : ''),
+          k.url, { noOpen:true, extra:'<button type="button" data-lpsend="' + r.id + '" data-kind="' + k.mail + '">Resend</button>' });
+      }).join('') : '<p class="mail-help">' + (q ? 'No one matches that search.' : 'No personal links yet.') + '</p>') + '</div></div>';
+    var hadFocus = document.activeElement && document.activeElement.id === 'lpQ';
+    $('lpBody').innerHTML = h;
+    if (hadFocus){ var i = $('lpQ'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }
+  }
+  $('lpBody').addEventListener('input', function(e){ if (e.target.id === 'lpQ'){ lp.q = e.target.value.trim(); renderPages(); } });
+  $('lpBody').addEventListener('click', function(e){
+    var c = e.target.closest('[data-lpcopy]');
+    if (c){ (navigator.clipboard ? navigator.clipboard.writeText(c.dataset.lpcopy) : Promise.reject()).then(function(){ toast('Link copied'); }, function(){ prompt('Copy this link:', c.dataset.lpcopy); }); return; }
+    var t = e.target.closest('[data-lptrack]'); if (t){ lp.track = t.dataset.lptrack; renderPages(); return; }
+    var sbtn = e.target.closest('[data-lpsend]');
+    if (sbtn){ var r = data.registrations.filter(function(x){ return x.id === sbtn.dataset.lpsend; })[0]; if (r) mail(r, sbtn.dataset.kind); }
   });
   $('loginForm').addEventListener('submit', signIn);
 
