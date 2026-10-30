@@ -207,6 +207,12 @@
   body.local .tabs .wrap{ grid-template-columns:repeat(2,1fr); }
   .host-row{ background:#f6efe1; border-left:4px solid #b8995a; padding:0 12px; }
   .host-row + .host-row{ border-top:1px solid #ead9b8; }
+  .host-pair{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
+  .host-pair.one{ grid-template-columns:1fr; }
+  .host-pair .host-row{ border-top:0 !important; min-width:0; }
+  .host-pair .host-row.open{ grid-column:1 / -1; }
+  .host-pair .p-row{ grid-template-columns:52px minmax(0,1fr) auto; }
+  @media (max-width: 560px){ .host-pair{ gap:8px; } .host-pair .host-row{ padding:0 8px; } .host-pair .p-row{ grid-template-columns:40px minmax(0,1fr); gap:8px; } .host-pair .p-row .av{ width:40px; height:40px; } .host-pair .chev{ display:none; } .host-pair .nm{ font-size:15px; } .host-pair .sub{ font-size:12px; } }
   .host-band{ font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#8a6d2f; padding-top:10px; }
   .host-row .p-row{ padding-top:6px; }
   .chip.seat{ background:#b8995a; border-color:#b8995a; color:#fff; cursor:pointer; font:inherit; font-size:13px; }
@@ -751,7 +757,7 @@
     $('crewCount').textContent = (q || st) ? (list.length === 1 ? '1 person' : list.length + ' people') + (st ? ' in ' + stateLabel(st) : '') + (q ? ' matching \u201c' + raw + '\u201d' : '') : '';
     if (!crew.length){ $('crewList').innerHTML = '<div class="empty">The Crew list will fill in as guests are confirmed.</div>'; return; }
     if (!list.length){ $('crewList').innerHTML = '<div class="empty">No one matches' + (q ? ' \u201c' + esc(raw) + '\u201d' : '') + (st ? ' in ' + esc(stateLabel(st)) : '') + '.</div>'; return; }
-    $('crewList').innerHTML = list.map(function(p){
+    function card(p){
       var place = [p.city, stateCode(p.state)].filter(Boolean).join(', '), tel = digits(p.phone), open = openId === p.id;
       var realTel = tel && /[1-9]/.test(tel), main = '', icons = '';
       if (realTel) main += '<a class="ic solid" href="sms:' + esc(tel) + '" aria-label="Text" title="Text">' + ICON.text + '</a><a class="ic" href="tel:' + esc(tel) + '" aria-label="Call" title="Call">' + ICON.call + '</a>';
@@ -776,7 +782,10 @@
           '<div><label class="note-lbl" for="nt-' + esc(p.id) + '"><span>My private note</span><span data-status></span></label>' +
           '<textarea class="note-box" id="nt-' + esc(p.id) + '" data-note="' + esc(p.id) + '" placeholder="What did you talk about? Who should you follow up with?">' + esc(p.my_note || '') + '</textarea></div>') +
         '</div>' : '') + '</div>';
-    }).join('');
+    }
+    // Jennifer and Natalie side by side on one row, everyone else listed below
+    var hosts = list.filter(function(p){ return p.role; }), rest = list.filter(function(p){ return !p.role; });
+    $('crewList').innerHTML = (hosts.length ? '<div class="host-pair' + (hosts.length === 1 ? ' one' : '') + '">' + hosts.map(card).join('') + '</div>' : '') + rest.map(card).join('');
   }
 
   // ---- contacts (.vcf) ----
