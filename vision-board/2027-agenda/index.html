@@ -738,7 +738,7 @@
   }
   function renderCrew(){
     var crew = data.crew || [], me = data.me || {}, raw = ($('crewSearch').value || '').trim(), q = raw.toLowerCase();
-    $('crewSub').textContent = crew.filter(function(p){ return !p.role; }).length + ' confirmed guests are in the Crew list. Tap someone to text, connect or jot a note.';
+    $('crewSub').textContent = crew.filter(function(p){ return !p.role && !p.team; }).length + ' confirmed guests are in the Crew list. Tap someone to text, connect or jot a note.';
     $('optinNudge').hidden = true;
     // state filter: one entry per state, with counts
     var counts = {}; crew.forEach(function(p){ var c = stateCode(p.state); if (c) counts[c] = (counts[c]||0) + 1; });
@@ -933,7 +933,7 @@
         (p.reply_count ? p.reply_count + (p.reply_count === 1 ? ' reply' : ' replies') : 'Reply') + '</button>';
     }
     return '<article class="post" data-post="' + esc(p.id) + '"><div class="post-head"><span class="av">' + avatar({ photo_url:a.photo, name:a.name }) + '</span>' +
-      '<div><b>' + esc(a.name) + (a.host ? '<span class="host-tag">' + (a.role === 'cohost' ? 'Cohost' : 'Host') + '</span>' : '') + '</b><span class="meta">' + esc([a.company, ago(p.created_at)].filter(Boolean).join(' · ')) + '</span></div>' +
+      '<div><b>' + esc(a.name) + (a.host ? '<span class="host-tag">' + (a.role === 'cohost' ? 'Cohost' : a.role === 'team' ? 'Team' : 'Host') + '</span>' : '') + '</b><span class="meta">' + esc([a.company, ago(p.created_at)].filter(Boolean).join(' · ')) + '</span></div>' +
       (p.mine ? '<button type="button" class="post-del" data-del="' + esc(p.id) + '">Delete</button>' : '<span></span>') + '</div>' +
       (p.body ? '<div class="post-body">' + chatText(p.body) + '</div>' : '') + photosHtml(p.photos) +
       '<div class="rx-row">' + rxHtml(p) + replies + '</div></article>';
@@ -941,7 +941,7 @@
   function replyHtml(p){
     var a = p.author || {};
     return '<div class="reply' + (p.mine ? ' mine' : '') + '" data-post="' + esc(p.id) + '"><span class="av">' + avatar({ photo_url:a.photo, name:a.name }) + '</span><div>' +
-      '<div class="bubble">' + (p.mine ? '' : '<div class="who">' + esc(a.name) + (a.host ? '<span class="host-tag">' + (a.role === 'cohost' ? 'Cohost' : 'Host') + '</span>' : '') + '</div>') + (p.body ? '<div class="post-body">' + chatText(p.body) + '</div>' : '') + photosHtml(p.photos) + '</div>' +
+      '<div class="bubble">' + (p.mine ? '' : '<div class="who">' + esc(a.name) + (a.host ? '<span class="host-tag">' + (a.role === 'cohost' ? 'Cohost' : a.role === 'team' ? 'Team' : 'Host') + '</span>' : '') + '</div>') + (p.body ? '<div class="post-body">' + chatText(p.body) + '</div>' : '') + photosHtml(p.photos) + '</div>' +
       '<div class="sub-row"><span>' + ago(p.created_at) + '</span>' + rxHtml(p) + (p.mine ? '<button type="button" class="post-del" data-del="' + esc(p.id) + '">Delete</button>' : '') + '</div></div></div>';
   }
   function renderFeed(){

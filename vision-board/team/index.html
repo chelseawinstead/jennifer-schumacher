@@ -1399,7 +1399,7 @@
   }
   function stPersonBtn(p, kind){
     return '<button type="button" class="st-person' + (st.sel && st.sel.id === p.id ? ' sel' : '') + '" data-' + kind + '="' + esc(p.id) + '"><span class="pav">' + (p.photo ? '<img src="' + esc(p.photo) + '" alt="">' : esc(stInit(p))) + '</span><span>' + esc(p.name) +
-      (p.role ? ' <b style="color:#b8995a;font-size:11px">' + (p.role === 'host' ? 'HOST' : 'COHOST') + '</b>' : (p.track === 'local' ? ' <b style="color:#5a7d5a;font-size:11px">LOCAL</b>' : '')) + '<small>' + esc([p.company, [p.city, p.state].filter(Boolean).join(', ')].filter(Boolean).join(' · ')) + '</small></span></button>';
+      (p.role ? ' <b style="color:#b8995a;font-size:11px">' + (p.role === 'host' ? 'HOST' : p.role === 'team' ? 'TEAM' : 'COHOST') + '</b>' : (p.track === 'local' ? ' <b style="color:#5a7d5a;font-size:11px">LOCAL</b>' : '')) + '<small>' + esc([p.company, [p.city, p.state].filter(Boolean).join(', ')].filter(Boolean).join(' · ')) + '</small></span></button>';
   }
   function stClosePop(){ var p = document.querySelector('.st-pop'); if (p) p.remove(); }
   function stPop(anchor, html){
@@ -2281,7 +2281,7 @@
       (s.preview_id ? lpRow('Guest app preview', 'What paid guests see', SITE + '/vision-board/2027-agenda?r=' + s.preview_id + '&preview=1') : '') +
       (s.local_preview_id ? lpRow('Local app preview', 'What local guests see', SITE + '/vision-board/2027-agenda?r=' + s.local_preview_id + '&preview=1') : '') +
       lpRow('Team page', 'This page · needs the team password', SITE + '/vision-board/team', { noOpen:true }) +
-      (s.host_links || []).map(function(x){ return lpRow(esc(x.name) + ' <span style="color:#b8995a;font-size:12px">' + (x.role === 'host' ? 'HOST' : 'COHOST') + '</span>',
+      (s.host_links || []).map(function(x){ return lpRow(esc(x.name) + ' <span style="color:#b8995a;font-size:12px">' + (x.role === 'host' ? 'HOST' : x.role === 'team' ? 'TEAM' : 'COHOST') + '</span>',
         'Personal app sign-in · only send it to ' + esc(x.name.split(' ')[0]), SITE + '/vision-board/2027-agenda?r=' + x.id, { noOpen:true }); }).join('') +
       '</div>';
     var withLink = regs.filter(function(r){ return lpLink(r); });
