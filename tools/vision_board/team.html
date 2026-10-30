@@ -680,7 +680,8 @@
     <div class="offer-quick" id="offerQuick"><button type="button" data-h="12">12 hours</button><button type="button" data-h="24">24 hours</button><button type="button" data-h="48">48 hours</button><button type="button" data-h="72">72 hours</button></div>
     <label class="offer-custom">Or type the number of hours <input id="offerHours" type="number" min="1" max="336" step="1" inputmode="numeric"> hours</label>
     <p class="offer-when" id="offerWhen"></p>
-    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px"><button type="button" class="ghost" id="offerCancel">Cancel</button><button type="button" class="solid" id="offerGo">Send offer</button></div>
+    <p class="mail-help" style="margin:12px 0 0">Next, the offer email opens so you can read it, edit it and send it.</p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px"><button type="button" class="ghost" id="offerCancel">Cancel</button><button type="button" class="solid" id="offerGo">Offer &amp; preview email</button></div>
   </div>
 </div>
 <div class="toast" id="toast" role="status"></div>
@@ -1676,8 +1677,8 @@
       return load().then(function(){
         if (a==='offer'){
           var nr = data.registrations.filter(function(x){ return x.id===id; })[0];
-          if (nr && isLocal(nr)) { if (confirm('Email ' + nr.first_name + ' now with the link to accept their spot?')) mail(nr, 'local_offer'); }
-          else if (nr && confirm('Email ' + nr.first_name + ' now to tell them the seat is theirs?')) mail(nr, 'offer');
+          // go straight to the email preview so she can review, edit and send it
+          if (nr) mail(nr, isLocal(nr) ? 'local_offer' : 'offer');
         }
       });
     });
