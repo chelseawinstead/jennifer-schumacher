@@ -334,6 +334,12 @@
     .td-fields{ grid-template-columns:1fr 1fr; } .td-linkadd{ grid-template-columns:1fr; }
     .td-drawer{ padding:18px 18px 40px; }
   }
+  .offer-quick{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:6px 0 14px; }
+  .offer-quick button{ background:#fff; border:1px solid var(--line); padding:12px 6px; font-size:14px; color:var(--ink); }
+  .offer-quick button[aria-pressed="true"]{ background:var(--navy); border-color:var(--navy); color:#fff; font-weight:500; }
+  .offer-custom{ display:flex; align-items:center; gap:8px; font-size:14px; color:var(--muted); }
+  .offer-custom input{ width:84px; font:inherit; font-size:15px; padding:8px 10px; border:1px solid #cfcbc2; }
+  .offer-when{ margin:14px 0 0; padding:12px 14px; background:var(--stone); font-size:14px; color:var(--ink); }
   .mail-wrap.page{ position:static; inset:auto; background:none; display:block; padding:0; z-index:auto; }
   .mail-wrap.page[hidden]{ display:none; }
   .mail-wrap.page > .mail{ max-width:none; width:auto; max-height:none; overflow:visible; padding:32px 40px 80px; }
@@ -665,6 +671,16 @@
     </div></div>
   </div>
 </div>
+<div class="mail-wrap" id="offerBox" hidden>
+  <div class="mail" role="dialog" aria-modal="true" aria-labelledby="offerTitle" style="max-width:480px">
+    <div class="mail-head"><h2 id="offerTitle" style="font-size:26px">Offer a seat</h2><button type="button" class="ghost" id="offerX">Cancel</button></div>
+    <p class="mail-help" id="offerHelp" style="font-size:14px"></p>
+    <div class="offer-quick" id="offerQuick"><button type="button" data-h="12">12 hours</button><button type="button" data-h="24">24 hours</button><button type="button" data-h="48">48 hours</button><button type="button" data-h="72">72 hours</button></div>
+    <label class="offer-custom">Or type the number of hours <input id="offerHours" type="number" min="1" max="336" step="1" inputmode="numeric"> hours</label>
+    <p class="offer-when" id="offerWhen"></p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px"><button type="button" class="ghost" id="offerCancel">Cancel</button><button type="button" class="solid" id="offerGo">Send offer</button></div>
+  </div>
+</div>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
@@ -847,7 +863,7 @@
                ['agenda','Agenda link','Each paid guest\u2019s personal link to the event app. Sent from Event agenda, the guest\u2019s row, or when a guest asks for their link.'],
                ['local_confirm','Local: confirmed + app link','Sent automatically when a local guest signs up and gets a spot (or accepts an offered spot). Includes their personal app link.'],
                ['local_waitlist','Local: waitlist','Sent automatically when a local guest signs up after all spots are taken.'],
-               ['local_offer','Local: spot opened up','Sent when the team offers a waitlisted local guest a spot. The link lets them accept within 72 hours.']];
+               ['local_offer','Local: spot opened up','Sent when the team offers a waitlisted local guest a spot. The link lets them accept before the deadline you set when you offer the spot.']];
   var mailState = null;
   function setMailFields(m){ $('mSubject').value = m.subject; $('mHeading').value = m.heading; $('mBody').value = m.body; }
   function mail(r, kind, onSent){
@@ -1597,6 +1613,26 @@
   });
 
   // ---- actions ----
+  // "Offer seat": the team picks how long the offer lasts; the guest's page counts down to it
+  var offerCb = null;
+  function offerSet(h){
+    h = Math.max(1, Math.min(336, parseInt(h, 10) || 0)); $('offerHours').value = h || '';
+    document.querySelectorAll('#offerQuick [data-h]').forEach(function(b){ b.setAttribute('aria-pressed', String(+b.dataset.h === h)); });
+    $('offerWhen').innerHTML = h ? 'Offer ends <b>' + esc(az(new Date(Date.now() + h * 36e5).toISOString(), { weekday:'long', month:'long', day:'numeric', hour:'numeric', minute:'2-digit' })) + ' Arizona time</b>. Their email shows this deadline, and their payment page counts down to it.' : 'Pick how many hours.';
+    $('offerGo').disabled = !h;
+  }
+  function askOfferHours(r, cb){
+    offerCb = cb; var local = isLocal(r);
+    $('offerTitle').textContent = local ? 'Offer a spot' : 'Offer a seat';
+    $('offerHelp').textContent = 'How long does ' + r.first_name + ' ' + r.last_name + ' have to ' + (local ? 'accept' : 'pay') + '? If time runs out, the ' + (local ? 'spot' : 'seat') + ' is released automatically.';
+    offerSet(24); $('offerBox').hidden = false; $('offerGo').focus();
+  }
+  function offerClose(){ $('offerBox').hidden = true; offerCb = null; }
+  $('offerQuick').addEventListener('click', function(e){ var b = e.target.closest('[data-h]'); if (b) offerSet(b.dataset.h); });
+  $('offerHours').addEventListener('input', function(){ offerSet(this.value); });
+  $('offerX').addEventListener('click', offerClose); $('offerCancel').addEventListener('click', offerClose);
+  $('offerBox').addEventListener('click', function(e){ if (e.target.id === 'offerBox') offerClose(); });
+  $('offerGo').addEventListener('click', function(){ var h = parseInt($('offerHours').value, 10); if (!(h >= 1 && h <= 336)) return; var cb = offerCb; offerClose(); if (cb) cb(h); });
   function act(id, action, value){
     return api('team-action', { id:id, action:action, value:value }).then(function(r){
       if (r._status === 401){ signIn(); return null; }
@@ -1620,9 +1656,11 @@
 
     if (a==='cancel' && !confirm((r.status==='waitlist' ? 'Remove ' + who + ' from the waitlist?' : 'Cancel ' + who + '’s ' + (isLocal(r) ? 'spot? It opens up on the local sign-up page right away.' : 'seat? It will open up on the public page right away.')))) return;
     if (a==='unpaid' && !confirm('Undo the payment for ' + who + '? They’ll go back to a 72-hour hold.')) return;
+    if (a==='offer' && !btn.dataset.hours){ askOfferHours(r, function(h){ btn.dataset.hours = h; btn.click(); }); return; }
+    var hours = btn.dataset.hours; delete btn.dataset.hours;
 
     btn.disabled = true;
-    act(id, a).then(function(res){
+    act(id, a, a === 'offer' ? String(hours) : undefined).then(function(res){
       if (!res) return;
       if (!res.ok && res.error==='full'){
         alert(isLocal(r) ? 'All ' + (data.settings.local_team_capacity || data.settings.local_capacity) + ' local spots in the team limit are taken, so ' + who + ' can\u2019t be given a spot right now. Raise the team spot limit or cancel someone first.'
@@ -1630,8 +1668,8 @@
         btn.disabled=false; return load();
       }
       if (!res.ok){ toast('That didn’t save. Refresh and try again.'); btn.disabled=false; return; }
-      var done = isLocal(r) ? { paid:'Marked confirmed', cancel: r.status==='waitlist' ? 'Removed from waitlist' : 'Spot cancelled', extend:'Accept window extended 24 hours', offer:'Spot offered: they have 72 hours to accept' }[a]
-        : { paid:'Marked paid', unpaid:'Moved back to awaiting payment', cancel: r.status==='waitlist' ? 'Removed from waitlist' : 'Seat cancelled', extend:'Hold extended 24 hours', offer:'Seat offered with a new 72-hour hold' }[a];
+      var done = isLocal(r) ? { paid:'Marked confirmed', cancel: r.status==='waitlist' ? 'Removed from waitlist' : 'Spot cancelled', extend:'Accept window extended 24 hours', offer:'Spot offered: they have ' + hours + ' hours to accept' }[a]
+        : { paid:'Marked paid', unpaid:'Moved back to awaiting payment', cancel: r.status==='waitlist' ? 'Removed from waitlist' : 'Seat cancelled', extend:'Hold extended 24 hours', offer:'Seat offered: they have ' + hours + ' hours to pay' }[a];
       toast(done);
       return load().then(function(){
         if (a==='offer'){

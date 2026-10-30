@@ -632,6 +632,7 @@
       msg = {
         offer: '<h2>A spot is yours' + n + '!</h2><p class="help">A spot opened up for Jennifer\u2019s Vision Board Party on <b>Saturday, January 9, 2:00\u20136:00pm</b> at the ANdAZ Scottsdale.' +
           (d.deadline ? ' Please accept by <b>' + esc(new Date(d.deadline).toLocaleString('en-US', { timeZone:'America/Phoenix', weekday:'long', month:'long', day:'numeric', hour:'numeric', minute:'2-digit' })) + ' Arizona time</b>.' : '') +
+          (d.deadline ? '<span class="acc-left" data-end="' + esc(d.deadline) + '" style="display:block;margin-top:10px;font-weight:600;color:var(--navy)"></span>' : '') +
           '</p><button type="button" class="btn solid" id="acceptBtn" style="width:100%">Accept my spot</button><p class="msg" id="acceptMsg" role="status"></p>',
         waitlist: '<h2>You\u2019re on the waitlist' + n + '.</h2><p class="help">If a spot opens up for the Vision Board Party, we\u2019ll email you a link to accept it.</p>',
         expired: '<h2>This offer has expired.</h2><p class="help">The spot went to the next person on the waitlist. Text Jennifer at (480) 322-2593 if you have questions.</p>',
@@ -1235,6 +1236,14 @@
       data.address_confirmed = true; data.me.address = addr; $('addrSheet').hidden = true; toast('Thank you! Address saved.');
     }).catch(function(){ b.disabled = false; $('adMsg').className = 'msg err'; $('adMsg').textContent = 'Check your connection and try again.'; });
   });
+
+  // live countdown on a local guest's "accept my spot" card
+  setInterval(function(){ document.querySelectorAll('.acc-left[data-end]').forEach(function(el){
+    var ms = new Date(el.dataset.end).getTime() - Date.now();
+    if (ms <= 0){ el.textContent = 'Time’s up'; return; }
+    var h = Math.floor(ms / 36e5), m = Math.floor(ms % 36e5 / 6e4), sec = Math.floor(ms % 6e4 / 1e3);
+    el.textContent = 'Time left to accept: ' + h + 'h ' + (m < 10 ? '0' : '') + m + 'm ' + (sec < 10 ? '0' : '') + sec + 's';
+  }); }, 1000);
 
   // ---- tabs ----
   function showTab(t){

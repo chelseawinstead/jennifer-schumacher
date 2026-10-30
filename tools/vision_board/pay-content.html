@@ -16,6 +16,10 @@
   .vbp-steps{ list-style:none; padding:0; margin:0 0 30px; counter-reset:s; }
   .vbp-steps li{ counter-increment:s; display:grid; grid-template-columns:40px 1fr; padding:12px 0; font-size:17px; line-height:1.6; color:var(--muted); }
   .vbp-steps li::before{ content:counter(s); font-family:'Cormorant Garamond',serif; font-size:26px; color:var(--navy); line-height:1.1; }
+  .vbp-timer{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; background:#002349; color:#fff; padding:16px 20px; margin:0 0 18px; }
+  .vbp-timer span{ font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:#cdd6e2; }
+  .vbp-timer b{ font-size:26px; font-weight:400; font-variant-numeric:tabular-nums; letter-spacing:.02em; }
+  .vbp-timer.soon{ background:#8a5a14; } .vbp-timer.over{ background:#a3271f; }
   .vbp-note{ background:var(--stone); padding:22px 24px; font-size:15px; line-height:1.7; color:var(--muted); }
   .vbp a:focus-visible,.vbp button:focus-visible{ outline:2px solid var(--navy); outline-offset:3px; }
   @media (max-width:820px){
@@ -54,9 +58,10 @@
     } else if (g.status === 'waitlist'){
       show('<h1>You’re on the waitlist, ' + n + '.</h1><p class="lede">All seats are taken right now, so there’s nothing to pay. If a seat opens, we’ll contact you in the order you joined. Your waitlist code is <strong>' + esc(g.code) + '</strong>.</p>' + contact);
     } else if (g.status === 'expired' || g.status === 'cancelled'){
-      show('<h1>This seat hold has ended.</h1><p class="lede">' + (g.status === 'expired' ? 'Payment wasn’t received within 72 hours, so the seat was released.' : 'This registration was cancelled.') + ' Please don’t send a payment for code ' + esc(g.code) + '. If you think this is a mistake, contact Jennifer right away.</p>' + contact);
+      show('<h1>This seat hold has ended.</h1><p class="lede">' + (g.status === 'expired' ? 'Payment wasn’t received in time, so the seat was released.' : 'This registration was cancelled.') + ' Please don’t send a payment for code ' + esc(g.code) + '. If you think this is a mistake, contact Jennifer right away.</p>' + contact);
     } else {
       show('<h1>Your seat is on hold, ' + n + '.</h1>' +
+        '<div class="vbp-timer" id="vbpTimer"><span>Time left to pay</span><b id="vbpLeft"></b></div>' +
         '<p class="lede">Send your payment by <strong>' + esc(az(g.hold_expires_at)) + '</strong> to keep it. After that the seat is released to the next guest.</p>' +
         '<dl class="vbp-pay">' +
           '<dt>Your code</dt><dd><span class="vbp-code">' + esc(g.code) + '</span><button type="button" class="vbp-copy" id="cp">Copy code</button></dd>' +
@@ -69,6 +74,16 @@
       var copy = function(btn, text){ btn.addEventListener('click', function(){ if (navigator.clipboard) navigator.clipboard.writeText(text).then(function(){ btn.textContent = 'Copied'; }); }); };
       copy(document.getElementById('cp'), g.code);
       copy(document.getElementById('cpz'), g.zelle_to || 'info@schumacherliving.com');
+      // live countdown to the payment deadline
+      var end = new Date(g.hold_expires_at).getTime(), el = document.getElementById('vbpLeft');
+      (function tick(){
+        var ms = end - Date.now();
+        if (ms <= 0){ el.textContent = 'Time’s up'; document.getElementById('vbpTimer').classList.add('over'); setTimeout(function(){ location.reload(); }, 4000); return; }
+        var h = Math.floor(ms / 36e5), m = Math.floor(ms % 36e5 / 6e4), sec = Math.floor(ms % 6e4 / 1e3);
+        el.textContent = (h >= 48 ? Math.floor(h / 24) + 'd ' + (h % 24) + 'h ' : h + 'h ') + (m < 10 ? '0' : '') + m + 'm ' + (sec < 10 ? '0' : '') + sec + 's';
+        document.getElementById('vbpTimer').classList.toggle('soon', ms < 6 * 36e5);
+        setTimeout(tick, 1000);
+      })();
     }
   }).catch(function(){ show('<h1>We couldn’t load your registration.</h1><p class="lede">Check your connection and refresh this page.</p>' + contact); });
 })();
