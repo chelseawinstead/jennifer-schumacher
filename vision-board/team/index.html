@@ -403,7 +403,9 @@
   .tgl i{ position:absolute; inset:0; background:#cfcbc2; border-radius:30px; transition:background .2s; } .tgl i::after{ content:""; position:absolute; top:3px; left:3px; width:24px; height:24px; border-radius:50%; background:#fff; transition:transform .2s; box-shadow:0 1px 3px rgba(0,0,0,.25); }
   .tgl input:checked + i{ background:var(--paid); } .tgl input:checked + i::after{ transform:translateX(22px); }
   .ci-acts{ display:flex; flex-wrap:wrap; gap:8px; }
-  .ci-vol{ border:1px solid var(--line); padding:16px 20px; display:grid; gap:10px; }
+  .ci-vol{ border:1px solid var(--line); padding:16px 20px; display:grid; gap:10px; align-content:start; }
+  .ci-vol2{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media (max-width: 760px){ .ci-vol2{ grid-template-columns:1fr; } }
   .ci-vol h3{ font-family:inherit; font-size:16px; font-weight:600; margin:0; }
   .ci-mode{ display:grid; grid-template-columns:repeat(4,1fr); border:1px solid var(--navy); }
   .ci-mode button{ background:#fff; border:0; border-left:1px solid var(--navy); padding:10px 8px; font-size:14px; color:var(--navy); }
@@ -2040,11 +2042,11 @@
         '<div class="ci-acts"><button type="button" class="solid" data-cisign="' + s.session + '">Print the QR sign</button><button type="button" class="ghost" data-cirotate="' + s.session + '">Make a new code</button></div>' +
         '<p class="mail-help" style="margin:0">Volunteers’ link: ' + esc(vol.replace('https://www.', '')) + ' (opens straight to this day). “Make a new code” retires old printed signs, so reprint after.</p></div>';
     }).join('') + '</div>' +
-    '<div class="ci-vol"><h3>Volunteers’ PIN</h3><p class="mail-help" style="margin:0">Both volunteers’ pages use this PIN. They only show names and check-in status (no emails, payments or addresses). The team password works there too.</p>' +
+    '<div class="ci-vol2"><div class="ci-vol"><h3>Volunteers’ PIN</h3><p class="mail-help" style="margin:0">Both volunteers’ pages use this PIN. They only show names and check-in status (no emails, payments or addresses). The team password works there too.</p>' +
       '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><span class="ci-pin">' + esc(ciT.pin || '----') + '</span><button type="button" class="ghost" id="ciPinBtn">Change PIN</button></div>' +
-      '<h3 style="margin-top:8px">Testing</h3><p class="mail-help" style="margin:0">Set a check-in to <b>Test</b> (then back to <b>Auto</b> when you’re done), open Chelsea’s test app on a phone, tap Check in and scan the printed sign. Test accounts show on the volunteers’ page tagged TEST and never count in the numbers. ' +
+      '</div><div class="ci-vol"><h3>Testing</h3><p class="mail-help" style="margin:0">Set a check-in to <b>Test</b> (then back to <b>Auto</b> when you’re done), open Chelsea’s test app on a phone, tap Check in and scan the printed sign. Test accounts show on the volunteers’ page tagged TEST and never count in the numbers. ' +
       (ciT.tests ? '<b>' + ciT.tests + ' test check-in' + (ciT.tests === 1 ? '' : 's') + '</b> on file.' : 'No test check-ins on file.') + '</p>' +
-      '<div class="ci-acts"><button type="button" class="ghost" id="ciClearTests"' + (ciT.tests ? '' : ' disabled') + '>Clear test check-ins</button></div></div>';
+      '<div class="ci-acts"><button type="button" class="ghost" id="ciClearTests"' + (ciT.tests ? '' : ' disabled') + '>Clear test check-ins</button></div></div></div>';
   }
   // times are stored and shown in Arizona time (always UTC-7, no daylight saving)
   function ciLocal(iso){ return iso ? String(iso).slice(0, 16) : ''; }
