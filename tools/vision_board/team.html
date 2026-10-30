@@ -1802,7 +1802,7 @@
 
 
   // ---- To Do: event tasks (status, due date, who, notes, links, receipts & images) ----
-  var TD_WHO = ['Jennifer Schumacher', 'Natalie Congleton', 'Ashly Bock'];
+  var TD_WHO = ['Jennifer Schumacher', 'Natalie Congleton', 'Ashly Bock']; // replaced by the saved list on load
   var td = { list:null, cats:[], rev:{}, catf:'', whof:'', group:'cat', year:2027, filter:'all', q:'', open:null, timers:{} };
   var TD_ST = { todo:'To do', doing:'In progress', waiting:'Waiting', done:'Done' };
   function tdToday(){ return new Date().toLocaleDateString('en-CA', { timeZone:'America/Phoenix' }); }
@@ -1815,8 +1815,15 @@
   function tdCostOf(t){ return t.unit != null ? Math.round(Number(t.unit) * tdQtyOf(t) * 100) / 100 : (t.cost == null ? null : Number(t.cost)); }
   function tdSumOf(list, k){ return list.reduce(function(a, t){ var v = k === 'cost' ? tdCostOf(t) : t[k]; return a + (v == null ? 0 : Number(v)); }, 0); }
   function tdWhoOpts(cur){ var l = TD_WHO.slice(); if (cur && l.indexOf(cur) < 0) l.push(cur);
-    return '<option value="">Unassigned</option>' + l.map(function(n){ return '<option' + (n === cur ? ' selected' : '') + '>' + esc(n) + '</option>'; }).join(''); }
-  function tdLoad(){ return api('team-todo', { op:'list' }).then(function(d){ if (!d.ok){ $('tdList').innerHTML = '<p class="mail-help">Couldn’t load the to dos. Refresh and try again.</p>'; return; } td.list = d.todos; td.cats = d.categories || []; td.rev = d.revenue || {}; tdRender(); }); }
+    return '<option value="">Unassigned</option>' + l.map(function(n){ return '<option' + (n === cur ? ' selected' : '') + '>' + esc(n) + '</option>'; }).join('') + '<option value="__add">+ Add a person…</option>'; }
+  function tdLoad(){ return api('team-todo', { op:'list' }).then(function(d){ if (!d.ok){ $('tdList').innerHTML = '<p class="mail-help">Couldn’t load the to dos. Refresh and try again.</p>'; return; } td.list = d.todos; td.cats = d.categories || []; td.rev = d.revenue || {}; if (d.people) TD_WHO = d.people; tdRender(); }); }
+  // add a person to the "Who's on it" list (saved for everyone on the team)
+  function tdAddPerson(then){
+    var n = prompt('Name of the person to add:'); if (!n || !n.trim()) return then && then(null);
+    n = n.trim();
+    api('team-todo', { op:'person_add', name:n }).then(function(d){ if (!d.ok){ toast('Didn’t add. Try again.'); return then && then(null); }
+      TD_WHO = d.people || TD_WHO.concat([n]); toast(n + ' added'); tdRender(); if (then) then(n); });
+  }
   function tdRevCalc(y){
     var r = td.rev[String(y)] || {}, n = Number(r.attendees) || 0, price = Number(r.price) || 0, ch = r.charity == null ? 150 : Number(r.charity) || 0, ei = Number(r.ei) || 0;
     var exp = tdSumOf((td.list || []).filter(function(t){ return t.year === y; }), 'cost');
@@ -1865,7 +1872,7 @@
     var whoAll = TD_WHO.slice(); tdYearList().forEach(function(t){ if (t.owner && whoAll.indexOf(t.owner) < 0) whoAll.push(t.owner); });
     $('tdWhoF').innerHTML = '<option value="">Everyone</option>' + whoAll.map(function(n){ var k = yl.filter(function(t){ return t.owner === n && t.status !== 'done'; }).length;
       return '<option value="' + esc(n) + '"' + (n === td.whof ? ' selected' : '') + '>' + esc(n) + ' · ' + k + ' open</option>'; }).join('') +
-      '<option value="__none"' + (td.whof === '__none' ? ' selected' : '') + '>Unassigned</option>';
+      '<option value="__none"' + (td.whof === '__none' ? ' selected' : '') + '>Unassigned</option><option value="__add">+ Add a person…</option>';
     $('tdWhoF').classList.toggle('on', !!td.whof); $('tdGroup').value = td.group;
     if (td.whof) yl = yl.filter(function(t){ return td.whof === '__none' ? !t.owner : t.owner === td.whof; });
     var c = { open:0, all:yl.length, todo:0, doing:0, waiting:0, done:0 };
@@ -2061,9 +2068,9 @@
       var nf = document.querySelector('[data-tdinline] input[name=t]'); if (nf) nf.focus(); }); });
   $('tdList').addEventListener('keydown', function(e){ if (e.key === 'Escape' && e.target.closest('[data-tdinline]')){ td.adding = null; tdRender(); } });
   $('tdCatF').addEventListener('change', function(){ td.catf = this.value; tdRender(); });
-  $('tdWhoF').addEventListener('change', function(){ td.whof = this.value; tdRender(); });
+  $('tdWhoF').addEventListener('change', function(){ if (this.value === '__add'){ this.value = td.whof; tdAddPerson(); return; } td.whof = this.value; tdRender(); });
   $('tdGroup').addEventListener('change', function(){ td.group = this.value; tdRender(); });
-  $('tdList').addEventListener('change', function(e){ var w = e.target.closest('[data-tdwho]'); if (w) tdSave(w.dataset.tdwho, { owner:w.value }).then(function(d){ if (d && d.ok) toast(w.value ? 'Assigned to ' + w.value : 'Unassigned'); }); });
+  $('tdList').addEventListener('change', function(e){ var w = e.target.closest('[data-tdwho]'); if (w && w.value === '__add'){ var t0 = tdFind(w.dataset.tdwho); w.value = t0 ? t0.owner || '' : ''; tdAddPerson(function(n){ if (n) tdSave(w.dataset.tdwho, { owner:n }); }); return; } if (w) tdSave(w.dataset.tdwho, { owner:w.value }).then(function(d){ if (d && d.ok) toast(w.value ? 'Assigned to ' + w.value : 'Unassigned'); }); });
   $('tdList').addEventListener('click', function(e){ if (e.target.id === 'tdCatAll'){ e.preventDefault(); td.catf = ''; tdRender(); } });
   $('tdList').addEventListener('change', function(e){ var r = e.target.closest('[data-tdrev]'); if (!r) return;
     var patch = { op:'revenue_save', year:String(td.year) }; patch[r.dataset.tdrev] = r.dataset.tdrev === 'ei_note' ? r.value : String(tdNum(r.value) == null ? 0 : tdNum(r.value));
@@ -2098,7 +2105,9 @@
   $('tdTitle').addEventListener('input', function(){ tdGrow(); tdLater('title', function(){ td.timers.title = null; tdFieldSave('title'); }); });
   $('tdTitle').addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); this.blur(); } });
   $('tdNotes').addEventListener('input', function(){ tdLater('notes', function(){ td.timers.notes = null; tdFieldSave('notes'); }); });
-  $('tdOwner').addEventListener('change', function(){ tdSave(td.open, { owner:this.value }); });
+  $('tdOwner').addEventListener('change', function(){ var id = td.open;
+    if (this.value === '__add'){ var t0 = tdFind(id); this.value = t0 ? t0.owner || '' : ''; tdAddPerson(function(n){ if (n) tdSave(id, { owner:n }); }); return; }
+    tdSave(id, { owner:this.value }); });
   ['tdTitle','tdNotes'].forEach(function(id){ $(id).addEventListener('blur', tdFlush); });
   $('tdCostType').addEventListener('change', function(){ var t = tdFind(td.open); if (!t) return;
     tdSave(t.id, this.value === 'each' ? { unit: t.unit != null ? String(t.unit) : '0' } : { unit:'', qty:'', cost: tdCostOf(t) == null ? '' : String(tdCostOf(t)) }); });
