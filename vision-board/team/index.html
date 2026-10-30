@@ -799,7 +799,7 @@
       tile('paid', '', paid, 'Paid &amp; confirmed') +
       tile('pending', '', pend, 'Holding a seat, awaiting Zelle') +
       tile('waitlist', '', wait, 'On the waitlist') +
-      tile('paid', 'money', money(paid * s.price), 'Collected');
+      tile('paid', 'money', money(regs.filter(function(r){ return r.status === 'paid'; }).reduce(function(a, r){ return a + (r.amount == null ? s.price : Number(r.amount)); }, 0)), 'Collected');
     var tcap = s.team_capacity || s.capacity, taken = paid + pend;
     $('seatLimit').innerHTML = '<span><b>Team seat limit: ' + tcap + '</b> · ' + taken + ' seats in use (paid + holding) · ' +
       (tcap > taken ? (tcap - taken) + ' more you can offer from the waitlist' : 'no room left to offer seats') +
@@ -824,7 +824,7 @@
       return;
     }
     $('rows').innerHTML = list.map(function(r){
-      var status = { paid:'Paid', pending:'Awaiting payment', waitlist:'Waitlist', expired:'Hold expired', cancelled:'Cancelled' }[r.status];
+      var status = { paid: Number(r.amount) === 0 ? 'Confirmed · no payment' : 'Paid', pending:'Awaiting payment', waitlist:'Waitlist', expired:'Hold expired', cancelled:'Cancelled' }[r.status];
       var extra = '';
       if (r.status==='pending' && r.hold_expires_at){
         var hrs = (new Date(r.hold_expires_at) - Date.now())/36e5;
