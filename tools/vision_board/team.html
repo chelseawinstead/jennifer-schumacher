@@ -280,7 +280,16 @@
   .td-empty-cat{ padding:12px 14px; border:1px solid var(--line); border-top:0; font-size:13px; color:var(--warm); background:#fff; }
   .td-tools{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
   .td-filters{ display:flex; flex-wrap:wrap; gap:6px; }
-  #tdLastWrap[hidden]{ display:none; }
+  #tdLastWrap[hidden], #tdCostWrap[hidden], #tdUnitWrap[hidden], #tdQtyWrap[hidden], .td-calc[hidden]{ display:none; }
+  .td-calc{ grid-column:1 / -1; background:var(--stone); padding:10px 12px; font-size:14px; }
+  .td-calc b{ font-weight:600; }
+  .td-each{ display:block; font-size:12px; color:var(--warm); text-align:right; margin-top:3px; }
+  .td-costbox{ text-align:right; font-variant-numeric:tabular-nums; font-size:14px; padding:6px 8px; background:#f3efe4; }
+  .td-row .td-whosel{ width:100%; font:inherit; font-size:13px; padding:6px 6px; border:1px solid transparent; background:transparent; color:var(--muted); }
+  .td-row .td-whosel:hover{ border-color:var(--line); } .td-row .td-whosel.set{ color:var(--ink); }
+  #tdWhoF, #tdGroup{ font:inherit; font-size:13px; padding:7px 10px; border:1px solid var(--navy); color:var(--navy); background:#fff; margin-right:6px; max-width:220px; }
+  #tdWhoF.on{ background:var(--navy); color:#fff; }
+  .td-cathead.due-over h3{ color:var(--red); } .td-cathead.due-soon h3{ color:var(--hold); }
   #tdCatF{ font:inherit; font-size:13px; padding:7px 10px; border:1px solid var(--navy); color:var(--navy); background:#fff; margin-right:6px; max-width:240px; }
   #tdCatF.on{ background:var(--navy); color:#fff; }
   .td-filters button{ background:#fff; border:1px solid var(--line); padding:7px 12px; font-size:13px; color:var(--muted); }
@@ -327,9 +336,16 @@
   .td-dfoot{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:28px; padding-top:14px; border-top:1px solid var(--line); }
   .td-del{ background:none; border:0; color:var(--red); font-size:13px; text-decoration:underline; cursor:pointer; }
   @media (max-width: 760px){
-    .td-row{ grid-template-columns:1fr auto; gap:6px 10px; }
-    .td-row .td-sel{ grid-column:1/-1; order:3; } .td-row .td-who, .td-row .td-ic, .td-row .td-last{ display:none; }
-    .td-sum{ grid-template-columns:1fr auto; } .td-sum .lbl{ grid-column:auto; } .td-sum .td-last{ display:none; }
+    /* phones: one line per item: status · item (due date under it) · cost */
+    .td-row{ grid-template-columns:96px minmax(0,1fr) 92px; grid-template-areas:"st ti co" "st du co"; gap:2px 8px; padding:9px 10px; align-items:center; }
+    .td-row > .td-sel{ grid-area:st; } .td-row > div:nth-child(2){ grid-area:ti; } .td-row > .td-due{ grid-area:du; font-size:12px; } .td-row > .td-due:empty{ display:none; }
+    .td-row > div:nth-child(5){ grid-area:co; } .td-row .td-who, .td-row .td-ic, .td-row .td-last, .td-row > div:nth-child(6){ display:none; }
+    .td-row select{ font-size:12px; padding:5px 4px; } .td-t{ font-size:14px; } .td-sub{ font-size:11px; }
+    .td-costin, .td-costbox{ font-size:13px; padding:5px 6px; } .td-each{ font-size:11px; }
+    .td-sum{ grid-template-columns:1fr auto; padding:8px 10px; font-size:13px; } .td-sum .lbl{ grid-column:auto; } .td-sum .td-last{ display:none; }
+    .td-sum .td-yr{ display:none; } .td-sum > span:empty{ display:none; } .td-addbtn{ padding:5px 9px; font-size:12px; white-space:nowrap; }
+    .td-cathead{ padding:8px 10px; } .td-cathead h3{ font-size:13px; } .td-catbtns button{ font-size:12px; padding:2px 4px; }
+    .td-inline{ flex-wrap:wrap; } .td-inline input[name=t]{ flex-basis:100%; }
     .td-total{ grid-template-columns:1fr auto; } .td-total .td-last{ display:none; } .td-add{ flex-wrap:wrap; } .td-add select{ max-width:none; width:100%; }
     .td-fields{ grid-template-columns:1fr 1fr; } .td-linkadd{ grid-template-columns:1fr; }
     .td-drawer{ padding:18px 18px 40px; }
@@ -629,7 +645,7 @@
     <p class="mail-help">The event checklist and budget in one place. Click any item to set its status and due date, add notes and links, and upload receipts or photos. Totals add up by category and at the bottom. Only the team can see this; uploaded files are private.</p>
     <div class="td-years" id="tdYears"></div>
     <form class="td-add" id="tdAddForm"><select id="tdNewCat" aria-label="Category"></select><input id="tdNew" maxlength="300" placeholder="Add an item… (e.g. Order gift bags)" autocomplete="off"><input id="tdNewCost" inputmode="decimal" placeholder="Cost" aria-label="Cost"><button type="submit" class="solid">Add</button></form>
-    <div class="td-tools"><div class="td-filters"><select id="tdCatF" aria-label="Show category"></select><span id="tdFilters" class="td-filters"></span></div><div class="td-tools-r"><input class="search" id="tdQ" type="search" placeholder="Search items, notes, people"><button type="button" class="ghost" id="tdAddCat">+ Category</button><button type="button" class="ghost" id="tdCsv">Export .csv</button></div></div>
+    <div class="td-tools"><div class="td-filters"><select id="tdGroup" aria-label="Group by"><option value="cat">Group by category</option><option value="due">Group by due date</option><option value="who">Group by who’s on it</option></select><select id="tdCatF" aria-label="Show category"></select><select id="tdWhoF" aria-label="Show person"></select><span id="tdFilters" class="td-filters"></span></div><div class="td-tools-r"><input class="search" id="tdQ" type="search" placeholder="Search items, notes, people"><button type="button" class="ghost" id="tdAddCat">+ Category</button><button type="button" class="ghost" id="tdCsv">Export .csv</button></div></div>
     <div id="tdList"><p class="mail-help">Loading…</p></div>
   </div>
 </div>
@@ -640,9 +656,13 @@
     <div class="td-fields">
       <label>Status<select id="tdStatus"><option value="todo">To do</option><option value="doing">In progress</option><option value="waiting">Waiting</option><option value="done">Done</option></select></label>
       <label>Due date<input type="date" id="tdDue"></label>
-      <label>Who’s on it<input id="tdOwner" maxlength="120" placeholder="e.g. Chelsea"></label>
+      <label>Who’s on it<select id="tdOwner"></select></label>
       <label>Category<select id="tdCat"></select></label>
-      <label><span id="tdCostLbl">Cost</span><input id="tdCost" inputmode="decimal" placeholder="$0.00"></label>
+      <label>Cost type<select id="tdCostType"><option value="total">Total cost</option><option value="each">Per attendee</option></select></label>
+      <label id="tdCostWrap"><span id="tdCostLbl">Cost</span><input id="tdCost" inputmode="decimal" placeholder="$0.00"></label>
+      <label id="tdUnitWrap">Cost per attendee<input id="tdUnit" inputmode="decimal" placeholder="$0.00"></label>
+      <label id="tdQtyWrap">How many<input id="tdQty" inputmode="numeric" placeholder=""></label>
+      <div id="tdCalc" class="td-calc"></div>
       <label id="tdLastWrap">2026 cost (last year)<input id="tdLast" inputmode="decimal" placeholder="$0.00"></label>
     </div>
     <h4>Notes</h4>
@@ -1782,13 +1802,20 @@
 
 
   // ---- To Do: event tasks (status, due date, who, notes, links, receipts & images) ----
-  var td = { list:null, cats:[], rev:{}, catf:'', year:2027, filter:'all', q:'', open:null, timers:{} };
+  var TD_WHO = ['Jennifer Schumacher', 'Natalie Congleton', 'Ashly Bock'];
+  var td = { list:null, cats:[], rev:{}, catf:'', whof:'', group:'cat', year:2027, filter:'all', q:'', open:null, timers:{} };
   var TD_ST = { todo:'To do', doing:'In progress', waiting:'Waiting', done:'Done' };
   function tdToday(){ return new Date().toLocaleDateString('en-CA', { timeZone:'America/Phoenix' }); }
   function tdDate(d){ if (!d) return ''; var x = new Date(d + 'T12:00:00Z'); return x.toLocaleDateString('en-US', { timeZone:'UTC', weekday:'short', month:'short', day:'numeric' }); }
   function tdMoney(n){ return n == null || n === '' ? '' : '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
   function tdNum(v){ var x = String(v == null ? '' : v).replace(/[^0-9.\-]/g, ''); return x === '' || isNaN(+x) ? null : Math.round(+x * 100) / 100; }
-  function tdSumOf(list, k){ return list.reduce(function(a, t){ return a + (t[k] == null ? 0 : Number(t[k])); }, 0); }
+  // items priced per attendee: cost per person × how many (blank = that year's attendee count)
+  function tdAttendees(y){ var r = (td.rev || {})[String(y)] || {}; return Number(r.attendees) || 0; }
+  function tdQtyOf(t){ return t.qty != null ? Number(t.qty) : tdAttendees(t.year); }
+  function tdCostOf(t){ return t.unit != null ? Math.round(Number(t.unit) * tdQtyOf(t) * 100) / 100 : (t.cost == null ? null : Number(t.cost)); }
+  function tdSumOf(list, k){ return list.reduce(function(a, t){ var v = k === 'cost' ? tdCostOf(t) : t[k]; return a + (v == null ? 0 : Number(v)); }, 0); }
+  function tdWhoOpts(cur){ var l = TD_WHO.slice(); if (cur && l.indexOf(cur) < 0) l.push(cur);
+    return '<option value="">Unassigned</option>' + l.map(function(n){ return '<option' + (n === cur ? ' selected' : '') + '>' + esc(n) + '</option>'; }).join(''); }
   function tdLoad(){ return api('team-todo', { op:'list' }).then(function(d){ if (!d.ok){ $('tdList').innerHTML = '<p class="mail-help">Couldn’t load the to dos. Refresh and try again.</p>'; return; } td.list = d.todos; td.cats = d.categories || []; td.rev = d.revenue || {}; tdRender(); }); }
   function tdRevCalc(y){
     var r = td.rev[String(y)] || {}, n = Number(r.attendees) || 0, price = Number(r.price) || 0, ch = r.charity == null ? 150 : Number(r.charity) || 0, ei = Number(r.ei) || 0;
@@ -1835,6 +1862,12 @@
       return '<option value="' + esc(c) + '"' + (c === td.catf ? ' selected' : '') + '>' + esc(c) + ' · ' + tdMoney(tdSumOf(n, 'cost')) + '</option>'; }).join('');
     $('tdCatF').classList.toggle('on', !!td.catf);
     if (td.catf) yl = yl.filter(function(t){ return t.category === td.catf; });
+    var whoAll = TD_WHO.slice(); tdYearList().forEach(function(t){ if (t.owner && whoAll.indexOf(t.owner) < 0) whoAll.push(t.owner); });
+    $('tdWhoF').innerHTML = '<option value="">Everyone</option>' + whoAll.map(function(n){ var k = yl.filter(function(t){ return t.owner === n && t.status !== 'done'; }).length;
+      return '<option value="' + esc(n) + '"' + (n === td.whof ? ' selected' : '') + '>' + esc(n) + ' · ' + k + ' open</option>'; }).join('') +
+      '<option value="__none"' + (td.whof === '__none' ? ' selected' : '') + '>Unassigned</option>';
+    $('tdWhoF').classList.toggle('on', !!td.whof); $('tdGroup').value = td.group;
+    if (td.whof) yl = yl.filter(function(t){ return td.whof === '__none' ? !t.owner : t.owner === td.whof; });
     var c = { open:0, all:yl.length, todo:0, doing:0, waiting:0, done:0 };
     yl.forEach(function(t){ c[t.status]++; if (t.status !== 'done') c.open++; });
     $('tdFilters').innerHTML = [['all','Everything'],['open','All open'],['todo','To do'],['doing','In progress'],['waiting','Waiting'],['done','Done']].map(function(f){
@@ -1844,16 +1877,36 @@
     function row(t){
       var late = t.status !== 'done' && t.due_date && t.due_date < today, isSoon = !late && t.status !== 'done' && t.due_date && t.due_date <= soon;
       var bits = []; if ((t.links || []).length) bits.push(t.links.length + ' link' + (t.links.length > 1 ? 's' : '')); if ((t.files || []).length) bits.push(t.files.length + ' file' + (t.files.length > 1 ? 's' : ''));
-      var sub = [t.notes ? esc(t.notes.split('\n')[0].slice(0, 100)) : '', bits.join(' · ')].filter(Boolean).join(' · ');
+      var sub = [td.group !== 'cat' ? esc(t.category) : '', t.notes ? esc(t.notes.split('\n')[0].slice(0, 100)) : '', bits.join(' · ')].filter(Boolean).join(' · ');
       return '<div class="td-row td-st-' + t.status + (t.status === 'done' ? ' done' : '') + '" data-tdid="' + t.id + '">' +
         '<div class="td-sel"><select data-tdstatus="' + t.id + '" aria-label="Status">' + Object.keys(TD_ST).map(function(k){ return '<option value="' + k + '"' + (k === t.status ? ' selected' : '') + '>' + TD_ST[k] + '</option>'; }).join('') + '</select></div>' +
         '<div><span class="td-t">' + esc(t.title) + '</span>' + (sub ? '<span class="td-sub">' + sub + '</span>' : '') + '</div>' +
         '<div class="td-due' + (late ? ' late' : isSoon ? ' soon' : '') + '">' + (t.due_date ? (late ? 'Overdue · ' : '') + tdDate(t.due_date) : '') + '</div>' +
-        '<div class="td-who">' + esc(t.owner || '') + '</div>' +
-        '<div><input class="td-costin" data-tdcost="' + t.id + '" value="' + esc(tdMoney(t.cost)) + '" placeholder="$0.00" inputmode="decimal" aria-label="Cost"></div>' +
+        '<div class="td-who"><select class="td-whosel' + (t.owner ? ' set' : '') + '" data-tdwho="' + t.id + '" aria-label="Who’s on it">' + tdWhoOpts(t.owner) + '</select></div>' +
+        (t.unit != null ? '<div title="Open the item to change the cost per attendee"><div class="td-costbox">' + tdMoney(tdCostOf(t)) + '</div><span class="td-each">' + tdQtyOf(t) + ' × ' + tdMoney(t.unit) + '</span></div>'
+          : '<div><input class="td-costin" data-tdcost="' + t.id + '" value="' + esc(tdMoney(t.cost)) + '" placeholder="$0.00" inputmode="decimal" aria-label="Cost"></div>') +
         (showLast ? '<div class="td-last" title="2026 cost">' + (t.cost_last != null ? tdMoney(t.cost_last) : '') + '</div>' : '<div></div>') + '</div>';
     }
     var html = '<div class="td-colhead"><span>Status</span><span>Item</span><span>Due</span><span>Who</span><span class="td-money">' + td.year + ' cost</span>' + (showLast ? '<span class="td-money">2026 cost</span>' : '<span></span>') + '</div>';
+    if (td.group !== 'cat'){
+      var groups = [];
+      if (td.group === 'due'){
+        var wk = new Date(Date.now() + 7 * 864e5).toLocaleDateString('en-CA', { timeZone:'America/Phoenix' });
+        var g = { over:[], week:[], later:[], none:[], done:[] };
+        yl.forEach(function(t){ if (t.status === 'done') g.done.push(t); else if (!t.due_date) g.none.push(t); else if (t.due_date < today) g.over.push(t); else if (t.due_date <= wk) g.week.push(t); else g.later.push(t); });
+        var byDue = function(a, b){ return (a.due_date || '').localeCompare(b.due_date || '') || tdSort(a, b); };
+        groups = [['over','Overdue',g.over],['week','Due in the next 7 days',g.week],['later','Due later',g.later],['none','No due date yet',g.none],['done','Done',g.done]]
+          .map(function(x){ return { key:x[0], label:x[1], items:x[2].sort(byDue) }; });
+      } else {
+        groups = whoAll.concat(['']).map(function(n){ return { key:n || 'none', label:n || 'Unassigned', items:yl.filter(function(t){ return (t.owner || '') === n; }).sort(function(a, b){ return (a.due_date || '9').localeCompare(b.due_date || '9') || tdSort(a, b); }) }; });
+      }
+      html += groups.map(function(gr){
+        var shown = gr.items.filter(tdMatch); if (!shown.length) return '';
+        return '<div class="td-cat"><div class="td-cathead' + (gr.key === 'over' ? ' due-over' : gr.key === 'week' ? ' due-soon' : '') + '"><h3>' + esc(gr.label) + '<small>' + shown.length + ' item' + (shown.length === 1 ? '' : 's') + '</small></h3><div></div></div>' +
+          shown.map(function(t){ return row(t).replace('<div><span class="td-t">', '<div><span class="td-t">').replace('</span>' + '', '</span>'); }).join('') +
+          '<div class="td-sum"><span class="lbl"><span></span><span>' + esc(gr.label) + ' total</span></span><span class="td-money">' + tdMoney(tdSumOf(shown, 'cost')) + '</span><span></span></div></div>';
+      }).join('') || '<p class="empty">Nothing matches.</p>';
+    } else
     html += cats.map(function(cat, ci){
       if (td.catf && cat !== td.catf) return '';
       var all = yl.filter(function(t){ return t.category === cat; }).sort(tdSort), shown = all.filter(tdMatch);
@@ -1891,7 +1944,7 @@
     out.push(['Category', 'Item', 'Status', 'Due date', 'Who', td.year + ' cost'].concat(showLast ? ['2026 cost'] : []).concat(['Notes', 'Links', 'Files']).map(q).join(','));
     cats.forEach(function(cat){
       var all = yl.filter(function(t){ return t.category === cat; }).sort(tdSort); if (!all.length) return;
-      all.forEach(function(t){ out.push([cat, t.title, TD_ST[t.status], t.due_date || '', t.owner, n(t.cost)].concat(showLast ? [n(t.cost_last)] : [])
+      all.forEach(function(t){ out.push([cat, t.title + (t.unit != null ? ' (' + tdQtyOf(t) + ' × $' + Number(t.unit).toFixed(2) + ')' : ''), TD_ST[t.status], t.due_date || '', t.owner, n(tdCostOf(t))].concat(showLast ? [n(t.cost_last)] : [])
         .concat([t.notes, (t.links || []).map(function(l){ return (l.label ? l.label + ': ' : '') + l.url; }).join(' | '), (t.files || []).map(function(f){ return f.name; }).join(' | ')]).map(q).join(',')); });
       out.push([cat + ' subtotal', '', '', '', '', n(tdSumOf(all, 'cost'))].concat(showLast ? [n(tdSumOf(all, 'cost_last'))] : []).map(q).join(','));
     });
@@ -1925,7 +1978,7 @@
   function tdFieldSave(k){ var id = td.open; if (!id) return;
     if (k === 'title'){ var v = $('tdTitle').value.trim(); if (v) tdSave(id, { title:v }); }
     if (k === 'notes') tdSave(id, { notes:$('tdNotes').value });
-    if (k === 'owner') tdSave(id, { owner:$('tdOwner').value.trim() });
+
   }
   function tdGrow(){ var el = $('tdTitle'); el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
   function tdDrawer(t, refresh){
@@ -1933,12 +1986,18 @@
     var active = document.activeElement;
     if (!refresh || active !== $('tdTitle')) $('tdTitle').value = t.title;
     if (!refresh || active !== $('tdNotes')) $('tdNotes').value = t.notes || '';
-    if (!refresh || active !== $('tdOwner')) $('tdOwner').value = t.owner || '';
+    $('tdOwner').innerHTML = tdWhoOpts(t.owner); $('tdOwner').value = t.owner || '';
     $('tdStatus').value = t.status; $('tdDue').value = t.due_date || '';
     var cl = tdCatList(); if (cl.indexOf(t.category) < 0) cl.push(t.category);
     $('tdCat').innerHTML = cl.map(function(c){ return '<option' + (c === t.category ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('');
     $('tdCostLbl').textContent = t.year + ' cost'; $('tdLastWrap').hidden = true;
     if (!refresh || active !== $('tdCost')) $('tdCost').value = tdMoney(t.cost);
+    var each = t.unit != null; $('tdCostType').value = each ? 'each' : 'total';
+    $('tdCostWrap').hidden = each; $('tdUnitWrap').hidden = !each; $('tdQtyWrap').hidden = !each; $('tdCalc').hidden = !each;
+    if (!refresh || active !== $('tdUnit')) $('tdUnit').value = each ? tdMoney(t.unit) : '';
+    if (!refresh || active !== $('tdQty')) $('tdQty').value = t.qty != null ? t.qty : '';
+    $('tdQty').placeholder = tdAttendees(t.year) + ' (attendees)';
+    if (each) $('tdCalc').innerHTML = tdMoney(t.unit) + ' × ' + tdQtyOf(t) + (t.qty == null ? ' attendees' : '') + ' = <b>' + tdMoney(tdCostOf(t)) + '</b>' + (t.qty == null ? ' <span style="color:var(--warm)">· updates when the attendee count changes</span>' : '');
     if (!refresh || active !== $('tdLast')) $('tdLast').value = tdMoney(t.cost_last);
     $('tdLinks').innerHTML = (t.links || []).map(function(l, i){ return '<div class="td-link"><a href="' + esc(l.url) + '" target="_blank" rel="noopener">' + esc(l.label || l.url) + '</a><button type="button" class="td-x" data-tdlinkrm="' + i + '" aria-label="Remove link">×</button></div>'; }).join('') || '<p class="mail-help" style="margin:0">No links yet.</p>';
     $('tdFiles').innerHTML = (t.files || []).map(function(f){
@@ -2002,6 +2061,9 @@
       var nf = document.querySelector('[data-tdinline] input[name=t]'); if (nf) nf.focus(); }); });
   $('tdList').addEventListener('keydown', function(e){ if (e.key === 'Escape' && e.target.closest('[data-tdinline]')){ td.adding = null; tdRender(); } });
   $('tdCatF').addEventListener('change', function(){ td.catf = this.value; tdRender(); });
+  $('tdWhoF').addEventListener('change', function(){ td.whof = this.value; tdRender(); });
+  $('tdGroup').addEventListener('change', function(){ td.group = this.value; tdRender(); });
+  $('tdList').addEventListener('change', function(e){ var w = e.target.closest('[data-tdwho]'); if (w) tdSave(w.dataset.tdwho, { owner:w.value }).then(function(d){ if (d && d.ok) toast(w.value ? 'Assigned to ' + w.value : 'Unassigned'); }); });
   $('tdList').addEventListener('click', function(e){ if (e.target.id === 'tdCatAll'){ e.preventDefault(); td.catf = ''; tdRender(); } });
   $('tdList').addEventListener('change', function(e){ var r = e.target.closest('[data-tdrev]'); if (!r) return;
     var patch = { op:'revenue_save', year:String(td.year) }; patch[r.dataset.tdrev] = r.dataset.tdrev === 'ei_note' ? r.value : String(tdNum(r.value) == null ? 0 : tdNum(r.value));
@@ -2036,8 +2098,13 @@
   $('tdTitle').addEventListener('input', function(){ tdGrow(); tdLater('title', function(){ td.timers.title = null; tdFieldSave('title'); }); });
   $('tdTitle').addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); this.blur(); } });
   $('tdNotes').addEventListener('input', function(){ tdLater('notes', function(){ td.timers.notes = null; tdFieldSave('notes'); }); });
-  $('tdOwner').addEventListener('input', function(){ tdLater('owner', function(){ td.timers.owner = null; tdFieldSave('owner'); }); });
-  ['tdTitle','tdNotes','tdOwner'].forEach(function(id){ $(id).addEventListener('blur', tdFlush); });
+  $('tdOwner').addEventListener('change', function(){ tdSave(td.open, { owner:this.value }); });
+  ['tdTitle','tdNotes'].forEach(function(id){ $(id).addEventListener('blur', tdFlush); });
+  $('tdCostType').addEventListener('change', function(){ var t = tdFind(td.open); if (!t) return;
+    tdSave(t.id, this.value === 'each' ? { unit: t.unit != null ? String(t.unit) : '0' } : { unit:'', qty:'', cost: tdCostOf(t) == null ? '' : String(tdCostOf(t)) }); });
+  $('tdUnit').addEventListener('focus', function(){ this.value = this.value.replace(/[$,]/g, ''); });
+  $('tdUnit').addEventListener('change', function(){ var v = tdNum(this.value); tdSave(td.open, { unit: v == null ? '0' : String(v) }); });
+  $('tdQty').addEventListener('change', function(){ var v = this.value.replace(/\D/g, ''); tdSave(td.open, { qty: v }); });
   $('tdStatus').addEventListener('change', function(){ tdSave(td.open, { status:this.value }); });
   $('tdCat').addEventListener('change', function(){ tdSave(td.open, { category:this.value }); });
   [['tdCost','cost'],['tdLast','cost_last']].forEach(function(f){
