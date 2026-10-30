@@ -339,6 +339,8 @@
   .offer-quick button[aria-pressed="true"]{ background:var(--navy); border-color:var(--navy); color:#fff; font-weight:500; }
   .offer-custom{ display:flex; align-items:center; gap:8px; font-size:14px; color:var(--muted); }
   .offer-custom input{ width:84px; font:inherit; font-size:15px; padding:8px 10px; border:1px solid #cfcbc2; }
+  .offer-h{ font-family:inherit; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--navy); font-weight:500; margin:22px 0 4px; }
+  #offerBody{ width:100%; margin-top:12px; font:inherit; font-size:14px; line-height:1.6; padding:12px; border:1px solid #cfcbc2; resize:vertical; box-sizing:border-box; }
   .offer-when{ margin:14px 0 0; padding:12px 14px; background:var(--stone); font-size:14px; color:var(--ink); }
   .mail-wrap.page{ position:static; inset:auto; background:none; display:block; padding:0; z-index:auto; }
   .mail-wrap.page[hidden]{ display:none; }
@@ -674,14 +676,19 @@
   </div>
 </div>
 <div class="mail-wrap" id="offerBox" hidden>
-  <div class="mail" role="dialog" aria-modal="true" aria-labelledby="offerTitle" style="max-width:480px">
+  <div class="mail" role="dialog" aria-modal="true" aria-labelledby="offerTitle" style="max-width:720px">
     <div class="mail-head"><h2 id="offerTitle" style="font-size:26px">Offer a seat</h2><button type="button" class="ghost" id="offerX">Cancel</button></div>
     <p class="mail-help" id="offerHelp" style="font-size:14px"></p>
     <div class="offer-quick" id="offerQuick"><button type="button" data-h="12">12 hours</button><button type="button" data-h="24">24 hours</button><button type="button" data-h="48">48 hours</button><button type="button" data-h="72">72 hours</button></div>
     <label class="offer-custom">Or type the number of hours <input id="offerHours" type="number" min="1" max="336" step="1" inputmode="numeric"> hours</label>
     <p class="offer-when" id="offerWhen"></p>
-    <p class="mail-help" style="margin:12px 0 0">Next, the offer email opens so you can read it, edit it and send it.</p>
-    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px"><button type="button" class="ghost" id="offerCancel">Cancel</button><button type="button" class="solid" id="offerGo">Offer &amp; preview email</button></div>
+    <h3 class="offer-h">The email they’ll get</h3>
+    <label class="mail-row"><span>To</span><b id="offerTo"></b></label>
+    <label class="mail-row"><span>Subject</span><input id="offerSubject"></label>
+    <label class="mail-row"><span>Heading</span><input id="offerHeading"></label>
+    <textarea id="offerBody" rows="9" aria-label="Email message"></textarea>
+    <p class="mail-help" id="offerNote" style="margin:8px 0 0"></p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;align-items:center;margin-top:14px"><span class="mail-help" style="margin:0 auto 0 0">Nothing changes until you click Send.</span><button type="button" class="ghost" id="offerCancel">Cancel</button><button type="button" class="solid" id="offerGo">Send offer</button></div>
   </div>
 </div>
 <div class="toast" id="toast" role="status"></div>
@@ -869,8 +876,8 @@
                ['local_offer','Local: spot opened up','Sent when the team offers a waitlisted local guest a spot. The link lets them accept before the deadline you set when you offer the spot.']];
   var mailState = null;
   function setMailFields(m){ $('mSubject').value = m.subject; $('mHeading').value = m.heading; $('mBody').value = m.body; }
-  function mail(r, kind, onSent){
-    mailState = { r:r, kind:kind, onSent:onSent };
+  function mail(r, kind, onSent, undoOffer){
+    mailState = { r:r, kind:kind, onSent:onSent, undoOffer:!!undoOffer };
     var connected = data.settings.mailer_connected;
     $('mTo').textContent = r.first_name + ' ' + r.last_name + ' <' + r.email + '>';
     setMailFields({ subject:'Loading…', heading:'', body:'' });
@@ -887,6 +894,14 @@
   function edited(){ return { subject:$('mSubject').value, heading:$('mHeading').value, body:$('mBody').value }; }
   function renderEdited(){ return api('team-email-render', { id:mailState.r.id, kind:mailState.kind, template:edited() }); }
   function closeMail(){ $('mailBox').hidden = true; mailState = null; }
+  // closing the preview of a just-made offer without sending: offer to take the offer back
+  function dismissMail(){
+    var st = mailState; closeMail();
+    if (!st || !st.undoOffer) return;
+    var r = st.r, what = isLocal(r) ? 'spot' : 'seat';
+    if (!confirm('The email to ' + r.first_name + ' wasn’t sent.\n\nUndo the ' + what + ' offer? ' + r.first_name + ' goes back on the waitlist in the same spot and the timer stops.\n\nOK = Undo the offer\nCancel = Keep the offer (send the email later with the Email button)')) { toast('Offer kept. The timer is running.'); return; }
+    act(r.id, 'unoffer').then(function(res){ if (res && res.ok){ toast('Offer undone: ' + r.first_name + ' is back on the waitlist'); load(); } else toast('Couldn’t undo. Refresh and try again.'); });
+  }
   function openOut(build){
     var w = window.open('about:blank', '_blank'); // open now so the browser doesn't block it
     renderEdited().then(function(m){ if (w) w.location = build(m); });
@@ -909,8 +924,8 @@
     });
   });
   $('mSent').addEventListener('click', function(){ var cb = mailState && mailState.onSent; closeMail(); if (cb) cb(); });
-  $('mClose').addEventListener('click', closeMail);
-  $('mailBox').addEventListener('click', function(e){ if (e.target.id==='mailBox') closeMail(); });
+  $('mClose').addEventListener('click', dismissMail);
+  $('mailBox').addEventListener('click', function(e){ if (e.target.id==='mailBox') dismissMail(); });
 
   // ---- template editor ----
   var tpl = null, tKind = 'hold', tTimer = null;
@@ -1589,7 +1604,7 @@
   $('tplBox').addEventListener('click', function(e){ if (e.target.id==='tplBox') closeTpl(); });
   document.addEventListener('keydown', function(e){
     if (e.key !== 'Escape') return;
-    if (document.querySelector('.st-pop')) stClosePop(); else if (!$('editBox').hidden) closeEdit(); else if (!$('mailBox').hidden) closeMail();
+    if (document.querySelector('.st-pop')) stClosePop(); else if (!$('editBox').hidden) closeEdit(); else if (!$('mailBox').hidden) dismissMail();
   });
 
   // ---- edit guest info ----
@@ -1616,26 +1631,47 @@
   });
 
   // ---- actions ----
-  // "Offer seat": the team picks how long the offer lasts; the guest's page counts down to it
-  var offerCb = null;
+  // "Offer seat": one view. Pick how long the offer lasts, review/edit the email, then Send does both.
+  var offer = { r:null, cb:null, dl:'', ready:false };
+  function offerDeadline(h){ return new Date(Date.now() + h * 36e5).toLocaleString('en-US', { timeZone:'America/Phoenix', weekday:'long', month:'long', day:'numeric', hour:'numeric', minute:'2-digit' }) + ' Arizona time'; }
+  function offerSwap(oldS, newS){ if (!oldS || oldS === newS) return; ['offerSubject','offerHeading','offerBody'].forEach(function(id){ var el = $(id); el.value = el.value.split(oldS).join(newS); }); }
   function offerSet(h){
     h = Math.max(1, Math.min(336, parseInt(h, 10) || 0)); $('offerHours').value = h || '';
     document.querySelectorAll('#offerQuick [data-h]').forEach(function(b){ b.setAttribute('aria-pressed', String(+b.dataset.h === h)); });
-    $('offerWhen').innerHTML = h ? 'Offer ends <b>' + esc(az(new Date(Date.now() + h * 36e5).toISOString(), { weekday:'long', month:'long', day:'numeric', hour:'numeric', minute:'2-digit' })) + ' Arizona time</b>. Their email shows this deadline, and their payment page counts down to it.' : 'Pick how many hours.';
-    $('offerGo').disabled = !h;
+    if (!h){ $('offerWhen').textContent = 'Pick how many hours.'; $('offerGo').disabled = true; return; }
+    var dl = offerDeadline(h);
+    $('offerWhen').innerHTML = 'Offer ends <b>' + esc(dl) + '</b>. The email below shows this deadline, and their ' + (offer.r && isLocal(offer.r) ? 'accept page' : 'payment page') + ' counts down to it.';
+    if (offer.ready) offerSwap(offer.dl, dl);
+    offer.dl = dl; $('offerGo').disabled = !offer.ready;
   }
   function askOfferHours(r, cb){
-    offerCb = cb; var local = isLocal(r);
+    var local = isLocal(r);
+    offer = { r:r, cb:cb, dl:'', ready:false };
     $('offerTitle').textContent = local ? 'Offer a spot' : 'Offer a seat';
     $('offerHelp').textContent = 'How long does ' + r.first_name + ' ' + r.last_name + ' have to ' + (local ? 'accept' : 'pay') + '? If time runs out, the ' + (local ? 'spot' : 'seat') + ' is released automatically.';
-    offerSet(24); $('offerBox').hidden = false; $('offerGo').focus();
+    $('offerTo').textContent = r.first_name + ' ' + r.last_name + ' <' + r.email + '>';
+    $('offerSubject').value = 'Loading…'; $('offerHeading').value = ''; $('offerBody').value = '';
+    $('offerNote').textContent = local ? 'Their “Accept my spot” button is in the message.' : 'The payment details box (code, amount, Zelle, deadline) and the “View my payment details” button are added below your message automatically.';
+    $('offerGo').textContent = local ? 'Send offer' : 'Send offer';
+    offerSet(24); $('offerBox').hidden = false;
+    api('team-email-render', { id:r.id, kind: local ? 'local_offer' : 'offer' }).then(function(m){
+      if (offer.r !== r) return;
+      if (!m.ok){ $('offerSubject').value = ''; toast('Couldn’t load the email. Close and try again.'); return; }
+      $('offerSubject').value = m.subject; $('offerHeading').value = m.heading || ''; $('offerBody').value = m.body;
+      offer.ready = true; offerSwap('within 72 hours', offer.dl); offerSet($('offerHours').value);
+      $('offerGo').focus();
+    });
   }
-  function offerClose(){ $('offerBox').hidden = true; offerCb = null; }
+  function offerClose(){ $('offerBox').hidden = true; offer = { r:null, cb:null, dl:'', ready:false }; }
   $('offerQuick').addEventListener('click', function(e){ var b = e.target.closest('[data-h]'); if (b) offerSet(b.dataset.h); });
   $('offerHours').addEventListener('input', function(){ offerSet(this.value); });
   $('offerX').addEventListener('click', offerClose); $('offerCancel').addEventListener('click', offerClose);
   $('offerBox').addEventListener('click', function(e){ if (e.target.id === 'offerBox') offerClose(); });
-  $('offerGo').addEventListener('click', function(){ var h = parseInt($('offerHours').value, 10); if (!(h >= 1 && h <= 336)) return; var cb = offerCb; offerClose(); if (cb) cb(h); });
+  $('offerGo').addEventListener('click', function(){
+    var h = parseInt($('offerHours').value, 10); if (!(h >= 1 && h <= 336) || !offer.ready) return;
+    var tpl = { subject:$('offerSubject').value, heading:$('offerHeading').value, body:$('offerBody').value }, cb = offer.cb;
+    offerClose(); if (cb) cb(h, tpl);
+  });
   function act(id, action, value){
     return api('team-action', { id:id, action:action, value:value }).then(function(r){
       if (r._status === 401){ signIn(); return null; }
@@ -1659,8 +1695,8 @@
 
     if (a==='cancel' && !confirm((r.status==='waitlist' ? 'Remove ' + who + ' from the waitlist?' : 'Cancel ' + who + '’s ' + (isLocal(r) ? 'spot? It opens up on the local sign-up page right away.' : 'seat? It will open up on the public page right away.')))) return;
     if (a==='unpaid' && !confirm('Undo the payment for ' + who + '? They’ll go back to a 24-hour hold.')) return;
-    if (a==='offer' && !btn.dataset.hours){ askOfferHours(r, function(h){ btn.dataset.hours = h; btn.click(); }); return; }
-    var hours = btn.dataset.hours; delete btn.dataset.hours;
+    if (a==='offer' && !btn.dataset.hours){ askOfferHours(r, function(h, tpl){ btn.dataset.hours = h; btn._tpl = tpl; btn.click(); }); return; }
+    var hours = btn.dataset.hours, offerTpl = btn._tpl; delete btn.dataset.hours; btn._tpl = null;
 
     btn.disabled = true;
     act(id, a, a === 'offer' ? String(hours) : undefined).then(function(res){
@@ -1673,14 +1709,16 @@
       if (!res.ok){ toast('That didn’t save. Refresh and try again.'); btn.disabled=false; return; }
       var done = isLocal(r) ? { paid:'Marked confirmed', cancel: r.status==='waitlist' ? 'Removed from waitlist' : 'Spot cancelled', extend:'Accept window extended 24 hours', offer:'Spot offered: they have ' + hours + ' hours to accept' }[a]
         : { paid:'Marked paid', unpaid:'Moved back to awaiting payment', cancel: r.status==='waitlist' ? 'Removed from waitlist' : 'Seat cancelled', extend:'Hold extended 24 hours', offer:'Seat offered: they have ' + hours + ' hours to pay' }[a];
+      if (a==='offer' && offerTpl){
+        // the offer is saved; now send the email she reviewed (deadline in the payment box comes from the saved offer)
+        toast('Offer saved. Sending the email…');
+        return api('team-email-send', { id:id, kind: isLocal(r) ? 'local_offer' : 'offer', template:offerTpl }).then(function(m){
+          toast(m.ok ? 'Offer sent to ' + r.first_name + ' from Jennifer’s Gmail' : 'Offer saved, but the email didn’t send (' + (m.error || 'try again') + '). Use the Email button on their row.');
+          return load();
+        });
+      }
       toast(done);
-      return load().then(function(){
-        if (a==='offer'){
-          var nr = data.registrations.filter(function(x){ return x.id===id; })[0];
-          // go straight to the email preview so she can review, edit and send it
-          if (nr) mail(nr, isLocal(nr) ? 'local_offer' : 'offer');
-        }
-      });
+      return load();
     });
   });
   $('rows').addEventListener('change', function(e){
