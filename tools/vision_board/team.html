@@ -1655,7 +1655,7 @@
     if (a==='email-confirm'){ mail(r, 'paid', function(){ act(id,'emailed').then(function(){ toast('Marked as sent'); load(); }); }); return; }
 
     if (a==='cancel' && !confirm((r.status==='waitlist' ? 'Remove ' + who + ' from the waitlist?' : 'Cancel ' + who + '’s ' + (isLocal(r) ? 'spot? It opens up on the local sign-up page right away.' : 'seat? It will open up on the public page right away.')))) return;
-    if (a==='unpaid' && !confirm('Undo the payment for ' + who + '? They’ll go back to a 72-hour hold.')) return;
+    if (a==='unpaid' && !confirm('Undo the payment for ' + who + '? They’ll go back to a 24-hour hold.')) return;
     if (a==='offer' && !btn.dataset.hours){ askOfferHours(r, function(h){ btn.dataset.hours = h; btn.click(); }); return; }
     var hours = btn.dataset.hours; delete btn.dataset.hours;
 

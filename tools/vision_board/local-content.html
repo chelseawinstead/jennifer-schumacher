@@ -250,7 +250,7 @@
     var area = $('regArea'), html;
     if (r.status === 'waitlist'){
       html = '<div class="vb-result"><h3>You’re on the waitlist, ' + esc(r.first_name) + '.</h3>' +
-        '<p>All the spots are taken right now. If one opens up, we’ll email you in the order you joined, and you’ll have 72 hours to accept it.</p>' +
+        '<p>All the spots are taken right now. If one opens up, we’ll email you in the order you joined, and you’ll have a set time to accept it.</p>' +
         '<p>Your waitlist code is <strong>' + esc(r.code) + '</strong>.</p></div>';
     } else if (r.status === 'pending'){
       html = '<div class="vb-result"><h3>A spot is waiting for you, ' + esc(r.first_name) + '.</h3><p>Check your email for the link to accept it.</p></div>';

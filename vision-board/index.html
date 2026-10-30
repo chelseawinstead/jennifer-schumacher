@@ -355,7 +355,7 @@ header > div:has(> [data-if="videoOpen"][data-open]) {
       <div class="vb-seats-num" id="seatNum">50</div>
       <p class="vb-seats-label" id="seatLabel">of 50 seats are still open.</p>
       <div class="vb-grid" id="seatGrid" aria-hidden="true"></div>
-      <p class="vb-seats-foot"><span class="vb-live">Updates live</span> as guests register. A seat counts as taken while its 72-hour payment hold is open.</p>
+      <p class="vb-seats-foot"><span class="vb-live">Updates live</span> as guests register. A seat counts as taken while its 24-hour payment hold is open.</p>
     </aside>
   </header>
 
@@ -398,8 +398,8 @@ header > div:has(> [data-if="videoOpen"][data-open]) {
   <section class="vb-sec vb-steps">
     <div class="vb-sec-head"><h2>How reserving works</h2></div>
     <ol>
-      <li><h3>Register below</h3><p>You'll get a personal code, like VB-014, and your seat is held for 72 hours.</p></li>
-      <li><h3>Pay by Zelle</h3><p>Send $1,150 within 72 hours and put your code in the Zelle memo so we can match your payment.</p></li>
+      <li><h3>Register below</h3><p>You'll get a personal code, like VB-014, and your seat is held for 24 hours.</p></li>
+      <li><h3>Pay by Zelle</h3><p>Send $1,150 within 24 hours and put your code in the Zelle memo so we can match your payment.</p></li>
       <li><h3>You're confirmed</h3><p>Once your payment arrives we'll email your confirmation and the ANdAZ room discount code.</p></li>
     </ol>
   </section>
@@ -408,7 +408,7 @@ header > div:has(> [data-if="videoOpen"][data-open]) {
     <div class="vb-reg">
       <div class="vb-reg-intro">
         <h2 id="regTitle">Reserve your seat</h2>
-        <p id="regIntro">Your seat is held for 72 hours while you send payment. If payment doesn't arrive in that time, the seat goes to the next guest.</p>
+        <p id="regIntro">Your seat is held for 24 hours while you send payment. If payment doesn't arrive in that time, the seat goes to the next guest.</p>
         <div class="vb-mini"><b id="miniNum">50</b><span id="miniLabel">seats left</span></div>
       </div>
 
@@ -472,8 +472,8 @@ header > div:has(> [data-if="videoOpen"][data-open]) {
     }
     $('regTitle').textContent = full ? 'Join the waitlist' : 'Reserve your seat';
     $('regIntro').textContent = full
-      ? 'Every seat is currently taken or on hold. Holds that go unpaid are released after 72 hours, so seats do open up.'
-      : 'Your seat is held for 72 hours while you send payment. If payment doesn’t arrive in that time, the seat goes to the next guest.';
+      ? 'Every seat is currently taken or on hold. Holds that go unpaid are released after 24 hours, so seats do open up.'
+      : 'Your seat is held for 24 hours while you send payment. If payment doesn’t arrive in that time, the seat goes to the next guest.';
     $('heroCta').textContent = full ? 'Join the waitlist' : 'Reserve your seat';
     if ($('waitNote')) $('waitNote').hidden = !full;
     if ($('submitBtn')) $('submitBtn').textContent = full ? 'Join the waitlist' : 'Reserve my seat';
