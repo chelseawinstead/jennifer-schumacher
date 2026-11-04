@@ -128,6 +128,18 @@
   .st-seat.drop{ border-color:var(--navy); background:#eef2f7; }
   .st-names{ font-size:12px; color:var(--muted); line-height:1.45; margin-top:6px; min-height:1em; }
   .st-names i{ font-style:normal; color:var(--warm); }
+  /* classroom room: two columns of long tables facing the screen, seats along one side */
+  .st-map.classroom{ grid-template-columns:1fr 1fr; gap:14px 40px; }
+  .st-screen{ grid-column:1 / -1; text-align:center; font-weight:700; letter-spacing:.32em; font-size:15px; color:var(--navy); background:#eef1f6; border:1px solid #d5dbe6; padding:10px; }
+  .st-roomnote{ grid-column:1 / -1; text-align:center; font-size:12px; color:var(--warm); letter-spacing:.06em; margin:-6px 0 2px; }
+  .st-table.row{ padding:10px 12px 10px; }
+  .st-rect{ display:flex; justify-content:space-between; align-items:center; width:100%; background:#eef1f6; border:1px solid #c9d1de; padding:7px 12px; cursor:pointer; font:inherit; text-align:left; }
+  .st-rect b{ font-family:var(--serif, Georgia, serif); font-size:17px; font-weight:400; color:var(--navy); }
+  .st-rect span{ color:var(--warm); font-size:12px; }
+  .st-rect.full{ background:#e8efe6; border-color:#bcd0b6; }
+  .st-line{ display:flex; justify-content:center; gap:8px; margin-top:8px; flex-wrap:wrap; }
+  .st-line .st-seat{ position:static; margin:0; }
+  @media (max-width:820px){ .st-map.classroom{ gap:12px; } }
   .st-side{ background:#fff; border:1px solid var(--line); padding:12px; position:sticky; top:0; max-height:70vh; display:flex; flex-direction:column; }
   .st-side h3{ font-size:16px; font-weight:600; margin:0 0 8px; font-family:inherit; }
   .st-side input{ font:inherit; font-size:14px; padding:8px 10px; border:1px solid #cfcbc2; margin-bottom:8px; width:100%; }
@@ -632,7 +644,7 @@
   <div class="mail seat" role="dialog" aria-modal="true" aria-labelledby="seatTitle">
     <div class="mail-head"><h2 id="seatTitle">Assigned seating</h2><button type="button" class="ghost" id="seatClose">Close</button></div>
     <p class="mail-help">Who can be seated follows each session’s “Who sees this” boxes in Event agenda (paid guests, local guests, or both). Pick a session, set up its tables, then seat people: tap a name on the right, then tap an empty seat (or tap an empty seat and choose someone). Tap a filled seat to move or remove that person. Guests see their table under that session in their app once you save.</p>
-    <div class="st-top"><select id="stSession" aria-label="Session"></select><span class="st-stat" id="stStat"></span></div>
+    <div class="st-top"><select id="stSession" aria-label="Session"></select><span class="st-stat" id="stStat"></span><span style="flex:1"></span><button type="button" class="ghost" id="stExportBtn">Export all seating (.csv)</button><button type="button" class="ghost" id="stPrintBtn">Print seating chart</button></div>
     <div id="stBody"></div>
     <div class="st-foot"><button type="button" class="solid" id="stSave">Save seating</button><span class="mail-help" id="stStatus" style="margin:0"></span></div>
   </div>
@@ -1347,7 +1359,7 @@
       if (!d.ok){ $('stBody').innerHTML = '<p class="mail-help">Couldn’t load seating. Try again.</p>'; return; }
       st.people = d.people; st.byId = {}; d.people.forEach(function(p){ st.byId[p.id] = p; });
       st.layouts = {};
-      d.tables.forEach(function(t){ var L = st.layouts[t.session] || (st.layouts[t.session] = { tables:[], assign:{} }); L.tables.push({ no:t.no, seats:t.seats, label:t.label || '' }); });
+      d.tables.forEach(function(t){ var L = st.layouts[t.session] || (st.layouts[t.session] = { tables:[], assign:{} }); L.tables.push({ no:t.no, seats:t.seats, label:t.label || '', shape:t.shape === 'row' ? 'row' : 'round' }); });
       d.assignments.forEach(function(a){ if (!st.byId[a.id]) return; var L = st.layouts[a.session] || (st.layouts[a.session] = { tables:[], assign:{} }); L.assign[a.id] = { table:a.table, seat:a.seat }; });
       if (!st.cur || !st.sessions.some(function(x){ return x.id === st.cur; })){
         var withSeats = st.sessions.filter(function(x){ return st.layouts[x.id] && st.layouts[x.id].tables.length; })[0];
@@ -1370,21 +1382,25 @@
       var others = st.sessions.filter(function(x){ return x.id !== st.cur && st.layouts[x.id] && st.layouts[x.id].tables.length; });
       $('stBody').innerHTML = '<div class="st-setup"><p style="margin:0 0 14px">No seating for this session yet. Total guests: <b>' + total + '</b></p>' +
         '<label><input type="number" id="stNT" min="1" max="60" value="' + Math.max(1, Math.ceil(total / 8)) + '"> tables with <input type="number" id="stNS" min="1" max="30" value="8"> seats each</label>' +
+        '<div style="margin-top:10px"><label style="margin-right:14px"><input type="radio" name="stShape" value="round" checked> Round tables</label><label><input type="radio" name="stShape" value="row"> Classroom rows facing a screen</label></div>' +
         '<div style="margin-top:14px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button type="button" class="solid" data-st="create">Create tables</button>' +
         (others.length ? '<select id="stCopyFrom" style="font:inherit;padding:8px">' + others.map(function(x){ return '<option value="' + esc(x.id) + '">' + esc(x.label) + '</option>'; }).join('') + '</select><button type="button" class="ghost" data-st="copy">Copy that seating</button>' : '') +
         '</div></div>';
       return;
     }
-    var map = L.tables.map(function(t){
-      var filled = 0, seatsHtml = '', names = [];
+    var classroom = L.tables.length && L.tables.every(function(t){ return t.shape === 'row'; });
+    var map = (classroom ? '<div class="st-screen">SCREEN</div><div class="st-roomnote">' + cap + ' SEATS · ' + L.tables.length + ' TABLES · tables 1 &amp; 2 are the front row</div>' : '') + L.tables.map(function(t){
+      var filled = 0, seatsHtml = '', names = [], row = t.shape === 'row';
       for (var n = 1; n <= t.seats; n++){
         var ang = (n - 1) / t.seats * 2 * Math.PI - Math.PI / 2, x = 95 + 76 * Math.cos(ang), y = 95 + 76 * Math.sin(ang);
         var id = stOccupant(L, t.no, n), p = id && st.byId[id];
         if (p){ filled++; names.push(esc(p.name.split(' ')[0] + ' ' + (p.name.split(' ').slice(1).join(' ')[0] || '') + '.')); }
         seatsHtml += '<button type="button" class="st-seat' + (p ? ' on' : '') + (p && p.role ? ' host' : '') + (st.sel && st.sel.id === id && id ? ' sel' : '') + (st.sel && !p ? ' drop' : '') +
-          '" style="left:' + x.toFixed(1) + 'px;top:' + y.toFixed(1) + 'px" data-seat="' + t.no + ':' + n + '" title="' + (p ? esc(p.name) : 'Seat ' + n + ' (empty)') + '">' +
+          '"' + (row ? '' : ' style="left:' + x.toFixed(1) + 'px;top:' + y.toFixed(1) + 'px"') + ' data-seat="' + t.no + ':' + n + '" title="' + (p ? esc(p.name) : 'Seat ' + n + ' (empty)') + '">' +
           (p ? (p.photo ? '<img src="' + esc(p.photo) + '" alt="">' : esc(stInit(p))) : n) + '</button>';
       }
+      if (row) return '<div class="st-table row"><button type="button" class="st-rect' + (filled === t.seats ? ' full' : '') + '" data-tbl="' + t.no + '"><b>' + esc(t.label || ('Table ' + t.no)) + '</b><span>' + filled + ' / ' + t.seats + '</span></button>' +
+        '<div class="st-line">' + seatsHtml + '</div><div class="st-names">' + (names.length ? names.join(', ') : '<i>Empty</i>') + '</div></div>';
       return '<div class="st-table"><div class="st-ring"><button type="button" class="st-center' + (filled === t.seats ? ' full' : '') + '" data-tbl="' + t.no + '"><b>' + esc(t.label || ('Table ' + t.no)) + '</b><span>' + filled + ' / ' + t.seats + '</span></button>' + seatsHtml + '</div>' +
         '<div class="st-names">' + (names.length ? names.join(', ') : '<i>Empty</i>') + '</div></div>';
     }).join('');
@@ -1392,10 +1408,50 @@
     var unseated = stPeople().filter(function(p){ return !L.assign[p.id]; }).filter(function(p){ return !q || (p.name + ' ' + (p.company || '')).toLowerCase().indexOf(q) > -1; });
     $('stBody').innerHTML = '<div class="st-tools"><button type="button" class="ghost" data-st="add">+ Add table</button><button type="button" class="ghost" data-st="fill">Auto-fill empty seats</button><button type="button" class="ghost" data-st="clear">Clear everyone</button><button type="button" class="ghost" data-st="reset">Start over</button></div>' +
       (st.sel ? '<div class="st-hint">Seating <b>' + esc(st.byId[st.sel.id].name) + '</b>: tap an empty seat' + (L.assign[st.sel.id] ? ' to move them, or a filled seat to swap' : '') + '. <a href="#" data-st="unsel">Cancel</a></div>' : '') +
-      '<div class="st-wrap"><div class="st-map">' + map + '</div>' +
+      '<div class="st-wrap"><div class="st-map' + (classroom ? ' classroom' : '') + '">' + map + '</div>' +
       '<div class="st-side"><h3>Not seated (' + stPeople().filter(function(p){ return !L.assign[p.id]; }).length + ')</h3><input id="stQ" placeholder="Search" value="' + esc(st.q) + '">' +
       '<div class="st-people">' + (unseated.length ? unseated.map(function(p){ return stPersonBtn(p, 'pick'); }).join('') : '<p class="mail-help">' + (q ? 'No match.' : 'Everyone has a seat. ✓') + '</p>') + '</div></div></div>';
     var qi = $('stQ'); if (qi && st._focusQ){ qi.focus(); qi.setSelectionRange(qi.value.length, qi.value.length); st._focusQ = false; }
+  }
+  // every session's seating with full names: .csv for spreadsheets, and a printable chart for the event coordinator
+  function stAllRows(){
+    return st.sessions.filter(function(x){ var L = st.layouts[x.id]; return L && L.tables.length; }).map(function(x){
+      var L = st.layouts[x.id], tables = L.tables.slice().sort(function(a, b){ return a.no - b.no; });
+      var aud = x.audience, ppl = st.people.filter(function(p){ return p.role || aud.indexOf(p.track || 'paid') > -1; });
+      return { session:x, tables:tables.map(function(t){
+        var seats = []; for (var n = 1; n <= t.seats; n++){ var id = stOccupant(L, t.no, n); seats.push({ n:n, p: id ? st.byId[id] : null }); }
+        return { no:t.no, label:t.label || 'Table ' + t.no, seats:seats };
+      }), unseated: ppl.filter(function(p){ return !L.assign[p.id]; }) };
+    });
+  }
+  function stExport(){
+    var q = function(v){ v = v == null ? '' : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+    var out = [['Session', 'Table', 'Seat', 'Guest', 'Company', 'City', 'State'].join(',')];
+    stAllRows().forEach(function(S){
+      S.tables.forEach(function(t){ t.seats.forEach(function(s){ var p = s.p;
+        out.push([S.session.label, t.label, s.n, p ? p.name : '(empty)', p ? p.company : '', p ? p.city : '', p ? p.state : ''].map(q).join(',')); }); });
+      S.unseated.forEach(function(p){ out.push([S.session.label, 'Not seated', '', p.name, p.company, p.city, p.state].map(q).join(',')); });
+    });
+    var blob = new Blob(['\ufeff' + out.join('\r\n')], { type:'text/csv;charset=utf-8' }), a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'VBC-2027-seating.csv'; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+    if (st.dirty) toast('Exported, including changes you haven’t saved yet');
+  }
+  function stPrint(){
+    var w = window.open('', '_blank'); if (!w) return toast('Allow pop-ups to print the seating chart');
+    var body = stAllRows().map(function(S){
+      return '<section><h2>' + esc(S.session.label) + '</h2><div class="grid">' + S.tables.map(function(t){
+        return '<div class="t"><h3>' + esc(t.label) + '</h3><ol>' + t.seats.map(function(s){ return '<li' + (s.p ? '' : ' class="e"') + '>' + (s.p ? esc(s.p.name) : 'empty') + '</li>'; }).join('') + '</ol></div>';
+      }).join('') + '</div>' + (S.unseated.length ? '<p class="un"><b>Not seated:</b> ' + S.unseated.map(function(p){ return esc(p.name); }).join(', ') + '</p>' : '') + '</section>';
+    }).join('') || '<p>No seating set up yet.</p>';
+    w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Seating chart · Vision Board Crew 2027</title><style>' +
+      'body{font-family:Helvetica,Arial,sans-serif;color:#14181d;margin:28px}h1{font-size:22px;margin:0 0 4px}.sub{color:#777;font-size:13px;margin:0 0 18px}' +
+      'section{page-break-after:always;margin-bottom:28px}section:last-child{page-break-after:auto}h2{font-size:18px;color:#002349;border-bottom:2px solid #002349;padding-bottom:6px}' +
+      '.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.t{border:1px solid #ccc;padding:8px 10px;break-inside:avoid}h3{margin:0 0 4px;font-size:14px}ol{margin:0;padding-left:20px;font-size:13px;line-height:1.5}li.e{color:#aaa}' +
+      '.un{font-size:13px;color:#a3271f}.p{margin-bottom:16px}@media print{.p{display:none}}</style></head><body>' +
+      '<button class="p" onclick="window.print()" style="font-size:15px;padding:10px 18px;background:#002349;color:#fff;border:0;cursor:pointer">Print</button>' +
+      '<h1>Vision Board Crew 2027 · Seating chart</h1><p class="sub">Full names by table and seat, for every session with seating.</p>' + body + '</body></html>');
+    w.document.close();
   }
   function stPersonBtn(p, kind){
     return '<button type="button" class="st-person' + (st.sel && st.sel.id === p.id ? ' sel' : '') + '" data-' + kind + '="' + esc(p.id) + '"><span class="pav">' + (p.photo ? '<img src="' + esc(p.photo) + '" alt="">' : esc(stInit(p))) + '</span><span>' + esc(p.name) +
@@ -1418,6 +1474,8 @@
   }
   function closeSeating(){ if (st.dirty && !confirm('Close without saving your seating changes?')) return; stClosePop(); $('seatBox').hidden = true; }
   $('seatClose').addEventListener('click', closeSeating);
+  $('stExportBtn').addEventListener('click', function(){ stExport(); });
+  $('stPrintBtn').addEventListener('click', function(){ stPrint(); });
   $('stSession').addEventListener('change', function(){ st.cur = this.value; st.sel = null; st.q = ''; stClosePop(); stRender(); });
   $('seatBox').addEventListener('input', function(e){ if (e.target.id === 'stQ'){ st.q = e.target.value; st._focusQ = true; stRender(); } });
   document.addEventListener('click', function(e){ if (!e.target.closest('.st-pop') && !e.target.closest('[data-seat]') && !e.target.closest('[data-tbl]')) stClosePop(); });
@@ -1439,6 +1497,7 @@
     if (a === 'rename'){ var t = L.tables.filter(function(x){ return x.no === +pop.dataset.t; })[0]; var v = prompt('Table name (leave blank for "Table ' + t.no + '")', t.label || ''); if (v !== null){ t.label = v.trim().slice(0, 40); stMark(); stRender(); } }
     if (a === 'resize'){ var t2 = L.tables.filter(function(x){ return x.no === +pop.dataset.t; })[0]; var v2 = parseInt(prompt('How many seats at ' + (t2.label || 'Table ' + t2.no) + '?', t2.seats), 10);
       if (v2 >= 1 && v2 <= 30){ t2.seats = v2; Object.keys(L.assign).forEach(function(k){ if (L.assign[k].table === t2.no && L.assign[k].seat > v2) delete L.assign[k]; }); stMark(); stRender(); } }
+    if (a === 'shape'){ var t3 = L.tables.filter(function(x){ return x.no === +pop.dataset.t; })[0]; t3.shape = t3.shape === 'row' ? 'round' : 'row'; stMark(); stRender(); }
     if (a === 'empty'){ Object.keys(L.assign).forEach(function(k){ if (L.assign[k].table === +pop.dataset.t) delete L.assign[k]; }); stMark(); stRender(); }
     if (a === 'deltable'){ if (!confirm('Remove this table? Anyone seated there goes back to Not seated.')) return; var no = +pop.dataset.t;
       L.tables = L.tables.filter(function(x){ return x.no !== no; }); Object.keys(L.assign).forEach(function(k){ if (L.assign[k].table === no) delete L.assign[k]; }); stMark(); stRender(); }
@@ -1449,9 +1508,12 @@
       e.preventDefault();
       var a = t.dataset.st;
       if (a === 'create'){ var nt = Math.min(60, Math.max(1, parseInt($('stNT').value, 10) || 1)), ns = Math.min(30, Math.max(1, parseInt($('stNS').value, 10) || 8));
-        L.tables = []; for (var i = 1; i <= nt; i++) L.tables.push({ no:i, seats:ns, label:'' }); L.assign = {}; stMark(); stRender(); }
+        var shp = (document.querySelector('input[name=stShape]:checked') || {}).value === 'row' ? 'row' : 'round';
+        L.tables = []; for (var i = 1; i <= nt; i++) L.tables.push({ no:i, seats:ns, label:'', shape:shp }); L.assign = {}; stMark(); stRender(); }
+      if (a === 'export') return stExport();
+      if (a === 'print') return stPrint();
       if (a === 'copy'){ var src = st.layouts[$('stCopyFrom').value]; st.layouts[st.cur] = JSON.parse(JSON.stringify(src)); stMark(); stRender(); }
-      if (a === 'add'){ var next = L.tables.reduce(function(m, x){ return Math.max(m, x.no); }, 0) + 1; var sz = L.tables.length ? L.tables[L.tables.length - 1].seats : 8; L.tables.push({ no:next, seats:sz, label:'' }); stMark(); stRender(); }
+      if (a === 'add'){ var next = L.tables.reduce(function(m, x){ return Math.max(m, x.no); }, 0) + 1; var sz = L.tables.length ? L.tables[L.tables.length - 1].seats : 8; L.tables.push({ no:next, seats:sz, label:'', shape: L.tables.length ? L.tables[L.tables.length - 1].shape || 'round' : 'round' }); stMark(); stRender(); }
       if (a === 'fill'){
         var open = []; L.tables.forEach(function(x){ for (var n = 1; n <= x.seats; n++) if (!stOccupant(L, x.no, n)) open.push([x.no, n]); });
         var left = stPeople().filter(function(p){ return !L.assign[p.id]; });
@@ -1470,7 +1532,7 @@
     if ((t = e.target.closest('[data-pick]'))){ st.sel = (st.sel && st.sel.id === t.dataset.pick) ? null : { id:t.dataset.pick }; stRender(); return; }
     if ((t = e.target.closest('[data-tbl]'))){
       var no = +t.dataset.tbl, tb = L.tables.filter(function(x){ return x.no === no; })[0];
-      var pop = stPop(t, '<h4>' + esc(tb.label || 'Table ' + no) + '</h4><div class="acts"><button type="button" class="ghost" data-sa="rename">Rename table</button><button type="button" class="ghost" data-sa="resize">Change number of seats</button><button type="button" class="ghost" data-sa="empty">Unseat this table</button><button type="button" class="ghost" data-sa="deltable">Remove table</button></div>');
+      var pop = stPop(t, '<h4>' + esc(tb.label || 'Table ' + no) + '</h4><div class="acts"><button type="button" class="ghost" data-sa="rename">Rename table</button><button type="button" class="ghost" data-sa="resize">Change number of seats</button><button type="button" class="ghost" data-sa="empty">Unseat this table</button><button type="button" class="ghost" data-sa="shape">' + (tb.shape === 'row' ? 'Make it a round table' : 'Make it a row table (classroom)') + '</button><button type="button" class="ghost" data-sa="deltable">Remove table</button></div>');
       pop.dataset.t = no; return;
     }
     if ((t = e.target.closest('[data-seat]'))){
