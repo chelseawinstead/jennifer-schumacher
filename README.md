@@ -146,3 +146,11 @@ Registrations live in the `vision_board` schema of the NAMB CRM Supabase project
 
 A phone-first app for confirmed (paid) guests: schedule with location and dress code, venue, notes from Jennifer, and the Crew list (opt-in contacts with photo, Instagram, Facebook, tap to text or call, private notes, save to phone contacts). Each guest opens it with their own private link (`?r=<registration id>`), emailed from the team page (Event agenda -> Email agenda links). Anyone else can ask for their link by email; it only goes to paid guests. The app closes on the date set under Event agenda -> App settings (default Feb 8, 2027). Jennifer edits everything under Event agenda on the team page. "Preview as a guest" uses a separate preview account (code PREVIEW, event_year 1) so the team never opens a real guest's private notes. Photos live in the public Supabase storage bucket `vision-board-photos`.
 
+
+## Jennifer's Big 5-0 (private RSVP + party chat)
+
+- `/big-50`: the invite Jennifer texts. RSVP: attending (name, email, cell, mailing address, optional +1 name) or can't make it. noindex, not in the nav or sitemap. The link preview image is `big-50/og.jpg`.
+- `/big-50/party?r=<id>`: each guest's own page. Shows their RSVP (they can change it), date with add-to-calendar, location with directions, gift/charity link, and Chat (attending guests only; +1s don't get access).
+- `/big-50/team`: password-protected (same team password as Vision Board). RSVP list with headcount incl. +1s, add/edit/remove guests, spreadsheet download with mailing addresses, Party details (location etc. update quietly, no email), Email guests (optional, from Jennifer's Gmail), Chat moderation. "Jennifer's party page" is her host account; "Preview as a guest" is a test account whose posts never reach real guests.
+
+Sources are in `tools/big_50/`; rebuild with `python3 tools/big_50/build.py`. Backend: Supabase edge function `big-50` (source `tools/big_50/edge/index.ts`), data in the `big_50` schema of the NAMB CRM project. It reuses the Vision Board Gmail sender (`vision_board.settings.mailer_url`) and team password.

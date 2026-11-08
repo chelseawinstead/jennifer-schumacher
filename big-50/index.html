@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Jennifer's Big 5-0 · You're invited</title>
+<meta name="description" content="Wednesday, January 27, 2027 · 7–11pm. Lite fare, endless beverages and music that moves you. Tap to RSVP.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jennifer Schumacher">
+<meta property="og:title" content="Jennifer's Big 5-0 🥂 You're invited">
+<meta property="og:description" content="Wednesday, January 27, 2027 · 7–11pm. Lite fare, endless beverages and music that moves you. Tap to RSVP.">
+<meta property="og:url" content="https://www.schumacherliving.com/big-50">
+<meta property="og:image" content="https://www.schumacherliving.com/big-50/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Jennifer holding gold-and-confetti 50 balloons with a glass of champagne">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Jennifer's Big 5-0 🥂 You're invited">
+<meta name="twitter:description" content="Wednesday, January 27, 2027 · 7–11pm. Tap to RSVP.">
+<meta name="twitter:image" content="https://www.schumacherliving.com/big-50/og.jpg">
+<meta name="theme-color" content="#002349">
+<link rel="icon" href="/images/schumacher-living-navy.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* An invitation card: photo, the essentials, one RSVP card. Navy and cream from Jennifer's site, champagne gold accents. */
+  :root{
+    --navy:#002349; --ink:#14181d; --muted:#55585c; --warm:#9a968d; --stone:#f6f5f2; --line:#e4e1da;
+    --paper:#fff; --gold:#b8995a; --cream:#e8dcc0; --sky:#c9d3df; --red:#a3271f; --ok:#2f6b4f;
+    --serif:'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    --sans:'Jost', 'Helvetica Neue', Arial, sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{ margin:0; background:var(--stone); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6; }
+  h1,h2,h3{ font-family:var(--serif); font-weight:400; margin:0; text-wrap:balance; }
+  p{ margin:0; }
+  a{ color:var(--navy); }
+  button,input,textarea{ font:inherit; color:inherit; }
+  button{ cursor:pointer; }
+  :focus-visible{ outline:2px solid var(--navy); outline-offset:2px; }
+  [hidden]{ display:none !important; }
+
+  .page{ display:grid; min-height:100vh; }
+  .photo{ position:relative; background:var(--navy); overflow:hidden; aspect-ratio:1/1; max-height:52vh; width:100%; }
+  .photo img{ width:100%; height:100%; object-fit:cover; object-position:50% 22%; display:block; }
+  .copy{ padding:30px max(22px, env(safe-area-inset-left,0px)) 56px; max-width:620px; width:100%; margin:0 auto; }
+
+  .kick{ font-size:12px; letter-spacing:.3em; text-transform:uppercase; color:var(--navy); }
+  h1{ font-size:56px; line-height:.98; margin:12px 0 18px; font-style:italic; font-weight:500; color:var(--ink); }
+  h1 span{ display:block; color:var(--navy); }
+  .when{ font-family:var(--serif); font-size:26px; line-height:1.25; }
+  .when small{ display:block; font-family:var(--sans); font-size:16px; color:var(--muted); margin-top:4px; }
+  .rule{ width:64px; height:1px; background:var(--gold); margin:22px 0; border:0; }
+  .where{ display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; align-items:start; font-size:16px; }
+  .where svg{ width:20px; height:20px; color:var(--gold); margin-top:3px; }
+  .where b{ font-weight:500; display:block; }
+  .where span{ color:var(--muted); font-size:15px; }
+  .details{ margin-top:18px; font-size:17px; color:var(--muted); white-space:pre-line; }
+  .gift{ margin-top:18px; padding:16px 18px; background:var(--paper); border:1px solid var(--line); font-size:15px; color:var(--muted); }
+  .gift a{ display:inline-flex; align-items:center; gap:6px; margin-top:10px; font-size:14px; letter-spacing:.06em; color:var(--navy); text-decoration:none; border-bottom:1px solid var(--gold); padding-bottom:2px; }
+
+  .back{ display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--navy); color:#fff; padding:14px 16px; margin-bottom:22px; font-size:15px; }
+  .back a{ color:#fff; white-space:nowrap; font-size:13px; letter-spacing:.12em; text-transform:uppercase; border:1px solid rgba(255,255,255,.5); padding:9px 12px; text-decoration:none; }
+
+  /* RSVP card */
+  .rsvp{ margin-top:30px; background:var(--paper); border:1px solid var(--line); padding:24px 20px; }
+  .rsvp h2{ font-size:34px; line-height:1.1; margin-bottom:4px; }
+  .rsvp .sub{ font-size:15px; color:var(--muted); margin-bottom:18px; }
+  .choice{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:6px; }
+  .choice button{ min-height:58px; border:1px solid var(--navy); background:var(--paper); color:var(--navy); font-size:15px; letter-spacing:.04em; padding:10px; }
+  .choice button[aria-pressed="true"]{ background:var(--navy); color:#fff; }
+  form{ display:grid; gap:14px; margin-top:18px; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .row3{ display:grid; grid-template-columns:minmax(0,1fr) 90px 110px; gap:10px; }
+  @media (max-width:420px){ .row3{ grid-template-columns:1fr 1fr; } .row3 .city{ grid-column:1/-1; } }
+  label.f{ display:block; font-size:13px; color:var(--warm); }
+  label.f input, label.f textarea{ display:block; width:100%; margin-top:6px; font-size:16px; padding:12px; border:1px solid #cfcbc2; border-radius:0; -webkit-appearance:none; background:#fff; color:var(--ink); }
+  label.f textarea{ min-height:80px; resize:vertical; line-height:1.5; }
+  label.f input:focus, label.f textarea:focus{ outline:0; border-color:var(--navy); box-shadow:0 0 0 1px var(--navy); }
+  label.f.bad input{ border-color:var(--red); }
+  .grp{ font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--navy); margin-top:6px; }
+  .grp small{ display:block; letter-spacing:0; text-transform:none; font-size:13px; color:var(--muted); margin-top:2px; }
+  .toggle{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; align-items:center; padding:14px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .toggle b{ font-weight:500; display:block; }
+  .toggle span{ font-size:13px; color:var(--muted); }
+  .switch{ position:relative; width:52px; height:30px; }
+  .switch input{ position:absolute; opacity:0; width:100%; height:100%; margin:0; cursor:pointer; z-index:1; }
+  .switch i{ position:absolute; inset:0; background:#cfcbc2; border-radius:999px; transition:background .2s; }
+  .switch i::after{ content:""; position:absolute; top:3px; left:3px; width:24px; height:24px; border-radius:50%; background:#fff; transition:transform .2s; box-shadow:0 1px 2px rgba(0,0,0,.2); }
+  .switch input:checked + i{ background:var(--ok); }
+  .switch input:checked + i::after{ transform:translateX(22px); }
+  .switch input:focus-visible + i{ outline:2px solid var(--navy); outline-offset:2px; }
+  .btn{ display:flex; align-items:center; justify-content:center; width:100%; min-height:54px; padding:14px 18px; border:1px solid var(--navy); background:var(--navy); color:#fff; font-size:13px; letter-spacing:.18em; text-transform:uppercase; text-decoration:none; }
+  .btn:disabled{ opacity:.55; cursor:wait; }
+  .btn.ghost{ background:var(--paper); color:var(--navy); }
+  .msg{ font-size:14px; min-height:1.3em; }
+  .msg.err{ color:var(--red); }
+  .done{ text-align:center; padding:8px 0; }
+  .done .big{ font-size:46px; line-height:1; margin-bottom:10px; }
+  .done h2{ margin-bottom:8px; }
+  .done p{ color:var(--muted); margin-bottom:18px; }
+  .lnk{ background:none; border:0; padding:0; color:var(--navy); text-decoration:underline; font-size:14px; }
+  .again{ margin-top:16px; font-size:14px; color:var(--muted); text-align:center; }
+  .again form{ text-align:left; }
+  footer{ text-align:center; font-size:12px; color:var(--warm); padding:0 20px 34px; }
+
+  @media (min-width:900px){
+    .page{ grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+    .photo{ aspect-ratio:auto; max-height:none; position:sticky; top:0; height:100vh; order:2; }
+    .photo img{ object-position:50% 30%; }
+    .copy{ padding:80px 56px 60px; max-width:640px; }
+    h1{ font-size:84px; }
+    .when{ font-size:30px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="photo"><img src="/big-50/hero.jpg" alt="Jennifer sitting on her kitchen counter with a glass of champagne and two big 50 balloons" width="666" height="1182"></div>
+  <main class="copy">
+    <div class="back" id="back" hidden><span>You've already RSVP'd.</span><a id="backLink" href="#">My party page</a></div>
+    <div class="kick">You're invited</div>
+    <h1>Jennifer's <span>Big 5-0</span></h1>
+    <p class="when" id="when">Wednesday, January 27, 2027<small>7:00 – 11:00pm</small></p>
+    <hr class="rule">
+    <div class="where">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+      <div id="where"><b>Location coming soon</b><span>Your party page updates as soon as it's set.</span></div>
+    </div>
+    <p class="details" id="details">Lite fare, endless beverages and music that moves you.</p>
+    <div class="gift" id="gift"><span id="giftNote">My gift is your good vibes, but if you feel the need, you can donate to one of my favorite charities.</span><br><a id="giftLink" href="#" target="_blank" rel="noopener" hidden></a></div>
+
+    <section class="rsvp" id="rsvp" aria-labelledby="rsvpTitle">
+      <div id="ask">
+        <h2 id="rsvpTitle">Will you be there?</h2>
+        <p class="sub" id="rsvpSub">Let Jennifer know by tapping one.</p>
+        <div class="choice" role="group" aria-label="Your answer">
+          <button type="button" id="yes" aria-pressed="false">I'm attending 🥂</button>
+          <button type="button" id="no" aria-pressed="false">Can't make it</button>
+        </div>
+        <form id="form" novalidate hidden>
+          <div class="row2">
+            <label class="f">First name<input id="first" autocomplete="given-name" required></label>
+            <label class="f">Last name<input id="last" autocomplete="family-name" required></label>
+          </div>
+          <label class="f">Email<input id="email" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" required></label>
+          <label class="f">Cell phone<input id="phone" type="tel" inputmode="tel" autocomplete="tel" required></label>
+          <div id="yesOnly">
+            <div class="toggle">
+              <div><b>Bringing a +1?</b><span>Just let us know their name.</span></div>
+              <label class="switch"><input type="checkbox" id="plus" aria-label="Bringing a plus one"><i></i></label>
+            </div>
+            <label class="f" id="plusWrap" hidden style="margin-top:14px">Your +1's name<input id="plusName" autocomplete="off"></label>
+            <p class="grp" style="margin-top:20px">Mailing address<small>Jennifer would love to send you a little something.</small></p>
+            <div style="display:grid;gap:14px;margin-top:12px">
+              <label class="f">Street address<input id="street" autocomplete="address-line1"></label>
+              <label class="f">Apartment, suite, etc. (optional)<input id="street2" autocomplete="address-line2"></label>
+              <div class="row3">
+                <label class="f city">City<input id="city" autocomplete="address-level2"></label>
+                <label class="f">State<input id="state" autocomplete="address-level1" maxlength="20"></label>
+                <label class="f">ZIP<input id="zip" autocomplete="postal-code" inputmode="numeric" maxlength="10"></label>
+              </div>
+            </div>
+          </div>
+          <label class="f">A note for Jennifer (optional)<textarea id="note" maxlength="1000" placeholder="Birthday wishes welcome"></textarea></label>
+          <button class="btn" type="submit" id="send">Send my RSVP</button>
+          <p class="msg" id="msg" role="status"></p>
+        </form>
+      </div>
+
+      <div class="done" id="done" hidden>
+        <div class="big" id="doneIcon">🥂</div>
+        <h2 id="doneTitle">You're on the list!</h2>
+        <p id="doneText"></p>
+        <a class="btn" id="doneBtn" href="#">Open my party page</a>
+      </div>
+    </section>
+
+    <div class="again" id="againWrap">
+      Already RSVP'd? <button type="button" class="lnk" id="againBtn">Email me my link</button>
+      <form id="againForm" hidden>
+        <label class="f">The email you RSVP'd with<input id="againEmail" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" required></label>
+        <button class="btn ghost" type="submit" id="againSend">Send my link</button>
+        <p class="msg" id="againMsg" role="status"></p>
+      </form>
+    </div>
+  </main>
+</div>
+<footer>With love, Jennifer</footer>
+
+<script>
+(function(){
+  var API = 'https://agnpwmdwofrdyqzttmlv.supabase.co/functions/v1/big-50';
+  var KEY = 'big50R';
+  var $ = function(id){ return document.getElementById(id); };
+  var answer = null;
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function stored(){ try { return localStorage.getItem(KEY) || ''; } catch(e){ return ''; } }
+  function store(v){ try { localStorage.setItem(KEY, v); } catch(e){} }
+  function post(action, body){
+    return fetch(API + '?action=' + action, { method:'POST', headers:{ 'content-type':'application/json' }, body: JSON.stringify(body) })
+      .then(function(r){ return r.json(); });
+  }
+
+  // returning guest on this phone: point them at their own page
+  var R = stored();
+  if (R){ $('back').hidden = false; $('backLink').href = '/big-50/party?r=' + encodeURIComponent(R); }
+
+  // live party details (location, notes, charity link) straight from Jennifer's team page
+  fetch(API + '?action=info').then(function(r){ return r.json(); }).then(function(d){
+    if (!d.ok) return; var p = d.party;
+    $('when').innerHTML = esc(p.date_label) + '<small>' + esc(p.time_label) + '</small>';
+    if (p.location_name || p.location_address){
+      $('where').innerHTML = '<b>' + esc(p.location_name || p.location_address) + '</b>' +
+        (p.location_name && p.location_address ? '<span>' + esc(p.location_address) + '</span>' : '') +
+        (p.location_note ? '<span style="display:block">' + esc(p.location_note) + '</span>' : '');
+    } else if (p.location_note){
+      $('where').innerHTML = '<b>Location coming soon</b><span>' + esc(p.location_note) + '</span>';
+    }
+    $('details').textContent = p.details || '';
+    $('details').hidden = !p.details;
+    $('giftNote').textContent = p.gift_note || '';
+    if (p.charity_url){ $('giftLink').href = p.charity_url; $('giftLink').textContent = (p.charity_label || 'Donate') + ' →'; $('giftLink').hidden = false; }
+    $('gift').hidden = !p.gift_note && !p.charity_url;
+    if (p.rsvp_closed){
+      $('rsvpTitle').textContent = 'RSVPs are closed';
+      $('rsvpSub').textContent = 'Text Jennifer if you have a question about the party.';
+      document.querySelector('.choice').hidden = true; $('form').hidden = true;
+    }
+  }).catch(function(){});
+
+  function choose(yes){
+    answer = yes;
+    $('yes').setAttribute('aria-pressed', String(yes)); $('no').setAttribute('aria-pressed', String(!yes));
+    $('form').hidden = false; $('yesOnly').hidden = !yes;
+    $('send').textContent = yes ? 'Count me in' : 'Send my RSVP';
+    $('msg').textContent = '';
+    if (!$('first').value) $('first').focus({ preventScroll:true });
+    $('form').scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+  $('yes').addEventListener('click', function(){ choose(true); });
+  $('no').addEventListener('click', function(){ choose(false); });
+  $('plus').addEventListener('change', function(){ $('plusWrap').hidden = !this.checked; if (this.checked) $('plusName').focus(); });
+
+  var LABEL = { first:'first name', last:'last name', email:'email', phone:'cell phone', street:'street address', city:'city', state:'state', zip:'ZIP', plus_one_name:'+1’s name' };
+  var FIELD = { first:'first', last:'last', email:'email', phone:'phone', street:'street', city:'city', state:'state', zip:'zip', plus_one_name:'plusName' };
+  function bad(keys){
+    document.querySelectorAll('label.f.bad').forEach(function(l){ l.classList.remove('bad'); });
+    keys.forEach(function(k){ var el = $(FIELD[k]); if (el) el.parentNode.classList.add('bad'); });
+    if (keys.length){ var first = $(FIELD[keys[0]]); if (first) first.focus(); }
+  }
+
+  $('form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var v = function(id){ return $(id).value.trim(); };
+    var body = { attending: answer, first:v('first'), last:v('last'), email:v('email'), phone:v('phone'), note:v('note'),
+      plus_one: answer && $('plus').checked, plus_one_name: v('plusName'),
+      street: answer ? v('street') : '', street2: answer ? v('street2') : '', city: answer ? v('city') : '', state: answer ? v('state') : '', zip: answer ? v('zip') : '' };
+    var need = ['first','last','email','phone'];
+    if (answer){ need = need.concat(['street','city','state','zip']); if (body.plus_one) need.push('plus_one_name'); }
+    var missing = need.filter(function(k){ return !body[k]; });
+    if (missing.length){ bad(missing); $('msg').className = 'msg err'; $('msg').textContent = 'Please add your ' + missing.map(function(k){ return LABEL[k]; }).join(', ') + '.'; return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(body.email)){ bad(['email']); $('msg').className = 'msg err'; $('msg').textContent = 'That email doesn’t look right.'; return; }
+    if (body.phone.replace(/\D/g,'').length < 10){ bad(['phone']); $('msg').className = 'msg err'; $('msg').textContent = 'Please add your full cell number, area code first.'; return; }
+    bad([]);
+    var btn = $('send'), label = btn.textContent; btn.disabled = true; btn.textContent = 'Sending…'; $('msg').textContent = '';
+    post('rsvp', body).then(function(d){
+      btn.disabled = false; btn.textContent = label;
+      if (!d.ok){
+        $('msg').className = 'msg err';
+        if (d.error === 'missing'){ bad(d.fields || []); $('msg').textContent = 'Please fill in the highlighted fields.'; }
+        else if (d.error === 'email'){ bad(['email']); $('msg').textContent = 'That email doesn’t look right.'; }
+        else if (d.error === 'phone'){ bad(['phone']); $('msg').textContent = 'Please add your full cell number.'; }
+        else if (d.error === 'closed'){ $('msg').textContent = 'RSVPs are closed. Text Jennifer if you have a question.'; }
+        else $('msg').textContent = 'That didn’t go through. Please try again.';
+        return;
+      }
+      $('ask').hidden = true; $('done').hidden = false; $('againWrap').hidden = true;
+      if (d.duplicate){
+        $('doneIcon').textContent = '💌'; $('doneTitle').textContent = 'You’ve already RSVP’d';
+        $('doneText').textContent = 'We just emailed your personal party link to ' + body.email + '. You can change your answer from there.';
+        $('doneBtn').hidden = true;
+      } else {
+        store(d.id);
+        var link = '/big-50/party?r=' + encodeURIComponent(d.id);
+        $('doneBtn').href = link;
+        if (answer){
+          $('doneText').textContent = 'Jennifer can’t wait to celebrate with you. Your party page has the latest details and a party chat for photos. We also emailed you the link.';
+        } else {
+          $('doneIcon').textContent = '💛'; $('doneTitle').textContent = 'Thanks for letting Jennifer know';
+          $('doneText').textContent = 'You’ll be missed! If plans change, you can update your RSVP from your party page.';
+          $('doneBtn').textContent = 'Change my RSVP later';
+        }
+        $('back').hidden = false; $('backLink').href = link;
+      }
+      $('rsvp').scrollIntoView({ behavior:'smooth', block:'start' });
+    }).catch(function(){ btn.disabled = false; btn.textContent = label; $('msg').className = 'msg err'; $('msg').textContent = 'Check your connection and try again.'; });
+  });
+
+  $('againBtn').addEventListener('click', function(){ $('againForm').hidden = false; $('againEmail').focus(); });
+  $('againForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var em = $('againEmail').value.trim(); if (!em) return;
+    $('againSend').disabled = true;
+    post('link', { email: em }).then(function(){
+      $('againSend').disabled = false; $('againMsg').className = 'msg';
+      $('againMsg').textContent = 'If you’re on the list, your link is on its way from jennifer@schumacherliving.com. Check your inbox (and spam) in a minute.';
+    }).catch(function(){ $('againSend').disabled = false; $('againMsg').className = 'msg err'; $('againMsg').textContent = 'Couldn’t send. Try again.'; });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Big 5-0 RSVPs | Jennifer Schumacher</title>
+<meta name="theme-color" content="#002349">
+<link rel="icon" href="/images/schumacher-living-navy.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{ --navy:#002349; --ink:#14181d; --muted:#55585c; --warm:#9a968d; --stone:#f6f5f2; --line:#e4e1da;
+         --yes:#2f6b4f; --yes-bg:#e7f1eb; --no:#8a5a14; --no-bg:#f8efdf; --off:#7a7a7a; --off-bg:#efefef; --red:#a3271f; --gold:#b8995a; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:#fff; color:var(--ink); font-family:'Jost',system-ui,sans-serif; font-size:15px; line-height:1.5; }
+  h1,h2,h3{ font-family:'Cormorant Garamond',serif; font-weight:400; margin:0; }
+  button,input,textarea,select{ font:inherit; color:inherit; }
+  button{ cursor:pointer; }
+  a{ color:var(--navy); }
+  :focus-visible{ outline:2px solid var(--navy); outline-offset:2px; }
+  [hidden]{ display:none !important; }
+
+  .bar{ display:flex; justify-content:space-between; align-items:center; gap:16px; padding:16px 32px; border-bottom:1px solid #ececec; position:sticky; top:0; background:rgba(255,255,255,.97); z-index:10; flex-wrap:wrap; }
+  .brand b{ display:block; font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:500; font-size:26px; line-height:1.1; }
+  .brand span{ font-size:12px; color:var(--warm); letter-spacing:.04em; }
+  .bar-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+  .ghost{ background:#fff; border:1px solid var(--navy); color:var(--navy); padding:9px 14px; font-size:13px; text-decoration:none; display:inline-flex; align-items:center; }
+  .solid{ background:var(--navy); border:1px solid var(--navy); color:#fff; padding:9px 16px; font-size:13px; }
+  .solid:disabled, .ghost:disabled{ opacity:.5; cursor:wait; }
+  .danger{ background:#fff; border:1px solid var(--red); color:var(--red); padding:9px 14px; font-size:13px; }
+  nav.tabs{ display:flex; gap:4px; padding:0 32px; border-bottom:1px solid var(--line); overflow-x:auto; }
+  nav.tabs button{ background:none; border:0; border-bottom:2px solid transparent; padding:14px 14px 12px; font-size:15px; color:var(--muted); white-space:nowrap; }
+  nav.tabs button[aria-selected="true"]{ color:var(--navy); border-bottom-color:var(--navy); font-weight:500; }
+  main{ padding:24px 32px 60px; max-width:1180px; }
+
+  .login{ max-width:380px; margin:12vh auto; padding:0 24px; display:grid; gap:12px; }
+  .login h1{ font-size:40px; font-style:italic; }
+  .login p{ color:var(--muted); margin:0 0 6px; }
+  .login input{ padding:13px; border:1px solid #cfcbc2; font-size:16px; }
+  .msg-err{ color:var(--red); font-size:14px; min-height:1.3em; }
+
+  .stats{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:22px; }
+  .stat{ background:var(--stone); padding:16px 18px; }
+  .stat b{ display:block; font-family:'Cormorant Garamond',serif; font-size:44px; font-weight:400; line-height:1; color:var(--navy); }
+  .stat span{ font-size:13px; color:var(--muted); }
+  .stat.hl{ background:var(--navy); } .stat.hl b, .stat.hl span{ color:#fff; }
+  @media (max-width:700px){ .stats{ grid-template-columns:repeat(2,1fr); } .bar, nav.tabs, main{ padding-left:16px; padding-right:16px; } }
+
+  .tools{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
+  .tools input[type=search]{ flex:1; min-width:200px; padding:10px 12px; border:1px solid #cfcbc2; font-size:15px; }
+  .seg{ display:inline-flex; border:1px solid var(--line); }
+  .seg button{ background:#fff; border:0; padding:9px 12px; font-size:13px; color:var(--muted); }
+  .seg button[aria-pressed="true"]{ background:var(--navy); color:#fff; }
+
+  table{ width:100%; border-collapse:collapse; }
+  th{ text-align:left; font-weight:500; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--warm); padding:10px 10px; border-bottom:1px solid var(--line); }
+  td{ padding:12px 10px; border-bottom:1px solid var(--line); vertical-align:top; font-size:14px; }
+  td .nm{ font-weight:500; font-size:15px; }
+  td .sub{ color:var(--muted); font-size:13px; }
+  td .note{ margin-top:6px; font-size:13px; color:var(--ink); background:#fbf8f1; border-left:3px solid var(--gold); padding:4px 8px; }
+  .chip{ display:inline-block; font-size:12px; padding:3px 9px; border-radius:999px; white-space:nowrap; }
+  .chip.yes{ background:var(--yes-bg); color:var(--yes); } .chip.no{ background:var(--no-bg); color:var(--no); } .chip.off{ background:var(--off-bg); color:var(--off); }
+  .acts{ display:flex; gap:6px; flex-wrap:wrap; }
+  .acts button{ background:#fff; border:1px solid var(--line); padding:6px 10px; font-size:12px; color:var(--navy); }
+  tr.removed td{ opacity:.55; }
+  .empty{ padding:36px; text-align:center; color:var(--muted); background:var(--stone); }
+  @media (max-width:860px){
+    table, tbody, tr, td{ display:block; width:100%; } thead{ display:none; }
+    tr{ border:1px solid var(--line); margin-bottom:10px; padding:4px 4px 8px; }
+    td{ border:0; padding:6px 10px; }
+  }
+
+  .form{ max-width:640px; display:grid; gap:14px; }
+  .form h2{ font-size:30px; }
+  .help{ font-size:14px; color:var(--muted); }
+  label.f{ display:block; font-size:13px; color:var(--warm); }
+  label.f input, label.f textarea, label.f select{ display:block; width:100%; margin-top:6px; padding:11px 12px; border:1px solid #cfcbc2; font-size:15px; background:#fff; border-radius:0; color:var(--ink); }
+  label.f textarea{ min-height:90px; resize:vertical; line-height:1.5; }
+  .two{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .three{ display:grid; grid-template-columns:minmax(0,1fr) 90px 110px; gap:12px; }
+  fieldset{ border:1px solid var(--line); padding:16px; margin:0; display:grid; gap:12px; }
+  legend{ padding:0 6px; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--navy); }
+  .check{ display:flex; gap:10px; align-items:flex-start; font-size:14px; }
+  .check input{ margin-top:3px; width:18px; height:18px; }
+  .saved{ font-size:14px; color:var(--yes); min-height:1.3em; }
+  .linkbox{ display:flex; gap:8px; align-items:center; background:var(--stone); padding:12px 14px; flex-wrap:wrap; }
+  .linkbox code{ font-size:15px; flex:1; min-width:200px; overflow-wrap:anywhere; }
+
+  .post{ border:1px solid var(--line); padding:12px 14px; margin-bottom:10px; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px; }
+  .post .who{ font-weight:500; } .post .when{ color:var(--warm); font-size:12px; }
+  .post .body{ white-space:pre-wrap; margin-top:4px; }
+  .post .imgs{ display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; } .post .imgs img{ width:84px; height:84px; object-fit:cover; }
+  .tag{ display:inline-block; font-size:10px; letter-spacing:.08em; text-transform:uppercase; padding:1px 7px; border-radius:999px; background:var(--gold); color:#fff; margin-left:6px; vertical-align:2px; }
+  .tag.test{ background:#cfcbc2; color:var(--ink); }
+
+  .modal{ position:fixed; inset:0; background:rgba(20,24,29,.45); z-index:30; display:flex; align-items:center; justify-content:center; padding:16px; }
+  .modal .box{ background:#fff; width:100%; max-width:560px; max-height:92vh; overflow:auto; padding:22px; }
+  .modal .head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .modal .head h2{ font-size:28px; }
+  .x{ background:none; border:0; color:var(--muted); padding:6px; }
+  .toast{ position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--ink); color:#fff; padding:10px 18px; border-radius:999px; font-size:14px; opacity:0; transition:opacity .2s; pointer-events:none; z-index:40; }
+  .toast.on{ opacity:1; }
+</style>
+</head>
+<body>
+
+<section class="login" id="login">
+  <h1>Jennifer's Big 5-0</h1>
+  <p>RSVP list and party settings. Use the same team password as the Vision Board guest list.</p>
+  <form id="loginForm" style="display:grid;gap:10px">
+    <input type="password" id="pw" autocomplete="current-password" placeholder="Team password" required>
+    <button class="solid" type="submit" id="loginBtn" style="padding:13px">Sign in</button>
+    <div class="msg-err" id="loginErr" role="alert"></div>
+  </form>
+</section>
+
+<div id="app" hidden>
+  <header class="bar">
+    <div class="brand"><b>Jennifer's Big 5-0</b><span id="barSub">RSVPs</span></div>
+    <div class="bar-actions">
+      <button class="ghost" type="button" id="copyInvite">Copy invite link</button>
+      <a class="ghost" id="hostLink" href="#" target="_blank" rel="noopener">Jennifer's party page</a>
+      <a class="ghost" id="testLink" href="#" target="_blank" rel="noopener">Preview as a guest</a>
+    </div>
+  </header>
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="guests" aria-selected="true">RSVPs</button>
+    <button role="tab" data-tab="details" aria-selected="false">Party details</button>
+    <button role="tab" data-tab="email" aria-selected="false">Email guests</button>
+    <button role="tab" data-tab="chat" aria-selected="false">Chat</button>
+  </nav>
+  <main>
+    <!-- RSVPs -->
+    <section id="tab-guests">
+      <div class="stats" id="stats"></div>
+      <div class="tools">
+        <input type="search" id="q" placeholder="Search name, email, phone or city" aria-label="Search RSVPs">
+        <div class="seg" role="group" aria-label="Show">
+          <button type="button" data-f="all" aria-pressed="true">All</button>
+          <button type="button" data-f="yes" aria-pressed="false">Attending</button>
+          <button type="button" data-f="no" aria-pressed="false">Can't make it</button>
+          <button type="button" data-f="removed" aria-pressed="false">Removed</button>
+        </div>
+        <button class="ghost" type="button" id="addBtn">+ Add a guest</button>
+        <button class="ghost" type="button" id="csvBtn">Download spreadsheet</button>
+      </div>
+      <div id="list"></div>
+    </section>
+
+    <!-- Party details -->
+    <section id="tab-details" hidden>
+      <div class="form">
+        <h2>Party details</h2>
+        <p class="help">Saving updates the invite page and every guest's party page right away. <b>No one is emailed.</b> To tell guests about a change, use Email guests.</p>
+        <div class="linkbox"><code>https://www.schumacherliving.com/big-50</code><button class="ghost" type="button" id="copyInvite2">Copy invite link</button></div>
+        <fieldset>
+          <legend>Location</legend>
+          <label class="f">Venue name<input id="sLocName" placeholder="Leave blank until it's set"></label>
+          <label class="f">Address<input id="sLocAddr" placeholder="Street, city, state ZIP (powers the Directions button)"></label>
+          <label class="f">Location note (optional)<input id="sLocNote" placeholder="e.g. Valet at the front door, or: Location coming in December!"></label>
+        </fieldset>
+        <fieldset>
+          <legend>When</legend>
+          <div class="two">
+            <label class="f">Date<input id="sDate"></label>
+            <label class="f">Time<input id="sTime"></label>
+          </div>
+          <p class="help" style="margin:0">This is the wording guests see. The calendar invite uses Jan 27, 2027, 7–11pm Arizona time. Ask Chelsea if the date or time itself changes.</p>
+        </fieldset>
+        <fieldset>
+          <legend>Invitation wording</legend>
+          <label class="f">About the party<textarea id="sDetails"></textarea></label>
+          <label class="f">Gift note<textarea id="sGift"></textarea></label>
+          <div class="two">
+            <label class="f">Charity donation link<input id="sCharity" placeholder="Paste the unique link"></label>
+            <label class="f">Button wording<input id="sCharityLabel"></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Settings</legend>
+          <label class="check"><input type="checkbox" id="sClosed"><span><b>Close RSVPs</b><br><span class="help">New people can't RSVP. Guests who already did can still change their answer and use Chat.</span></span></label>
+          <label class="f">Chat stays open until<input type="date" id="sCloses"></label>
+        </fieldset>
+        <div><button class="solid" type="button" id="saveDetails" style="padding:13px 24px">Save party details</button></div>
+        <p class="saved" id="savedMsg" role="status"></p>
+      </div>
+    </section>
+
+    <!-- Email -->
+    <section id="tab-email" hidden>
+      <div class="form">
+        <h2>Email guests</h2>
+        <p class="help">Sends from Jennifer's Gmail. Each guest gets their own copy. Type <b>{first_name}</b> to use their first name.</p>
+        <label class="f">Send to
+          <select id="eTo">
+            <option value="yes">Everyone attending</option>
+            <option value="no">Everyone who can't make it</option>
+            <option value="all">Everyone who RSVP'd</option>
+          </select>
+        </label>
+        <label class="f">Subject<input id="eSubject" maxlength="200" placeholder="e.g. We have a location! 🥂"></label>
+        <label class="f">Message<textarea id="eBody" style="min-height:180px" placeholder="Hi {first_name},&#10;&#10;"></textarea></label>
+        <label class="check"><input type="checkbox" id="eDetails" checked><span>Include the date, time and location</span></label>
+        <label class="check"><input type="checkbox" id="eButton" checked><span>Include an "Open my party page" button (their personal link)</span></label>
+        <div class="two" style="align-items:end">
+          <label class="f">Send a test to<input id="eTest" type="email" placeholder="you@example.com"></label>
+          <button class="ghost" type="button" id="eTestBtn" style="padding:11px 14px">Send test</button>
+        </div>
+        <div><button class="solid" type="button" id="eSend" style="padding:13px 24px">Send</button></div>
+        <p class="saved" id="eMsg" role="status"></p>
+      </div>
+    </section>
+
+    <!-- Chat -->
+    <section id="tab-chat" hidden>
+      <h2 style="font-size:30px;margin-bottom:4px">Chat</h2>
+      <p class="help" style="margin-bottom:16px">Every post and reply, newest first. Remove takes it down for everyone.</p>
+      <div id="feed"></div>
+    </section>
+  </main>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="box" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <div class="head"><h2 id="mTitle">Edit RSVP</h2><button class="x" type="button" id="mClose">Close</button></div>
+    <div class="form" style="max-width:none">
+      <div class="two">
+        <label class="f">First name<input id="mFirst"></label>
+        <label class="f">Last name<input id="mLast"></label>
+      </div>
+      <div class="two">
+        <label class="f">Email<input id="mEmail" type="email"></label>
+        <label class="f">Cell phone<input id="mPhone" type="tel"></label>
+      </div>
+      <label class="f">Answer
+        <select id="mAtt"><option value="1">Attending</option><option value="0">Can't make it</option></select>
+      </label>
+      <label class="check"><input type="checkbox" id="mPlus"><span>Bringing a +1</span></label>
+      <label class="f" id="mPlusWrap">+1's name<input id="mPlusName"></label>
+      <label class="f">Street address<input id="mStreet"></label>
+      <label class="f">Apartment, suite, etc.<input id="mStreet2"></label>
+      <div class="three">
+        <label class="f">City<input id="mCity"></label>
+        <label class="f">State<input id="mState"></label>
+        <label class="f">ZIP<input id="mZip"></label>
+      </div>
+      <label class="check" id="mSendWrap"><input type="checkbox" id="mSend"><span>Email them their party link now</span></label>
+      <div><button class="solid" type="button" id="mSave" style="padding:12px 22px">Save</button></div>
+      <p class="msg-err" id="mErr" role="alert"></p>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  var API = 'https://agnpwmdwofrdyqzttmlv.supabase.co/functions/v1/big-50';
+  var SITE = 'https://www.schumacherliving.com';
+  var $ = function(id){ return document.getElementById(id); };
+  var pw = '', D = null, filter = 'all', editing = null;
+  try { pw = sessionStorage.getItem('vbTeamPw') || ''; } catch(e){}
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function toast(t){ var el=$('toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(function(){ el.classList.remove('on'); }, 2600); }
+  function api(action, body){
+    return fetch(API + '?action=' + action, { method: body ? 'POST' : 'GET',
+      headers: Object.assign({ 'x-team-password': pw }, body ? { 'content-type':'application/json' } : {}), body: body ? JSON.stringify(body) : undefined })
+      .then(function(r){ return r.json().then(function(j){ j._status = r.status; return j; }); })
+      .then(function(d){
+        if (d._status === 401){ pw = ''; try { sessionStorage.removeItem('vbTeamPw'); } catch(e){} $('app').hidden = true; $('login').hidden = false; $('loginErr').textContent = 'That password didn’t work. Check with Chelsea for the current one.'; throw new Error('pw'); }
+        return d;
+      });
+  }
+  function copy(text, msg){
+    (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(function(){ toast(msg || 'Copied'); })
+      .catch(function(){ window.prompt('Copy this link:', text); });
+  }
+  function fmtDate(iso){ return new Date(iso).toLocaleDateString('en-US', { month:'short', day:'numeric', timeZone:'America/Phoenix' }); }
+  function addr(g){ return [g.street, g.street2].filter(Boolean).join(', ') + (g.city || g.state || g.zip ? (g.street ? '<br>' : '') + esc([g.city, [g.state, g.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ')) : ''); }
+
+  function load(){
+    return api('team-list').then(function(d){
+      try { sessionStorage.setItem('vbTeamPw', pw); } catch(e){}
+      D = d; $('login').hidden = true; $('app').hidden = false; render();
+    }).catch(function(){});
+  }
+
+  $('loginForm').addEventListener('submit', function(e){
+    e.preventDefault(); pw = $('pw').value; $('loginErr').textContent = ''; $('loginBtn').disabled = true;
+    load().then(function(){ $('loginBtn').disabled = false; });
+  });
+
+  function render(){
+    var live = D.guests.filter(function(g){ return !g.removed; });
+    var yes = live.filter(function(g){ return g.attending; }), no = live.filter(function(g){ return !g.attending; });
+    var plus = yes.filter(function(g){ return g.plus_one; }).length;
+    $('stats').innerHTML =
+      '<div class="stat hl"><b>' + (yes.length + plus) + '</b><span>Total headcount</span></div>' +
+      '<div class="stat"><b>' + yes.length + '</b><span>Guests attending</span></div>' +
+      '<div class="stat"><b>' + plus + '</b><span>+1s</span></div>' +
+      '<div class="stat"><b>' + no.length + '</b><span>Can’t make it</span></div>';
+    $('barSub').textContent = (yes.length + plus) + ' coming · ' + D.party.date_label;
+    $('hostLink').href = SITE + '/big-50/party?r=' + D.host_id;
+    $('testLink').href = SITE + '/big-50/party?r=' + D.test_id;
+    renderList(); fillDetails();
+  }
+
+  function renderList(){
+    var q = $('q').value.trim().toLowerCase();
+    var rows = D.guests.filter(function(g){
+      if (filter === 'removed') { if (!g.removed) return false; }
+      else { if (g.removed) return false; if (filter === 'yes' && !g.attending) return false; if (filter === 'no' && g.attending) return false; }
+      if (!q) return true;
+      return [g.first_name, g.last_name, g.email, g.phone, g.city, g.plus_one_name].join(' ').toLowerCase().indexOf(q) > -1;
+    });
+    if (!rows.length){ $('list').innerHTML = '<div class="empty">' + (D.guests.length ? 'No one matches.' : 'No RSVPs yet. Copy the invite link and text it to your guests!') + '</div>'; return; }
+    $('list').innerHTML = '<table><thead><tr><th>Guest</th><th>Answer</th><th>+1</th><th>Contact</th><th>Mailing address</th><th></th></tr></thead><tbody>' +
+      rows.map(function(g){
+        var lastMail = (g.emails || []).slice(-1)[0];
+        return '<tr class="' + (g.removed ? 'removed' : '') + '" data-id="' + g.id + '">' +
+          '<td><div class="nm">' + esc(g.first_name + ' ' + g.last_name) + '</div><div class="sub">RSVP’d ' + fmtDate(g.created_at) + (g.added_by === 'team' ? ' · added by team' : '') + '</div>' +
+            (g.note ? '<div class="note">“' + esc(g.note) + '”</div>' : '') + '</td>' +
+          '<td>' + (g.removed ? '<span class="chip off">Removed</span>' : g.attending ? '<span class="chip yes">Attending</span>' : '<span class="chip no">Can’t make it</span>') + '</td>' +
+          '<td>' + (g.plus_one ? esc(g.plus_one_name || 'Yes') : '<span class="sub">—</span>') + '</td>' +
+          '<td>' + (g.phone ? '<a href="sms:' + esc(g.phone.replace(/[^\d+]/g,'')) + '">' + esc(g.phone) + '</a><br>' : '') + (g.email ? '<a href="mailto:' + esc(g.email) + '">' + esc(g.email) + '</a>' : '') +
+            (lastMail ? '<div class="sub">' + (lastMail.ok ? 'Emailed ' : 'Email failed ') + fmtDate(lastMail.at) + '</div>' : '') + '</td>' +
+          '<td>' + (addr(g) || '<span class="sub">—</span>') + '</td>' +
+          '<td><div class="acts">' + (g.removed ? '<button data-act="restore">Restore</button>' :
+            '<button data-act="edit">Edit</button><button data-act="copy">Copy their link</button>' + (g.email ? '<button data-act="resend">Email their link</button>' : '') + '<button data-act="remove">Remove</button>') + '</div></td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+  $('q').addEventListener('input', renderList);
+  document.querySelector('.seg').addEventListener('click', function(e){
+    var b = e.target.closest('[data-f]'); if (!b) return; filter = b.dataset.f;
+    this.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed', String(x === b)); }); renderList();
+  });
+  $('list').addEventListener('click', function(e){
+    var b = e.target.closest('[data-act]'); if (!b) return;
+    var id = b.closest('tr').dataset.id, g = D.guests.filter(function(x){ return x.id === id; })[0];
+    var act = b.dataset.act;
+    if (act === 'edit') return openModal(g);
+    if (act === 'copy') return copy(SITE + '/big-50/party?r=' + id, 'Copied ' + g.first_name + '’s personal link');
+    if (act === 'resend'){ b.disabled = true; return api('team-resend', { id:id }).then(function(d){ b.disabled = false; toast(d.ok ? 'Sent to ' + g.email : 'Didn’t send: ' + (d.error || 'try again')); load(); }); }
+    if (act === 'remove'){ if (!confirm('Remove ' + g.first_name + ' ' + g.last_name + '? They’ll lose access to their party page and Chat. You can restore them later.')) return;
+      return api('team-guest-remove', { id:id, remove:true }).then(function(){ toast('Removed'); load(); }); }
+    if (act === 'restore') return api('team-guest-remove', { id:id, remove:false }).then(function(d){ toast(d.ok ? 'Restored' : 'Someone else already RSVP’d with that email'); load(); });
+  });
+
+  // ---- add / edit ----
+  function openModal(g){
+    editing = g || null;
+    $('mTitle').textContent = g ? 'Edit RSVP' : 'Add a guest';
+    var v = g || { first_name:'', last_name:'', email:'', phone:'', attending:true, plus_one:false, plus_one_name:'', street:'', street2:'', city:'', state:'', zip:'' };
+    $('mFirst').value = v.first_name; $('mLast').value = v.last_name; $('mEmail').value = v.email; $('mPhone').value = v.phone;
+    $('mAtt').value = v.attending ? '1' : '0'; $('mPlus').checked = !!v.plus_one; $('mPlusName').value = v.plus_one_name || ''; $('mPlusWrap').hidden = !v.plus_one;
+    $('mStreet').value = v.street; $('mStreet2').value = v.street2; $('mCity').value = v.city; $('mState').value = v.state; $('mZip').value = v.zip;
+    $('mSendWrap').hidden = !!g; $('mSend').checked = false; $('mErr').textContent = '';
+    $('modal').hidden = false; $('mFirst').focus();
+  }
+  $('mPlus').addEventListener('change', function(){ $('mPlusWrap').hidden = !this.checked; });
+  $('mClose').addEventListener('click', function(){ $('modal').hidden = true; });
+  $('modal').addEventListener('click', function(e){ if (e.target.id === 'modal') $('modal').hidden = true; });
+  $('addBtn').addEventListener('click', function(){ openModal(null); });
+  $('mSave').addEventListener('click', function(){
+    var v = function(id){ return $(id).value.trim(); };
+    var f = { first_name:v('mFirst'), last_name:v('mLast'), email:v('mEmail'), phone:v('mPhone'), attending:$('mAtt').value === '1',
+      plus_one:$('mPlus').checked, plus_one_name:v('mPlusName'), street:v('mStreet'), street2:v('mStreet2'), city:v('mCity'), state:v('mState'), zip:v('mZip') };
+    if (!f.first_name){ $('mErr').textContent = 'Add at least a first name.'; return; }
+    var btn = this; btn.disabled = true;
+    var req = editing ? api('team-guest-save', Object.assign({ id: editing.id }, f))
+      : api('team-add', { first:f.first_name, last:f.last_name, email:f.email, phone:f.phone, attending:f.attending, plus_one:f.plus_one, plus_one_name:f.plus_one_name,
+          street:f.street, street2:f.street2, city:f.city, state:f.state, zip:f.zip, send_email:$('mSend').checked });
+    req.then(function(d){
+      btn.disabled = false;
+      if (!d.ok){ $('mErr').textContent = d.error === 'duplicate' ? 'Someone already RSVP’d with that email.' : d.error === 'email' ? 'That email doesn’t look right.' : 'That didn’t save. Try again.'; return; }
+      $('modal').hidden = true; toast('Saved'); load();
+    }).catch(function(){ btn.disabled = false; });
+  });
+
+  // ---- spreadsheet ----
+  $('csvBtn').addEventListener('click', function(){
+    var cols = ['First name','Last name','Answer','+1','+1 name','Email','Cell','Street','Apt/Suite','City','State','ZIP','Note','RSVP date'];
+    var csvq = function(s){ s = String(s == null ? '' : s); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+    var rows = D.guests.filter(function(g){ return !g.removed; }).map(function(g){
+      return [g.first_name, g.last_name, g.attending ? 'Attending' : 'Can’t make it', g.plus_one ? 'Yes' : '', g.plus_one_name, g.email, g.phone,
+        g.street, g.street2, g.city, g.state, g.zip, g.note, fmtDate(g.created_at)].map(csvq).join(',');
+    });
+    var blob = new Blob(['﻿' + cols.join(',') + '\n' + rows.join('\n')], { type:'text/csv;charset=utf-8' });
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'big-50-rsvps.csv'; document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  });
+
+  // ---- party details ----
+  function fillDetails(){
+    if (fillDetails.done) return; fillDetails.done = true;
+    var p = D.party;
+    $('sLocName').value = p.location_name; $('sLocAddr').value = p.location_address; $('sLocNote').value = p.location_note;
+    $('sDate').value = p.date_label; $('sTime').value = p.time_label; $('sDetails').value = p.details; $('sGift').value = p.gift_note;
+    $('sCharity').value = p.charity_url; $('sCharityLabel').value = p.charity_label; $('sClosed').checked = !!p.rsvp_closed;
+    $('sCloses').value = new Date(p.app_closes_at).toLocaleDateString('en-CA', { timeZone:'America/Phoenix' });
+  }
+  $('saveDetails').addEventListener('click', function(){
+    var btn = this; btn.disabled = true; $('savedMsg').textContent = '';
+    var closes = $('sCloses').value ? $('sCloses').value + 'T23:59:00-07:00' : null;
+    api('team-settings', { location_name:$('sLocName').value, location_address:$('sLocAddr').value, location_note:$('sLocNote').value,
+      date_label:$('sDate').value, time_label:$('sTime').value, details:$('sDetails').value, gift_note:$('sGift').value,
+      charity_url:$('sCharity').value, charity_label:$('sCharityLabel').value, rsvp_closed:$('sClosed').checked, app_closes_at:closes })
+    .then(function(d){
+      btn.disabled = false; if (!d.ok){ $('savedMsg').textContent = 'That didn’t save. Try again.'; return; }
+      D = d; fillDetails.done = false; render(); $('savedMsg').textContent = 'Saved. Guests see the update now.';
+    }).catch(function(){ btn.disabled = false; });
+  });
+  function copyInvite(){ copy(SITE + '/big-50', 'Invite link copied. Paste it into your text!'); }
+  $('copyInvite').addEventListener('click', copyInvite); $('copyInvite2').addEventListener('click', copyInvite);
+
+  // ---- email guests ----
+  function emailBody(extra){ return Object.assign({ subject:$('eSubject').value.trim(), body:$('eBody').value, details:$('eDetails').checked, button:$('eButton').checked }, extra); }
+  $('eTestBtn').addEventListener('click', function(){
+    var to = $('eTest').value.trim(); if (!to){ $('eTest').focus(); return; }
+    var b = emailBody({ test_to: to }); if (!b.subject || !b.body.trim()){ $('eMsg').textContent = 'Add a subject and a message first.'; return; }
+    var btn = this; btn.disabled = true;
+    api('team-email', b).then(function(d){ btn.disabled = false; $('eMsg').textContent = d.ok ? 'Test sent to ' + to + '. (It uses a sample guest named Test.)' : 'Didn’t send: ' + (d.error || 'try again'); });
+  });
+  $('eSend').addEventListener('click', function(){
+    var b = emailBody({}); if (!b.subject || !b.body.trim()){ $('eMsg').textContent = 'Add a subject and a message first.'; return; }
+    var to = $('eTo').value;
+    var list = D.guests.filter(function(g){ return !g.removed && g.email && (to === 'all' || (to === 'yes') === g.attending); });
+    if (!list.length){ $('eMsg').textContent = 'No one to send to yet.'; return; }
+    if (!confirm('Send "' + b.subject + '" to ' + list.length + (list.length === 1 ? ' person' : ' people') + '?')) return;
+    var btn = this; btn.disabled = true; var ids = list.map(function(g){ return g.id; }), sent = 0, failed = [];
+    (function next(){
+      if (!ids.length){ btn.disabled = false; $('eMsg').textContent = 'Sent to ' + sent + (failed.length ? '. Didn’t send to: ' + failed.join(', ') : '.'); load(); return; }
+      var chunk = ids.splice(0, 5);
+      $('eMsg').textContent = 'Sending… ' + sent + ' of ' + list.length;
+      api('team-email', Object.assign({ ids: chunk }, b)).then(function(d){
+        chunk.forEach(function(id){ var r = d.results && d.results[id]; if (r && r.ok) sent++; else { var g = list.filter(function(x){ return x.id === id; })[0]; failed.push(g ? g.first_name + ' ' + g.last_name : id); } });
+        next();
+      }).catch(function(){ btn.disabled = false; $('eMsg').textContent = 'Stopped after ' + sent + '. Check your connection, then send again to the rest.'; });
+    })();
+  });
+
+  // ---- chat moderation ----
+  function loadFeed(){
+    api('team-feed').then(function(d){
+      $('feed').innerHTML = d.posts.length ? d.posts.map(function(p){
+        return '<div class="post"><div><span class="who">' + esc(p.author) + '</span>' + (p.host ? '<span class="tag">Host</span>' : '') + (p.test ? '<span class="tag test">Test account</span>' : '') +
+          ' <span class="when">' + new Date(p.created_at).toLocaleString('en-US', { month:'short', day:'numeric', hour:'numeric', minute:'2-digit', timeZone:'America/Phoenix' }) + (p.reply_to != null ? ' · reply to “' + esc(p.reply_to) + '”' : '') + '</span>' +
+          (p.body ? '<div class="body">' + esc(p.body) + '</div>' : '') +
+          (p.photos && p.photos.length ? '<div class="imgs">' + p.photos.map(function(u){ return '<a href="' + esc(u) + '" target="_blank" rel="noopener"><img src="' + esc(u) + '" alt=""></a>'; }).join('') + '</div>' : '') +
+          '</div><div><button class="danger" type="button" data-rm="' + p.id + '">Remove</button></div></div>';
+      }).join('') : '<div class="empty">No posts yet.</div>';
+    });
+  }
+  $('feed').addEventListener('click', function(e){
+    var b = e.target.closest('[data-rm]'); if (!b || !confirm('Remove this post for everyone?')) return;
+    api('team-feed-remove', { id:b.dataset.rm }).then(function(){ toast('Removed'); loadFeed(); });
+  });
+
+  // ---- tabs ----
+  document.querySelector('nav.tabs').addEventListener('click', function(e){
+    var b = e.target.closest('[data-tab]'); if (!b) return;
+    this.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-selected', String(x === b)); });
+    ['guests','details','email','chat'].forEach(function(k){ $('tab-' + k).hidden = k !== b.dataset.tab; });
+    if (b.dataset.tab === 'chat') loadFeed();
+  });
+
+  setInterval(function(){ if (D && !document.hidden && $('modal').hidden && !$('tab-guests').hidden) api('team-list').then(function(d){ D = d; render(); }).catch(function(){}); }, 30000);
+  if (pw) load();
+})();
+</script>
+</body>
+</html>
