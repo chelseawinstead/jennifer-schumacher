@@ -605,7 +605,7 @@ Deno.serve(async (req) => {
                 name: str(sp?.name, 120), title: str(sp?.title, 200), bio: str(sp?.bio, 1500),
                 photo_url: httpsOnly(sp?.photo_url), website: httpsOnly(sp?.website),
                 instagram: str(sp?.instagram, 80).replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/^@/, "").replace(/[/?#].*$/, ""),
-                facebook: str(sp?.facebook, 300), linkedin: httpsOnly(sp?.linkedin),
+                facebook: str(sp?.facebook, 300), linkedin: httpsOnly(sp?.linkedin), youtube: httpsOnly(sp?.youtube),
               })).filter((sp: any) => sp.name),
             })),
           })),

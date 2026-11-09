@@ -704,8 +704,9 @@
       if (it.dress) meta += '<span class="chip dress"><b>Wear</b> ' + esc(it.dress) + '</span>';
       var seat = (data.seats || []).filter(function(x){ return x.session === it.id; })[0];
       if (seat) meta += '<button type="button" class="chip seat" data-mytable="' + esc(it.id) + '"><b>Your seat</b> ' + esc(seat.label) + ' \u203a</button>';
-      return '<div class="item"><time>' + esc(it.time) + '</time><div><h3>' + esc(it.title) + '</h3>' + speakersHtml(it.speakers) +
-        (meta ? '<div class="meta">' + meta + '</div>' : '') + (it.details ? '<p class="det">' + rich(it.details) + '</p>' : '') + '</div></div>';
+      // title, then where/wear tags and the description, then the speakers
+      return '<div class="item"><time>' + esc(it.time) + '</time><div><h3>' + esc(it.title) + '</h3>' +
+        (meta ? '<div class="meta">' + meta + '</div>' : '') + (it.details ? '<p class="det">' + rich(it.details) + '</p>' : '') + speakersHtml(it.speakers) + '</div></div>';
     }).join('') || '<div class="empty">Details for this day are coming soon.</div>');
     [].forEach.call(document.querySelectorAll('#dayList details.spk'), function(x, i){ if (wasOpen[i]) x.open = true; });
   }
@@ -717,6 +718,7 @@
       if (sp.instagram) links += '<a href="' + esc(igUrl(sp.instagram)) + '" target="_blank" rel="noopener">' + ICON.ig + 'Instagram</a>';
       if (sp.facebook) links += '<a href="' + esc(fbUrl(sp.facebook)) + '" target="_blank" rel="noopener">' + ICON.fb + 'Facebook</a>';
       if (sp.linkedin) links += '<a href="' + esc(sp.linkedin) + '" target="_blank" rel="noopener">' + ICON.li + 'LinkedIn</a>';
+      if (sp.youtube) links += '<a href="' + esc(sp.youtube) + '" target="_blank" rel="noopener">' + ICON.yt + 'YouTube</a>';
       var more = (sp.bio ? '<p class="bio">' + rich(sp.bio) + '</p>' : '') + (links ? '<div class="links">' + links + '</div>' : '');
       var head = '<span class="av">' + avatar(sp) + '</span><span><span class="nm" style="display:block">' + esc(sp.name) + '</span>' +
         (sp.title ? '<span class="ttl" style="display:block">' + esc(sp.title) + '</span>' : '') + '</span>';

@@ -1211,7 +1211,8 @@
                 '<div class="links"><input data-p="'+sp_+'website" value="'+esc(sp.website)+'" placeholder="Website, e.g. bloomrealty.com" aria-label="Website">' +
                 '<input data-p="'+sp_+'instagram" value="'+esc(sp.instagram)+'" placeholder="Instagram, e.g. @handle" aria-label="Instagram">' +
                 '<input data-p="'+sp_+'facebook" value="'+esc(sp.facebook)+'" placeholder="Facebook link or username" aria-label="Facebook">' +
-                '<input data-p="'+sp_+'linkedin" value="'+esc(sp.linkedin)+'" placeholder="LinkedIn link" aria-label="LinkedIn"></div>' +
+                '<input data-p="'+sp_+'linkedin" value="'+esc(sp.linkedin)+'" placeholder="LinkedIn link" aria-label="LinkedIn">' +
+                '<input data-p="'+sp_+'youtube" value="'+esc(sp.youtube)+'" placeholder="YouTube link" aria-label="YouTube"></div>' +
               '</div>';
             }).join('') + '<button type="button" class="add small" data-ag="spk-add" data-d="'+di+'" data-i="'+ii+'">+ Add speaker</button></div>' +
           '</div>';
@@ -1654,7 +1655,7 @@
     if (a==='up') swap(ag.days[d].items, i, i-1);
     if (a==='down') swap(ag.days[d].items, i, i+1);
     if (a==='add-day') ag.days.push({ label:'', items:[] });
-    if (a==='spk-add'){ var it_ = ag.days[d].items[i]; it_.speakers = (it_.speakers||[]).concat([{ name:'', title:'', bio:'', photo_url:'', website:'', instagram:'', facebook:'', linkedin:'' }]); }
+    if (a==='spk-add'){ var it_ = ag.days[d].items[i]; it_.speakers = (it_.speakers||[]).concat([{ name:'', title:'', bio:'', photo_url:'', website:'', instagram:'', facebook:'', linkedin:'', youtube:'' }]); }
     if (a==='spk-del' && confirm('Remove this speaker?')) ag.days[d].items[i].speakers.splice(+b.dataset.s, 1);
     if (a==='photo-del') agSetPath(b.dataset.path, '');
     if (a==='day-del' && confirm('Remove this whole day and everything in it?')) ag.days.splice(d,1);
