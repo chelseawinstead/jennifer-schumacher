@@ -108,7 +108,7 @@
 
 <section class="login" id="login">
   <h1>Jennifer's Big 5-0</h1>
-  <p>RSVP list and party settings. Use the same team password as the Vision Board guest list.</p>
+  <p>RSVP list and party settings.</p>
   <form id="loginForm" style="display:grid;gap:10px">
     <input type="password" id="pw" autocomplete="current-password" placeholder="Team password" required>
     <button class="solid" type="submit" id="loginBtn" style="padding:13px">Sign in</button>
@@ -260,7 +260,7 @@
   var SITE = 'https://www.schumacherliving.com';
   var $ = function(id){ return document.getElementById(id); };
   var pw = '', D = null, filter = 'all', editing = null;
-  try { pw = sessionStorage.getItem('vbTeamPw') || ''; } catch(e){}
+  try { pw = sessionStorage.getItem('b50TeamPw') || ''; } catch(e){}
 
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function toast(t){ var el=$('toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(function(){ el.classList.remove('on'); }, 2600); }
@@ -269,7 +269,7 @@
       headers: Object.assign({ 'x-team-password': pw }, body ? { 'content-type':'application/json' } : {}), body: body ? JSON.stringify(body) : undefined })
       .then(function(r){ return r.json().then(function(j){ j._status = r.status; return j; }); })
       .then(function(d){
-        if (d._status === 401){ pw = ''; try { sessionStorage.removeItem('vbTeamPw'); } catch(e){} $('app').hidden = true; $('login').hidden = false; $('loginErr').textContent = 'That password didn’t work. Check with Chelsea for the current one.'; throw new Error('pw'); }
+        if (d._status === 401){ pw = ''; try { sessionStorage.removeItem('b50TeamPw'); } catch(e){} $('app').hidden = true; $('login').hidden = false; $('loginErr').textContent = 'That password didn’t work. Try again, or check with Chelsea.'; throw new Error('pw'); }
         return d;
       });
   }
@@ -282,7 +282,7 @@
 
   function load(){
     return api('team-list').then(function(d){
-      try { sessionStorage.setItem('vbTeamPw', pw); } catch(e){}
+      try { sessionStorage.setItem('b50TeamPw', pw); } catch(e){}
       D = d; $('login').hidden = true; $('app').hidden = false; render();
     }).catch(function(){});
   }

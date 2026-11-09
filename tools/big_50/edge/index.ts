@@ -1,7 +1,7 @@
 import postgres from "npm:postgres@3.4.4";
 
 // Jennifer's Big 5-0: private RSVP tracker + party chat. Data lives in the big_50 schema.
-// Same database, pooler, Gmail sender and team password as the Vision Board function.
+// Same database, pooler and Gmail sender as the Vision Board function; its own team password.
 const _direct = new URL(Deno.env.get("SUPABASE_DB_URL")!);
 const sql = postgres({
   host: "aws-1-us-east-1.pooler.supabase.com", port: 6543, database: "postgres",
@@ -265,10 +265,10 @@ Deno.serve(async (req) => {
       return json(row.r, row.r.ok ? 200 : (["slow", "empty", "emoji"].includes(row.r.error) ? 400 : 403));
     }
 
-    // ---------- Jennifer's team (same password as the Vision Board team page) ----------
+    // ---------- Jennifer's team (its own password, separate from Vision Board) ----------
     if (action.startsWith("team")) {
       const pw = req.headers.get("x-team-password") || "";
-      const [chk] = await sql`select vision_board.check_password(${pw}) as ok`;
+      const [chk] = await sql`select big_50.check_password(${pw}) as ok`;
       if (!chk.ok) {
         await new Promise((r) => setTimeout(r, 1200));
         return json({ ok: false, error: "password" }, 401);
