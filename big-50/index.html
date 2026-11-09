@@ -19,54 +19,57 @@
 <meta name="twitter:title" content="Jennifer's Big 5-0 🥂 You're invited">
 <meta name="twitter:description" content="Wednesday, January 27, 2027 · 7–11pm. Tap to RSVP.">
 <meta name="twitter:image" content="https://www.schumacherliving.com/big-50/og.jpg">
-<meta name="theme-color" content="#002349">
+<meta name="theme-color" content="#0b0b0b">
 <link rel="icon" href="/images/schumacher-living-navy.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   /* An invitation card: photo, the essentials, one RSVP card. Navy and cream from Jennifer's site, champagne gold accents. */
   :root{
-    --navy:#002349; --ink:#14181d; --muted:#55585c; --warm:#9a968d; --stone:#f6f5f2; --line:#e4e1da;
-    --paper:#fff; --gold:#b8995a; --cream:#e8dcc0; --sky:#c9d3df; --red:#a3271f; --ok:#2f6b4f;
-    --serif:'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    /* personal palette: black and silver */
+    --navy:#111111; --ink:#141414; --muted:#5f5f5f; --warm:#8c8c8c; --stone:#0b0b0b; --line:#e2e2e2;
+    --paper:#fff; --gold:#b9b9b9; --cream:#d9d9d9; --sky:#bdbdbd; --red:#b3261e; --ok:#3c3c3c;
+    --serif:'Marcellus', Georgia, 'Times New Roman', serif;
     --sans:'Jost', 'Helvetica Neue', Arial, sans-serif;
   }
   *{ box-sizing:border-box; }
   html{ -webkit-text-size-adjust:100%; }
-  body{ margin:0; background:var(--stone); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6; }
+  body{ margin:0; background:#0b0b0b; color:#ececec; font-family:var(--sans); font-size:16px; line-height:1.6; }
   h1,h2,h3{ font-family:var(--serif); font-weight:400; margin:0; text-wrap:balance; }
   p{ margin:0; }
-  a{ color:var(--navy); }
+  a{ color:inherit; }
   button,input,textarea{ font:inherit; color:inherit; }
   button{ cursor:pointer; }
   :focus-visible{ outline:2px solid var(--navy); outline-offset:2px; }
   [hidden]{ display:none !important; }
 
   .page{ display:grid; min-height:100vh; }
-  .photo{ position:relative; background:var(--navy); overflow:hidden; aspect-ratio:1/1; max-height:52vh; width:100%; }
+  .photo{ position:relative; background:#000; overflow:hidden; aspect-ratio:1/1; max-height:52vh; width:100%; }
   .photo img{ width:100%; height:100%; object-fit:cover; object-position:50% 22%; display:block; }
   .copy{ padding:30px max(22px, env(safe-area-inset-left,0px)) 56px; max-width:620px; width:100%; margin:0 auto; }
 
-  .kick{ font-size:12px; letter-spacing:.3em; text-transform:uppercase; color:var(--navy); }
-  h1{ font-size:56px; line-height:.98; margin:12px 0 18px; font-style:italic; font-weight:500; color:var(--ink); }
-  h1 span{ display:block; color:var(--navy); }
+  .kick{ font-size:12px; letter-spacing:.34em; text-transform:uppercase; color:#b9b9b9; }
+  h1{ font-size:50px; line-height:1.02; margin:14px 0 20px; font-weight:400; color:#fff; letter-spacing:.01em; }
+  h1 span{ display:block; font-size:1.18em; background:linear-gradient(180deg,#ffffff 0%,#d4d4d4 38%,#9d9d9d 62%,#e9e9e9 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .when{ font-family:var(--serif); font-size:26px; line-height:1.25; }
-  .when small{ display:block; font-family:var(--sans); font-size:16px; color:var(--muted); margin-top:4px; }
+  .when{ color:#fff; }
+  .when small{ display:block; font-family:var(--sans); font-size:16px; color:#a8a8a8; margin-top:4px; }
   .rule{ width:64px; height:1px; background:var(--gold); margin:22px 0; border:0; }
   .where{ display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; align-items:start; font-size:16px; }
   .where svg{ width:20px; height:20px; color:var(--gold); margin-top:3px; }
   .where b{ font-weight:500; display:block; }
-  .where span{ color:var(--muted); font-size:15px; }
-  .details{ margin-top:18px; font-size:17px; color:var(--muted); white-space:pre-line; }
-  .gift{ margin-top:18px; padding:16px 18px; background:var(--paper); border:1px solid var(--line); font-size:15px; color:var(--muted); }
-  .gift a{ display:inline-flex; align-items:center; gap:6px; margin-top:10px; font-size:14px; letter-spacing:.06em; color:var(--navy); text-decoration:none; border-bottom:1px solid var(--gold); padding-bottom:2px; }
+  .where span{ color:#a8a8a8; font-size:15px; }
+  .details{ margin-top:18px; font-size:17px; color:#cfcfcf; white-space:pre-line; }
+  .gift{ margin-top:18px; padding:16px 18px; background:#161616; border:1px solid #2c2c2c; font-size:15px; color:#bdbdbd; }
+  .gift a{ display:inline-flex; align-items:center; gap:6px; margin-top:10px; font-size:14px; letter-spacing:.06em; color:#fff; text-decoration:none; border-bottom:1px solid var(--gold); padding-bottom:2px; }
 
-  .back{ display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--navy); color:#fff; padding:14px 16px; margin-bottom:22px; font-size:15px; }
+  .back{ display:flex; align-items:center; justify-content:space-between; gap:12px; background:#1c1c1c; border:1px solid #333; color:#fff; padding:14px 16px; margin-bottom:22px; font-size:15px; }
   .back a{ color:#fff; white-space:nowrap; font-size:13px; letter-spacing:.12em; text-transform:uppercase; border:1px solid rgba(255,255,255,.5); padding:9px 12px; text-decoration:none; }
 
   /* RSVP card */
-  .rsvp{ margin-top:30px; background:var(--paper); border:1px solid var(--line); padding:24px 20px; }
+  .rsvp{ margin-top:30px; background:var(--paper); color:var(--ink); border:1px solid var(--line); padding:24px 20px; }
+  .rsvp a{ color:var(--navy); }
   .rsvp h2{ font-size:34px; line-height:1.1; margin-bottom:4px; }
   .rsvp .sub{ font-size:15px; color:var(--muted); margin-bottom:18px; }
   .choice{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:6px; }
@@ -103,16 +106,19 @@
   .done h2{ margin-bottom:8px; }
   .done p{ color:var(--muted); margin-bottom:18px; }
   .lnk{ background:none; border:0; padding:0; color:var(--navy); text-decoration:underline; font-size:14px; }
-  .again{ margin-top:16px; font-size:14px; color:var(--muted); text-align:center; }
+  .again{ margin-top:16px; font-size:14px; color:#a8a8a8; text-align:center; }
+  .again .lnk{ color:#e6e6e6; }
+  .again label.f{ color:#a8a8a8; }
+  .again .btn.ghost{ background:transparent; color:#fff; border-color:#8c8c8c; }
   .again form{ text-align:left; }
-  footer{ text-align:center; font-size:12px; color:var(--warm); padding:0 20px 34px; }
+  footer{ text-align:center; font-size:12px; color:#7d7d7d; letter-spacing:.08em; padding:0 20px 34px; }
 
   @media (min-width:900px){
     .page{ grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
     .photo{ aspect-ratio:auto; max-height:none; position:sticky; top:0; height:100vh; order:2; }
     .photo img{ object-position:50% 30%; }
     .copy{ padding:80px 56px 60px; max-width:640px; }
-    h1{ font-size:84px; }
+    h1{ font-size:72px; }
     .when{ font-size:30px; }
   }
 </style>

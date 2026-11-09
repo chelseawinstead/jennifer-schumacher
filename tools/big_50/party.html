@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
-<meta name="theme-color" content="#002349">
+<meta name="theme-color" content="#0b0b0b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Jen's 50th">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -15,13 +15,14 @@
 <link rel="icon" href="/images/schumacher-living-navy.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   /* Layout: a pocket program. Navy cover band, sticky section tabs, one calm column (max 640px) that reads like a printed agenda. */
   :root{
-    --navy:#002349; --ink:#14181d; --muted:#55585c; --warm:#9a968d;
-    --stone:#f6f5f2; --line:#e4e1da; --paper:#ffffff; --gold:#b8995a; --cream:#e8dcc0; --sky:#c9d3df; --red:#a3271f; --ok:#2f6b4f;
-    --serif:'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    /* personal palette: black and silver */
+    --navy:#111111; --ink:#141414; --muted:#5f5f5f; --warm:#8c8c8c;
+    --stone:#f1f1f1; --line:#e0e0e0; --paper:#ffffff; --gold:#b9b9b9; --cream:#dcdcdc; --sky:#bdbdbd; --red:#b3261e; --ok:#3c3c3c;
+    --serif:'Marcellus', Georgia, 'Times New Roman', serif;
     --sans:'Jost', 'Helvetica Neue', Arial, sans-serif;
   }
   *{ box-sizing:border-box; }
@@ -117,7 +118,7 @@
   .meta{ display:flex; flex-wrap:wrap; gap:6px 8px; margin-top:8px; }
   .chip{ display:inline-flex; align-items:center; gap:6px; font-size:13px; line-height:1.3; padding:4px 10px; border-radius:999px; background:var(--paper); border:1px solid var(--line); }
   .chip b{ font-weight:500; color:var(--warm); }
-  .chip.dress{ background:#f6efe1; border-color:#ead9b8; }
+  .chip.dress{ background:#f0f0f0; border-color:#ead9b8; }
   .chip.place{ cursor:pointer; color:var(--navy); text-decoration:underline; text-decoration-color:var(--line); text-underline-offset:3px; }
   .chip.place svg{ width:13px; height:13px; flex:none; }
   .chip.place:active{ background:var(--stone); }
@@ -171,7 +172,7 @@
   .you-tag{ font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); margin-left:6px; }
   .crew-foot{ font-size:13px; color:var(--muted); margin-top:16px; }
   .empty{ padding:26px 18px; text-align:center; color:var(--muted); background:var(--paper); border:1px dashed var(--line); font-size:15px; }
-  .optin-nudge{ background:#f6efe1; border:1px solid #ead9b8; padding:14px 16px; margin-bottom:14px; font-size:14px; display:grid; gap:10px; }
+  .optin-nudge{ background:#f0f0f0; border:1px solid #ead9b8; padding:14px 16px; margin-bottom:14px; font-size:14px; display:grid; gap:10px; }
 
   /* chat */
   .tab-badge{ display:inline-block; min-width:18px; height:18px; padding:0 5px; margin-left:4px; border-radius:9px; background:var(--red,#b3261e); color:#fff; font-size:11px; line-height:18px; font-weight:600; vertical-align:2px; }
@@ -204,7 +205,7 @@
   .post-body a{ color:var(--navy); }
   body.local [data-tab="crew"], body.local [data-tab="chat"], body.local #meBtn{ display:none !important; }
   body.local .tabs .wrap{ grid-template-columns:repeat(2,1fr); }
-  .host-row{ background:#f6efe1; border-left:4px solid #b8995a; padding:0 12px; }
+  .host-row{ background:#f0f0f0; border-left:4px solid #a8a8a8; padding:0 12px; }
   .host-row + .host-row{ border-top:1px solid #ead9b8; }
   .host-pair{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
   .host-pair.one{ grid-template-columns:1fr; }
@@ -214,24 +215,24 @@
   @media (max-width: 560px){ .host-pair{ gap:8px; } .host-pair .host-row{ padding:0 8px; } .host-pair .p-row{ grid-template-columns:40px minmax(0,1fr); gap:8px; } .host-pair .p-row .av{ width:40px; height:40px; } .host-pair .chev{ display:none; } .host-pair .nm{ font-size:15px; } .host-pair .sub{ font-size:12px; } }
   .host-band{ font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#8a6d2f; padding-top:10px; }
   .host-row .p-row{ padding-top:6px; }
-  .chip.seat{ background:#b8995a; border-color:#b8995a; color:#fff; cursor:pointer; font:inherit; font-size:13px; }
+  .chip.seat{ background:#a8a8a8; border-color:#a8a8a8; color:#fff; cursor:pointer; font:inherit; font-size:13px; }
   .chip.seat b{ color:#fff; opacity:.85; }
   .mates{ list-style:none; padding:0; margin:0 0 12px; }
   .mates li{ padding:8px 0; border-bottom:1px solid var(--line); font-size:15px; }
-  .host-tag{ display:inline-block; margin-left:6px; padding:1px 7px; border-radius:999px; background:var(--gold,#b8995a); color:#fff; font-size:10px; letter-spacing:.08em; text-transform:uppercase; vertical-align:2px; font-weight:600; }
+  .host-tag{ display:inline-block; margin-left:6px; padding:1px 7px; border-radius:999px; background:var(--gold,#a8a8a8); color:#fff; font-size:10px; letter-spacing:.08em; text-transform:uppercase; vertical-align:2px; font-weight:600; }
   .tag-btn{ display:none; width:100%; align-items:center; gap:10px; margin:0 0 12px; padding:11px 14px; background:var(--paper); border:1px solid var(--line); text-align:left; font-size:15px; color:var(--navy); }
   .tag-btn.has{ display:flex; }
   .tag-btn .at{ width:28px; height:28px; border-radius:50%; background:var(--navy); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:600; flex:none; }
-  .tag-btn .nw{ margin-left:auto; background:#b8995a; color:#14181d; border-radius:999px; font-size:12px; font-weight:600; padding:3px 9px; }
+  .tag-btn .nw{ margin-left:auto; background:#a8a8a8; color:#14181d; border-radius:999px; font-size:12px; font-weight:600; padding:3px 9px; }
   .tag-btn .go{ margin-left:auto; color:var(--muted, #9a968d); font-size:13px; }
   .tag-btn .nw + .go{ margin-left:8px; }
   .tag-list button{ display:grid; grid-template-columns:38px minmax(0,1fr); gap:10px; width:100%; text-align:left; background:none; border:0; border-bottom:1px solid var(--line); padding:12px 2px; font:inherit; color:inherit; cursor:pointer; }
   .tag-list button .av{ width:38px; height:38px; font-size:13px; }
   .tag-list b{ font-weight:600; } .tag-list .when{ color:#9a968d; font-size:13px; } .tag-list .pv{ display:block; color:#55585c; font-size:14px; margin-top:3px; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
-  .tag-list .new-dot{ display:inline-block; width:8px; height:8px; border-radius:50%; background:#b8995a; margin-right:6px; vertical-align:middle; }
-  .post.tag-hl, .reply.tag-hl .bubble{ box-shadow:0 0 0 2px #b8995a; transition:box-shadow .6s; }
-  .ev-av{ display:flex; width:100%; height:100%; border-radius:50%; background:#b8995a; color:#14181d; align-items:center; justify-content:center; font-weight:600; }
-  .mention.me{ background:#f3ead6; padding:0 3px; }
+  .tag-list .new-dot{ display:inline-block; width:8px; height:8px; border-radius:50%; background:#a8a8a8; margin-right:6px; vertical-align:middle; }
+  .post.tag-hl, .reply.tag-hl .bubble{ box-shadow:0 0 0 2px #a8a8a8; transition:box-shadow .6s; }
+  .ev-av{ display:flex; width:100%; height:100%; border-radius:50%; background:#a8a8a8; color:#14181d; align-items:center; justify-content:center; font-weight:600; }
+  .mention.me{ background:#f3f3f3; padding:0 3px; }
   .mention{ background:none; border:0; padding:0; font:inherit; color:var(--navy); font-weight:600; cursor:pointer; }
   .photos{ display:grid; gap:4px; margin-top:10px; }
   .photos.n1{ grid-template-columns:1fr; }
@@ -370,13 +371,19 @@
   @media (prefers-reduced-motion:reduce){ *{ transition:none !important; scroll-behavior:auto !important; } }
 
   /* Big 5-0 additions */
-  .cover h1{ font-style:italic; font-weight:500; }
-  .cover h1 em{ font-style:italic; }
+  .cover{ background:#0b0b0b !important; }
+  .cover h1{ font-style:normal; font-weight:400; letter-spacing:.01em; }
+  .cover h1 em{ font-style:normal; background:linear-gradient(180deg,#ffffff 0%,#d4d4d4 38%,#9d9d9d 62%,#e9e9e9 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .cover .brand{ color:#b9b9b9; letter-spacing:.3em; }
+  .cover .pill{ background:linear-gradient(180deg,#f2f2f2,#bdbdbd); color:#111; }
+  .status .tick{ background:#ececec; }
+  .status.no .tick{ background:#f3f3f3; }
+  .soon{ background:#e6e6e6; color:#111; }
   .tabs .wrap{ grid-template-columns:repeat(2,1fr); }
   body.nochat .tabs{ display:none; }
   .status{ display:grid; grid-template-columns:44px minmax(0,1fr); gap:14px; align-items:center; }
-  .status .tick{ width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; background:#e7f1eb; }
-  .status.no .tick{ background:#f3ead6; }
+  .status .tick{ width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; background:#ececec; }
+  .status.no .tick{ background:#f3f3f3; }
   .status b{ font-weight:500; display:block; font-size:17px; line-height:1.3; }
   .status span{ font-size:14px; color:var(--muted); }
   .blk{ margin-top:12px; }
@@ -415,7 +422,7 @@
 </div>
 
 <div id="app" hidden>
-  <div id="testBar" hidden style="background:#b8995a;color:#14181d;text-align:center;font-size:13px;padding:calc(env(safe-area-inset-top,0px) + 6px) 12px 6px">Test account. Your posts only show to other test accounts, never to real guests.</div>
+  <div id="testBar" hidden style="background:#c9c9c9;color:#111;text-align:center;font-size:13px;padding:calc(env(safe-area-inset-top,0px) + 6px) 12px 6px">Test account. Your posts only show to other test accounts, never to real guests.</div>
   <header class="cover"><div class="wrap">
     <div class="brand" id="hi">YOU'RE INVITED</div>
     <h1 id="appTitle">Jennifer's <em>Big 5-0</em></h1>
