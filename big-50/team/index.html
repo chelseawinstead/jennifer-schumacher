@@ -41,7 +41,7 @@
   .login input{ padding:13px; border:1px solid #cfcbc2; font-size:16px; }
   .msg-err{ color:var(--red); font-size:14px; min-height:1.3em; }
 
-  .stats{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:22px; }
+  .stats{ display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; margin-bottom:22px; }
   .stat{ background:var(--stone); padding:16px 18px; }
   .stat b{ display:block; font-family:'Marcellus',Georgia,serif; font-size:44px; font-weight:400; line-height:1; color:var(--navy); }
   .stat span{ font-size:13px; color:var(--muted); }
@@ -62,6 +62,7 @@
   td .note{ margin-top:6px; font-size:13px; color:var(--ink); background:#fbf8f1; border-left:3px solid var(--gold); padding:4px 8px; }
   .chip{ display:inline-block; font-size:12px; padding:3px 9px; border-radius:999px; white-space:nowrap; }
   .chip.yes{ background:var(--yes-bg); color:var(--yes); } .chip.no{ background:var(--no-bg); color:var(--no); } .chip.off{ background:var(--off-bg); color:var(--off); }
+  .chip.wait{ background:#fff; color:#555; border:1px dashed #9d9d9d; }
   .acts{ display:flex; gap:6px; flex-wrap:wrap; }
   .acts button{ background:#fff; border:1px solid var(--line); padding:6px 10px; font-size:12px; color:var(--navy); }
   tr.removed td{ opacity:.55; }
@@ -96,6 +97,10 @@
   .tag.test{ background:#cfcbc2; color:var(--ink); }
 
   .modal{ position:fixed; inset:0; background:rgba(20,24,29,.45); z-index:30; display:flex; align-items:center; justify-content:center; padding:16px; }
+  .ready{ background:var(--stone); padding:16px; display:grid; gap:12px; }
+  .ready b{ font-family:'Marcellus',Georgia,serif; font-weight:400; font-size:22px; }
+  .ready code{ font-size:14px; overflow-wrap:anywhere; background:#fff; padding:8px 10px; border:1px solid var(--line); }
+  .ready .row{ display:flex; gap:8px; flex-wrap:wrap; }
   .modal .box{ background:#fff; width:100%; max-width:560px; max-height:92vh; overflow:auto; padding:22px; }
   .modal .head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
   .modal .head h2{ font-size:28px; }
@@ -141,9 +146,10 @@
           <button type="button" data-f="all" aria-pressed="true">All</button>
           <button type="button" data-f="yes" aria-pressed="false">Attending</button>
           <button type="button" data-f="no" aria-pressed="false">Can't make it</button>
+          <button type="button" data-f="wait" aria-pressed="false">No answer yet</button>
           <button type="button" data-f="removed" aria-pressed="false">Removed</button>
         </div>
-        <button class="ghost" type="button" id="addBtn">+ Add a guest</button>
+        <button class="solid" type="button" id="addBtn">+ Invite a guest</button>
         <button class="ghost" type="button" id="csvBtn">Download spreadsheet</button>
       </div>
       <div id="list"></div>
@@ -231,24 +237,29 @@
         <label class="f">Last name<input id="mLast"></label>
       </div>
       <div class="two">
-        <label class="f">Email<input id="mEmail" type="email"></label>
-        <label class="f">Cell phone<input id="mPhone" type="tel"></label>
+        <label class="f">Cell phone<input id="mPhone" type="tel" inputmode="tel"></label>
+        <label class="f">Email (optional)<input id="mEmail" type="email"></label>
       </div>
       <label class="f">Answer
-        <select id="mAtt"><option value="1">Attending</option><option value="0">Can't make it</option></select>
+        <select id="mAtt"><option value="">No answer yet (I'll text them their invite link)</option><option value="1">Attending</option><option value="0">Can't make it</option></select>
       </label>
       <label class="check"><input type="checkbox" id="mPlus"><span>Bringing a +1</span></label>
       <label class="f" id="mPlusWrap">+1's name<input id="mPlusName"></label>
-      <label class="f">Street address<input id="mStreet"></label>
-      <label class="f">Apartment, suite, etc.<input id="mStreet2"></label>
-      <div class="three">
-        <label class="f">City<input id="mCity"></label>
-        <label class="f">State<input id="mState"></label>
-        <label class="f">ZIP<input id="mZip"></label>
-      </div>
       <label class="check" id="mSendWrap"><input type="checkbox" id="mSend"><span>Email them their party link now</span></label>
       <div><button class="solid" type="button" id="mSave" style="padding:12px 22px">Save</button></div>
       <p class="msg-err" id="mErr" role="alert"></p>
+    </div>
+    <div class="ready" id="ready" hidden>
+      <b id="readyTitle">Invite ready</b>
+      <span class="help" id="readyHelp">This link is just for them. When they RSVP, it shows up on their row.</span>
+      <code id="readyLink"></code>
+      <label class="f">Text message<textarea id="readyMsg" style="min-height:96px"></textarea></label>
+      <div class="row">
+        <a class="solid" id="readyText" href="#" style="text-decoration:none;padding:11px 16px">Text it from my phone</a>
+        <button class="ghost" type="button" id="readyCopy">Copy message</button>
+        <button class="ghost" type="button" id="readyCopyLink">Copy link only</button>
+      </div>
+      <button class="ghost" type="button" id="readyDone" style="justify-self:start">Done</button>
     </div>
   </div>
 </div>
@@ -278,7 +289,7 @@
       .catch(function(){ window.prompt('Copy this link:', text); });
   }
   function fmtDate(iso){ return new Date(iso).toLocaleDateString('en-US', { month:'short', day:'numeric', timeZone:'America/Phoenix' }); }
-  function addr(g){ return [g.street, g.street2].filter(Boolean).join(', ') + (g.city || g.state || g.zip ? (g.street ? '<br>' : '') + esc([g.city, [g.state, g.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ')) : ''); }
+  function addr_unused(g){ return [g.street, g.street2].filter(Boolean).join(', ') + (g.city || g.state || g.zip ? (g.street ? '<br>' : '') + esc([g.city, [g.state, g.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ')) : ''); }
 
   function load(){
     return api('team-list').then(function(d){
@@ -294,13 +305,15 @@
 
   function render(){
     var live = D.guests.filter(function(g){ return !g.removed; });
-    var yes = live.filter(function(g){ return g.attending; }), no = live.filter(function(g){ return !g.attending; });
+    var yes = live.filter(function(g){ return g.attending === true; }), no = live.filter(function(g){ return g.attending === false; }),
+        wait = live.filter(function(g){ return g.attending === null; });
     var plus = yes.filter(function(g){ return g.plus_one; }).length;
     $('stats').innerHTML =
       '<div class="stat hl"><b>' + (yes.length + plus) + '</b><span>Total headcount</span></div>' +
       '<div class="stat"><b>' + yes.length + '</b><span>Guests attending</span></div>' +
       '<div class="stat"><b>' + plus + '</b><span>+1s</span></div>' +
-      '<div class="stat"><b>' + no.length + '</b><span>Can’t make it</span></div>';
+      '<div class="stat"><b>' + no.length + '</b><span>Can\u2019t make it</span></div>' +
+      '<div class="stat"><b>' + wait.length + '</b><span>No answer yet</span></div>';
     $('barSub').textContent = (yes.length + plus) + ' coming · ' + D.party.date_label;
     $('hostLink').href = SITE + '/big-50/party?r=' + D.host_id;
     $('testLink').href = SITE + '/big-50/party?r=' + D.test_id;
@@ -311,24 +324,23 @@
     var q = $('q').value.trim().toLowerCase();
     var rows = D.guests.filter(function(g){
       if (filter === 'removed') { if (!g.removed) return false; }
-      else { if (g.removed) return false; if (filter === 'yes' && !g.attending) return false; if (filter === 'no' && g.attending) return false; }
+      else { if (g.removed) return false; if (filter === 'yes' && g.attending !== true) return false; if (filter === 'no' && g.attending !== false) return false; if (filter === 'wait' && g.attending !== null) return false; }
       if (!q) return true;
       return [g.first_name, g.last_name, g.email, g.phone, g.city, g.plus_one_name].join(' ').toLowerCase().indexOf(q) > -1;
     });
     if (!rows.length){ $('list').innerHTML = '<div class="empty">' + (D.guests.length ? 'No one matches.' : 'No RSVPs yet. Copy the invite link and text it to your guests!') + '</div>'; return; }
-    $('list').innerHTML = '<table><thead><tr><th>Guest</th><th>Answer</th><th>+1</th><th>Contact</th><th>Mailing address</th><th></th></tr></thead><tbody>' +
+    $('list').innerHTML = '<table><thead><tr><th>Guest</th><th>Answer</th><th>+1</th><th>Contact</th><th></th></tr></thead><tbody>' +
       rows.map(function(g){
         var lastMail = (g.emails || []).slice(-1)[0];
         return '<tr class="' + (g.removed ? 'removed' : '') + '" data-id="' + g.id + '">' +
-          '<td><div class="nm">' + esc(g.first_name + ' ' + g.last_name) + '</div><div class="sub">RSVP’d ' + fmtDate(g.created_at) + (g.added_by === 'team' ? ' · added by team' : '') + '</div>' +
+          '<td><div class="nm">' + esc(g.first_name + ' ' + g.last_name) + '</div><div class="sub">' + (g.attending === null ? 'Invited ' + fmtDate(g.created_at) : (g.added_by === 'team' ? 'Invited ' + fmtDate(g.created_at) + ' · answered ' + fmtDate(g.updated_at) : 'RSVP\u2019d ' + fmtDate(g.created_at))) + '</div>' +
             (g.note ? '<div class="note">“' + esc(g.note) + '”</div>' : '') + '</td>' +
-          '<td>' + (g.removed ? '<span class="chip off">Removed</span>' : g.attending ? '<span class="chip yes">Attending</span>' : '<span class="chip no">Can’t make it</span>') + '</td>' +
+          '<td>' + (g.removed ? '<span class="chip off">Removed</span>' : g.attending === null ? '<span class="chip wait">No answer yet</span>' : g.attending ? '<span class="chip yes">Attending</span>' : '<span class="chip no">Can\u2019t make it</span>') + '</td>' +
           '<td>' + (g.plus_one ? esc(g.plus_one_name || 'Yes') : '<span class="sub">—</span>') + '</td>' +
           '<td>' + (g.phone ? '<a href="sms:' + esc(g.phone.replace(/[^\d+]/g,'')) + '">' + esc(g.phone) + '</a><br>' : '') + (g.email ? '<a href="mailto:' + esc(g.email) + '">' + esc(g.email) + '</a>' : '') +
             (lastMail ? '<div class="sub">' + (lastMail.ok ? 'Emailed ' : 'Email failed ') + fmtDate(lastMail.at) + '</div>' : '') + '</td>' +
-          '<td>' + (addr(g) || '<span class="sub">—</span>') + '</td>' +
           '<td><div class="acts">' + (g.removed ? '<button data-act="restore">Restore</button>' :
-            '<button data-act="edit">Edit</button><button data-act="copy">Copy their link</button>' + (g.email ? '<button data-act="resend">Email their link</button>' : '') + '<button data-act="remove">Remove</button>') + '</div></td></tr>';
+            (g.phone ? '<button data-act="text">Text their link</button>' : '') + '<button data-act="copy">Copy their link</button>' + (g.email && g.attending !== null ? '<button data-act="resend">Email their link</button>' : '') + '<button data-act="edit">Edit</button><button data-act="remove">Remove</button>') + '</div></td></tr>';
       }).join('') + '</tbody></table>';
   }
   $('q').addEventListener('input', renderList);
@@ -341,7 +353,8 @@
     var id = b.closest('tr').dataset.id, g = D.guests.filter(function(x){ return x.id === id; })[0];
     var act = b.dataset.act;
     if (act === 'edit') return openModal(g);
-    if (act === 'copy') return copy(SITE + '/big-50/party?r=' + id, 'Copied ' + g.first_name + '’s personal link');
+    if (act === 'copy') return copy(inviteLink(id), 'Copied ' + g.first_name + '\u2019s personal link');
+    if (act === 'text') return showReady(g, true);
     if (act === 'resend'){ b.disabled = true; return api('team-resend', { id:id }).then(function(d){ b.disabled = false; toast(d.ok ? 'Sent to ' + g.email : 'Didn’t send: ' + (d.error || 'try again')); load(); }); }
     if (act === 'remove'){ if (!confirm('Remove ' + g.first_name + ' ' + g.last_name + '? They’ll lose access to their party page and Chat. You can restore them later.')) return;
       return api('team-guest-remove', { id:id, remove:true }).then(function(){ toast('Removed'); load(); }); }
@@ -351,41 +364,70 @@
   // ---- add / edit ----
   function openModal(g){
     editing = g || null;
-    $('mTitle').textContent = g ? 'Edit RSVP' : 'Add a guest';
-    var v = g || { first_name:'', last_name:'', email:'', phone:'', attending:true, plus_one:false, plus_one_name:'', street:'', street2:'', city:'', state:'', zip:'' };
+    $('mTitle').textContent = g ? 'Edit RSVP' : 'Invite a guest';
+    var v = g || { first_name:'', last_name:'', email:'', phone:'', attending:null, plus_one:false, plus_one_name:'' };
     $('mFirst').value = v.first_name; $('mLast').value = v.last_name; $('mEmail').value = v.email; $('mPhone').value = v.phone;
-    $('mAtt').value = v.attending ? '1' : '0'; $('mPlus').checked = !!v.plus_one; $('mPlusName').value = v.plus_one_name || ''; $('mPlusWrap').hidden = !v.plus_one;
-    $('mStreet').value = v.street; $('mStreet2').value = v.street2; $('mCity').value = v.city; $('mState').value = v.state; $('mZip').value = v.zip;
+    $('mAtt').value = v.attending === null ? '' : v.attending ? '1' : '0'; $('mPlus').checked = !!v.plus_one; $('mPlusName').value = v.plus_one_name || ''; $('mPlusWrap').hidden = !v.plus_one;
     $('mSendWrap').hidden = !!g; $('mSend').checked = false; $('mErr').textContent = '';
+    $('ready').hidden = true; document.querySelector('#modal .form').hidden = false; syncAtt();
     $('modal').hidden = false; $('mFirst').focus();
   }
   $('mPlus').addEventListener('change', function(){ $('mPlusWrap').hidden = !this.checked; });
+  function syncAtt(){ var pend = $('mAtt').value === ''; $('mSendWrap').hidden = !!editing || pend || $('mAtt').value === '';
+    $('mSave').textContent = editing ? 'Save' : pend ? 'Create their invite link' : 'Save'; }
+  $('mAtt').addEventListener('change', syncAtt);
+  function inviteLink(id){ return SITE + '/big-50?i=' + id; }
+  function smsHref(phone, body){ var n = String(phone || '').replace(/[^\d+]/g, ''); return 'sms:' + n + '?&body=' + encodeURIComponent(body); }
+  function showReady(g, fromRow){
+    if (fromRow) { editing = g; $('mTitle').textContent = g.first_name + ' ' + g.last_name; }
+    document.querySelector('#modal .form').hidden = true; $('ready').hidden = false; $('modal').hidden = false;
+    var link = inviteLink(g.id);
+    $('readyTitle').textContent = g.attending === null ? 'Invite ready for ' + g.first_name : g.first_name + '\u2019s personal link';
+    $('readyHelp').textContent = g.attending === null ? 'This link is just for ' + g.first_name + '. When they RSVP, it shows up on their row.' : 'Opens ' + g.first_name + '\u2019s party page (details, their RSVP and Chat).';
+    $('readyLink').textContent = link;
+    $('readyMsg').value = g.attending === null
+      ? 'Hi ' + g.first_name + '! I\u2019m turning 50 and would love to celebrate with you 🥂 Here\u2019s your invite, tap to RSVP: ' + link
+      : 'Hi ' + g.first_name + '! Here\u2019s your link for my 50th, with all the details and the party chat 🥂 ' + link;
+    var upd = function(){ $('readyText').href = smsHref(g.phone, $('readyMsg').value); };
+    upd(); $('readyMsg').oninput = upd;
+    $('readyText').hidden = !g.phone;
+  }
+  $('readyCopy').addEventListener('click', function(){ copy($('readyMsg').value, 'Message copied. Paste it into your text!'); });
+  $('readyCopyLink').addEventListener('click', function(){ copy($('readyLink').textContent, 'Link copied'); });
+  $('readyDone').addEventListener('click', function(){ $('modal').hidden = true; });
   $('mClose').addEventListener('click', function(){ $('modal').hidden = true; });
   $('modal').addEventListener('click', function(e){ if (e.target.id === 'modal') $('modal').hidden = true; });
   $('addBtn').addEventListener('click', function(){ openModal(null); });
   $('mSave').addEventListener('click', function(){
     var v = function(id){ return $(id).value.trim(); };
-    var f = { first_name:v('mFirst'), last_name:v('mLast'), email:v('mEmail'), phone:v('mPhone'), attending:$('mAtt').value === '1',
-      plus_one:$('mPlus').checked, plus_one_name:v('mPlusName'), street:v('mStreet'), street2:v('mStreet2'), city:v('mCity'), state:v('mState'), zip:v('mZip') };
+    var a = $('mAtt').value;
+    var f = { first_name:v('mFirst'), last_name:v('mLast'), email:v('mEmail'), phone:v('mPhone'), attending: a === '' ? null : a === '1',
+      plus_one:$('mPlus').checked, plus_one_name:v('mPlusName') };
     if (!f.first_name){ $('mErr').textContent = 'Add at least a first name.'; return; }
+    if (!editing && f.attending === null && f.phone.replace(/\D/g, '').length < 10){ $('mErr').textContent = 'Add their cell number so you can text them the link.'; return; }
+    var savePayload = Object.assign({ id: editing && editing.id }, f); if (f.attending === null) delete savePayload.attending;
     var btn = this; btn.disabled = true;
-    var req = editing ? api('team-guest-save', Object.assign({ id: editing.id }, f))
+    var req = editing ? api('team-guest-save', savePayload)
       : api('team-add', { first:f.first_name, last:f.last_name, email:f.email, phone:f.phone, attending:f.attending, plus_one:f.plus_one, plus_one_name:f.plus_one_name,
-          street:f.street, street2:f.street2, city:f.city, state:f.state, zip:f.zip, send_email:$('mSend').checked });
+          send_email:$('mSend').checked });
     req.then(function(d){
       btn.disabled = false;
-      if (!d.ok){ $('mErr').textContent = d.error === 'duplicate' ? 'Someone already RSVP’d with that email.' : d.error === 'email' ? 'That email doesn’t look right.' : 'That didn’t save. Try again.'; return; }
-      $('modal').hidden = true; toast('Saved'); load();
+      if (!d.ok){ $('mErr').textContent = d.error === 'duplicate_phone' ? 'That phone number is already on the list.' : d.error === 'duplicate' ? 'Someone already RSVP\u2019d with that email.' : d.error === 'email' ? 'That email doesn\u2019t look right.' : 'That didn\u2019t save. Try again.'; return; }
+      var wasNew = !editing;
+      load().then(function(){
+        if (wasNew && f.attending === null && d.id){ var g = D.guests.filter(function(x){ return x.id === d.id; })[0]; if (g) return showReady(g, false); }
+        $('modal').hidden = true; toast('Saved');
+      });
     }).catch(function(){ btn.disabled = false; });
   });
 
   // ---- spreadsheet ----
   $('csvBtn').addEventListener('click', function(){
-    var cols = ['First name','Last name','Answer','+1','+1 name','Email','Cell','Street','Apt/Suite','City','State','ZIP','Note','RSVP date'];
+    var cols = ['First name','Last name','Answer','+1','+1 name','Email','Cell','Note','Added','Personal link'];
     var csvq = function(s){ s = String(s == null ? '' : s); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
     var rows = D.guests.filter(function(g){ return !g.removed; }).map(function(g){
-      return [g.first_name, g.last_name, g.attending ? 'Attending' : 'Can’t make it', g.plus_one ? 'Yes' : '', g.plus_one_name, g.email, g.phone,
-        g.street, g.street2, g.city, g.state, g.zip, g.note, fmtDate(g.created_at)].map(csvq).join(',');
+      return [g.first_name, g.last_name, g.attending === null ? 'No answer yet' : g.attending ? 'Attending' : 'Can\u2019t make it', g.plus_one ? 'Yes' : '', g.plus_one_name, g.email, g.phone,
+        g.note, fmtDate(g.created_at), inviteLink(g.id)].map(csvq).join(',');
     });
     var blob = new Blob(['﻿' + cols.join(',') + '\n' + rows.join('\n')], { type:'text/csv;charset=utf-8' });
     var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'big-50-rsvps.csv'; document.body.appendChild(a); a.click();

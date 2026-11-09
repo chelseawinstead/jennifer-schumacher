@@ -111,7 +111,7 @@
   .again label.f{ color:#a8a8a8; }
   .again .btn.ghost{ background:transparent; color:#fff; border-color:#8c8c8c; }
   .again form{ text-align:left; }
-  footer{ text-align:center; font-size:12px; color:#7d7d7d; letter-spacing:.08em; padding:0 20px 34px; }
+  footer{ text-align:center; font-size:13px; color:#8c8c8c; letter-spacing:.12em; padding:56px 0 8px; }
 
   @media (min-width:900px){
     .page{ grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
@@ -148,28 +148,19 @@
           <button type="button" id="no" aria-pressed="false">Can't make it</button>
         </div>
         <form id="form" novalidate hidden>
-          <div class="row2">
+          <div id="who"><div class="row2">
             <label class="f">First name<input id="first" autocomplete="given-name" required></label>
             <label class="f">Last name<input id="last" autocomplete="family-name" required></label>
           </div>
           <label class="f">Email<input id="email" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" required></label>
-          <label class="f">Cell phone<input id="phone" type="tel" inputmode="tel" autocomplete="tel" required></label>
+          <label class="f">Cell phone<input id="phone" type="tel" inputmode="tel" autocomplete="tel" required></label></div>
+          <label class="f" id="emailOpt" hidden>Email (optional)<input id="email2" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="For your confirmation and party updates"></label>
           <div id="yesOnly">
             <div class="toggle">
               <div><b>Bringing a +1?</b><span>Just let us know their name.</span></div>
               <label class="switch"><input type="checkbox" id="plus" aria-label="Bringing a plus one"><i></i></label>
             </div>
             <label class="f" id="plusWrap" hidden style="margin-top:14px">Your +1's name<input id="plusName" autocomplete="off"></label>
-            <p class="grp" style="margin-top:20px">Mailing address<small>Jennifer would love to send you a little something.</small></p>
-            <div style="display:grid;gap:14px;margin-top:12px">
-              <label class="f">Street address<input id="street" autocomplete="address-line1"></label>
-              <label class="f">Apartment, suite, etc. (optional)<input id="street2" autocomplete="address-line2"></label>
-              <div class="row3">
-                <label class="f city">City<input id="city" autocomplete="address-level2"></label>
-                <label class="f">State<input id="state" autocomplete="address-level1" maxlength="20"></label>
-                <label class="f">ZIP<input id="zip" autocomplete="postal-code" inputmode="numeric" maxlength="10"></label>
-              </div>
-            </div>
           </div>
           <label class="f">A note for Jennifer (optional)<textarea id="note" maxlength="1000" placeholder="Birthday wishes welcome"></textarea></label>
           <button class="btn" type="submit" id="send">Send my RSVP</button>
@@ -193,9 +184,9 @@
         <p class="msg" id="againMsg" role="status"></p>
       </form>
     </div>
+    <footer>With love, Jennifer</footer>
   </main>
 </div>
-<footer>With love, Jennifer</footer>
 
 <script>
 (function(){
@@ -213,7 +204,7 @@
 
   // returning guest on this phone: point them at their own page
   var R = stored();
-  if (R){ $('back').hidden = false; $('backLink').href = '/big-50/party?r=' + encodeURIComponent(R); }
+  if (R && !new URLSearchParams(location.search).get('i')){ $('back').hidden = false; $('backLink').href = '/big-50/party?r=' + encodeURIComponent(R); }
 
   // live party details (location, notes, charity link) straight from Jennifer's team page
   fetch(API + '?action=info').then(function(r){ return r.json(); }).then(function(d){
@@ -238,6 +229,53 @@
     }
   }).catch(function(){});
 
+  // ---- personal invite link from Jennifer: /big-50?i=<id> ----
+  var INV = new URLSearchParams(location.search).get('i') || '';
+  if (INV && !/^[0-9a-f-]{36}$/i.test(INV)) INV = '';
+  if (INV){
+    post('guest', { r: INV }).then(function(d){
+      if (!d.ok){ INV = ''; return; }              // bad link: fall back to the general invite
+      if (d.me.attending !== null){ location.replace('/big-50/party?r=' + encodeURIComponent(INV)); return; }
+      $('first').value = d.me.first_name || ''; $('last').value = d.me.last_name || ''; $('phone').value = d.me.phone || '';
+      $('email2').value = d.me.email || '';
+      $('who').hidden = true; $('emailOpt').hidden = false;
+      document.querySelector('.kick').textContent = (d.me.first_name || 'You') + ', you’re invited';
+      $('rsvpTitle').textContent = 'Will you be there, ' + (d.me.first_name || 'friend') + '?';
+      $('againWrap').hidden = true;
+    }).catch(function(){ INV = ''; });
+  }
+  function respond(body){
+    if (body.plus_one && !body.plus_one_name){ bad(['plus_one_name']); $('msg').className = 'msg err'; $('msg').textContent = 'Add your +1’s name, or switch the +1 off.'; return; }
+    var em = $('email2').value.trim();
+    if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)){ $('msg').className = 'msg err'; $('msg').textContent = 'That email doesn’t look right.'; return; }
+    var btn = $('send'), label = btn.textContent; btn.disabled = true; btn.textContent = 'Sending…'; $('msg').textContent = '';
+    post('respond', { r: INV, attending: answer, plus_one: body.plus_one, plus_one_name: body.plus_one_name, email: em, note: body.note }).then(function(d){
+      btn.disabled = false; btn.textContent = label;
+      if (!d.ok){ $('msg').className = 'msg err'; $('msg').textContent = d.error === 'email_taken' ? 'Someone already RSVP’d with that email. Leave it blank or use another.' : 'That didn’t go through. Please try again.'; return; }
+      store(INV); showDone(INV, false, '');
+    }).catch(function(){ btn.disabled = false; btn.textContent = label; $('msg').className = 'msg err'; $('msg').textContent = 'Check your connection and try again.'; });
+  }
+  function showDone(id, duplicate, email){
+    $('ask').hidden = true; $('done').hidden = false; $('againWrap').hidden = true;
+    if (duplicate){
+      $('doneIcon').textContent = '💌'; $('doneTitle').textContent = 'You’ve already RSVP’d';
+      $('doneText').textContent = 'We just emailed your personal party link to ' + email + '. You can change your answer from there.';
+      $('doneBtn').hidden = true;
+    } else {
+      var link = '/big-50/party?r=' + encodeURIComponent(id);
+      $('doneBtn').href = link;
+      if (answer){
+        $('doneText').textContent = 'Jennifer can’t wait to celebrate with you. Your party page has the latest details and a party chat for photos.';
+      } else {
+        $('doneIcon').textContent = '💛'; $('doneTitle').textContent = 'Thanks for letting Jennifer know';
+        $('doneText').textContent = 'You’ll be missed! If plans change, you can update your RSVP from your party page.';
+        $('doneBtn').textContent = 'Change my RSVP later';
+      }
+      $('back').hidden = false; $('backLink').href = link;
+    }
+    $('rsvp').scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
   function choose(yes){
     answer = yes;
     $('yes').setAttribute('aria-pressed', String(yes)); $('no').setAttribute('aria-pressed', String(!yes));
@@ -251,8 +289,8 @@
   $('no').addEventListener('click', function(){ choose(false); });
   $('plus').addEventListener('change', function(){ $('plusWrap').hidden = !this.checked; if (this.checked) $('plusName').focus(); });
 
-  var LABEL = { first:'first name', last:'last name', email:'email', phone:'cell phone', street:'street address', city:'city', state:'state', zip:'ZIP', plus_one_name:'+1’s name' };
-  var FIELD = { first:'first', last:'last', email:'email', phone:'phone', street:'street', city:'city', state:'state', zip:'zip', plus_one_name:'plusName' };
+  var LABEL = { first:'first name', last:'last name', email:'email', phone:'cell phone', plus_one_name:'+1’s name' };
+  var FIELD = { first:'first', last:'last', email:'email', phone:'phone', plus_one_name:'plusName' };
   function bad(keys){
     document.querySelectorAll('label.f.bad').forEach(function(l){ l.classList.remove('bad'); });
     keys.forEach(function(k){ var el = $(FIELD[k]); if (el) el.parentNode.classList.add('bad'); });
@@ -263,10 +301,10 @@
     e.preventDefault();
     var v = function(id){ return $(id).value.trim(); };
     var body = { attending: answer, first:v('first'), last:v('last'), email:v('email'), phone:v('phone'), note:v('note'),
-      plus_one: answer && $('plus').checked, plus_one_name: v('plusName'),
-      street: answer ? v('street') : '', street2: answer ? v('street2') : '', city: answer ? v('city') : '', state: answer ? v('state') : '', zip: answer ? v('zip') : '' };
+      plus_one: answer && $('plus').checked, plus_one_name: v('plusName') };
+    if (INV) return respond(body);
     var need = ['first','last','email','phone'];
-    if (answer){ need = need.concat(['street','city','state','zip']); if (body.plus_one) need.push('plus_one_name'); }
+    if (answer && body.plus_one) need.push('plus_one_name');
     var missing = need.filter(function(k){ return !body[k]; });
     if (missing.length){ bad(missing); $('msg').className = 'msg err'; $('msg').textContent = 'Please add your ' + missing.map(function(k){ return LABEL[k]; }).join(', ') + '.'; return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(body.email)){ bad(['email']); $('msg').className = 'msg err'; $('msg').textContent = 'That email doesn’t look right.'; return; }
@@ -284,25 +322,8 @@
         else $('msg').textContent = 'That didn’t go through. Please try again.';
         return;
       }
-      $('ask').hidden = true; $('done').hidden = false; $('againWrap').hidden = true;
-      if (d.duplicate){
-        $('doneIcon').textContent = '💌'; $('doneTitle').textContent = 'You’ve already RSVP’d';
-        $('doneText').textContent = 'We just emailed your personal party link to ' + body.email + '. You can change your answer from there.';
-        $('doneBtn').hidden = true;
-      } else {
-        store(d.id);
-        var link = '/big-50/party?r=' + encodeURIComponent(d.id);
-        $('doneBtn').href = link;
-        if (answer){
-          $('doneText').textContent = 'Jennifer can’t wait to celebrate with you. Your party page has the latest details and a party chat for photos. We also emailed you the link.';
-        } else {
-          $('doneIcon').textContent = '💛'; $('doneTitle').textContent = 'Thanks for letting Jennifer know';
-          $('doneText').textContent = 'You’ll be missed! If plans change, you can update your RSVP from your party page.';
-          $('doneBtn').textContent = 'Change my RSVP later';
-        }
-        $('back').hidden = false; $('backLink').href = link;
-      }
-      $('rsvp').scrollIntoView({ behavior:'smooth', block:'start' });
+      if (!d.duplicate) store(d.id);
+      showDone(d.id, d.duplicate, body.email);
     }).catch(function(){ btn.disabled = false; btn.textContent = label; $('msg').className = 'msg err'; $('msg').textContent = 'Check your connection and try again.'; });
   });
 

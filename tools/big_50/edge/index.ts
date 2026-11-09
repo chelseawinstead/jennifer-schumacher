@@ -59,7 +59,7 @@ function whereLine(p: Party) {
 }
 
 function render(p: Party, g: Target, o: { heading: string; body: string; subject: string; button?: string; details?: boolean }) {
-  const link = `${SITE}/big-50/party?r=${g.id}`;
+  const link = `${SITE}/big-50/party?r=${g.id}`; // same token as their invite link /big-50?i=
   const v: Record<string, string> = { first_name: g.first_name, last_name: g.last_name, party_link: link };
   const fill = (s: string) => String(s || "").replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m));
   const subject = fill(o.subject), heading = fill(o.heading), body = fill(o.body);
@@ -166,7 +166,7 @@ function rsvpFields(b: any) {
   return {
     first: clean(b.first, 80), last: clean(b.last, 80), email: clean(b.email, 200).toLowerCase(), phone: clean(b.phone, 40),
     street: clean(b.street, 200), street2: clean(b.street2, 200), city: clean(b.city, 100), state: clean(b.state, 40), zip: clean(b.zip, 12),
-    attending: bool(b.attending), plus_one: bool(b.plus_one), plus_one_name: clean(b.plus_one_name, 120), note: clean(b.note, 1000),
+    attending: b.attending === null || b.attending === undefined || b.attending === "" ? null : bool(b.attending), plus_one: bool(b.plus_one), plus_one_name: clean(b.plus_one_name, 120), note: clean(b.note, 1000),
   };
 }
 
@@ -186,7 +186,7 @@ Deno.serve(async (req) => {
       const b = await req.json().catch(() => ({}));
       const f = rsvpFields(b);
       const missing = ["first", "last", "email", "phone"].filter((k) => !(f as any)[k]);
-      if (f.attending) for (const k of ["street", "city", "state", "zip"]) if (!(f as any)[k]) missing.push(k);
+      if (f.attending === null) missing.push("attending");
       if (f.attending && f.plus_one && !f.plus_one_name) missing.push("plus_one_name");
       if (missing.length) return json({ ok: false, error: "missing", fields: missing }, 400);
       if (!EMAIL.test(f.email)) return json({ ok: false, error: "email" }, 400);
@@ -218,6 +218,26 @@ Deno.serve(async (req) => {
       }
       const [row] = await sql`select big_50.guest(${id}::uuid) as r`;
       return json(row.r, row.r.ok ? 200 : 404);
+    }
+
+    // a guest answering from the personal link Jennifer texted them (/big-50?i=<id>)
+    if (req.method === "POST" && action === "respond") {
+      const b = await req.json().catch(() => ({}));
+      const id = clean(b.r, 40);
+      if (!UUID.test(id)) return json({ ok: false, reason: "not_found" }, 404);
+      const f = rsvpFields(b);
+      if (f.attending === null) return json({ ok: false, error: "missing", fields: ["attending"] }, 400);
+      if (f.attending && f.plus_one && !f.plus_one_name) return json({ ok: false, error: "missing", fields: ["plus_one_name"] }, 400);
+      if (f.email && !EMAIL.test(f.email)) return json({ ok: false, error: "email" }, 400);
+      const [before] = await sql`select big_50.email_target(${id}::uuid) as t`;
+      const [row] = await sql`select big_50.respond(${id}::uuid, ${sql.json(f)}) as r`;
+      if (!row.r.ok) return json(row.r, row.r.error === "email_taken" ? 409 : 404);
+      // first answer (or switching to attending) gets the confirmation email, if they gave one
+      if (before.t && (before.t.attending === null || (!before.t.attending && f.attending)) && (f.email || before.t.email)) {
+        // @ts-ignore EdgeRuntime is provided by Supabase
+        EdgeRuntime.waitUntil(deliver(id, "confirm", "auto", confirmEmail));
+      }
+      return json(row.r);
     }
 
     if (req.method === "POST" && action === "link") {
@@ -294,8 +314,8 @@ Deno.serve(async (req) => {
         if (!f.first) return json({ ok: false, error: "missing", fields: ["first"] }, 400);
         if (f.email && !EMAIL.test(f.email)) return json({ ok: false, error: "email" }, 400);
         const [row] = await sql`select big_50.rsvp(${sql.json(f)}) as r`;
-        if (row.r.duplicate) return json({ ok: false, error: "duplicate" }, 409);
-        if (row.r.ok && f.email && bool(b.send_email)) await deliver(row.r.id, "confirm", "team", confirmEmail);
+        if (!row.r.ok) return json(row.r, 409);
+        if (f.email && f.attending !== null && bool(b.send_email)) await deliver(row.r.id, "confirm", "team", confirmEmail);
         return json(row.r, row.r.ok ? 200 : 409);
       }
       if (action === "team-guest-save" && req.method === "POST") {

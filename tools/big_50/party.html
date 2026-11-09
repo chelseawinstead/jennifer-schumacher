@@ -487,13 +487,6 @@
       </div>
       <label class="fld" id="cPlusWrap">Your +1's name<input id="cPlusName" autocomplete="off"></label>
       <label class="fld">Cell phone<input id="cPhone" type="tel" inputmode="tel" autocomplete="tel"></label>
-      <label class="fld">Street address<input id="cStreet" autocomplete="address-line1"></label>
-      <label class="fld">Apartment, suite, etc. (optional)<input id="cStreet2" autocomplete="address-line2"></label>
-      <div class="three">
-        <label class="fld">City<input id="cCity" autocomplete="address-level2"></label>
-        <label class="fld">State<input id="cState" autocomplete="address-level1" maxlength="20"></label>
-        <label class="fld">ZIP<input id="cZip" autocomplete="postal-code" inputmode="numeric" maxlength="10"></label>
-      </div>
     </div>
     <button class="btn solid" type="button" id="cSave" style="width:100%">Save my RSVP</button>
     <p class="msg" id="cMsg" role="status"></p>
@@ -555,6 +548,7 @@
   function load(){
     return post('guest', { r: R }).then(function(d){
       if (!d.ok) return showGate(d);
+      if (d.me.attending === null && !d.me.is_host){ location.replace('/big-50?i=' + encodeURIComponent(R)); return; }
       if (!d.me.is_test && !d.me.is_host) store(R);
       var sig = JSON.stringify(d);
       if (data && sig === load.sig) return;
@@ -652,8 +646,7 @@
     var me = data.me;
     setAns(true); // "Actually, I can come!" opens on attending
     $('cPlus').checked = !!me.plus_one; $('cPlusName').value = me.plus_one_name || ''; $('cPlusWrap').hidden = !me.plus_one;
-    $('cPhone').value = me.phone || ''; $('cStreet').value = me.street || ''; $('cStreet2').value = me.street2 || '';
-    $('cCity').value = me.city || ''; $('cState').value = me.state || ''; $('cZip').value = me.zip || '';
+    $('cPhone').value = me.phone || '';
     $('cMsg').textContent = ''; $('sheet').hidden = false;
   }
   function closeSheet(){ $('sheet').hidden = true; }
@@ -665,9 +658,8 @@
   $('cSave').addEventListener('click', function(){
     var v = function(id){ return $(id).value.trim(); };
     var body = { r:R, attending:cAns, plus_one: cAns && $('cPlus').checked, plus_one_name: v('cPlusName'),
-      phone:v('cPhone'), street:v('cStreet'), street2:v('cStreet2'), city:v('cCity'), state:v('cState'), zip:v('cZip') };
+      phone:v('cPhone') };
     if (body.plus_one && !body.plus_one_name){ $('cMsg').className = 'msg err'; $('cMsg').textContent = 'Add your +1\u2019s name, or switch the +1 off.'; return; }
-    if (cAns && (!body.street || !body.city || !body.state || !body.zip)){ $('cMsg').className = 'msg err'; $('cMsg').textContent = 'Please add your mailing address.'; return; }
     var btn = this; btn.disabled = true;
     post('update', body).then(function(d){
       btn.disabled = false;
