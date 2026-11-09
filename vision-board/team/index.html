@@ -204,6 +204,10 @@
   .ag-item{ display:grid; grid-template-columns:236px 1fr 1fr 1fr 118px; gap:8px 10px; align-items:center; padding:14px 0; border-top:1px solid var(--line); }
   .ag-item input,.ag-item textarea,.ag-note input,.ag-note textarea{ width:100%; font:inherit; font-size:14px; padding:8px 10px; border:1px solid #cfcbc2; }
   .ag-item textarea{ grid-column:1/-1; min-height:38px; resize:vertical; }
+  .ag-fmt{ grid-column:1/-1; display:flex; align-items:center; gap:6px; margin-bottom:-4px; }
+  .ag-fmt button{ min-width:34px; height:30px; padding:0 9px; font:inherit; font-size:13px; background:#fff; border:1px solid #cfcbc2; color:var(--ink); cursor:pointer; }
+  .ag-fmt button:hover{ border-color:var(--navy); color:var(--navy); }
+  .ag-fmt span{ font-size:12px; color:var(--warm); margin-left:4px; }
   .ag-item .tools,.ag-note .tools{ display:flex; gap:4px; }
   .ag-item .tools button,.ag-note .tools button{ background:#fff; border:1px solid #cfcbc2; padding:6px 9px; font-size:13px; }
   .ag-item .tools button:hover,.ag-note .tools button:hover{ border-color:var(--navy); color:var(--navy); }
@@ -1200,7 +1204,8 @@
             (function(){ var au = it.audience && it.audience.length ? it.audience : ['paid'];
               return '<div class="ag-aud">Who sees this:<label><input type="checkbox" data-aud="paid" data-d="'+di+'" data-i="'+ii+'"' + (au.indexOf('paid')>-1?' checked':'') + '> Paid guests</label>' +
                 '<label><input type="checkbox" data-aud="local" data-d="'+di+'" data-i="'+ii+'"' + (au.indexOf('local')>-1?' checked':'') + '> Local guests</label></div>'; })() +
-            '<textarea data-p="'+p+'details" rows="1" placeholder="Extra details (optional)" aria-label="Details">'+esc(it.details||'')+'</textarea>' +
+            '<div class="ag-fmt"><button type="button" data-fmt="b" title="Bold"><b>B</b></button><button type="button" data-fmt="u" title="Underline"><u>U</u></button><button type="button" data-fmt="li" title="Bulleted list">• List</button><span>Select text, then tap a button.</span></div>' +
+            '<textarea data-p="'+p+'details" rows="3" placeholder="Extra details (optional)" aria-label="Details">'+esc(it.details||'')+'</textarea>' +
             '<div class="ag-spk-wrap">' + (it.speakers||[]).map(function(sp, si){
               var sp_ = p + 'speakers.' + si + '.';
               return '<div class="ag-spk">' + photoPicker(sp_ + 'photo_url', sp.photo_url) +
@@ -1611,6 +1616,23 @@
     var it = ag.days[+c.dataset.d].items[+c.dataset.i], au = (it.audience && it.audience.length ? it.audience : ['paid']).slice();
     if (c.checked){ if (au.indexOf(c.dataset.aud) < 0) au.push(c.dataset.aud); } else au = au.filter(function(x){ return x !== c.dataset.aud; });
     it.audience = au; agDirty = true; $('agStatus').textContent = au.length ? 'Unsaved changes' : 'Unsaved changes \u00b7 nobody will see that line';
+  });
+  // formatting buttons for descriptions: **bold**, __underline__, "• " bullets
+  $('agBody').addEventListener('mousedown', function(e){ if (e.target.closest('[data-fmt]')) e.preventDefault(); });
+  $('agBody').addEventListener('click', function(e){
+    var fb = e.target.closest('[data-fmt]'); if (!fb) return;
+    var ta = fb.parentNode.nextElementSibling; if (!ta || ta.tagName !== 'TEXTAREA') return;
+    var v = ta.value, a = ta.selectionStart, z = ta.selectionEnd, k = fb.dataset.fmt, out, sa, sz;
+    if (k === 'li'){
+      var ls = v.lastIndexOf('\n', a - 1) + 1, le = v.indexOf('\n', z); if (le < 0) le = v.length;
+      var lines = v.slice(ls, le).split('\n'), allB = lines.every(function(x){ return /^\s*•\s/.test(x); });
+      var nl = lines.map(function(x){ return allB ? x.replace(/^\s*•\s/, '') : (/^\s*(?:[•\-]\s|\*(?!\*))/.test(x) ? x.replace(/^\s*(?:[•\-]\s|\*\s?)/, '• ') : '• ' + x); }).join('\n');
+      out = v.slice(0, ls) + nl + v.slice(le); sa = ls; sz = ls + nl.length;
+    } else {
+      var m = k === 'b' ? '**' : '__', sel = v.slice(a, z) || (k === 'b' ? 'bold text' : 'underlined text');
+      out = v.slice(0, a) + m + sel + m + v.slice(z); sa = a + 2; sz = sa + sel.length;
+    }
+    ta.value = out; ta.focus(); ta.setSelectionRange(sa, sz); ta.dispatchEvent(new Event('input', { bubbles:true }));
   });
   $('agBody').addEventListener('click', function(e){
     var t = e.target.closest('.ag-daypick'); if (!t) return;
