@@ -36,6 +36,12 @@ from collections import OrderedDict
 # other listings need are present to fill or remove.
 LISTING_TEMPLATE = "listings/2300-e-campbell-ave-202"
 
+# The post whose exported page supplies the template every Little Black Book
+# post is built from. It has an italic opening line and a photo caption, so
+# both branches are there to fill or remove. If the export ever drops it, the
+# first post in the export is used instead.
+JOURNAL_TEMPLATE = "journal/a-locals-guide-to-arcadia"
+
 # Listing content, held apart from the design. When content/listings is absent
 # the build falls back to taking listings straight from the export, which is
 # how the site worked before the team had a form.
@@ -607,7 +613,21 @@ def main():
     for name in ("about", "buy", "sell", "listings", "journal"):
         pages.append(("%s/index.html" % name, name))
     listing_content = load_listings()
+    journal_on = os.path.isdir(os.path.join(CONTENT, "journal"))
+    journal_tpl_route = None
     for group in ("listings", "journal"):
+        if group == "journal" and journal_on:
+            # Posts are written in the form at /admin. Only the template post is
+            # built from the export; every post page is rendered from
+            # content/journal further down, so a Design export never overwrites
+            # what the team has written.
+            entries = sorted(e for e in os.listdir(os.path.join(export, group))
+                             if os.path.isfile(os.path.join(export, group, e, "index.html")))
+            if entries:
+                want = JOURNAL_TEMPLATE.split("/", 1)[1]
+                journal_tpl_route = "journal/%s" % (want if want in entries else entries[0])
+                pages.append(("%s/index.html" % journal_tpl_route, journal_tpl_route))
+            continue
         if group == "listings" and listing_content:
             # Only the template listing is built from the export; the rest are
             # rendered from content/listings further down.
@@ -665,6 +685,30 @@ def main():
             with open(path, "w", encoding="utf-8") as fh:
                 fh.write(filled)
 
+    if journal_tpl_route:
+        import journal as journal_tpl
+        import render_content
+        template = read(os.path.join(out, journal_tpl_route, "index.html"))
+        with open(os.path.join(os.path.dirname(__file__), "journal-template.html"),
+                  "w", encoding="utf-8") as fh:
+            fh.write(template)
+        report[:] = [r for r in report if r[0] != journal_tpl_route]
+        shutil.rmtree(os.path.join(out, journal_tpl_route))
+        pages = [p for p in pages if p[1] != journal_tpl_route]
+        posts = render_content.load_journal()
+        for post in posts:
+            route = "journal/%s" % post["slug"]
+            page = journal_tpl.render(template, post, journal_tpl.others_for(post, posts))
+            os.makedirs(os.path.join(out, route), exist_ok=True)
+            with open(os.path.join(out, route, "index.html"), "w", encoding="utf-8") as fh:
+                fh.write(page)
+            pages.append(("", route))
+            report.append((route, len(page)))
+        index = os.path.join(out, "journal", "index.html")
+        filled = journal_tpl.render_index(read(index), posts)
+        with open(index, "w", encoding="utf-8") as fh:
+            fh.write(filled)
+
     for name in ("404.html", "robots.txt"):
         shutil.copy(os.path.join(export, name), os.path.join(out, name))
     fix_404 = os.path.join(out, "404.html")
@@ -687,7 +731,12 @@ def main():
         print("          unreferenced: %s" % ", ".join(dropped))
 
     # sitemap, regenerated so it matches the published routes
-    routes = [""] + [r for _, r in pages[1:]]
+    # Same order tools/render_content.py writes, so the two builders never
+    # disagree about the sitemap and rewrite each other's work.
+    rest = [r for _, r in pages[1:]]
+    statics = [r for r in rest if "/" not in r]
+    routes = ([""] + statics + sorted(r for r in rest if r.startswith("journal/"))
+              + sorted(r for r in rest if r.startswith("listings/")))
     urls = "\n".join(
         '  <url><loc>%s/%s</loc><changefreq>weekly</changefreq>'
         '<priority>%s</priority></url>' % (SITE_URL, r, "1.0" if r == "" else "0.8")

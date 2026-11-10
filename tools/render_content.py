@@ -26,9 +26,11 @@ sys.path.insert(0, HERE)
 
 import listings as listing_tpl          # noqa: E402
 import cards as listing_cards           # noqa: E402
+import journal as journal_tpl           # noqa: E402
 
 CONTENT = os.path.join(REPO, "content")
 TEMPLATE = os.path.join(HERE, "listing-template.html")
+JOURNAL_TEMPLATE = os.path.join(HERE, "journal-template.html")
 SITE_URL = "https://www.schumacherliving.com"
 
 MAX_WIDTH = 2000
@@ -71,6 +73,56 @@ def load_listings():
                             or os.path.splitext(name)[0])
         out.append(data)
     return out
+
+
+def load_journal():
+    """Published Little Black Book posts, newest first.
+
+    The file name is the web address, so a post keeps its link however often
+    its title is reworded.
+    """
+    import yaml
+    folder = os.path.join(CONTENT, "journal")
+    if not os.path.isdir(folder):
+        return []
+    out = []
+    for name in sorted(os.listdir(folder)):
+        if not name.endswith((".yml", ".yaml")):
+            continue
+        data = yaml.safe_load(read(os.path.join(folder, name))) or {}
+        if str(data.get("state", "Published")).strip().lower() != "published":
+            continue          # drafts and archived posts are not on the site
+        out.append(journal_tpl.with_defaults(data, os.path.splitext(name)[0]))
+    return journal_tpl.in_order(out)
+
+
+def journal_photos(posts):
+    names = set()
+    for p in posts:
+        names.add(p["hero"]["src"])
+        for src in re.findall(r"!\[[^\]]*\]\(\s*<?([^)\s>]+)", p.get("body") or ""):
+            names.add(journal_tpl.photo_src(src))
+    return {n for n in names if n}
+
+
+def render_journal(posts):
+    """Every post page and the Little Black Book page. Returns retired slugs."""
+    template = read(JOURNAL_TEMPLATE)
+    live = set()
+    for post in posts:
+        route = "journal/%s" % post["slug"]
+        write(os.path.join(REPO, route, "index.html"),
+              journal_tpl.render(template, post, journal_tpl.others_for(post, posts)))
+        live.add(post["slug"])
+    retired = []
+    folder = os.path.join(REPO, "journal")
+    for name in sorted(os.listdir(folder)):
+        if os.path.isfile(os.path.join(folder, name, "index.html")) and name not in live:
+            shutil.rmtree(os.path.join(folder, name))
+            retired.append(name)
+    index = os.path.join(folder, "index.html")
+    write(index, journal_tpl.render_index(read(index), posts))
+    return retired
 
 
 def bring_in_photos(wanted):
@@ -124,7 +176,8 @@ def main():
         sys.exit("%s is missing — run tools/refresh.py once to create it" % TEMPLATE)
     template = read(TEMPLATE)
 
-    brought = bring_in_photos(photos_of(data))
+    posts = load_journal()
+    brought = bring_in_photos(photos_of(data) | journal_photos(posts))
 
     live = set()
     for listing in data:
@@ -147,6 +200,12 @@ def main():
         path = os.path.join(REPO, rel)
         write(path, fill(read(path), data))
 
+    # The Little Black Book. Only once there is a content file for it - before
+    # that the posts come straight from the export, as they always did.
+    journal_retired = []
+    if os.path.isdir(os.path.join(CONTENT, "journal")) and os.path.isfile(JOURNAL_TEMPLATE):
+        journal_retired = render_journal(posts)
+
     # Same order tools/build.py writes, so the two builders never disagree
     # about the sitemap and rewrite each other's work.
     routes = (STATIC_ROUTES + sorted(journal_routes())
@@ -162,6 +221,10 @@ def main():
 
     print("%d listing(s) published%s" % (len(data),
           (", %d retired: %s" % (len(retired), ", ".join(retired))) if retired else ""))
+    if os.path.isdir(os.path.join(CONTENT, "journal")):
+        print("%d post(s) published%s" % (len(posts),
+              (", %d retired: %s" % (len(journal_retired), ", ".join(journal_retired)))
+              if journal_retired else ""))
     if brought:
         print("photos brought in: %s" % ", ".join(brought))
 

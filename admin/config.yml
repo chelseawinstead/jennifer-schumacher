@@ -1,4 +1,4 @@
-# The form Jennifer's team uses to publish listings.
+# The form Jennifer's team uses to publish listings and Little Black Book posts.
 #
 # Every field here writes into content/listings/<address>.yml, which the build
 # pours into the listing template from Jennifer's Claude Design document. This
@@ -118,3 +118,94 @@ collections:
           - { name: slug, label: Web address, widget: string, required: false }
           - { name: title, label: Browser tab title, widget: string, required: false }
           - { name: meta_description, label: Search description, widget: string, required: false }
+
+  # ------------------------------------------------------------------------
+  # The Little Black Book
+  #
+  # Every post writes content/journal/<web-address>.yml. The build pours it
+  # into the post page from Jennifer's Claude Design document, and rebuilds the
+  # Little Black Book page and the "More from" row under every post. The file
+  # name is the web address, taken from the title when the post is created,
+  # and it never changes afterwards, so rewording a title never breaks a link.
+  # ------------------------------------------------------------------------
+  - name: journal
+    label: Little Black Book
+    label_singular: Post
+    folder: content/journal
+    extension: yml
+    format: yaml
+    create: true
+    # Same as listings: Archived takes a post down and keeps every word.
+    delete: false
+    slug: "{{title}}"
+    identifier_field: title
+    summary: "{{state}}  ·  {{title}}  ·  {{place}}"
+    sortable_fields: [date, title, place, state]
+    fields:
+      - { name: state, label: Where this post is, widget: select, default: Draft,
+          options: [Draft, Published, Archived],
+          hint: "Draft — still being written, never been on the site. Published — live. Archived — taken down, but everything is kept and it can go back up in one click." }
+      - { name: featured, label: Feature this one at the top of the Little Black Book page,
+          widget: boolean, default: false,
+          hint: "The big block at the top of the page. Only one post should have this switched on. If none do, the newest post goes there." }
+      - { name: date, label: Date, widget: datetime, time_format: false,
+          format: YYYY-MM-DD, date_format: "MMM D, YYYY", default: "{{now}}",
+          hint: "Newest posts show first. The date isn't printed on the page." }
+      - { name: title, label: Headline, widget: string,
+          hint: "As it should read on the page — A weekend in Scottsdale. The web address is made from this when you first save, and stays the same after." }
+      - { name: category, label: Kind of post, widget: string, default: Neighborhood guide,
+          hint: "The small line at the top — Neighborhood guide, Market update, Dining…" }
+      - { name: place, label: Place, widget: string, required: false,
+          hint: "The blue line above the headline, and the label on the post's card — Arcadia · Phoenix" }
+      - { name: intro, label: One- or two-line intro, widget: text,
+          hint: "Under the headline, and on the post's card on the Little Black Book page." }
+
+      - name: hero
+        label: Main photo
+        widget: object
+        hint: "The wide photo at the top of the post. It's also the photo on the post's card."
+        fields:
+          - { name: src, label: Photo, widget: image }
+          - { name: caption, label: Caption, widget: string, required: false,
+              hint: "Small grey line under the photo. Leave blank for none." }
+
+      - { name: lede, label: Opening line, widget: text, required: false,
+          hint: "Optional. The large italic sentence that starts the article." }
+
+      - { name: body, label: The article, widget: markdown,
+          modes: [rich_text], minimal: false,
+          buttons: [bold, italic, link, heading-two, heading-three, quote, bulleted-list, numbered-list],
+          editor_components: [image],
+          hint: "Write it the way you'd write an email. Use Heading 2 for sections like Morning / Afternoon / Evening. Photos can be dropped in anywhere." }
+
+      - { name: author, label: Written by, widget: string, default: Jennifer Schumacher }
+      - { name: read_time, label: Minutes to read, widget: string, required: false,
+          hint: "Leave blank and it's worked out from the length of the article." }
+
+      - name: photo_tuning
+        label: Photo fine-tuning
+        widget: object
+        collapsed: true
+        required: false
+        hint: "All optional. Only worth opening if a photo is cropped badly."
+        fields:
+          - { name: alt, label: Describe the photo, widget: string, required: false,
+              hint: "Read aloud to people using screen readers, and used by Google. The caption or the place is used if this is blank." }
+          - { name: zoom, label: Zoom into the main photo, widget: select, required: false,
+              options: [{ label: "None", value: "" }, { label: "A little", value: "1.2" },
+                        { label: "More", value: "1.4" }, { label: "A lot", value: "1.6" }] }
+          - { name: focus, label: Which part of the photo to keep on the small card, widget: select,
+              required: false,
+              options: [{ label: "Middle", value: "" }, { label: "Top", value: "center 20%" },
+                        { label: "Bottom", value: "center 80%" }] }
+
+      - name: seo
+        label: Browser tab and Google listing
+        widget: object
+        collapsed: true
+        required: false
+        hint: "Filled in automatically from the headline and intro. Only worth opening to override them."
+        fields:
+          - { name: seo_title, label: Browser tab title, widget: string, required: false,
+              hint: "\" | The Little Black Book\" is added to the end automatically." }
+          - { name: meta_description, label: Google description, widget: string, required: false }
