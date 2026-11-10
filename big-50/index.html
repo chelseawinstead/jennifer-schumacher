@@ -14,7 +14,7 @@
 <meta property="og:image" content="https://www.schumacherliving.com/big-50/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Jennifer holding gold-and-confetti 50 balloons with a glass of champagne">
+<meta property="og:image:alt" content="Jennifer holding two big 50 balloons with a glass of champagne">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Jennifer's Big 5-0 🥂 You're invited">
 <meta name="twitter:description" content="Wednesday, January 27, 2027 · 7–11pm. Tap to RSVP.">
@@ -25,175 +25,351 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  /* An invitation card: photo, the essentials, one RSVP card. Navy and cream from Jennifer's site, champagne gold accents. */
+  /* Jennifer's Big 5-0: same bones as the Vision Board page (hero + panel, facts strip, sections, form),
+     dressed for a party: black and silver, confetti, a countdown, a scrolling ribbon and a photo wall. */
   :root{
-    /* personal palette: black and silver */
-    --navy:#111111; --ink:#141414; --muted:#5f5f5f; --warm:#8c8c8c; --stone:#0b0b0b; --line:#e2e2e2;
-    --paper:#fff; --gold:#b9b9b9; --cream:#d9d9d9; --sky:#bdbdbd; --red:#b3261e; --ok:#3c3c3c;
+    --black:#0b0b0b; --coal:#151515; --char:#1d1d1d; --edge:#2e2e2e;
+    --white:#ffffff; --mist:#ececec; --silver:#bdbdbd; --steel:#8c8c8c;
+    --ink:#141414; --muted:#5f5f5f; --line:#e2e2e2; --paper:#ffffff; --red:#b3261e;
+    --chrome:linear-gradient(180deg,#ffffff 0%,#d9d9d9 36%,#9a9a9a 60%,#ececec 100%);
     --serif:'Marcellus', Georgia, 'Times New Roman', serif;
     --sans:'Jost', 'Helvetica Neue', Arial, sans-serif;
   }
   *{ box-sizing:border-box; }
-  html{ -webkit-text-size-adjust:100%; }
-  body{ margin:0; background:#0b0b0b; color:#ececec; font-family:var(--sans); font-size:16px; line-height:1.6; }
-  h1,h2,h3{ font-family:var(--serif); font-weight:400; margin:0; text-wrap:balance; }
+  html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+  body{ margin:0; background:var(--black); color:var(--mist); font-family:var(--sans); font-size:16px; line-height:1.6; overflow-x:hidden; }
+  h1,h2,h3{ font-family:var(--serif); font-weight:400; margin:0; text-wrap:balance; letter-spacing:.01em; }
   p{ margin:0; }
   a{ color:inherit; }
   button,input,textarea{ font:inherit; color:inherit; }
   button{ cursor:pointer; }
-  :focus-visible{ outline:2px solid var(--navy); outline-offset:2px; }
+  :focus-visible{ outline:2px solid var(--silver); outline-offset:3px; }
   [hidden]{ display:none !important; }
+  .chrome{ background:var(--chrome); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .wrap{ max-width:1240px; margin:0 auto; padding:0 24px; }
+  .kick{ font-size:12px; letter-spacing:.32em; text-transform:uppercase; color:var(--silver); }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:54px; padding:14px 30px; border:1px solid var(--white); background:var(--white); color:var(--ink); font-size:13px; letter-spacing:.2em; text-transform:uppercase; text-decoration:none; }
+  .btn.dark{ background:var(--ink); border-color:var(--ink); color:#fff; }
+  .btn.line{ background:transparent; color:#fff; border-color:#6b6b6b; }
+  .btn:disabled{ opacity:.55; cursor:wait; }
 
-  .page{ display:grid; min-height:100vh; }
-  .photo{ position:relative; background:#000; overflow:hidden; aspect-ratio:1/1; max-height:52vh; width:100%; }
-  .photo img{ width:100%; height:100%; object-fit:cover; object-position:50% 22%; display:block; }
-  .copy{ padding:30px max(22px, env(safe-area-inset-left,0px)) 56px; max-width:620px; width:100%; margin:0 auto; }
+  /* ---------- hero ---------- */
+  .hero{ position:relative; display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr); min-height:min(92vh,860px); }
+  .hero-copy{ position:relative; z-index:2; display:flex; flex-direction:column; justify-content:center; padding:80px 56px 72px max(24px, calc((100vw - 1240px)/2 + 24px)); }
+  .hero h1{ font-size:clamp(54px, 7.2vw, 104px); line-height:.96; color:#fff; margin:20px 0 26px; }
+  .hero h1 .big{ display:block; font-size:1.22em; line-height:1; }
+  .hero .date{ font-family:var(--serif); font-size:clamp(22px, 2.2vw, 30px); color:#fff; line-height:1.25; }
+  .hero .time{ font-size:17px; color:var(--silver); margin-top:4px; }
+  .hero .lede{ margin-top:22px; max-width:440px; font-size:18px; color:#d6d6d6; }
+  .hero .ctas{ display:flex; gap:12px; flex-wrap:wrap; margin-top:32px; }
+  .hero-photo{ position:relative; overflow:hidden; background:#000; }
+  .hero-photo img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 28%; }
+  .hero-photo::after{ content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(11,11,11,.55), rgba(11,11,11,0) 28%); }
+  #confetti{ position:absolute; inset:0; width:100%; height:100%; z-index:1; pointer-events:none; }
 
-  .kick{ font-size:12px; letter-spacing:.34em; text-transform:uppercase; color:#b9b9b9; }
-  h1{ font-size:50px; line-height:1.02; margin:14px 0 20px; font-weight:400; color:#fff; letter-spacing:.01em; }
-  h1 span{ display:block; font-size:1.18em; background:linear-gradient(180deg,#ffffff 0%,#d4d4d4 38%,#9d9d9d 62%,#e9e9e9 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
-  .when{ font-family:var(--serif); font-size:26px; line-height:1.25; }
-  .when{ color:#fff; }
-  .when small{ display:block; font-family:var(--sans); font-size:16px; color:#a8a8a8; margin-top:4px; }
-  .rule{ width:64px; height:1px; background:var(--gold); margin:22px 0; border:0; }
-  .where{ display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; align-items:start; font-size:16px; }
-  .where svg{ width:20px; height:20px; color:var(--gold); margin-top:3px; }
-  .where b{ font-weight:500; display:block; }
-  .where span{ color:#a8a8a8; font-size:15px; }
-  .details{ margin-top:18px; font-size:17px; color:#cfcfcf; white-space:pre-line; }
-  .gift{ margin-top:18px; padding:16px 18px; background:#161616; border:1px solid #2c2c2c; font-size:15px; color:#bdbdbd; }
-  .gift a{ display:inline-flex; align-items:center; gap:6px; margin-top:10px; font-size:14px; letter-spacing:.06em; color:#fff; text-decoration:none; border-bottom:1px solid var(--gold); padding-bottom:2px; }
+  .count{ position:absolute; z-index:3; left:32px; bottom:36px; background:rgba(14,14,14,.86); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); border:1px solid #3a3a3a; padding:20px 24px 16px; min-width:330px; }
+  .count .kick{ font-size:11px; margin-bottom:10px; }
+  .count .units{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; text-align:center; }
+  .count b{ display:block; font-family:var(--serif); font-weight:400; font-size:46px; line-height:1; }
+  .count span{ display:block; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--steel); margin-top:6px; }
+  .count .today{ font-family:var(--serif); font-size:34px; }
 
-  .back{ display:flex; align-items:center; justify-content:space-between; gap:12px; background:#1c1c1c; border:1px solid #333; color:#fff; padding:14px 16px; margin-bottom:22px; font-size:15px; }
-  .back a{ color:#fff; white-space:nowrap; font-size:13px; letter-spacing:.12em; text-transform:uppercase; border:1px solid rgba(255,255,255,.5); padding:9px 12px; text-decoration:none; }
+  .back{ display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; border:1px solid #3a3a3a; background:var(--coal); padding:12px 14px 12px 16px; margin-bottom:26px; font-size:15px; max-width:480px; }
+  .back a{ font-size:12px; letter-spacing:.16em; text-transform:uppercase; text-decoration:none; border:1px solid #777; padding:9px 12px; }
 
-  /* RSVP card */
-  .rsvp{ margin-top:30px; background:var(--paper); color:var(--ink); border:1px solid var(--line); padding:24px 20px; }
-  .rsvp a{ color:var(--navy); }
-  .rsvp h2{ font-size:34px; line-height:1.1; margin-bottom:4px; }
-  .rsvp .sub{ font-size:15px; color:var(--muted); margin-bottom:18px; }
-  .choice{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:6px; }
-  .choice button{ min-height:58px; border:1px solid var(--navy); background:var(--paper); color:var(--navy); font-size:15px; letter-spacing:.04em; padding:10px; }
-  .choice button[aria-pressed="true"]{ background:var(--navy); color:#fff; }
-  form{ display:grid; gap:14px; margin-top:18px; }
+  /* ---------- ribbon ---------- */
+  .ribbon{ border-top:1px solid var(--edge); border-bottom:1px solid var(--edge); background:var(--coal); overflow:hidden; white-space:nowrap; }
+  .ribbon-track{ display:inline-flex; padding:18px 0; animation:slide 38s linear infinite; }
+  .ribbon span{ font-family:var(--serif); font-size:22px; letter-spacing:.14em; text-transform:uppercase; padding:0 26px; }
+  .ribbon i{ font-style:normal; color:var(--steel); }
+  @keyframes slide{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+
+  /* ---------- facts strip ---------- */
+  .facts{ display:grid; grid-template-columns:repeat(3,1fr); background:var(--paper); color:var(--ink); }
+  .fact{ padding:44px max(24px, 3vw); border-right:1px solid var(--line); }
+  .fact:last-child{ border-right:0; }
+  .fact .lbl{ display:flex; align-items:center; gap:10px; font-size:12px; letter-spacing:.24em; text-transform:uppercase; color:var(--steel); margin-bottom:14px; }
+  .fact .lbl svg{ width:18px; height:18px; color:var(--ink); }
+  .fact .big{ font-family:var(--serif); font-size:28px; line-height:1.2; }
+  .fact .sm{ font-size:15px; color:var(--muted); margin-top:6px; white-space:pre-line; }
+
+  /* ---------- sections ---------- */
+  section.band{ padding:110px 0; }
+  .head{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,.7fr); gap:40px; align-items:end; margin-bottom:56px; }
+  .head h2{ font-size:clamp(42px, 5vw, 68px); line-height:1.02; color:#fff; }
+  .head p{ color:var(--silver); font-size:16px; }
+
+  .vibe{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .vcard{ position:relative; background:var(--coal); border:1px solid var(--edge); padding:40px 30px 34px; overflow:hidden; transition:transform .3s, border-color .3s; }
+  .vcard:hover{ transform:translateY(-4px); border-color:#555; }
+  .vcard .n{ position:absolute; right:22px; top:16px; font-family:var(--serif); font-size:64px; line-height:1; color:#232323; }
+  .vcard svg{ width:68px; height:68px; color:#d9d9d9; margin-bottom:26px; }
+  .vcard h3{ font-size:30px; color:#fff; margin-bottom:8px; }
+  .vcard p{ color:var(--silver); font-size:15px; }
+  .gift{ margin-top:18px; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:24px; align-items:center; background:var(--paper); color:var(--ink); padding:34px 36px; }
+  .gift q{ display:block; font-family:var(--serif); font-size:clamp(22px, 2.4vw, 30px); line-height:1.3; quotes:none; }
+  .gift .sm{ color:var(--muted); font-size:15px; margin-top:8px; }
+
+  /* photo wall */
+  .wall{ display:grid; grid-template-columns:repeat(4,1fr); grid-auto-rows:220px; gap:12px;
+    grid-template-areas:"a a b c" "a a d c" "e e f f"; }
+  .t1{ grid-area:a; } .t2{ grid-area:b; } .t3{ grid-area:c; } .t4{ grid-area:d; } .t5{ grid-area:e; } .t6{ grid-area:f; }
+  .tile{ position:relative; overflow:hidden; background:var(--char); border:1px solid var(--edge); }
+  .tile img{ width:100%; height:100%; object-fit:cover; display:block; transition:transform .6s; }
+  .tile:hover img{ transform:scale(1.04); }
+  .tile svg.art{ position:absolute; inset:0; width:100%; height:100%; }
+
+  /* ---------- RSVP ---------- */
+  .rsvp-band{ background:linear-gradient(180deg, var(--black) 0%, #111 100%); border-top:1px solid var(--edge); }
+  .rsvp-grid{ display:grid; grid-template-columns:minmax(0,.8fr) minmax(0,1fr); gap:64px; align-items:start; }
+  .rsvp-intro h2{ font-size:clamp(44px, 5vw, 70px); line-height:1; color:#fff; margin:14px 0 20px; }
+  .rsvp-intro > p{ color:var(--silver); max-width:420px; }
+  .steps{ list-style:none; padding:0; margin:36px 0 0; display:grid; gap:0; max-width:440px; }
+  .steps li{ display:grid; grid-template-columns:56px minmax(0,1fr); gap:6px; padding:18px 0; border-top:1px solid var(--edge); }
+  .steps li:last-child{ border-bottom:1px solid var(--edge); }
+  .steps b{ font-family:var(--serif); font-weight:400; font-size:34px; line-height:1; }
+  .steps strong{ display:block; font-weight:500; color:#fff; }
+  .steps span{ font-size:14px; color:var(--steel); }
+
+  .card{ background:var(--paper); color:var(--ink); padding:34px 32px; }
+  .card h3{ font-size:34px; line-height:1.1; }
+  .card .sub{ color:var(--muted); font-size:15px; margin:4px 0 20px; }
+  .choice{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .choice button{ min-height:62px; border:1px solid var(--ink); background:var(--paper); color:var(--ink); font-size:15px; letter-spacing:.04em; padding:10px; transition:background .15s, color .15s; }
+  .choice button[aria-pressed="true"]{ background:var(--ink); color:#fff; }
+  form{ display:grid; gap:14px; margin-top:22px; }
   .row2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  .row3{ display:grid; grid-template-columns:minmax(0,1fr) 90px 110px; gap:10px; }
-  @media (max-width:420px){ .row3{ grid-template-columns:1fr 1fr; } .row3 .city{ grid-column:1/-1; } }
-  label.f{ display:block; font-size:13px; color:var(--warm); }
-  label.f input, label.f textarea{ display:block; width:100%; margin-top:6px; font-size:16px; padding:12px; border:1px solid #cfcbc2; border-radius:0; -webkit-appearance:none; background:#fff; color:var(--ink); }
-  label.f textarea{ min-height:80px; resize:vertical; line-height:1.5; }
-  label.f input:focus, label.f textarea:focus{ outline:0; border-color:var(--navy); box-shadow:0 0 0 1px var(--navy); }
+  .row3{ display:grid; grid-template-columns:minmax(0,1fr) 92px 112px; gap:10px; }
+  label.f{ display:block; font-size:13px; color:var(--steel); }
+  label.f input, label.f textarea{ display:block; width:100%; margin-top:6px; font-size:16px; padding:12px; border:1px solid #cfcfcf; border-radius:0; -webkit-appearance:none; background:#fff; color:var(--ink); }
+  label.f textarea{ min-height:84px; resize:vertical; line-height:1.5; }
+  label.f input:focus, label.f textarea:focus{ outline:0; border-color:var(--ink); box-shadow:0 0 0 1px var(--ink); }
   label.f.bad input{ border-color:var(--red); }
-  .grp{ font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--navy); margin-top:6px; }
+  .grp{ font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink); margin-top:8px; }
   .grp small{ display:block; letter-spacing:0; text-transform:none; font-size:13px; color:var(--muted); margin-top:2px; }
   .toggle{ display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; align-items:center; padding:14px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
   .toggle b{ font-weight:500; display:block; }
   .toggle span{ font-size:13px; color:var(--muted); }
   .switch{ position:relative; width:52px; height:30px; }
   .switch input{ position:absolute; opacity:0; width:100%; height:100%; margin:0; cursor:pointer; z-index:1; }
-  .switch i{ position:absolute; inset:0; background:#cfcbc2; border-radius:999px; transition:background .2s; }
-  .switch i::after{ content:""; position:absolute; top:3px; left:3px; width:24px; height:24px; border-radius:50%; background:#fff; transition:transform .2s; box-shadow:0 1px 2px rgba(0,0,0,.2); }
-  .switch input:checked + i{ background:var(--ok); }
+  .switch i{ position:absolute; inset:0; background:#cfcfcf; border-radius:999px; transition:background .2s; }
+  .switch i::after{ content:""; position:absolute; top:3px; left:3px; width:24px; height:24px; border-radius:50%; background:#fff; transition:transform .2s; box-shadow:0 1px 2px rgba(0,0,0,.25); }
+  .switch input:checked + i{ background:var(--ink); }
   .switch input:checked + i::after{ transform:translateX(22px); }
-  .switch input:focus-visible + i{ outline:2px solid var(--navy); outline-offset:2px; }
-  .btn{ display:flex; align-items:center; justify-content:center; width:100%; min-height:54px; padding:14px 18px; border:1px solid var(--navy); background:var(--navy); color:#fff; font-size:13px; letter-spacing:.18em; text-transform:uppercase; text-decoration:none; }
-  .btn:disabled{ opacity:.55; cursor:wait; }
-  .btn.ghost{ background:var(--paper); color:var(--navy); }
+  .switch input:focus-visible + i{ outline:2px solid var(--ink); outline-offset:2px; }
+  .send{ width:100%; }
   .msg{ font-size:14px; min-height:1.3em; }
   .msg.err{ color:var(--red); }
-  .done{ text-align:center; padding:8px 0; }
-  .done .big{ font-size:46px; line-height:1; margin-bottom:10px; }
-  .done h2{ margin-bottom:8px; }
-  .done p{ color:var(--muted); margin-bottom:18px; }
-  .lnk{ background:none; border:0; padding:0; color:var(--navy); text-decoration:underline; font-size:14px; }
-  .again{ margin-top:16px; font-size:14px; color:#a8a8a8; text-align:center; }
-  .again .lnk{ color:#e6e6e6; }
-  .again label.f{ color:#a8a8a8; }
-  .again .btn.ghost{ background:transparent; color:#fff; border-color:#8c8c8c; }
-  .again form{ text-align:left; }
-  footer{ text-align:center; font-size:13px; color:#8c8c8c; letter-spacing:.12em; padding:56px 0 8px; }
+  .done{ text-align:center; padding:10px 0; }
+  .done .bigicon{ font-size:52px; line-height:1; margin-bottom:12px; }
+  .done h3{ margin-bottom:8px; }
+  .done p{ color:var(--muted); margin-bottom:22px; }
+  .again{ margin-top:18px; font-size:14px; color:var(--steel); }
+  .lnk{ background:none; border:0; padding:0; color:#e6e6e6; text-decoration:underline; font-size:14px; }
+  .again form{ margin-top:12px; }
+  .again label.f{ color:var(--steel); }
+  footer{ text-align:center; padding:70px 24px 60px; border-top:1px solid var(--edge); }
+  footer .sig{ font-family:var(--serif); font-size:30px; }
+  footer p{ font-size:12px; letter-spacing:.24em; text-transform:uppercase; color:var(--steel); margin-top:6px; }
 
-  @media (min-width:900px){
-    .page{ grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
-    .photo{ aspect-ratio:auto; max-height:none; position:sticky; top:0; height:100vh; order:2; }
-    .photo img{ object-position:50% 30%; }
-    .copy{ padding:80px 56px 60px; max-width:640px; }
-    h1{ font-size:72px; }
-    .when{ font-size:30px; }
+  /* ---------- reveal on scroll ---------- */
+  .rv{ opacity:0; transform:translateY(22px); transition:opacity .8s ease, transform .8s ease; }
+  .rv.in{ opacity:1; transform:none; }
+
+  /* ---------- phone ---------- */
+  @media (max-width:900px){
+    .hero{ grid-template-columns:1fr; min-height:0; }
+    .hero-photo{ order:-1; height:62vh; min-height:380px; max-height:560px; }
+    .hero-photo::after{ background:linear-gradient(0deg, rgba(11,11,11,1) 0%, rgba(11,11,11,.85) 18%, rgba(11,11,11,0) 55%); }
+    .hero-copy{ padding:0 22px 48px; margin-top:-90px; }
+    .count{ position:relative; left:auto; bottom:auto; min-width:0; margin:30px 0 0; width:100%; }
+    .count b{ font-size:38px; }
+    .facts{ grid-template-columns:1fr; }
+    .fact{ border-right:0; border-bottom:1px solid var(--line); padding:30px 22px; }
+    section.band{ padding:72px 0; }
+    .head{ grid-template-columns:1fr; gap:14px; margin-bottom:34px; }
+    .vibe{ grid-template-columns:1fr; }
+    .gift{ grid-template-columns:1fr; padding:28px 24px; }
+    .wall{ grid-template-columns:1fr 1fr; grid-auto-rows:150px; gap:8px; grid-template-areas:"a a" "a a" "b c" "d c" "e e" "f f"; }
+    .rsvp-grid{ grid-template-columns:1fr; gap:36px; }
+    .card{ padding:26px 20px; }
+    .ribbon span{ font-size:17px; padding:0 18px; }
   }
+  @media (max-width:420px){ .row3{ grid-template-columns:1fr 1fr; } .row3 .city{ grid-column:1/-1; } }
+  @media (prefers-reduced-motion:reduce){ .ribbon-track{ animation:none; } .rv{ opacity:1; transform:none; transition:none; } }
 </style>
 </head>
 <body>
-<div class="page">
-  <div class="photo"><img src="/big-50/hero.jpg" alt="Jennifer sitting on her kitchen counter with a glass of champagne and two big 50 balloons" width="666" height="1182"></div>
-  <main class="copy">
-    <div class="back" id="back" hidden><span>You've already RSVP'd.</span><a id="backLink" href="#">My party page</a></div>
-    <div class="kick">You're invited</div>
-    <h1>Jennifer's <span>Big 5-0</span></h1>
-    <p class="when" id="when">Wednesday, January 27, 2027<small>7:00 – 11:00pm</small></p>
-    <hr class="rule">
-    <div class="where">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
-      <div id="where"><b>Location coming soon</b><span>Your party page updates as soon as it's set.</span></div>
-    </div>
-    <p class="details" id="details">Lite fare, endless beverages and music that moves you.</p>
-    <div class="gift" id="gift"><span id="giftNote">My gift is your good vibes, but if you feel the need, you can donate to one of my favorite charities.</span><br><a id="giftLink" href="#" target="_blank" rel="noopener" hidden></a></div>
 
-    <section class="rsvp" id="rsvp" aria-labelledby="rsvpTitle">
-      <div id="ask">
-        <h2 id="rsvpTitle">Will you be there?</h2>
-        <p class="sub" id="rsvpSub">Let Jennifer know by tapping one.</p>
-        <div class="choice" role="group" aria-label="Your answer">
-          <button type="button" id="yes" aria-pressed="false">I'm attending 🥂</button>
-          <button type="button" id="no" aria-pressed="false">Can't make it</button>
-        </div>
-        <form id="form" novalidate hidden>
-          <div id="who"><div class="row2">
-            <label class="f">First name<input id="first" autocomplete="given-name" required></label>
-            <label class="f">Last name<input id="last" autocomplete="family-name" required></label>
+<header class="hero">
+  <canvas id="confetti" aria-hidden="true"></canvas>
+  <div class="hero-copy">
+    <div class="back" id="back" hidden><span>You've already RSVP'd 🥂</span><a id="backLink" href="#">My party page</a></div>
+    <div class="kick" id="kick">You're invited · Hosted by Jennifer</div>
+    <h1>Jennifer's <span class="big chrome">Big 5-0</span></h1>
+    <p class="date" id="date">Wednesday, January 27, 2027</p>
+    <p class="time" id="time">7:00 – 11:00pm</p>
+    <p class="lede" id="lede">Lite fare, endless beverages and music that moves you.</p>
+    <div class="ctas">
+      <a class="btn" href="#rsvp" id="heroRsvp">RSVP now</a>
+      <a class="btn line" href="#vibe">See the details</a>
+    </div>
+  </div>
+  <div class="hero-photo">
+    <img src="/big-50/hero.jpg" alt="Jennifer on her kitchen counter with champagne and two big 50 balloons" width="666" height="1182">
+    <div class="count" id="count" aria-live="off">
+      <div class="kick">The countdown</div>
+      <div class="units" id="units">
+        <div><b id="cD">--</b><span>Days</span></div>
+        <div><b id="cH">--</b><span>Hours</span></div>
+        <div><b id="cM">--</b><span>Mins</span></div>
+        <div><b id="cS">--</b><span>Secs</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="ribbon" aria-hidden="true"><div class="ribbon-track" id="ribbon"></div></div>
+
+<div class="facts">
+  <div class="fact rv">
+    <div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="1"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>When</div>
+    <div class="big" id="fWhen">Wednesday, January 27, 2027</div>
+    <div class="sm" id="fWhenSm">7:00 – 11:00pm</div>
+  </div>
+  <div class="fact rv">
+    <div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Where</div>
+    <div class="big" id="fWhere">Location coming soon</div>
+    <div class="sm" id="fWhereSm">Your party page updates the moment it's set.</div>
+  </div>
+  <div class="fact rv">
+    <div class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 3l3 2 3-2 4 3-2 4h-2v11H9V10H7L5 6z"/></svg>Dress</div>
+    <div class="big" id="fDress">Coming soon</div>
+    <div class="sm" id="fDressSm">Jennifer will share the dress code soon.</div>
+  </div>
+</div>
+
+<section class="band" id="vibe">
+  <div class="wrap">
+    <div class="head rv">
+      <h2>The <span class="chrome">vibe</span></h2>
+      <p id="details">Lite fare, endless beverages and music that moves you.</p>
+    </div>
+    <div class="vibe">
+      <div class="vcard rv"><span class="n">01</span>
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="32" cy="34" r="17"/><circle cx="32" cy="34" r="11"/><path d="M9 14v13a3 3 0 0 0 3 3v20M9 14v8M15 14v8M12 14v8"/><path d="M55 14c-4 2-5 8-5 14h5v22"/></svg>
+        <h3>Lite fare</h3><p>Bites to keep you going all night.</p></div>
+      <div class="vcard rv"><span class="n">02</span>
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M17 10h12l-1 14a5 5 0 0 1-10 0z" transform="rotate(-14 23 24)"/><path d="M21 30l-3 20M13 51h10" transform="rotate(-14 23 24)"/><path d="M35 10h12l-1 14a5 5 0 0 1-10 0z" transform="rotate(14 41 24)"/><path d="M41 30l3 20M39 51h10" transform="rotate(14 41 24)"/><path d="M32 4v4M26 6l2 3M38 6l-2 3"/></svg>
+        <h3>Endless beverages</h3><p>Glasses up. Refills on repeat.</p></div>
+      <div class="vcard rv"><span class="n">03</span>
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="28" cy="34" r="20"/><circle cx="28" cy="34" r="6"/><circle cx="28" cy="34" r="1.5"/><path d="M28 20a14 14 0 0 1 14 14M28 24a10 10 0 0 1 10 10"/><path d="M52 8v26M52 8l8 3"/><circle cx="48" cy="35" r="4"/></svg>
+        <h3>Music that moves you</h3><p>Bring your dancing shoes.</p></div>
+    </div>
+    <div class="gift rv" id="gift">
+      <div><q id="giftNote">My gift is your good vibes, but if you feel the need, you can donate to one of my favorite charities.</q></div>
+      <a class="btn dark" id="giftLink" href="#" target="_blank" rel="noopener" hidden>Donate</a>
+    </div>
+  </div>
+</section>
+
+<section class="band" style="padding-top:0">
+  <div class="wrap">
+    <div class="head rv">
+      <h2>Fifty years <span class="chrome">in the making</span></h2>
+      <p>Grab a glass. We're celebrating all of it.</p>
+    </div>
+    <div class="wall" id="wall"></div>
+  </div>
+</section>
+
+<section class="band rsvp-band" id="rsvp">
+  <div class="wrap rsvp-grid">
+    <div class="rsvp-intro rv">
+      <div class="kick">RSVP</div>
+      <h2>Save me <span class="chrome">a spot</span></h2>
+      <p>Tap your answer, add your +1, and you're set. Jennifer can't wait to celebrate with you.</p>
+      <ol class="steps">
+        <li><b class="chrome">1</b><div><strong>RSVP here</strong><span>Name, cell, email and where to mail your thank-you card.</span></div></li>
+        <li><b class="chrome">2</b><div><strong>Get your party page</strong><span>Venue, time, dress, hotel picks and the Photo Booth, all in one link.</span></div></li>
+        <li><b class="chrome">3</b><div><strong>Cheers on the 27th</strong><span>Snap photos with Jen and drop them in the Photo Booth.</span></div></li>
+      </ol>
+    </div>
+
+    <div>
+      <div class="card" id="rsvpCard">
+        <div id="ask">
+          <h3 id="rsvpTitle">Will you be there?</h3>
+          <p class="sub" id="rsvpSub">Let Jennifer know by tapping one.</p>
+          <div class="choice" role="group" aria-label="Your answer" id="choice">
+            <button type="button" id="yes" aria-pressed="false">I'm attending 🥂</button>
+            <button type="button" id="no" aria-pressed="false">Can't make it</button>
           </div>
-          <label class="f">Email<input id="email" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" required></label>
-          <label class="f">Cell phone<input id="phone" type="tel" inputmode="tel" autocomplete="tel" required></label></div>
-          <label class="f" id="emailOpt" hidden>Email (optional)<input id="email2" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="For your confirmation and party updates"></label>
-          <div id="yesOnly">
-            <div class="toggle">
-              <div><b>Bringing a +1?</b><span>Just let us know their name.</span></div>
-              <label class="switch"><input type="checkbox" id="plus" aria-label="Bringing a plus one"><i></i></label>
+          <form id="form" novalidate hidden>
+            <div id="who">
+              <div class="row2">
+                <label class="f">First name<input id="first" autocomplete="given-name" required></label>
+                <label class="f">Last name<input id="last" autocomplete="family-name" required></label>
+              </div>
+              <div style="display:grid;gap:14px;margin-top:14px">
+                <label class="f" id="emailReq">Email<input id="email" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" required></label>
+                <label class="f">Cell phone<input id="phone" type="tel" inputmode="tel" autocomplete="tel" required></label>
+              </div>
             </div>
-            <label class="f" id="plusWrap" hidden style="margin-top:14px">Your +1's name<input id="plusName" autocomplete="off"></label>
-          </div>
-          <label class="f">A note for Jennifer (optional)<textarea id="note" maxlength="1000" placeholder="Birthday wishes welcome"></textarea></label>
-          <button class="btn" type="submit" id="send">Send my RSVP</button>
-          <p class="msg" id="msg" role="status"></p>
+            <label class="f" id="emailOpt" hidden>Email (optional)<input id="email2" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="For your confirmation and party updates"></label>
+            <div id="yesOnly">
+              <div class="toggle">
+                <div><b>Bringing a +1?</b><span>Just let us know their name.</span></div>
+                <label class="switch"><input type="checkbox" id="plus" aria-label="Bringing a plus one"><i></i></label>
+              </div>
+              <label class="f" id="plusWrap" hidden style="margin-top:14px">Your +1's name<input id="plusName" autocomplete="off"></label>
+              <p class="grp" style="margin-top:20px">Mailing address<small>So Jennifer can send you a thank-you card.</small></p>
+              <div style="display:grid;gap:14px;margin-top:12px">
+                <label class="f">Street address<input id="street" autocomplete="address-line1"></label>
+                <label class="f">Apartment, suite, etc. (optional)<input id="street2" autocomplete="address-line2"></label>
+                <div class="row3">
+                  <label class="f city">City<input id="city" autocomplete="address-level2"></label>
+                  <label class="f">State<input id="state" autocomplete="address-level1" maxlength="20"></label>
+                  <label class="f">ZIP<input id="zip" autocomplete="postal-code" inputmode="numeric" maxlength="10"></label>
+                </div>
+              </div>
+            </div>
+            <label class="f">A note for Jennifer (optional)<textarea id="note" maxlength="1000" placeholder="Birthday wishes welcome"></textarea></label>
+            <button class="btn dark send" type="submit" id="send">Send my RSVP</button>
+            <p class="msg" id="msg" role="status"></p>
+          </form>
+        </div>
+        <div class="done" id="done" hidden>
+          <div class="bigicon" id="doneIcon">🥂</div>
+          <h3 id="doneTitle">You're on the list!</h3>
+          <p id="doneText"></p>
+          <a class="btn dark send" id="doneBtn" href="#">Open my party page</a>
+        </div>
+      </div>
+      <div class="again" id="againWrap">
+        Already RSVP'd? <button type="button" class="lnk" id="againBtn">Email me my link</button>
+        <form id="againForm" hidden>
+          <label class="f">The email you RSVP'd with<input id="againEmail" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" required></label>
+          <button class="btn line" type="submit" id="againSend">Send my link</button>
+          <p class="msg" id="againMsg" role="status"></p>
         </form>
       </div>
-
-      <div class="done" id="done" hidden>
-        <div class="big" id="doneIcon">🥂</div>
-        <h2 id="doneTitle">You're on the list!</h2>
-        <p id="doneText"></p>
-        <a class="btn" id="doneBtn" href="#">Open my party page</a>
-      </div>
-    </section>
-
-    <div class="again" id="againWrap">
-      Already RSVP'd? <button type="button" class="lnk" id="againBtn">Email me my link</button>
-      <form id="againForm" hidden>
-        <label class="f">The email you RSVP'd with<input id="againEmail" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" required></label>
-        <button class="btn ghost" type="submit" id="againSend">Send my link</button>
-        <p class="msg" id="againMsg" role="status"></p>
-      </form>
     </div>
-    <footer>With love, Jennifer</footer>
-  </main>
-</div>
+  </div>
+</section>
+
+<footer>
+  <div class="sig chrome">With love, Jennifer</div>
+  <p>Cheers to 50</p>
+</footer>
 
 <script>
 (function(){
   var API = 'https://agnpwmdwofrdyqzttmlv.supabase.co/functions/v1/big-50';
   var KEY = 'big50R';
   var $ = function(id){ return document.getElementById(id); };
-  var answer = null;
+  var answer = null, startsAt = new Date('2027-01-28T02:00:00Z');
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function stored(){ try { return localStorage.getItem(KEY) || ''; } catch(e){ return ''; } }
   function store(v){ try { localStorage.setItem(KEY, v); } catch(e){} }
@@ -202,59 +378,201 @@
       .then(function(r){ return r.json(); });
   }
 
-  // returning guest on this phone: point them at their own page
-  var R = stored();
-  if (R && !new URLSearchParams(location.search).get('i')){ $('back').hidden = false; $('backLink').href = '/big-50/party?r=' + encodeURIComponent(R); }
+  // ---------- ribbon ----------
+  (function(){
+    var words = ['Lite fare','Endless beverages','Music that moves you','Good vibes only','Cheers to 50','Wednesday · January 27'];
+    var one = words.map(function(w){ return '<span>' + w + '</span><i>✦</i>'; }).join('');
+    $('ribbon').innerHTML = one + one;
+  })();
 
-  // live party details (location, notes, charity link) straight from Jennifer's team page
+  // ---------- countdown ----------
+  function pad(n){ return (n < 10 ? '0' : '') + n; }
+  function tick(){
+    var ms = startsAt - Date.now();
+    if (ms <= 0){
+      var after = Date.now() - startsAt < 5 * 3600e3;
+      $('units').innerHTML = '<div class="today chrome" style="grid-column:1/-1;text-align:left">' + (after ? 'It’s party time! 🥂' : 'Thank you for celebrating!') + '</div>';
+      return false;
+    }
+    var s = Math.floor(ms / 1000);
+    $('cD').textContent = Math.floor(s / 86400); $('cH').textContent = pad(Math.floor(s % 86400 / 3600));
+    $('cM').textContent = pad(Math.floor(s % 3600 / 60)); $('cS').textContent = pad(s % 60);
+    return true;
+  }
+  if (tick()) setInterval(tick, 1000);
+  // phones: the countdown sits under the buttons instead of over the photo
+  (function(){
+    var mq = matchMedia('(max-width:900px)'), card = $('count'), photo = document.querySelector('.hero-photo'), copy = document.querySelector('.hero-copy');
+    function place(){ if (mq.matches) copy.appendChild(card); else photo.appendChild(card); }
+    place(); mq.addEventListener ? mq.addEventListener('change', place) : mq.addListener(place);
+  })();
+
+  // ---------- confetti (gentle in the hero, a burst when someone says yes) ----------
+  var conf = (function(){
+    var cv = $('confetti'), cx = cv.getContext('2d'), parts = [], W = 0, H = 0, dpr = Math.min(2, window.devicePixelRatio || 1), running = false;
+    var cols = ['#ffffff','#e6e6e6','#c9c9c9','#a6a6a6','#d8d8d8','#8f8f8f'];
+    function size(){ var r = cv.getBoundingClientRect(); W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; cx.setTransform(dpr,0,0,dpr,0,0); }
+    function make(x, y, burst){
+      var a = burst ? Math.random() * Math.PI * 2 : Math.PI / 2, sp = burst ? 4 + Math.random() * 7 : .4 + Math.random() * .8;
+      return { x:x, y:y, vx:Math.cos(a) * sp + (burst ? 0 : (Math.random() - .5) * .3), vy:Math.sin(a) * sp - (burst ? 5 : 0),
+        w:4 + Math.random() * 6, h:7 + Math.random() * 9, r:Math.random() * 6, vr:(Math.random() - .5) * .2,
+        c:cols[(Math.random() * cols.length) | 0], g:burst ? .18 : .006, life:burst ? 160 : 9e9, shape:Math.random() < .3 ? 'dot' : 'bar' };
+    }
+    function frame(){
+      cx.clearRect(0, 0, W, H);
+      for (var i = parts.length - 1; i >= 0; i--){
+        var p = parts[i]; p.vy += p.g; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life--;
+        if (p.y > H + 20 || p.life <= 0){ if (p.ambient){ parts[i] = Object.assign(make(Math.random() * W, -20, false), { ambient:true }); } else parts.splice(i, 1); continue; }
+        cx.save(); cx.translate(p.x, p.y); cx.rotate(p.r); cx.fillStyle = p.c; cx.globalAlpha = p.ambient ? .55 : .95;
+        if (p.shape === 'dot'){ cx.beginPath(); cx.arc(0, 0, p.w / 2, 0, Math.PI * 2); cx.fill(); } else cx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * .45);
+        cx.restore();
+      }
+      if (parts.length) requestAnimationFrame(frame); else running = false;
+    }
+    function go(){ if (!running){ running = true; requestAnimationFrame(frame); } }
+    size(); window.addEventListener('resize', size);
+    return {
+      ambient:function(n){ if (reduce) return; for (var i = 0; i < n; i++) parts.push(Object.assign(make(Math.random() * W, Math.random() * H, false), { ambient:true })); go(); },
+      burst:function(el){
+        if (reduce) return;
+        // burst from the RSVP card: draw on a fixed full-screen canvas
+        var r = el.getBoundingClientRect(); cv.style.position = 'fixed'; cv.style.zIndex = 50; size();
+        parts = parts.filter(function(p){ return !p.ambient; });
+        for (var i = 0; i < 180; i++) parts.push(make(r.left + r.width / 2, r.top + 60, true));
+        go();
+      }
+    };
+  })();
+  conf.ambient(window.innerWidth < 700 ? 26 : 46);
+
+  // ---------- reveal on scroll ----------
+  if ('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, { rootMargin:'0px 0px -8% 0px' });
+    document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+  } else document.querySelectorAll('.rv').forEach(function(el){ el.classList.add('in'); });
+
+  // ---------- photo wall: Jennifer's photos, with designed stand-ins until she adds her own ----------
+  var ART = [
+    // disco ball
+    '<svg class="art" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice"><defs><radialGradient id="g1" cx="40%" cy="35%"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#9b9b9b"/><stop offset="1" stop-color="#2a2a2a"/></radialGradient><pattern id="m1" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="none" stroke="#111" stroke-width="1.4"/></pattern></defs><rect width="400" height="400" fill="#141414"/><line x1="200" y1="0" x2="200" y2="96" stroke="#777" stroke-width="2"/><circle cx="200" cy="210" r="112" fill="url(#g1)"/><circle cx="200" cy="210" r="112" fill="url(#m1)" opacity=".7"/><g fill="#fff"><path d="M88 96l4 10 10 4-10 4-4 10-4-10-10-4 10-4z"/><path d="M318 300l3 8 8 3-8 3-3 8-3-8-8-3 8-3z"/><path d="M320 80l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></g></svg>',
+    // 50 outline + sparkles
+    '<svg class="art" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#9a9a9a"/><stop offset="1" stop-color="#e9e9e9"/></linearGradient></defs><rect width="400" height="400" fill="#0e0e0e"/><text x="200" y="262" text-anchor="middle" font-family="Marcellus, Georgia, serif" font-size="210" fill="none" stroke="url(#g2)" stroke-width="3">50</text><g fill="#ddd"><circle cx="70" cy="80" r="3"/><circle cx="330" cy="330" r="3"/><circle cx="345" cy="70" r="2"/><circle cx="60" cy="320" r="2"/></g></svg>',
+    // champagne coupe tower
+    '<svg class="art" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice"><rect width="400" height="400" fill="#171717"/><g fill="none" stroke="#d6d6d6" stroke-width="2.4" stroke-linecap="round"><path d="M160 120h80c0 26-18 40-40 40s-40-14-40-40zM200 160v40M184 200h32"/><path d="M110 210h80c0 26-18 40-40 40s-40-14-40-40zM150 250v40M134 290h32"/><path d="M210 210h80c0 26-18 40-40 40s-40-14-40-40zM250 250v40M234 290h32"/></g><g fill="#fff" opacity=".85"><circle cx="196" cy="100" r="4"/><circle cx="210" cy="86" r="3"/><circle cx="190" cy="72" r="2.4"/><circle cx="214" cy="60" r="2"/></g></svg>',
+    // cake
+    '<svg class="art" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice"><rect width="400" height="400" fill="#121212"/><g fill="none" stroke="#d9d9d9" stroke-width="2.4" stroke-linecap="round"><rect x="110" y="220" width="180" height="80"/><rect x="140" y="170" width="120" height="50"/><path d="M110 250c22 14 45 14 60 0s40-14 60 0 45 14 60 0M140 194c20 10 40 10 60 0s40-10 60 0"/><path d="M180 170v-28M200 170v-34M220 170v-28"/></g><g fill="#fff"><path d="M180 134c-5-7 0-14 0-14s5 7 0 14zM200 128c-5-7 0-14 0-14s5 7 0 14zM220 134c-5-7 0-14 0-14s5 7 0 14z"/></g></svg>',
+    // balloons
+    '<svg class="art" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice"><defs><radialGradient id="g5" cx="35%" cy="30%"><stop offset="0" stop-color="#fff"/><stop offset=".6" stop-color="#a5a5a5"/><stop offset="1" stop-color="#4a4a4a"/></radialGradient></defs><rect width="400" height="400" fill="#101010"/><g stroke="#777" stroke-width="1.6" fill="none"><path d="M140 210c10 50-10 80 60 150M220 180c-6 60 10 110-20 180M290 220c-20 50-60 90-90 140"/></g><ellipse cx="140" cy="160" rx="52" ry="62" fill="url(#g5)"/><ellipse cx="225" cy="120" rx="58" ry="68" fill="url(#g5)"/><ellipse cx="292" cy="180" rx="46" ry="56" fill="url(#g5)"/></svg>',
+    // cheers script
+    '<svg class="art" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g6" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#a0a0a0"/><stop offset="1" stop-color="#ececec"/></linearGradient></defs><rect width="800" height="400" fill="#151515"/><text x="400" y="232" text-anchor="middle" font-family="Marcellus, Georgia, serif" font-size="120" letter-spacing="18" fill="url(#g6)">CHEERS</text><line x1="250" y1="276" x2="550" y2="276" stroke="#777" stroke-width="2"/><g fill="#fff"><path d="M150 120l5 13 13 5-13 5-5 13-5-13-13-5 13-5z"/><path d="M660 270l4 10 10 4-10 4-4 10-4-10-10-4 10-4z"/></g></svg>'
+  ];
+  function wall(photos){
+    var html = '';
+    for (var i = 0; i < 6; i++){
+      var u = photos[i] || (i === 0 ? '/big-50/hero.jpg' : '');
+      html += '<div class="tile t' + (i + 1) + ' rv in">' + (u ? '<img src="' + esc(u) + '" alt="" loading="lazy">' : ART[i]) + '</div>';
+    }
+    $('wall').innerHTML = html;
+  }
+  wall([]);
+
+  // ---------- live details from Jennifer's team page ----------
   fetch(API + '?action=info').then(function(r){ return r.json(); }).then(function(d){
     if (!d.ok) return; var p = d.party;
-    $('when').innerHTML = esc(p.date_label) + '<small>' + esc(p.time_label) + '</small>';
+    $('date').textContent = p.date_label; $('time').textContent = p.time_label;
+    $('fWhen').textContent = p.date_label; $('fWhenSm').textContent = p.time_label;
+    if (p.starts_at){ startsAt = new Date(p.starts_at); tick(); }
     if (p.location_name || p.location_address){
-      $('where').innerHTML = '<b>' + esc(p.location_name || p.location_address) + '</b>' +
-        (p.location_name && p.location_address ? '<span>' + esc(p.location_address) + '</span>' : '') +
-        (p.location_note ? '<span style="display:block">' + esc(p.location_note) + '</span>' : '');
-    } else if (p.location_note){
-      $('where').innerHTML = '<b>Location coming soon</b><span>' + esc(p.location_note) + '</span>';
-    }
-    $('details').textContent = p.details || '';
-    $('details').hidden = !p.details;
+      $('fWhere').textContent = p.location_name || p.location_address;
+      $('fWhereSm').textContent = [p.location_name ? p.location_address : '', p.location_note].filter(Boolean).join('\n');
+    } else if (p.location_note) $('fWhereSm').textContent = p.location_note;
+    if (p.dress_code){ $('fDress').textContent = p.dress_code.split('\n')[0]; $('fDressSm').textContent = p.dress_code.split('\n').slice(1).join('\n'); }
+    if (p.details){ $('details').textContent = p.details; $('lede').textContent = p.details; }
     $('giftNote').textContent = p.gift_note || '';
-    if (p.charity_url){ $('giftLink').href = p.charity_url; $('giftLink').textContent = (p.charity_label || 'Donate') + ' →'; $('giftLink').hidden = false; }
+    if (p.charity_url){ $('giftLink').href = p.charity_url; $('giftLink').textContent = p.charity_label || 'Donate'; $('giftLink').hidden = false; }
     $('gift').hidden = !p.gift_note && !p.charity_url;
-    if (p.rsvp_closed){
+    if (p.gallery && p.gallery.length) wall(p.gallery);
+    if (p.rsvp_closed && !INV){
       $('rsvpTitle').textContent = 'RSVPs are closed';
       $('rsvpSub').textContent = 'Text Jennifer if you have a question about the party.';
-      document.querySelector('.choice').hidden = true; $('form').hidden = true;
+      $('choice').hidden = true; $('form').hidden = true;
     }
   }).catch(function(){});
 
-  // ---- personal invite link from Jennifer: /big-50?i=<id> ----
+  // returning guest on this phone
+  var R = stored();
+  if (R && !new URLSearchParams(location.search).get('i')){ $('back').hidden = false; $('backLink').href = '/big-50/party?r=' + encodeURIComponent(R); }
+
+  // ---------- personal invite link from Jennifer: /big-50?i=<id> ----------
   var INV = new URLSearchParams(location.search).get('i') || '';
   if (INV && !/^[0-9a-f-]{36}$/i.test(INV)) INV = '';
   if (INV){
     post('guest', { r: INV }).then(function(d){
-      if (!d.ok){ INV = ''; return; }              // bad link: fall back to the general invite
+      if (!d.ok){ INV = ''; return; }
       if (d.me.attending !== null){ location.replace('/big-50/party?r=' + encodeURIComponent(INV)); return; }
-      $('first').value = d.me.first_name || ''; $('last').value = d.me.last_name || ''; $('phone').value = d.me.phone || '';
-      $('email2').value = d.me.email || '';
+      var m = d.me;
+      $('first').value = m.first_name || ''; $('last').value = m.last_name || ''; $('phone').value = m.phone || ''; $('email2').value = m.email || '';
+      $('street').value = m.street || ''; $('street2').value = m.street2 || ''; $('city').value = m.city || ''; $('state').value = m.state || ''; $('zip').value = m.zip || '';
       $('who').hidden = true; $('emailOpt').hidden = false;
-      document.querySelector('.kick').textContent = (d.me.first_name || 'You') + ', you’re invited';
-      $('rsvpTitle').textContent = 'Will you be there, ' + (d.me.first_name || 'friend') + '?';
+      $('kick').textContent = (m.first_name || 'You') + ', you’re invited';
+      $('rsvpTitle').textContent = 'Will you be there, ' + (m.first_name || 'friend') + '?';
+      $('heroRsvp').textContent = 'RSVP, ' + (m.first_name || 'friend');
       $('againWrap').hidden = true;
     }).catch(function(){ INV = ''; });
   }
-  function respond(body){
-    if (body.plus_one && !body.plus_one_name){ bad(['plus_one_name']); $('msg').className = 'msg err'; $('msg').textContent = 'Add your +1’s name, or switch the +1 off.'; return; }
-    var em = $('email2').value.trim();
-    if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)){ $('msg').className = 'msg err'; $('msg').textContent = 'That email doesn’t look right.'; return; }
-    var btn = $('send'), label = btn.textContent; btn.disabled = true; btn.textContent = 'Sending…'; $('msg').textContent = '';
-    post('respond', { r: INV, attending: answer, plus_one: body.plus_one, plus_one_name: body.plus_one_name, email: em, note: body.note }).then(function(d){
-      btn.disabled = false; btn.textContent = label;
-      if (!d.ok){ $('msg').className = 'msg err'; $('msg').textContent = d.error === 'email_taken' ? 'Someone already RSVP’d with that email. Leave it blank or use another.' : 'That didn’t go through. Please try again.'; return; }
-      store(INV); showDone(INV, false, '');
-    }).catch(function(){ btn.disabled = false; btn.textContent = label; $('msg').className = 'msg err'; $('msg').textContent = 'Check your connection and try again.'; });
+
+  function choose(yes){
+    answer = yes;
+    $('yes').setAttribute('aria-pressed', String(yes)); $('no').setAttribute('aria-pressed', String(!yes));
+    $('form').hidden = false; $('yesOnly').hidden = !yes;
+    $('send').textContent = yes ? 'Count me in' : 'Send my RSVP';
+    $('msg').textContent = '';
+    if (yes) conf.burst($('yes'));
   }
+  $('yes').addEventListener('click', function(){ choose(true); });
+  $('no').addEventListener('click', function(){ choose(false); });
+  $('plus').addEventListener('change', function(){ $('plusWrap').hidden = !this.checked; if (this.checked) $('plusName').focus(); });
+
+  var LABEL = { first:'first name', last:'last name', email:'email', phone:'cell phone', street:'street address', city:'city', state:'state', zip:'ZIP', plus_one_name:'+1’s name' };
+  var FIELD = { first:'first', last:'last', email:'email', phone:'phone', street:'street', city:'city', state:'state', zip:'zip', plus_one_name:'plusName' };
+  function bad(keys){
+    document.querySelectorAll('label.f.bad').forEach(function(l){ l.classList.remove('bad'); });
+    keys.forEach(function(k){ var el = $(FIELD[k]); if (el) el.parentNode.classList.add('bad'); });
+    if (keys.length){ var first = $(FIELD[keys[0]]); if (first && first.offsetParent) first.focus(); }
+  }
+  function err(t){ $('msg').className = 'msg err'; $('msg').textContent = t; }
+
+  $('form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var v = function(id){ return $(id).value.trim(); };
+    var body = { attending: answer, first:v('first'), last:v('last'), email: INV ? v('email2') : v('email'), phone:v('phone'), note:v('note'),
+      plus_one: answer && $('plus').checked, plus_one_name: v('plusName'),
+      street: answer ? v('street') : '', street2: answer ? v('street2') : '', city: answer ? v('city') : '', state: answer ? v('state') : '', zip: answer ? v('zip') : '' };
+    var need = INV ? [] : ['first','last','email','phone'];
+    if (answer){ need = need.concat(['street','city','state','zip']); if (body.plus_one) need.push('plus_one_name'); }
+    var missing = need.filter(function(k){ return !body[k]; });
+    if (missing.length){ bad(missing); return err('Please add your ' + missing.map(function(k){ return LABEL[k]; }).join(', ') + '.'); }
+    if ((body.email || !INV) && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(body.email)){ bad(INV ? [] : ['email']); return err('That email doesn’t look right.'); }
+    if (!INV && body.phone.replace(/\D/g,'').length < 10){ bad(['phone']); return err('Please add your full cell number, area code first.'); }
+    bad([]);
+    var btn = $('send'), label = btn.textContent; btn.disabled = true; btn.textContent = 'Sending…'; $('msg').textContent = '';
+    var req = INV ? post('respond', Object.assign({ r: INV }, body)) : post('rsvp', body);
+    req.then(function(d){
+      btn.disabled = false; btn.textContent = label;
+      if (!d.ok){
+        if (d.error === 'missing'){ bad(d.fields || []); return err('Please fill in the highlighted fields.'); }
+        if (d.error === 'email'){ bad(['email']); return err('That email doesn’t look right.'); }
+        if (d.error === 'email_taken') return err('Someone already RSVP’d with that email. Leave it blank or use another.');
+        if (d.error === 'phone'){ bad(['phone']); return err('Please add your full cell number.'); }
+        if (d.error === 'closed') return err('RSVPs are closed. Text Jennifer if you have a question.');
+        return err('That didn’t go through. Please try again.');
+      }
+      var id = INV || d.id;
+      if (!d.duplicate) store(id);
+      showDone(id, d.duplicate, body.email);
+    }).catch(function(){ btn.disabled = false; btn.textContent = label; err('Check your connection and try again.'); });
+  });
+
   function showDone(id, duplicate, email){
     $('ask').hidden = true; $('done').hidden = false; $('againWrap').hidden = true;
     if (duplicate){
@@ -265,7 +583,8 @@
       var link = '/big-50/party?r=' + encodeURIComponent(id);
       $('doneBtn').href = link;
       if (answer){
-        $('doneText').textContent = 'Jennifer can’t wait to celebrate with you. Your party page has the latest details and a party chat for photos.';
+        $('doneText').textContent = 'Jennifer can’t wait to celebrate with you. Your party page has the venue, time, dress, hotel picks and the Photo Booth.';
+        conf.burst($('rsvpCard'));
       } else {
         $('doneIcon').textContent = '💛'; $('doneTitle').textContent = 'Thanks for letting Jennifer know';
         $('doneText').textContent = 'You’ll be missed! If plans change, you can update your RSVP from your party page.';
@@ -273,59 +592,8 @@
       }
       $('back').hidden = false; $('backLink').href = link;
     }
-    $('rsvp').scrollIntoView({ behavior:'smooth', block:'start' });
+    $('rsvpCard').scrollIntoView({ behavior:'smooth', block:'center' });
   }
-
-  function choose(yes){
-    answer = yes;
-    $('yes').setAttribute('aria-pressed', String(yes)); $('no').setAttribute('aria-pressed', String(!yes));
-    $('form').hidden = false; $('yesOnly').hidden = !yes;
-    $('send').textContent = yes ? 'Count me in' : 'Send my RSVP';
-    $('msg').textContent = '';
-    if (!$('first').value) $('first').focus({ preventScroll:true });
-    $('form').scrollIntoView({ behavior:'smooth', block:'nearest' });
-  }
-  $('yes').addEventListener('click', function(){ choose(true); });
-  $('no').addEventListener('click', function(){ choose(false); });
-  $('plus').addEventListener('change', function(){ $('plusWrap').hidden = !this.checked; if (this.checked) $('plusName').focus(); });
-
-  var LABEL = { first:'first name', last:'last name', email:'email', phone:'cell phone', plus_one_name:'+1’s name' };
-  var FIELD = { first:'first', last:'last', email:'email', phone:'phone', plus_one_name:'plusName' };
-  function bad(keys){
-    document.querySelectorAll('label.f.bad').forEach(function(l){ l.classList.remove('bad'); });
-    keys.forEach(function(k){ var el = $(FIELD[k]); if (el) el.parentNode.classList.add('bad'); });
-    if (keys.length){ var first = $(FIELD[keys[0]]); if (first) first.focus(); }
-  }
-
-  $('form').addEventListener('submit', function(e){
-    e.preventDefault();
-    var v = function(id){ return $(id).value.trim(); };
-    var body = { attending: answer, first:v('first'), last:v('last'), email:v('email'), phone:v('phone'), note:v('note'),
-      plus_one: answer && $('plus').checked, plus_one_name: v('plusName') };
-    if (INV) return respond(body);
-    var need = ['first','last','email','phone'];
-    if (answer && body.plus_one) need.push('plus_one_name');
-    var missing = need.filter(function(k){ return !body[k]; });
-    if (missing.length){ bad(missing); $('msg').className = 'msg err'; $('msg').textContent = 'Please add your ' + missing.map(function(k){ return LABEL[k]; }).join(', ') + '.'; return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(body.email)){ bad(['email']); $('msg').className = 'msg err'; $('msg').textContent = 'That email doesn’t look right.'; return; }
-    if (body.phone.replace(/\D/g,'').length < 10){ bad(['phone']); $('msg').className = 'msg err'; $('msg').textContent = 'Please add your full cell number, area code first.'; return; }
-    bad([]);
-    var btn = $('send'), label = btn.textContent; btn.disabled = true; btn.textContent = 'Sending…'; $('msg').textContent = '';
-    post('rsvp', body).then(function(d){
-      btn.disabled = false; btn.textContent = label;
-      if (!d.ok){
-        $('msg').className = 'msg err';
-        if (d.error === 'missing'){ bad(d.fields || []); $('msg').textContent = 'Please fill in the highlighted fields.'; }
-        else if (d.error === 'email'){ bad(['email']); $('msg').textContent = 'That email doesn’t look right.'; }
-        else if (d.error === 'phone'){ bad(['phone']); $('msg').textContent = 'Please add your full cell number.'; }
-        else if (d.error === 'closed'){ $('msg').textContent = 'RSVPs are closed. Text Jennifer if you have a question.'; }
-        else $('msg').textContent = 'That didn’t go through. Please try again.';
-        return;
-      }
-      if (!d.duplicate) store(d.id);
-      showDone(d.id, d.duplicate, body.email);
-    }).catch(function(){ btn.disabled = false; btn.textContent = label; $('msg').className = 'msg err'; $('msg').textContent = 'Check your connection and try again.'; });
-  });
 
   $('againBtn').addEventListener('click', function(){ $('againForm').hidden = false; $('againEmail').focus(); });
   $('againForm').addEventListener('submit', function(e){

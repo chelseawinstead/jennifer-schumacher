@@ -104,7 +104,7 @@ function confirmEmail(p: Party, g: Target) {
   if (g.attending) return render(p, g, {
     subject: "You're on the list for " + p.title + " 🥂",
     heading: "You're on the list, {first_name}!",
-    body: "I can't wait to celebrate with you.\n\nYour party page has the latest details (including the location once it's set) and a party chat where everyone can post pictures. Save this email so you can always find it.",
+    body: "I can't wait to celebrate with you.\n\nYour party page has the latest details (including the location once it's set) plus Jennifer's hotel picks and the Photo Booth, where everyone drops their photos from the night. Save this email so you can always find it.",
     button: "Open my party page",
   });
   return render(p, g, {
@@ -118,7 +118,7 @@ function linkEmail(p: Party, g: Target) {
   return render(p, g, {
     subject: "Your link for " + p.title,
     heading: "Here's your party page, {first_name}",
-    body: g.attending ? "You're already on the list. Here's your personal link for the details and the party chat." : "Here's your personal link. You can change your RSVP there anytime.",
+    body: g.attending ? "You're already on the list. Here's your personal link for the details and the Photo Booth." : "Here's your personal link. You can change your RSVP there anytime.",
     button: "Open my party page", details: g.attending,
   });
 }
@@ -143,6 +143,21 @@ async function deliver(id: string, kind: string, by: string, build: (p: Party, g
     console.error("email " + kind, e);
     return { ok: false, error: String(e).slice(0, 120) };
   }
+}
+
+const PHOTO_PREFIX = () => `${SUPA}/storage/v1/object/public/${BUCKET}/big-50/`;
+const isOurPhoto = (u: unknown) => typeof u === "string" && u.startsWith(PHOTO_PREFIX()) && /^[0-9a-f-]{36}\.jpg$/i.test(u.slice(PHOTO_PREFIX().length));
+async function uploadOne(d: unknown, maxBytes = 4_500_000): Promise<string | { error: string }> {
+  const m = /^data:image\/jpeg;base64,([A-Za-z0-9+/=]+)$/.exec(String(d || ""));
+  if (!m) return { error: "photo" };
+  const bytes = Uint8Array.from(atob(m[1]), (c) => c.charCodeAt(0));
+  if (bytes.length > maxBytes) return { error: "photo_too_big" };
+  const path = `big-50/${crypto.randomUUID()}.jpg`;
+  const up = await fetch(`${SUPA}/storage/v1/object/${BUCKET}/${path}`, {
+    method: "POST", headers: { ...storageAuth(), "Content-Type": "image/jpeg", "cache-control": "31536000" }, body: bytes,
+  });
+  if (!up.ok) { console.error("photo upload", up.status, await up.text()); return { error: "upload" }; }
+  return `${SUPA}/storage/v1/object/public/${BUCKET}/${path}`;
 }
 
 async function uploadPhotos(list: unknown): Promise<string[] | { error: string }> {
@@ -187,6 +202,7 @@ Deno.serve(async (req) => {
       const f = rsvpFields(b);
       const missing = ["first", "last", "email", "phone"].filter((k) => !(f as any)[k]);
       if (f.attending === null) missing.push("attending");
+      if (f.attending) for (const k of ["street", "city", "state", "zip"]) if (!(f as any)[k]) missing.push(k);
       if (f.attending && f.plus_one && !f.plus_one_name) missing.push("plus_one_name");
       if (missing.length) return json({ ok: false, error: "missing", fields: missing }, 400);
       if (!EMAIL.test(f.email)) return json({ ok: false, error: "email" }, 400);
@@ -227,7 +243,10 @@ Deno.serve(async (req) => {
       if (!UUID.test(id)) return json({ ok: false, reason: "not_found" }, 404);
       const f = rsvpFields(b);
       if (f.attending === null) return json({ ok: false, error: "missing", fields: ["attending"] }, 400);
-      if (f.attending && f.plus_one && !f.plus_one_name) return json({ ok: false, error: "missing", fields: ["plus_one_name"] }, 400);
+      const miss: string[] = [];
+      if (f.attending) for (const k of ["street", "city", "state", "zip"]) if (!(f as any)[k]) miss.push(k);
+      if (f.attending && f.plus_one && !f.plus_one_name) miss.push("plus_one_name");
+      if (miss.length) return json({ ok: false, error: "missing", fields: miss }, 400);
       if (f.email && !EMAIL.test(f.email)) return json({ ok: false, error: "email" }, 400);
       const [before] = await sql`select big_50.email_target(${id}::uuid) as t`;
       const [row] = await sql`select big_50.respond(${id}::uuid, ${sql.json(f)}) as r`;
@@ -238,6 +257,13 @@ Deno.serve(async (req) => {
         EdgeRuntime.waitUntil(deliver(id, "confirm", "auto", confirmEmail));
       }
       return json(row.r);
+    }
+
+    if (req.method === "POST" && action === "find") {
+      const b = await req.json().catch(() => ({}));
+      const [row] = await sql`select big_50.find_by_phone(${clean(b.phone, 40)}, ${clean(b.first, 80)}) as id`;
+      if (!row.id) { await new Promise((r) => setTimeout(r, 900)); return json({ ok: false }); }
+      return json({ ok: true, id: row.id });
     }
 
     if (req.method === "POST" && action === "link") {
@@ -267,9 +293,18 @@ Deno.serve(async (req) => {
       } else if (action === "feed-post") {
         const v = await sql`select (big_50._viewer(${id}::uuid)).id as vid`;
         if (!v[0].vid) return json({ ok: false }, 403);
-        const photos = await uploadPhotos(b.photos);
+        const list = Array.isArray(b.photos) ? b.photos.slice(0, 10) : [];
+        let photos: string[] | { error: string };
+        if (list.every(isOurPhoto)) photos = list as string[];
+        else photos = await uploadPhotos(list);
         if (!Array.isArray(photos)) return json({ ok: false, error: photos.error }, photos.error === "upload" ? 502 : 400);
         [row] = await sql`select big_50.feed_create(${id}::uuid, ${pid}::uuid, ${String(b.body ?? "").slice(0, 2000)}, ${photos}::text[]) as r`;
+      } else if (action === "feed-photo") {
+        const v = await sql`select (big_50._viewer(${id}::uuid)).id as vid`;
+        if (!v[0].vid) return json({ ok: false }, 403);
+        const u = await uploadOne(b.photo);
+        if (typeof u !== "string") return json({ ok: false, error: u.error }, u.error === "upload" ? 502 : 400);
+        return json({ ok: true, url: u });
       } else if (action === "feed-react") {
         if (!pid) return json({ ok: false }, 404);
         [row] = await sql`select big_50.feed_react(${id}::uuid, ${pid}::uuid, ${clean(b.emoji, 16)}) as r`;
@@ -301,9 +336,23 @@ Deno.serve(async (req) => {
       }
       if (action === "team-settings" && req.method === "POST") {
         const p: Record<string, unknown> = {};
-        for (const k of ["title", "date_label", "time_label", "location_name", "location_address", "location_note", "details", "gift_note", "charity_url", "charity_label"])
+        for (const k of ["title", "date_label", "time_label", "location_name", "location_address", "location_note", "details", "gift_note", "charity_url", "charity_label", "dress_code"])
           if (k in b) p[k] = String(b[k] ?? "").trim();
         if (p.charity_url && !/^https?:\/\//i.test(String(p.charity_url))) p.charity_url = "https://" + p.charity_url;
+        if (Array.isArray(b.hotels)) {
+          p.hotels = b.hotels.slice(0, 8).map((h: any) => {
+            let url = clean(h?.url, 500); if (url && !/^https?:\/\//i.test(url)) url = "https://" + url;
+            return { name: clean(h?.name, 120), note: clean(h?.note, 600), url, code: clean(h?.code, 200), phone: clean(h?.phone, 40) };
+          }).filter((h: any) => h.name);
+        }
+        if (Array.isArray(b.gallery)) {
+          const out: string[] = [];
+          for (const g of b.gallery.slice(0, 6)) {
+            if (isOurPhoto(g)) out.push(g);
+            else if (String(g || "").startsWith("data:image/jpeg")) { const u = await uploadOne(g); if (typeof u === "string") out.push(u); }
+          }
+          p.gallery = out;
+        }
         if ("rsvp_closed" in b) p.rsvp_closed = bool(b.rsvp_closed);
         if (b.app_closes_at && !isNaN(Date.parse(b.app_closes_at))) p.app_closes_at = new Date(b.app_closes_at).toISOString();
         const [row] = await sql`select big_50.team_settings_save(${sql.json(p)}) as d`;
@@ -356,6 +405,10 @@ Deno.serve(async (req) => {
         const results: Record<string, unknown> = {};
         for (const id of ids) results[id] = await deliver(id, "custom", "team", build);
         return json({ ok: true, results });
+      }
+      if (action === "team-photos") {
+        const [row] = await sql`select big_50.team_photos() as r`;
+        return json({ ok: true, photos: row.r });
       }
       if (action === "team-feed") {
         const [row] = await sql`select big_50.team_feed() as r`;

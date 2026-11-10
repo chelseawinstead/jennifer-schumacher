@@ -379,8 +379,29 @@
   .status .tick{ background:#ececec; }
   .status.no .tick{ background:#f3f3f3; }
   .soon{ background:#e6e6e6; color:#111; }
-  .tabs .wrap{ grid-template-columns:repeat(2,1fr); }
-  body.nochat .tabs{ display:none; }
+  .tabs .wrap{ grid-template-columns:repeat(3,1fr); }
+  .hotel{ display:grid; gap:6px; }
+  .hotel h3{ font-family:var(--serif); font-weight:400; font-size:26px; line-height:1.15; }
+  .hotel .sm{ font-size:15px; color:var(--muted); white-space:pre-line; }
+  .hotel .code{ display:inline-block; margin-top:6px; font-size:13px; letter-spacing:.06em; background:#efefef; padding:6px 10px; }
+  .hotel .actions{ margin-top:12px; }
+  .hotel .num{ font-family:var(--serif); font-size:15px; color:#9a9a9a; letter-spacing:.1em; }
+  .booth-hero{ background:#0b0b0b; color:#fff; padding:22px 20px; margin-bottom:14px; display:grid; gap:6px; }
+  .booth-hero h2{ font-family:var(--serif); font-weight:400; font-size:28px; line-height:1.1; }
+  .booth-hero p{ color:#bdbdbd; font-size:15px; }
+  .booth-add{ display:flex; align-items:center; justify-content:center; gap:10px; min-height:58px; margin-top:10px; background:#fff; color:#111; font-size:14px; letter-spacing:.14em; text-transform:uppercase; cursor:pointer; border:0; width:100%; }
+  .booth-add svg{ width:22px; height:22px; }
+  .views{ display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--line); margin-bottom:14px; background:var(--paper); }
+  .views button{ background:none; border:0; padding:11px; font-size:14px; color:var(--muted); }
+  .views button[aria-pressed="true"]{ background:#111; color:#fff; }
+  .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:3px; }
+  .grid button{ padding:0; border:0; background:#ddd; aspect-ratio:1; overflow:hidden; }
+  .grid img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .find{ background:var(--paper); border:1px solid var(--line); padding:22px 18px; display:grid; gap:12px; }
+  .find h2{ font-family:var(--serif); font-weight:400; font-size:26px; line-height:1.15; }
+  .find p{ font-size:15px; color:var(--muted); }
+  .find .two{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .up-bar{ height:4px; background:#e5e5e5; margin-top:8px; overflow:hidden; } .up-bar i{ display:block; height:100%; width:0; background:#111; transition:width .3s; }
   .status{ display:grid; grid-template-columns:44px minmax(0,1fr); gap:14px; align-items:center; }
   .status .tick{ width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; background:#ececec; }
   .status.no .tick{ background:#f3f3f3; }
@@ -432,7 +453,8 @@
 
   <nav class="tabs" aria-label="Sections"><div class="wrap" role="tablist">
     <button role="tab" data-tab="party" aria-selected="true">The Party</button>
-    <button role="tab" data-tab="chat" aria-selected="false">Chat<span class="tab-badge" id="chatBadge" hidden></span></button>
+    <button role="tab" data-tab="hotels" aria-selected="false">Hotels</button>
+    <button role="tab" data-tab="chat" aria-selected="false">Photo Booth<span class="tab-badge" id="chatBadge" hidden></span></button>
   </div></nav>
 
   <main class="wrap">
@@ -440,17 +462,43 @@
       <div class="card" id="rsvpCard"></div>
       <div class="card blk" id="whenCard"></div>
       <div class="card blk" id="whereCard"></div>
+      <div class="card blk" id="dressCard"></div>
       <div class="card blk" id="giftCard"></div>
     </section>
 
+    <section id="tab-hotels" hidden>
+      <div class="booth-hero"><h2>Jennifer's hotel picks</h2><p>Staying the night? These are her favorites nearby.</p></div>
+      <div id="hotelList"></div>
+    </section>
+
     <section id="tab-chat" hidden>
+      <div class="booth-hero" id="boothHero">
+        <h2>📸 Photo Booth</h2>
+        <p>Drop the photos you take tonight, especially the ones with Jen, so she can keep them all.</p>
+        <label class="booth-add" for="cmpFile" id="boothAdd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Add photos</label>
+      </div>
+      <div class="find" id="boothFind" hidden>
+        <h2>Find your RSVP</h2>
+        <p id="findText">Type your first name and the cell number you RSVP'd with to open the Photo Booth on this phone.</p>
+        <div class="two">
+          <label class="fld">First name<input id="fFirst" autocomplete="given-name"></label>
+          <label class="fld">Cell phone<input id="fPhone" type="tel" inputmode="tel" autocomplete="tel"></label>
+        </div>
+        <button class="btn solid" type="button" id="fGo">Open the Photo Booth</button>
+        <p class="msg" id="fMsg" role="status"></p>
+        <p class="help">Haven't RSVP'd yet? <a href="/big-50#rsvp">RSVP here</a>.</p>
+      </div>
       <div class="chat-closed" id="chatClosed" hidden></div>
+      <div id="boothBody">
+      <div class="views" role="group" aria-label="View"><button type="button" id="vFeed" aria-pressed="true">Posts</button><button type="button" id="vGrid" aria-pressed="false">All photos</button></div>
+      <div class="grid" id="photoGrid" hidden></div>
+      <div id="feedWrap">
       <button type="button" class="tag-btn" id="tagBtn"><span class="at">@</span><span id="tagBtnText">You were tagged! 🎉</span></button>
       <div class="composer" id="composer">
         <span class="av" id="cmpAv"></span>
         <div>
           <div class="cmp-box">
-            <textarea class="cmp-text" id="cmpText" rows="1" maxlength="2000" placeholder="Post a photo, a toast, a memory…"></textarea>
+            <textarea class="cmp-text" id="cmpText" rows="1" maxlength="2000" placeholder="Add a caption, tag someone…"></textarea>
             <div class="mention-pop" id="cmpPop" hidden></div>
           </div>
           <div class="cmp-photos" id="cmpPhotos"></div>
@@ -458,6 +506,7 @@
             <div class="cmp-tools">
               <label class="cmp-tool" for="cmpFile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M21 17l-5-5-9 8"/></svg>Photo</label>
               <input id="cmpFile" type="file" accept="image/*" multiple hidden>
+              <div class="up-bar" id="upBar" hidden><i></i></div>
               <button type="button" class="cmp-tool" id="cmpAt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M16 12v1.5a2.5 2.5 0 0 0 5 0V12a9 9 0 1 0-3.5 7.1"/></svg>Tag</button>
             </div>
             <button type="button" class="btn solid cmp-post" id="cmpPost">Post</button>
@@ -467,6 +516,8 @@
       <button type="button" class="new-pill" id="newPill" hidden></button>
       <div id="feedList"></div>
       <button type="button" class="btn feed-more" id="feedMore" hidden>Show earlier posts</button>
+      </div>
+      </div>
     </section>
   </main>
   <footer>With love, Jennifer</footer>
@@ -487,6 +538,14 @@
       </div>
       <label class="fld" id="cPlusWrap">Your +1's name<input id="cPlusName" autocomplete="off"></label>
       <label class="fld">Cell phone<input id="cPhone" type="tel" inputmode="tel" autocomplete="tel"></label>
+      <p class="help" style="margin:4px 0 0">Mailing address, for your thank-you card</p>
+      <label class="fld">Street address<input id="cStreet" autocomplete="address-line1"></label>
+      <label class="fld">Apartment, suite, etc. (optional)<input id="cStreet2" autocomplete="address-line2"></label>
+      <div class="three">
+        <label class="fld">City<input id="cCity" autocomplete="address-level2"></label>
+        <label class="fld">State<input id="cState" autocomplete="address-level1" maxlength="20"></label>
+        <label class="fld">ZIP<input id="cZip" autocomplete="postal-code" inputmode="numeric" maxlength="10"></label>
+      </div>
     </div>
     <button class="btn solid" type="button" id="cSave" style="width:100%">Save my RSVP</button>
     <p class="msg" id="cMsg" role="status"></p>
@@ -545,9 +604,22 @@
   }
 
   // ---- load ----
+  // the shared link (no personal link on this phone): party details + hotels, and "find my RSVP" for the Photo Booth
+  function loadPublic(note){
+    return fetch(API + '?action=info', { cache:'no-store' }).then(function(r){ return r.json(); }).then(function(d){
+      if (!d.ok) return showGate({ reason:'offline' });
+      data = { ok:true, me:null, party:d.party, chat_open:false, people:[] }; load.sig = '';
+      $('gate').hidden = true; $('app').hidden = false; render();
+      if (note) $('findText').textContent = note;
+    }).catch(function(){ if (!data) showGate({ reason:'offline' }); });
+  }
   function load(){
+    if (!R) return loadPublic();
     return post('guest', { r: R }).then(function(d){
-      if (!d.ok) return showGate(d);
+      if (!d.ok){
+        if (d.reason === 'not_found'){ if (stored() === R) store(''); R = ''; return loadPublic('That link didn’t work. Type your first name and cell number to find your RSVP.'); }
+        return showGate(d);
+      }
       if (d.me.attending === null && !d.me.is_host){ location.replace('/big-50?i=' + encodeURIComponent(R)); return; }
       if (!d.me.is_test && !d.me.is_host) store(R);
       var sig = JSON.stringify(d);
@@ -564,25 +636,28 @@
   }
 
   function render(){
-    var me = data.me, p = data.party;
-    document.body.classList.toggle('nochat', !me.attending);
+    var me = data.me || { attending:false, first_name:'', public:true }, p = data.party;
     $('testBar').hidden = !me.is_test;
-    $('hi').textContent = me.is_host ? 'YOUR PARTY' : 'HI, ' + String(me.first_name).toUpperCase();
+    $('hi').textContent = me.public ? 'YOU\u2019RE INVITED' : me.is_host ? 'YOUR PARTY' : 'HI, ' + String(me.first_name).toUpperCase();
     $('appWhen').textContent = p.date_label + ' · ' + p.time_label;
     var days = Math.ceil((new Date(p.starts_at).getTime() - Date.now()) / 864e5);
     $('countdown').hidden = !(days > 0 && me.attending);
     $('countdown').textContent = days === 1 ? 'Tomorrow!' : days + ' days to go';
-    $('cmpAv').innerHTML = avatar(me);
+    if (!me.public) $('cmpAv').innerHTML = avatar(me);
 
     // RSVP status
     var plus = me.attending && me.plus_one ? ' + ' + esc(me.plus_one_name || 'a guest') : '';
-    $('rsvpCard').innerHTML = me.is_host
+    $('rsvpCard').innerHTML = me.public
+      ? '<div class="status no"><span class="tick">🥂</span><div><b>Welcome to Jen\u2019s party page</b><span>Venue, time, dress and hotel picks are all here.</span></div></div>' +
+        '<div class="actions" style="grid-template-columns:1fr 1fr;margin-top:16px"><a class="btn solid" href="/big-50#rsvp">RSVP</a><button class="btn" type="button" id="findBtn">I already RSVP\u2019d</button></div>'
+      : me.is_host
       ? '<div class="status"><span class="tick">🎂</span><div><b>This is your party page, Jennifer</b><span>Post in Chat as the host. Edit details from your team page.</span></div></div>'
       : '<div class="status' + (me.attending ? '' : ' no') + '"><span class="tick">' + (me.attending ? '🥂' : '💛') + '</span><div><b>' +
         (me.attending ? 'You\u2019re on the list' + plus : 'You said you can\u2019t make it') + '</b><span>' +
         (me.attending ? 'Jennifer can\u2019t wait to celebrate with you.' : 'If plans change, Jennifer would love to see you.') + '</span></div></div>' +
         '<div class="actions" style="grid-template-columns:1fr;margin-top:16px"><button class="btn" type="button" id="editBtn">' + (me.attending ? 'Change my RSVP' : 'Actually, I can come!') + '</button></div>';
     var eb = $('editBtn'); if (eb) eb.addEventListener('click', openSheet);
+    var fb = $('findBtn'); if (fb) fb.addEventListener('click', function(){ showTab('chat'); });
 
     // When
     $('whenCard').innerHTML = '<div class="lbl">When</div><div class="big">' + esc(p.date_label) + '</div><div class="sm">' + esc(p.time_label) + '</div>' +
@@ -598,17 +673,36 @@
       : '<div class="big">Location coming soon</div><div class="sm">' + esc(p.location_note || 'This page updates the moment Jennifer sets it.') + '</div>');
     var mb = $('mapBtn'); if (mb) mb.addEventListener('click', openMaps);
 
+    // Dress
+    $('dressCard').innerHTML = '<div class="lbl">Dress</div>' + (p.dress_code
+      ? '<div class="big">' + esc(p.dress_code.split('\n')[0]) + '</div>' + (p.dress_code.indexOf('\n') > -1 ? '<div class="sm">' + esc(p.dress_code.split('\n').slice(1).join('\n')) + '</div>' : '')
+      : '<div class="big">Coming soon</div><div class="sm">Jennifer will share the dress code here.</div>');
+
+    // Hotels
+    var hs = p.hotels || [];
+    $('hotelList').innerHTML = hs.length ? hs.map(function(h, i){
+      return '<div class="card blk hotel"><div class="num">0' + (i + 1) + '</div><h3>' + esc(h.name) + '</h3>' + (h.note ? '<div class="sm">' + esc(h.note) + '</div>' : '') +
+        (h.code ? '<span class="code">' + esc(h.code) + '</span>' : '') +
+        ((h.url || h.phone) ? '<div class="actions" style="grid-template-columns:' + (h.url && h.phone ? '1fr 1fr' : '1fr') + '">' +
+          (h.url ? '<a class="btn solid" href="' + esc(h.url) + '" target="_blank" rel="noopener">Book a room</a>' : '') +
+          (h.phone ? '<a class="btn" href="tel:' + esc(h.phone.replace(/[^\d+]/g, '')) + '">Call ' + esc(h.phone) + '</a>' : '') + '</div>' : '') + '</div>';
+    }).join('') : '<div class="chat-closed">Jennifer\u2019s hotel picks are coming soon.</div>';
+
     // Details + gift
     var giftBits = (p.details ? '<div class="lbl">The party</div><div class="sm" style="font-size:16px;color:var(--ink)">' + esc(p.details) + '</div>' : '') +
       (p.gift_note || p.charity_url ? '<div class="lbl" style="margin-top:' + (p.details ? '18px' : '0') + '">Gifts</div>' + (p.gift_note ? '<div class="sm">' + esc(p.gift_note) + '</div>' : '') +
         (p.charity_url ? '<a class="gift-link" href="' + esc(p.charity_url) + '" target="_blank" rel="noopener">' + esc(p.charity_label || 'Donate') + ' \u2192</a>' : '') : '');
     $('giftCard').innerHTML = giftBits; $('giftCard').hidden = !giftBits;
 
-    // Chat availability
-    $('chatClosed').hidden = data.chat_open;
-    $('chatClosed').textContent = 'The party chat has closed. Thank you for celebrating with Jennifer!';
-    $('composer').hidden = !data.chat_open;
-    if (!me.attending && location.hash === '#chat') showTab('party');
+    // Photo Booth availability
+    var inBooth = !me.public && me.attending;
+    $('boothFind').hidden = !me.public;
+    $('boothHero').hidden = !inBooth || !data.chat_open;
+    $('boothBody').hidden = !inBooth;
+    $('chatClosed').hidden = me.public || (inBooth && data.chat_open);
+    $('chatClosed').textContent = !me.attending ? 'The Photo Booth is for guests who are coming. Change your RSVP on The Party tab if your plans change!'
+      : 'The Photo Booth has closed. Thank you for celebrating with Jennifer!';
+    $('composer').hidden = !inBooth || !data.chat_open;
   }
 
   // ---- calendar ----
@@ -646,7 +740,8 @@
     var me = data.me;
     setAns(true); // "Actually, I can come!" opens on attending
     $('cPlus').checked = !!me.plus_one; $('cPlusName').value = me.plus_one_name || ''; $('cPlusWrap').hidden = !me.plus_one;
-    $('cPhone').value = me.phone || '';
+    $('cPhone').value = me.phone || ''; $('cStreet').value = me.street || ''; $('cStreet2').value = me.street2 || '';
+    $('cCity').value = me.city || ''; $('cState').value = me.state || ''; $('cZip').value = me.zip || '';
     $('cMsg').textContent = ''; $('sheet').hidden = false;
   }
   function closeSheet(){ $('sheet').hidden = true; }
@@ -658,7 +753,8 @@
   $('cSave').addEventListener('click', function(){
     var v = function(id){ return $(id).value.trim(); };
     var body = { r:R, attending:cAns, plus_one: cAns && $('cPlus').checked, plus_one_name: v('cPlusName'),
-      phone:v('cPhone') };
+      phone:v('cPhone'), street:v('cStreet'), street2:v('cStreet2'), city:v('cCity'), state:v('cState'), zip:v('cZip') };
+    if (cAns && (!body.street || !body.city || !body.state || !body.zip)){ $('cMsg').className = 'msg err'; $('cMsg').textContent = 'Please add your mailing address so Jennifer can send your thank-you card.'; return; }
     if (body.plus_one && !body.plus_one_name){ $('cMsg').className = 'msg err'; $('cMsg').textContent = 'Add your +1\u2019s name, or switch the +1 off.'; return; }
     var btn = this; btn.disabled = true;
     post('update', body).then(function(d){
@@ -667,6 +763,19 @@
       data = d; load.sig = JSON.stringify(d); render(); closeSheet(); toast(cAns ? 'You\u2019re on the list! 🥂' : 'Got it. You\u2019ll be missed!');
       if (data.chat_open && pollSince === null) feedPoll();
     }).catch(function(){ btn.disabled = false; $('cMsg').className = 'msg err'; $('cMsg').textContent = 'Check your connection and try again.'; });
+  });
+
+  // ---- find my RSVP (shared link / QR at the party) ----
+  $('fGo').addEventListener('click', function(){
+    var first = $('fFirst').value.trim(), phone = $('fPhone').value.trim();
+    if (!first || phone.replace(/\D/g, '').length < 10){ $('fMsg').className = 'msg err'; $('fMsg').textContent = 'Add your first name and full cell number.'; return; }
+    var btn = this; btn.disabled = true; $('fMsg').textContent = '';
+    post('find', { first:first, phone:phone }).then(function(d){
+      btn.disabled = false;
+      if (!d.ok){ $('fMsg').className = 'msg err'; $('fMsg').textContent = 'We couldn\u2019t find that RSVP. Use the name and cell number you RSVP\u2019d with.'; return; }
+      R = d.id; store(R); try { history.replaceState(null, '', location.pathname + '?r=' + encodeURIComponent(R) + '#chat'); } catch(e){}
+      load().then(function(){ showTab(data && data.me && data.me.attending ? 'chat' : 'party'); });
+    }).catch(function(){ btn.disabled = false; $('fMsg').className = 'msg err'; $('fMsg').textContent = 'Check your connection and try again.'; });
   });
 
   // ---- email me my link ----
@@ -727,9 +836,23 @@
       '<div class="bubble">' + (p.mine ? '' : '<div class="who">' + esc(a.name) + (a.host ? '<span class="host-tag">' + 'Host' + '</span>' : '') + '</div>') + (p.body ? '<div class="post-body">' + chatText(p.body) + '</div>' : '') + photosHtml(p.photos) + '</div>' +
       '<div class="sub-row"><span>' + ago(p.created_at) + '</span>' + rxHtml(p) + (p.mine ? '<button type="button" class="post-del" data-del="' + esc(p.id) + '">Delete</button>' : '') + '</div></div></div>';
   }
+  var view = 'feed';
+  function renderGrid(){
+    var urls = []; feedPosts.forEach(function(p){ (p.photos || []).forEach(function(u){ urls.push(u); }); });
+    $('photoGrid').innerHTML = urls.length ? urls.map(function(u){ return '<button type="button" data-light="' + esc(u) + '"><img src="' + esc(u) + '" alt="" loading="lazy"></button>'; }).join('')
+      : '<div class="feed-empty" style="grid-column:1/-1">No photos yet. Snap one with Jen and be the first! 📸</div>';
+  }
+  function setView(v){
+    view = v; $('vFeed').setAttribute('aria-pressed', String(v === 'feed')); $('vGrid').setAttribute('aria-pressed', String(v === 'grid'));
+    $('feedWrap').hidden = v !== 'feed'; $('photoGrid').hidden = v !== 'grid'; if (v === 'grid') renderGrid();
+  }
+  $('vFeed').addEventListener('click', function(){ setView('feed'); });
+  $('vGrid').addEventListener('click', function(){ setView('grid'); });
+  $('photoGrid').addEventListener('click', function(e){ var t = e.target.closest('[data-light]'); if (t){ $('lightImg').src = t.dataset.light; $('lightbox').hidden = false; } });
   function renderFeed(){
+    if (view === 'grid') renderGrid();
     $('feedList').innerHTML = feedPosts.length ? feedPosts.map(function(p){ return postHtml(p, false); }).join('') :
-      '<div class="feed-empty">No posts yet. Be the first to say hi, share a win or post a photo! 🎉</div>';
+      '<div class="feed-empty">No photos yet. Snap one with Jen and be the first! 📸</div>';
     $('feedMore').hidden = !feedMore;
     $('newPill').hidden = !pendingNew;
     $('newPill').textContent = pendingNew + (pendingNew === 1 ? ' new post' : ' new posts') + ' ↑';
@@ -762,16 +885,31 @@
     return new Promise(function(res, rej){
       var img = new Image(), url = URL.createObjectURL(file);
       img.onload = function(){
-        var max = 1600, w = img.naturalWidth, h = img.naturalHeight, k = Math.min(1, max / Math.max(w, h));
+        var max = 2400, w = img.naturalWidth, h = img.naturalHeight, k = Math.min(1, max / Math.max(w, h));
         var c = document.createElement('canvas'); c.width = Math.round(w*k); c.height = Math.round(h*k);
         c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
-        res(c.toDataURL('image/jpeg', 0.82));
+        res(c.toDataURL('image/jpeg', 0.86));
       };
       img.onerror = function(){ URL.revokeObjectURL(url); rej(); };
       img.src = url;
     });
   }
-  var composers = [];
+  var composers = [], uploading = false;
+  // each photo goes up on its own (full quality, no giant request), then the post is made with the saved links
+  function uploadAll(list, btn){
+    if (!list.length) return Promise.resolve([]);
+    uploading = true; var urls = [], bar = $('upBar'); bar.hidden = false; bar.firstChild.style.width = '4%';
+    return list.reduce(function(p, d, i){
+      return p.then(function(){
+        btn.textContent = 'Uploading ' + (i + 1) + ' of ' + list.length + '…';
+        return post('feed-photo', { r:R, photo:d }).then(function(res){
+          if (!res.ok) throw new Error(res.error || 'upload');
+          urls.push(res.url); bar.firstChild.style.width = Math.round((i + 1) / list.length * 100) + '%';
+        });
+      });
+    }, Promise.resolve()).then(function(){ uploading = false; bar.hidden = true; return urls; },
+      function(e){ uploading = false; bar.hidden = true; throw e; });
+  }
   function makeComposer(o){
     var text = $(o.text), pop = $(o.pop), box = $(o.photos), file = $(o.file), btn = $(o.btn), photos = [], tags = [], popItems = [], popSel = 0;
     function grow(){ text.style.height = 'auto'; text.style.height = Math.min(text.scrollHeight, 180) + 'px'; }
@@ -780,8 +918,8 @@
     }
     box.addEventListener('click', function(e){ var b = e.target.closest('[data-rm]'); if (b){ photos.splice(+b.dataset.rm, 1); drawPhotos(); } });
     file.addEventListener('change', function(){
-      var files = [].slice.call(this.files || [], 0, 4 - photos.length); this.value = '';
-      if (this.files && this.files.length > files.length) toast('Up to 4 photos per post');
+      var all = [].slice.call(this.files || []), files = all.slice(0, 10 - photos.length); this.value = '';
+      if (all.length > files.length) toast('Up to 10 photos per post');
       Promise.all(files.map(function(f){ return compressPhoto(f).catch(function(){ return null; }); })).then(function(list){
         list.filter(Boolean).forEach(function(d){ photos.push(d); }); drawPhotos();
       });
@@ -846,12 +984,14 @@
     btn.addEventListener('click', function(){
       var b = body().trim(); if (!b && !photos.length) { text.focus(); return; }
       btn.disabled = true; var label = btn.textContent; btn.textContent = photos.length ? 'Uploading…' : 'Posting…';
-      post('feed-post', { r:R, body:b, photos:photos, post:o.parent ? o.parent() : null }).then(function(d){
+      uploadAll(photos, btn).then(function(urls){
+        return post('feed-post', { r:R, body:b, photos:urls, post:o.parent ? o.parent() : null });
+      }).then(function(d){
         btn.disabled = false; btn.textContent = label;
         if (!d.ok){ toast(d.error === 'slow' ? 'Slow down a little, then try again' : d.error === 'photo_too_big' ? 'That photo is too large' : 'Didn’t post. Try again.'); return; }
         text.value = ''; photos = []; tags = []; drawPhotos(); grow(); text.blur();
         o.done(d);
-      }).catch(function(){ btn.disabled = false; btn.textContent = label; toast('Didn’t post. Check your connection.'); });
+      }).catch(function(e){ btn.disabled = false; btn.textContent = label; toast(e && e.message === 'photo_too_big' ? 'One photo is too large' : 'Didn’t post. Check your connection.'); });
     });
     var c = { dirty:function(){ return !!text.value.trim() || photos.length > 0; } };
     composers.push(c); return c;
@@ -1013,24 +1153,23 @@
 
   // ---- tabs ----
   function showTab(t){
-    if (t === 'chat' && !(data && data.me.attending)) t = 'party';
+    var inBooth = data && data.me && data.me.attending;
     document.querySelectorAll('.tabs [role=tab]').forEach(function(b){ b.setAttribute('aria-selected', String(b.dataset.tab === t)); });
-    ['party','chat'].forEach(function(k){ $('tab-' + k).hidden = k !== t; });
-    if (t === 'chat') chatOpened(); else chatTab = false;
+    ['party','hotels','chat'].forEach(function(k){ $('tab-' + k).hidden = k !== t; });
+    if (t === 'chat' && inBooth) chatOpened(); else chatTab = false;
     try { history.replaceState(null, '', location.pathname + location.search + '#' + t); } catch(e){}
     var top = document.querySelector('.tabs').offsetTop; if (window.scrollY > top) window.scrollTo({ top: top });
   }
   document.querySelector('.tabs').addEventListener('click', function(e){ var b = e.target.closest('[data-tab]'); if (b) showTab(b.dataset.tab); });
 
   // keep the location and details fresh while the page is open
-  setInterval(function(){ if (!document.hidden && data && !threadId && $('sheet').hidden) load(); }, 45000);
+  setInterval(function(){ if (!document.hidden && data && !threadId && $('sheet').hidden && !uploading) load(); }, 45000);
   document.addEventListener('visibilitychange', function(){ if (!document.hidden && data) load(); });
 
   // ---- start ----
   R = new URLSearchParams(location.search).get('r') || stored();
-  if (!R){ showGate({}); return; }
-  if (!new URLSearchParams(location.search).get('r')){ try { history.replaceState(null, '', location.pathname + '?r=' + encodeURIComponent(R) + location.hash); } catch(e){} }
-  load().then(function(){ if (location.hash === '#chat' && data && data.me.attending) showTab('chat'); });
+  if (R && !new URLSearchParams(location.search).get('r')){ try { history.replaceState(null, '', location.pathname + '?r=' + encodeURIComponent(R) + location.hash); } catch(e){} }
+  load().then(function(){ var h = location.hash.slice(1); if (h === 'chat' || h === 'hotels') showTab(h); });
 })();
 </script>
 </body>

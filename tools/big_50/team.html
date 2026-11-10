@@ -96,6 +96,20 @@
   .tag{ display:inline-block; font-size:10px; letter-spacing:.08em; text-transform:uppercase; padding:1px 7px; border-radius:999px; background:var(--gold); color:#fff; margin-left:6px; vertical-align:2px; }
   .tag.test{ background:#cfcbc2; color:var(--ink); }
 
+  .applink{ display:grid; grid-template-columns:auto minmax(0,1fr); gap:20px; align-items:center; background:var(--stone); padding:16px 18px; margin-bottom:18px; }
+  .applink #qr{ width:112px; height:112px; background:#fff; padding:6px; }
+  .applink #qr img, .applink #qr canvas{ width:100%; height:100%; image-rendering:pixelated; }
+  .applink b{ font-family:'Marcellus',Georgia,serif; font-weight:400; font-size:22px; display:block; }
+  .applink .row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .gal{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .slot{ position:relative; aspect-ratio:1; background:#1a1a1a; overflow:hidden; display:flex; align-items:flex-end; }
+  .slot img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .slot .art{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#9d9d9d; font-size:13px; text-align:center; padding:10px; }
+  .slot .bar{ position:relative; display:flex; gap:6px; padding:8px; width:100%; background:linear-gradient(0deg, rgba(0,0,0,.7), rgba(0,0,0,0)); }
+  .slot .bar button, .slot .bar label{ background:#fff; color:#111; border:0; font-size:12px; padding:5px 9px; cursor:pointer; }
+  .hotel-row{ border:1px solid var(--line); padding:14px; display:grid; gap:10px; }
+  .hotel-row .top{ display:flex; justify-content:space-between; align-items:center; }
+  .hotel-row .top b{ font-family:'Marcellus',Georgia,serif; font-weight:400; font-size:18px; }
   .modal{ position:fixed; inset:0; background:rgba(20,24,29,.45); z-index:30; display:flex; align-items:center; justify-content:center; padding:16px; }
   .ready{ background:var(--stone); padding:16px; display:grid; gap:12px; }
   .ready b{ font-family:'Marcellus',Georgia,serif; font-weight:400; font-size:22px; }
@@ -134,12 +148,25 @@
     <button role="tab" data-tab="guests" aria-selected="true">RSVPs</button>
     <button role="tab" data-tab="details" aria-selected="false">Party details</button>
     <button role="tab" data-tab="email" aria-selected="false">Email guests</button>
-    <button role="tab" data-tab="chat" aria-selected="false">Chat</button>
+    <button role="tab" data-tab="chat" aria-selected="false">Photo Booth</button>
   </nav>
   <main>
     <!-- RSVPs -->
     <section id="tab-guests">
       <div class="stats" id="stats"></div>
+      <div class="applink">
+        <div id="qr" aria-label="QR code for the party app"></div>
+        <div>
+          <b>Party app link</b>
+          <span class="help">One link for everyone: venue, time, dress, hotels and the Photo Booth. Put the QR code on a sign at the party; guests find themselves with their first name and cell.</span>
+          <div class="row">
+            <button class="ghost" type="button" id="copyApp">Copy party app link</button>
+            <button class="ghost" type="button" id="qrDl">Download QR code</button>
+            <button class="solid" type="button" id="zipBtn">Download all photos (.zip)</button>
+          </div>
+          <p class="saved" id="zipMsg" role="status"></p>
+        </div>
+      </div>
       <div class="tools">
         <input type="search" id="q" placeholder="Search name, email, phone or city" aria-label="Search RSVPs">
         <div class="seg" role="group" aria-label="Show">
@@ -176,6 +203,22 @@
           <p class="help" style="margin:0">This is the wording guests see. The calendar invite uses Jan 27, 2027, 7–11pm Arizona time. Ask Chelsea if the date or time itself changes.</p>
         </fieldset>
         <fieldset>
+          <legend>Dress</legend>
+          <label class="f">Dress code<textarea id="sDress" style="min-height:70px" placeholder="First line is the headline, e.g. Cocktail chic&#10;Optional second line with details"></textarea></label>
+        </fieldset>
+        <fieldset>
+          <legend>Hotel picks</legend>
+          <p class="help" style="margin:0">Shown on the Hotels tab of the party app, in this order.</p>
+          <div id="hotels" style="display:grid;gap:10px"></div>
+          <div><button class="ghost" type="button" id="addHotel">+ Add a hotel</button></div>
+        </fieldset>
+        <fieldset>
+          <legend>Invite page photo wall</legend>
+          <p class="help" style="margin:0">Six spots on the invite page. Empty spots show designed party art until you add a photo. Photos save when you press Save party details.</p>
+          <div class="gal" id="gal"></div>
+          <input type="file" id="galFile" accept="image/*" hidden>
+        </fieldset>
+        <fieldset>
           <legend>Invitation wording</legend>
           <label class="f">About the party<textarea id="sDetails"></textarea></label>
           <label class="f">Gift note<textarea id="sGift"></textarea></label>
@@ -186,8 +229,8 @@
         </fieldset>
         <fieldset>
           <legend>Settings</legend>
-          <label class="check"><input type="checkbox" id="sClosed"><span><b>Close RSVPs</b><br><span class="help">New people can't RSVP. Guests who already did can still change their answer and use Chat.</span></span></label>
-          <label class="f">Chat stays open until<input type="date" id="sCloses"></label>
+          <label class="check"><input type="checkbox" id="sClosed"><span><b>Close RSVPs</b><br><span class="help">New people can't RSVP. Guests who already did can still change their answer and use the Photo Booth.</span></span></label>
+          <label class="f">Photo Booth stays open until<input type="date" id="sCloses"></label>
         </fieldset>
         <div><button class="solid" type="button" id="saveDetails" style="padding:13px 24px">Save party details</button></div>
         <p class="saved" id="savedMsg" role="status"></p>
@@ -221,7 +264,7 @@
 
     <!-- Chat -->
     <section id="tab-chat" hidden>
-      <h2 style="font-size:30px;margin-bottom:4px">Chat</h2>
+      <h2 style="font-size:30px;margin-bottom:4px">Photo Booth</h2>
       <p class="help" style="margin-bottom:16px">Every post and reply, newest first. Remove takes it down for everyone.</p>
       <div id="feed"></div>
     </section>
@@ -245,6 +288,13 @@
       </label>
       <label class="check"><input type="checkbox" id="mPlus"><span>Bringing a +1</span></label>
       <label class="f" id="mPlusWrap">+1's name<input id="mPlusName"></label>
+      <label class="f">Street address<input id="mStreet"></label>
+      <label class="f">Apartment, suite, etc.<input id="mStreet2"></label>
+      <div class="three">
+        <label class="f">City<input id="mCity"></label>
+        <label class="f">State<input id="mState"></label>
+        <label class="f">ZIP<input id="mZip"></label>
+      </div>
       <label class="check" id="mSendWrap"><input type="checkbox" id="mSend"><span>Email them their party link now</span></label>
       <div><button class="solid" type="button" id="mSave" style="padding:12px 22px">Save</button></div>
       <p class="msg-err" id="mErr" role="alert"></p>
@@ -289,7 +339,7 @@
       .catch(function(){ window.prompt('Copy this link:', text); });
   }
   function fmtDate(iso){ return new Date(iso).toLocaleDateString('en-US', { month:'short', day:'numeric', timeZone:'America/Phoenix' }); }
-  function addr_unused(g){ return [g.street, g.street2].filter(Boolean).join(', ') + (g.city || g.state || g.zip ? (g.street ? '<br>' : '') + esc([g.city, [g.state, g.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ')) : ''); }
+  function addr(g){ return [g.street, g.street2].filter(Boolean).join(', ') + (g.city || g.state || g.zip ? (g.street ? '<br>' : '') + esc([g.city, [g.state, g.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ')) : ''); }
 
   function load(){
     return api('team-list').then(function(d){
@@ -329,7 +379,7 @@
       return [g.first_name, g.last_name, g.email, g.phone, g.city, g.plus_one_name].join(' ').toLowerCase().indexOf(q) > -1;
     });
     if (!rows.length){ $('list').innerHTML = '<div class="empty">' + (D.guests.length ? 'No one matches.' : 'No RSVPs yet. Copy the invite link and text it to your guests!') + '</div>'; return; }
-    $('list').innerHTML = '<table><thead><tr><th>Guest</th><th>Answer</th><th>+1</th><th>Contact</th><th></th></tr></thead><tbody>' +
+    $('list').innerHTML = '<table><thead><tr><th>Guest</th><th>Answer</th><th>+1</th><th>Contact</th><th>Mailing address</th><th></th></tr></thead><tbody>' +
       rows.map(function(g){
         var lastMail = (g.emails || []).slice(-1)[0];
         return '<tr class="' + (g.removed ? 'removed' : '') + '" data-id="' + g.id + '">' +
@@ -339,6 +389,7 @@
           '<td>' + (g.plus_one ? esc(g.plus_one_name || 'Yes') : '<span class="sub">—</span>') + '</td>' +
           '<td>' + (g.phone ? '<a href="sms:' + esc(g.phone.replace(/[^\d+]/g,'')) + '">' + esc(g.phone) + '</a><br>' : '') + (g.email ? '<a href="mailto:' + esc(g.email) + '">' + esc(g.email) + '</a>' : '') +
             (lastMail ? '<div class="sub">' + (lastMail.ok ? 'Emailed ' : 'Email failed ') + fmtDate(lastMail.at) + '</div>' : '') + '</td>' +
+          '<td>' + (addr(g) || '<span class="sub">—</span>') + '</td>' +
           '<td><div class="acts">' + (g.removed ? '<button data-act="restore">Restore</button>' :
             (g.phone ? '<button data-act="text">Text their link</button>' : '') + '<button data-act="copy">Copy their link</button>' + (g.email && g.attending !== null ? '<button data-act="resend">Email their link</button>' : '') + '<button data-act="edit">Edit</button><button data-act="remove">Remove</button>') + '</div></td></tr>';
       }).join('') + '</tbody></table>';
@@ -365,9 +416,10 @@
   function openModal(g){
     editing = g || null;
     $('mTitle').textContent = g ? 'Edit RSVP' : 'Invite a guest';
-    var v = g || { first_name:'', last_name:'', email:'', phone:'', attending:null, plus_one:false, plus_one_name:'' };
+    var v = g || { first_name:'', last_name:'', email:'', phone:'', attending:null, plus_one:false, plus_one_name:'', street:'', street2:'', city:'', state:'', zip:'' };
     $('mFirst').value = v.first_name; $('mLast').value = v.last_name; $('mEmail').value = v.email; $('mPhone').value = v.phone;
-    $('mAtt').value = v.attending === null ? '' : v.attending ? '1' : '0'; $('mPlus').checked = !!v.plus_one; $('mPlusName').value = v.plus_one_name || ''; $('mPlusWrap').hidden = !v.plus_one;
+    $('mAtt').value = v.attending === null ? '' : v.attending ? '1' : '0';
+    $('mStreet').value = v.street || ''; $('mStreet2').value = v.street2 || ''; $('mCity').value = v.city || ''; $('mState').value = v.state || ''; $('mZip').value = v.zip || ''; $('mPlus').checked = !!v.plus_one; $('mPlusName').value = v.plus_one_name || ''; $('mPlusWrap').hidden = !v.plus_one;
     $('mSendWrap').hidden = !!g; $('mSend').checked = false; $('mErr').textContent = '';
     $('ready').hidden = true; document.querySelector('#modal .form').hidden = false; syncAtt();
     $('modal').hidden = false; $('mFirst').focus();
@@ -383,11 +435,11 @@
     document.querySelector('#modal .form').hidden = true; $('ready').hidden = false; $('modal').hidden = false;
     var link = inviteLink(g.id);
     $('readyTitle').textContent = g.attending === null ? 'Invite ready for ' + g.first_name : g.first_name + '\u2019s personal link';
-    $('readyHelp').textContent = g.attending === null ? 'This link is just for ' + g.first_name + '. When they RSVP, it shows up on their row.' : 'Opens ' + g.first_name + '\u2019s party page (details, their RSVP and Chat).';
+    $('readyHelp').textContent = g.attending === null ? 'This link is just for ' + g.first_name + '. When they RSVP, it shows up on their row.' : 'Opens ' + g.first_name + '\u2019s party page (details, their RSVP and the Photo Booth).';
     $('readyLink').textContent = link;
     $('readyMsg').value = g.attending === null
       ? 'Hi ' + g.first_name + '! I\u2019m turning 50 and would love to celebrate with you 🥂 Here\u2019s your invite, tap to RSVP: ' + link
-      : 'Hi ' + g.first_name + '! Here\u2019s your link for my 50th, with all the details and the party chat 🥂 ' + link;
+      : 'Hi ' + g.first_name + '! Here\u2019s your link for my 50th, with the venue, dress, hotels and the Photo Booth 🥂 ' + link;
     var upd = function(){ $('readyText').href = smsHref(g.phone, $('readyMsg').value); };
     upd(); $('readyMsg').oninput = upd;
     $('readyText').hidden = !g.phone;
@@ -402,14 +454,14 @@
     var v = function(id){ return $(id).value.trim(); };
     var a = $('mAtt').value;
     var f = { first_name:v('mFirst'), last_name:v('mLast'), email:v('mEmail'), phone:v('mPhone'), attending: a === '' ? null : a === '1',
-      plus_one:$('mPlus').checked, plus_one_name:v('mPlusName') };
+      plus_one:$('mPlus').checked, plus_one_name:v('mPlusName'), street:v('mStreet'), street2:v('mStreet2'), city:v('mCity'), state:v('mState'), zip:v('mZip') };
     if (!f.first_name){ $('mErr').textContent = 'Add at least a first name.'; return; }
     if (!editing && f.attending === null && f.phone.replace(/\D/g, '').length < 10){ $('mErr').textContent = 'Add their cell number so you can text them the link.'; return; }
     var savePayload = Object.assign({ id: editing && editing.id }, f); if (f.attending === null) delete savePayload.attending;
     var btn = this; btn.disabled = true;
     var req = editing ? api('team-guest-save', savePayload)
       : api('team-add', { first:f.first_name, last:f.last_name, email:f.email, phone:f.phone, attending:f.attending, plus_one:f.plus_one, plus_one_name:f.plus_one_name,
-          send_email:$('mSend').checked });
+          street:f.street, street2:f.street2, city:f.city, state:f.state, zip:f.zip, send_email:$('mSend').checked });
     req.then(function(d){
       btn.disabled = false;
       if (!d.ok){ $('mErr').textContent = d.error === 'duplicate_phone' ? 'That phone number is already on the list.' : d.error === 'duplicate' ? 'Someone already RSVP\u2019d with that email.' : d.error === 'email' ? 'That email doesn\u2019t look right.' : 'That didn\u2019t save. Try again.'; return; }
@@ -423,11 +475,11 @@
 
   // ---- spreadsheet ----
   $('csvBtn').addEventListener('click', function(){
-    var cols = ['First name','Last name','Answer','+1','+1 name','Email','Cell','Note','Added','Personal link'];
+    var cols = ['First name','Last name','Answer','+1','+1 name','Email','Cell','Street','Apt/Suite','City','State','ZIP','Note','Added','Personal link'];
     var csvq = function(s){ s = String(s == null ? '' : s); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
     var rows = D.guests.filter(function(g){ return !g.removed; }).map(function(g){
       return [g.first_name, g.last_name, g.attending === null ? 'No answer yet' : g.attending ? 'Attending' : 'Can\u2019t make it', g.plus_one ? 'Yes' : '', g.plus_one_name, g.email, g.phone,
-        g.note, fmtDate(g.created_at), inviteLink(g.id)].map(csvq).join(',');
+        g.street, g.street2, g.city, g.state, g.zip, g.note, fmtDate(g.created_at), inviteLink(g.id)].map(csvq).join(',');
     });
     var blob = new Blob(['﻿' + cols.join(',') + '\n' + rows.join('\n')], { type:'text/csv;charset=utf-8' });
     var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'big-50-rsvps.csv'; document.body.appendChild(a); a.click();
@@ -442,18 +494,113 @@
     $('sDate').value = p.date_label; $('sTime').value = p.time_label; $('sDetails').value = p.details; $('sGift').value = p.gift_note;
     $('sCharity').value = p.charity_url; $('sCharityLabel').value = p.charity_label; $('sClosed').checked = !!p.rsvp_closed;
     $('sCloses').value = new Date(p.app_closes_at).toLocaleDateString('en-CA', { timeZone:'America/Phoenix' });
+    $('sDress').value = p.dress_code || '';
+    hotels = (p.hotels || []).map(function(h){ return Object.assign({}, h); }); drawHotels();
+    gallery = (p.gallery || []).slice(0, 6); while (gallery.length < 6) gallery.push(null); drawGallery();
   }
+
+  // hotel picks editor
+  var hotels = [];
+  function drawHotels(){
+    $('hotels').innerHTML = hotels.map(function(h, i){
+      return '<div class="hotel-row" data-i="' + i + '"><div class="top"><b>Hotel ' + (i + 1) + '</b><span>' +
+        (i ? '<button class="ghost" type="button" data-h="up" style="padding:5px 10px">↑</button> ' : '') +
+        '<button class="danger" type="button" data-h="rm" style="padding:5px 10px">Remove</button></span></div>' +
+        '<label class="f">Hotel name<input data-k="name" value="' + esc(h.name || '') + '"></label>' +
+        '<label class="f">Why she loves it (optional)<textarea data-k="note" style="min-height:60px">' + esc(h.note || '') + '</textarea></label>' +
+        '<div class="two"><label class="f">Booking link<input data-k="url" value="' + esc(h.url || '') + '" placeholder="https://"></label>' +
+        '<label class="f">Phone (optional)<input data-k="phone" value="' + esc(h.phone || '') + '"></label></div>' +
+        '<label class="f">Discount or group code (optional)<input data-k="code" value="' + esc(h.code || '') + '" placeholder="e.g. Mention Jen\u2019s 50th for 15% off"></label></div>';
+    }).join('');
+    $('addHotel').hidden = hotels.length >= 8;
+  }
+  $('hotels').addEventListener('input', function(e){ var k = e.target.dataset.k; if (!k) return; hotels[+e.target.closest('.hotel-row').dataset.i][k] = e.target.value; });
+  $('hotels').addEventListener('click', function(e){
+    var b = e.target.closest('[data-h]'); if (!b) return; var i = +b.closest('.hotel-row').dataset.i;
+    if (b.dataset.h === 'rm') hotels.splice(i, 1); else { var t = hotels[i]; hotels[i] = hotels[i - 1]; hotels[i - 1] = t; }
+    drawHotels();
+  });
+  $('addHotel').addEventListener('click', function(){ hotels.push({ name:'', note:'', url:'', phone:'', code:'' }); drawHotels(); $('hotels').lastChild.querySelector('input').focus(); });
+
+  // photo wall editor
+  var gallery = [], galSlot = 0;
+  var ARTNAME = ['Jennifer\u2019s 50 photo', 'Silver "50" art', 'Champagne art', 'Cake art', 'Balloon art', '"Cheers" art'];
+  function drawGallery(){
+    $('gal').innerHTML = gallery.map(function(u, i){
+      var src = u || (i === 0 ? '/big-50/hero.jpg' : '');
+      return '<div class="slot">' + (src ? '<img src="' + esc(src) + '" alt="">' : '<div class="art">Stand-in:<br>' + ARTNAME[i] + '</div>') +
+        '<div class="bar"><button type="button" data-g="set" data-i="' + i + '">' + (u ? 'Replace' : 'Add photo') + '</button>' +
+        (u ? '<button type="button" data-g="rm" data-i="' + i + '">Remove</button>' : '') + '</div></div>';
+    }).join('');
+  }
+  $('gal').addEventListener('click', function(e){
+    var b = e.target.closest('[data-g]'); if (!b) return; galSlot = +b.dataset.i;
+    if (b.dataset.g === 'rm'){ gallery[galSlot] = null; drawGallery(); return; }
+    $('galFile').click();
+  });
+  $('galFile').addEventListener('change', function(){
+    var f = this.files && this.files[0]; this.value = ''; if (!f) return;
+    var img = new Image(), url = URL.createObjectURL(f);
+    img.onload = function(){
+      var k = Math.min(1, 2000 / Math.max(img.naturalWidth, img.naturalHeight)), c = document.createElement('canvas');
+      c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      gallery[galSlot] = c.toDataURL('image/jpeg', 0.86); drawGallery(); $('savedMsg').textContent = 'Photo added. Press Save party details to put it on the invite page.';
+    };
+    img.src = url;
+  });
   $('saveDetails').addEventListener('click', function(){
     var btn = this; btn.disabled = true; $('savedMsg').textContent = '';
     var closes = $('sCloses').value ? $('sCloses').value + 'T23:59:00-07:00' : null;
     api('team-settings', { location_name:$('sLocName').value, location_address:$('sLocAddr').value, location_note:$('sLocNote').value,
       date_label:$('sDate').value, time_label:$('sTime').value, details:$('sDetails').value, gift_note:$('sGift').value,
-      charity_url:$('sCharity').value, charity_label:$('sCharityLabel').value, rsvp_closed:$('sClosed').checked, app_closes_at:closes })
+      charity_url:$('sCharity').value, charity_label:$('sCharityLabel').value, rsvp_closed:$('sClosed').checked, app_closes_at:closes,
+      dress_code:$('sDress').value, hotels: hotels.filter(function(h){ return (h.name || '').trim(); }), gallery: gallery.filter(Boolean) })
     .then(function(d){
       btn.disabled = false; if (!d.ok){ $('savedMsg').textContent = 'That didn’t save. Try again.'; return; }
       D = d; fillDetails.done = false; render(); $('savedMsg').textContent = 'Saved. Guests see the update now.';
     }).catch(function(){ btn.disabled = false; });
   });
+  var APP = SITE + '/big-50/party';
+  $('copyApp').addEventListener('click', function(){ copy(APP, 'Party app link copied'); });
+  function loadScript(src){ return new Promise(function(res, rej){ var s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); }); }
+  var qrReady = loadScript('https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js').then(function(){
+    var q = qrcode(0, 'M'); q.addData(APP); q.make(); $('qr').innerHTML = q.createImgTag(8, 0, 'QR code for ' + APP);
+    return q;
+  }).catch(function(){ $('qr').textContent = ''; });
+  $('qrDl').addEventListener('click', function(){
+    qrReady.then(function(q){
+      if (!q) return;
+      var n = q.getModuleCount(), cell = 24, pad = 4 * cell, c = document.createElement('canvas'); c.width = c.height = n * cell + pad * 2;
+      var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.fillStyle = '#000';
+      for (var r = 0; r < n; r++) for (var k = 0; k < n; k++) if (q.isDark(r, k)) x.fillRect(pad + k * cell, pad + r * cell, cell, cell);
+      var a = document.createElement('a'); a.href = c.toDataURL('image/png'); a.download = 'big-50-party-app-qr.png'; document.body.appendChild(a); a.click(); a.remove();
+    });
+  });
+  $('zipBtn').addEventListener('click', function(){
+    var btn = this; btn.disabled = true; $('zipMsg').textContent = 'Gathering photos…';
+    Promise.all([api('team-photos'), window.JSZip ? null : loadScript('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js')]).then(function(r){
+      var list = (r[0].photos || []).filter(function(p){ return !p.test; });
+      if (!list.length){ btn.disabled = false; $('zipMsg').textContent = 'No photos in the Photo Booth yet.'; return; }
+      var zip = new JSZip(), done = 0, failed = 0, slug = function(t){ return String(t || 'guest').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); };
+      var jobs = list.map(function(p, i){
+        var when = new Date(p.created_at).toLocaleString('sv-SE', { timeZone:'America/Phoenix' }).replace(' ', '_').replace(/:/g, '-').slice(0, 16);
+        var name = (p.with_jen ? 'with-jen/' : 'everyone/') + when + '_' + slug(p.author) + '_' + (i + 1) + '.jpg';
+        return fetch(p.url).then(function(res){ if (!res.ok) throw 0; return res.blob(); }).then(function(b){
+          zip.file(name, b); done++; $('zipMsg').textContent = 'Downloading ' + done + ' of ' + list.length + '…';
+        }).catch(function(){ failed++; });
+      });
+      return Promise.all(jobs).then(function(){
+        $('zipMsg').textContent = 'Zipping…';
+        return zip.generateAsync({ type:'blob' });
+      }).then(function(blob){
+        var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'jennifers-big-5-0-photos.zip'; document.body.appendChild(a); a.click();
+        setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+        btn.disabled = false; $('zipMsg').textContent = 'Downloaded ' + done + ' photos' + (failed ? ' (' + failed + ' couldn\u2019t be fetched)' : '') + '. Photos with Jen are in their own folder.';
+      });
+    }).catch(function(){ btn.disabled = false; $('zipMsg').textContent = 'Couldn\u2019t build the zip. Check your connection and try again.'; });
+  });
+
   function copyInvite(){ copy(SITE + '/big-50', 'Invite link copied. Paste it into your text!'); }
   $('copyInvite').addEventListener('click', copyInvite); $('copyInvite2').addEventListener('click', copyInvite);
 
