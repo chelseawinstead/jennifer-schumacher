@@ -126,8 +126,12 @@
   .ph .add .card2{ background:#fff; border-radius:9px; padding:8px; display:flex; gap:8px; align-items:center; }
   .ph .add .card2 img{ width:34px; height:34px; border-radius:8px; } .ph .add .card2 .nm{ border-bottom:1px solid #e5e5ea; flex:1; padding-bottom:4px; font-size:11px; }
   .ph .add .tg{ margin-top:8px; background:#fff; border-radius:9px; padding:7px 9px; display:flex; justify-content:space-between; align-items:center; }
+  .ph .add .card2 .nm.hl, .ph .add .tg.hl{ background:#fffaf0; border-radius:6px; } .ph .add .card2 .nm.hl{ padding:3px 5px; border-bottom:0; } .ph .add .card2 .nm b{ display:inline-block; width:1px; height:11px; background:#007aff; vertical-align:-2px; margin-left:1px; animation:svblink 1s steps(1) infinite; } @keyframes svblink{ 50%{ opacity:0; } }
   .ph .add .tg i{ width:24px; height:14px; border-radius:8px; background:#34c759; position:relative; } .ph .add .tg i::after{ content:""; position:absolute; right:1px; top:1px; width:12px; height:12px; border-radius:50%; background:#fff; }
-  .ph .home{ position:absolute; inset:0; background:linear-gradient(160deg,#c9d3df,#e8dcc0); display:grid; grid-template-columns:repeat(4,1fr); gap:10px 8px; padding:16px 12px; align-content:start; }
+  .ph .home{ position:absolute; inset:0; background:linear-gradient(160deg,#c9d3df,#e8dcc0); display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px 8px; padding:16px 12px; align-content:start; }
+  .ph .home .saf{ display:block; width:100%; aspect-ratio:1; border-radius:9px; background:#fff radial-gradient(circle at 50% 50%, #fff 0 12%, transparent 13%), conic-gradient(from 45deg,#ff3b30 0 25%,#fff 0 50%,#ff3b30 0 0); background:radial-gradient(circle,#4fc3f7 0 30%,#1e88e5 62%,#fff 64%); }
+  .saf-i{ display:inline-block; width:16px; height:16px; border-radius:4px; vertical-align:-3px; background:radial-gradient(circle,#4fc3f7 0 30%,#1e88e5 62%,#fff 64%); box-shadow:0 0 0 1px #ddd; }
+  .sv-plus{ display:inline-flex; width:15px; height:15px; border-radius:50%; background:#34c759; color:#fff; font-size:12px; font-weight:700; align-items:center; justify-content:center; vertical-align:-2px; line-height:1; }
   .ph .home i{ display:block; aspect-ratio:1; border-radius:9px; background:rgba(255,255,255,.55); }
   .ph .home .me{ display:flex; flex-direction:column; align-items:center; gap:2px; font-size:7.5px; color:#14181d; }
   .ph .home .me img{ width:100%; aspect-ratio:1; border-radius:9px; }
@@ -140,7 +144,7 @@
   .ph .adlg b{ display:block; font-size:11px; margin-bottom:8px; } .ph .adlg .r{ display:flex; gap:8px; align-items:center; } .ph .adlg img{ width:30px; height:30px; border-radius:50%; }
   .ph .adlg .bt{ display:flex; justify-content:flex-end; gap:12px; margin-top:12px; color:#1a73e8; font-weight:600; } .ph .adlg .bt span{ padding:3px 6px; border-radius:6px; }
   .ph .dim{ position:absolute; inset:0; background:rgba(0,0,0,.25); }
-  .ph .add .hd b{ white-space:nowrap; font-size:9px; }
+  .ph .add .hd{ gap:4px; } .ph .add .hd b{ white-space:nowrap; font-size:8px; } .ph .add .hd span{ font-size:9px; } .ph .add .hd .go{ padding:2px 4px; }
   @media (max-width:420px){ .sv-step{ grid-template-columns:minmax(0,1fr) 135px; gap:10px; } .sv-step > .ph{ zoom:.8; } }
   .cover h1{ font-size:42px; line-height:1; margin:16px 0 8px; }
   .cover h1 em{ font-style:italic; color:var(--cream); }
@@ -948,17 +952,20 @@
   function svPage(){ return '<div class="pg"><i class="n"></i><i></i><i class="s"></i><i></i><i class="s"></i></div>'; }
   var SV = {
     ios: [
-      { t:'Open your app link in <b>Safari</b> (the compass icon), then tap the <b>•••</b> button next to the address bar at the bottom.',
-        s:'On an older iPhone, tap the <b>Share</b> button <span aria-hidden="true">⬆︎</span> at the bottom of Safari and skip to step 3.',
-        ph:'<div class="ph"><div class="sc">' + svPage() + '<div class="ibar"><span class="b">‹</span><span class="url">schumacherliving.com</span><span class="b hl">•••</span></div></div></div>' },
-      { t:'Tap <b>Share</b>.',
-        ph:'<div class="ph"><div class="sc">' + svPage() + '<div class="dim"></div><div class="menu"><div class="hl"><span>Share</span><span>⬆︎</span></div><div><span>Add to Bookmarks</span></div><div><span>Copy</span></div><div><span>Find on Page</span></div></div><div class="ibar"><span class="b">‹</span><span class="url">schumacherliving.com</span><span class="b">•••</span></div></div></div>' },
-      { t:'Scroll down and tap <b>Add to Home Screen</b>.', s:'If you don’t see it, tap <b>View More</b> first.',
-        ph:'<div class="ph"><div class="sc">' + svPage() + '<div class="dim"></div><div class="shs"><div class="grp"><div><span>Copy</span><span>⧉</span></div><div><span>Add to Reading List</span><span>◎</span></div><div class="hl"><span>Add to Home Screen</span><span>⊞</span></div><div><span>Add Bookmark</span><span>☆</span></div></div></div></div></div>' },
-      { t:'Leave <b>Open as Web App</b> on, then tap <b>Add</b> in the top right.',
+      { t:'Go to the <b>Safari</b> app <span class="saf-i" aria-hidden="true"></span> on your iPhone.', s:'Use Safari, not Chrome or the Instagram/email browser. Only Safari can add it to your home screen.',
+        ph:'<div class="ph"><div class="sc"><div class="home"><i></i><i></i><i></i><i></i><i></i>' + '<span class="me"><span class="saf hl"></span>Safari</span>' + '<i></i><i></i><i></i><i></i><i></i><i></i></div></div></div>' },
+      { t:'Go to your app link.', s:'Paste the link from your email or text into the address bar.',
+        ph:'<div class="ph"><div class="sc">' + svPage() + '<div class="ibar"><span class="b">‹</span><span class="url hl">schumacherliving.com</span><span class="b">☰</span></div>' + '</div></div>' },
+      { t:'Tap <b>☰</b>, then tap <b>Share</b>.', s:'If your Tabs layout is Bottom or Top, tap the Share button <span aria-hidden="true">⬆︎</span> instead.',
+        ph:'<div class="ph"><div class="sc">' + svPage() + '<div class="dim"></div><div class="menu"><div class="hl"><span>Share</span><span>⬆︎</span></div><div><span>Add to Bookmarks</span></div><div><span>Copy</span></div><div><span>Find on Page</span></div></div>' + '<div class="ibar"><span class="b">‹</span><span class="url">schumacherliving.com</span><span class="b hl">☰</span></div>' + '</div></div>' },
+      { t:'Scroll down the list of options, then tap <b>Add to Home Screen</b>.', s:'Don’t see it? Scroll to the bottom of the list, tap <b>Edit Actions</b>, then tap <span class="sv-plus">+</span> <b>Add to Home Screen</b>.',
+        ph:'<div class="ph"><div class="sc">' + svPage() + '<div class="dim"></div><div class="shs"><div class="grp"><div><span>Add to Reading List</span><span>◎</span></div><div class="hl"><span>Add to Home Screen</span><span>⊞</span></div><div><span>Add Bookmark</span><span>☆</span></div><div><span style="color:#007aff">Edit Actions…</span><span></span></div></div></div></div></div>' },
+      { t:'Turn on <b>Open as Web App</b>.', s:'The switch should be green.',
+        ph:'<div class="ph"><div class="sc"><div class="add"><div class="hd"><span>Cancel</span><b>Add to Home Screen</b><span class="go">Add</span></div><div class="card2"><img src="' + SV_ICON + '" alt=""><span class="nm">VBC 2027</span></div><div class="tg hl"><span>Open as Web App</span><i></i></div></div></div></div>' },
+      { t:'Tap <b>Add</b>.',
         ph:'<div class="ph"><div class="sc"><div class="add"><div class="hd"><span>Cancel</span><b>Add to Home Screen</b><span class="go hl">Add</span></div><div class="card2"><img src="' + SV_ICON + '" alt=""><span class="nm">VBC 2027</span></div><div class="tg"><span>Open as Web App</span><i></i></div></div></div></div>' },
-      { t:'Done! Look for the <b>VBC 2027</b> icon on your home screen. Tap it any time to open your app.',
-        ph:'<div class="ph"><div class="sc"><div class="home"><i></i><i></i><i></i><i></i><i></i><i></i><span class="me"><img class="hl" src="' + SV_ICON + '" alt="">VBC 2027</span><i></i><i></i><i></i><i></i><i></i></div></div></div>' }
+      { t:'Done! The <b>VBC 2027</b> icon is now on your home screen. Tap it any time to open your app.',
+        ph:'<div class="ph"><div class="sc"><div class="home"><i></i><i></i><i></i><i></i><i></i><span class="me"><img class="hl" src="' + SV_ICON + '" alt="">VBC 2027</span><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div>' }
     ],
     android: [
       { t:'Open your app link in <b>Chrome</b>, then tap the <b>⋮</b> menu in the top right.',
@@ -968,7 +975,7 @@
       { t:'Tap <b>Add</b> (or <b>Install</b>).', s:'If it asks again, tap <b>Add</b> or drag the icon where you want it.',
         ph:'<div class="ph and"><div class="sc"><div class="cbar"><span class="b">⌂</span><span class="url">schumacherliving.com</span><span class="b">⋮</span></div><div class="dim"></div><div class="adlg"><b>Add to home screen</b><div class="r"><img src="' + SV_ICON + '" alt=""><span>VBC 2027</span></div><div class="bt"><span style="color:#5f6368">Cancel</span><span class="hl">Add</span></div></div></div></div>' },
       { t:'Done! Look for the <b>VBC 2027</b> icon on your home screen. Tap it any time to open your app.',
-        ph:'<div class="ph and"><div class="sc"><div class="home"><i></i><i></i><i></i><i></i><i></i><i></i><span class="me"><img class="hl" src="' + SV_ICON + '" alt="">VBC 2027</span><i></i><i></i><i></i><i></i><i></i></div></div></div>' }
+        ph:'<div class="ph and"><div class="sc"><div class="home"><i></i><i></i><i></i><i></i><i></i><span class="me"><img class="hl" src="' + SV_ICON + '" alt="">VBC 2027</span><i></i><i></i><i></i><i></i><i></i></div></div></div>' }
     ]
   };
   function svShow(dev){
