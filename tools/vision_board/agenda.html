@@ -279,7 +279,7 @@
   @media (max-width: 560px){ .host-pair{ gap:8px; } .host-pair .host-row{ padding:0 8px; } .host-pair .p-row{ grid-template-columns:40px minmax(0,1fr); gap:8px; } .host-pair .p-row .av{ width:40px; height:40px; } .host-pair .chev{ display:none; } .host-pair .nm{ font-size:15px; } .host-pair .sub{ font-size:12px; } }
   .host-band{ font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#8a6d2f; padding-top:10px; }
   .host-row .p-row{ padding-top:6px; }
-  .chip.seat{ background:#b8995a; border-color:#b8995a; color:#fff; cursor:pointer; font:inherit; font-size:13px; }
+  .chip.seat{ background:#b8995a; border-color:#b8995a; color:#fff; cursor:default; font:inherit; font-size:13px; }
   .chip.seat b{ color:#fff; opacity:.85; }
   .mates{ list-style:none; padding:0; margin:0 0 12px; }
   .mates li{ padding:8px 0; border-bottom:1px solid var(--line); font-size:15px; }
@@ -793,7 +793,7 @@
       if (it.location) meta += '<button type="button" class="chip place" data-place="' + esc(it.location) + '"><b>Where</b> ' + esc(it.location) + ' ' + PIN + '</button>';
       if (it.dress) meta += '<span class="chip dress"><b>Wear</b> ' + esc(it.dress) + '</span>';
       var seat = (data.seats || []).filter(function(x){ return x.session === it.id; })[0];
-      if (seat) meta += '<button type="button" class="chip seat" data-mytable="' + esc(it.id) + '"><b>Your seat</b> ' + esc(seat.label) + ' \u203a</button>';
+      if (seat) meta += '<span class="chip seat"><b>Your seat</b> ' + esc(seat.label) + '</span>';
       // title, then where/wear tags and the description, then the speakers
       return '<div class="item"><time>' + esc(it.time) + '</time><div><h3>' + esc(it.title) + '</h3>' +
         (meta ? '<div class="meta">' + meta + '</div>' : '') + (it.details ? '<div class="det">' + richBlock(it.details) + '</div>' : '') + speakersHtml(it.speakers) + '</div></div>';
