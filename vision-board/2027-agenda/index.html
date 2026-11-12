@@ -86,6 +86,62 @@
   .crew-count{ font-size:13px; color:var(--muted); margin:2px 0 8px; min-height:1.2em; }
   .me-btn{ flex:none; white-space:nowrap; display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.25); color:#fff; border-radius:999px; padding:4px 12px 4px 4px; font-size:13px; }
   .me-btn .av{ width:28px; height:28px; font-size:12px; }
+  .top-r{ display:flex; align-items:center; gap:8px; flex:none; }
+  .save-btn{ display:flex; align-items:center; gap:6px; background:var(--gold); border:0; color:#14181d; border-radius:999px; padding:7px 12px 7px 9px; font-size:13px; font-weight:500; white-space:nowrap; }
+  .save-btn svg{ width:18px; height:18px; }
+  @media (max-width:430px){ .save-btn span{ display:none; } .save-btn{ padding:7px; } .me-btn > span:last-child{ display:none; } .me-btn{ padding:4px; } }
+  /* "Save the app" guide */
+  .sv-tabs{ display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--navy); margin-bottom:14px; }
+  .sv-tabs button{ background:var(--paper); border:0; padding:11px; font-size:15px; color:var(--navy); }
+  .sv-tabs button[aria-selected="true"]{ background:var(--navy); color:#fff; font-weight:500; }
+  .sv-warn{ background:#fbf3e2; border:1px solid #ecd9a8; padding:12px 14px; font-size:14px; margin-bottom:14px; }
+  .sv-warn b{ display:block; margin-bottom:4px; }
+  .sv-warn button{ margin-top:8px; }
+  .sv-done{ background:#e6f0ea; color:var(--ok); padding:12px 14px; font-size:15px; margin-bottom:14px; }
+  .sv-step{ display:grid; grid-template-columns:minmax(0,1fr) 168px; gap:14px; align-items:center; padding:14px 0; border-top:1px solid var(--line); }
+  .sv-step:first-child{ border-top:0; }
+  .sv-step .n{ display:inline-flex; width:26px; height:26px; border-radius:50%; background:var(--navy); color:#fff; font-size:13px; align-items:center; justify-content:center; margin-bottom:6px; }
+  .sv-step p{ margin:0; font-size:15px; line-height:1.45; } .sv-step p small{ display:block; color:var(--muted); font-size:13px; margin-top:4px; }
+  .sv-tip{ font-size:13px; color:var(--muted); background:var(--stone); padding:10px 12px; margin-top:6px; }
+  /* phone illustrations */
+  .ph{ position:relative; width:168px; height:190px; border-radius:22px; background:#1d1d1f; padding:6px; box-shadow:0 2px 10px rgba(0,0,0,.15); }
+  .ph .sc{ position:relative; width:100%; height:100%; border-radius:17px; overflow:hidden; background:#f2f2f7; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; color:#111; }
+  .ph.and{ border-radius:18px; } .ph.and .sc{ border-radius:13px; background:#fff; }
+  .hl{ box-shadow:0 0 0 2.5px var(--gold), 0 0 0 7px rgba(184,153,90,.3); animation:svpulse 1.6s ease-in-out infinite; }
+  @keyframes svpulse{ 50%{ box-shadow:0 0 0 2.5px var(--gold), 0 0 0 10px rgba(184,153,90,.12); } }
+  @media (prefers-reduced-motion: reduce){ .hl{ animation:none; } }
+  .ph .pg{ position:absolute; left:10px; right:10px; top:12px; display:grid; gap:6px; } .ph .pg i{ display:block; height:7px; border-radius:4px; background:#dcdce0; } .ph .pg i.s{ width:60%; } .ph .pg i.n{ height:22px; background:#002349; border-radius:4px; }
+  .ph .ibar{ position:absolute; left:6px; right:6px; bottom:8px; height:30px; border-radius:16px; background:rgba(255,255,255,.92); box-shadow:0 1px 6px rgba(0,0,0,.18); display:flex; align-items:center; gap:4px; padding:0 4px; font-size:9px; }
+  .ph .ibar .url{ flex:1; text-align:center; background:#eeeef0; border-radius:12px; padding:5px 4px; color:#333; overflow:hidden; white-space:nowrap; }
+  .ph .ibar .b{ width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; color:#007aff; flex:none; }
+  .ph .menu{ position:absolute; right:8px; bottom:44px; width:118px; background:rgba(255,255,255,.97); border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,.2); overflow:hidden; font-size:10px; }
+  .ph .menu div{ padding:7px 10px; border-top:1px solid #ececf0; display:flex; justify-content:space-between; } .ph .menu div:first-child{ border-top:0; }
+  .ph .menu div.hl{ border-radius:8px; margin:3px; background:#fffaf0; border-top:0; }
+  .ph .shs{ position:absolute; left:0; right:0; bottom:0; height:132px; background:#f2f2f7; border-radius:14px 14px 0 0; box-shadow:0 -2px 12px rgba(0,0,0,.15); padding:8px; font-size:10px; }
+  .ph .shs .grp{ background:#fff; border-radius:9px; overflow:hidden; }
+  .ph .shs .grp div{ padding:7px 9px; border-top:1px solid #ececf0; display:flex; justify-content:space-between; align-items:center; } .ph .shs .grp div:first-child{ border-top:0; }
+  .ph .shs .grp div.hl{ background:#fffaf0; border-radius:7px; margin:2px; border-top:0; }
+  .ph .add{ position:absolute; inset:0; background:#f2f2f7; padding:10px 8px; font-size:10px; }
+  .ph .add .hd{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; } .ph .add .hd b{ font-size:10px; } .ph .add .hd span{ color:#007aff; } .ph .add .hd .go{ font-weight:600; padding:2px 6px; border-radius:6px; }
+  .ph .add .card2{ background:#fff; border-radius:9px; padding:8px; display:flex; gap:8px; align-items:center; }
+  .ph .add .card2 img{ width:34px; height:34px; border-radius:8px; } .ph .add .card2 .nm{ border-bottom:1px solid #e5e5ea; flex:1; padding-bottom:4px; font-size:11px; }
+  .ph .add .tg{ margin-top:8px; background:#fff; border-radius:9px; padding:7px 9px; display:flex; justify-content:space-between; align-items:center; }
+  .ph .add .tg i{ width:24px; height:14px; border-radius:8px; background:#34c759; position:relative; } .ph .add .tg i::after{ content:""; position:absolute; right:1px; top:1px; width:12px; height:12px; border-radius:50%; background:#fff; }
+  .ph .home{ position:absolute; inset:0; background:linear-gradient(160deg,#c9d3df,#e8dcc0); display:grid; grid-template-columns:repeat(4,1fr); gap:10px 8px; padding:16px 12px; align-content:start; }
+  .ph .home i{ display:block; aspect-ratio:1; border-radius:9px; background:rgba(255,255,255,.55); }
+  .ph .home .me{ display:flex; flex-direction:column; align-items:center; gap:2px; font-size:7.5px; color:#14181d; }
+  .ph .home .me img{ width:100%; aspect-ratio:1; border-radius:9px; }
+  .ph .cbar{ position:absolute; left:0; right:0; top:0; height:30px; background:#fff; border-bottom:1px solid #e5e5ea; display:flex; align-items:center; gap:4px; padding:0 6px; font-size:9px; }
+  .ph .cbar .url{ flex:1; background:#f1f3f4; border-radius:12px; padding:5px 8px; color:#333; overflow:hidden; white-space:nowrap; }
+  .ph .cbar .b{ width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; color:#444; flex:none; }
+  .ph .amenu{ position:absolute; right:4px; top:4px; width:120px; background:#fff; border-radius:8px; box-shadow:0 4px 14px rgba(0,0,0,.22); font-size:10px; padding:4px 0; }
+  .ph .amenu div{ padding:6px 10px; } .ph .amenu div.hl{ background:#fffaf0; border-radius:6px; margin:2px 4px; }
+  .ph .adlg{ position:absolute; left:10px; right:10px; top:46px; background:#fff; border-radius:14px; box-shadow:0 4px 18px rgba(0,0,0,.25); padding:12px; font-size:10px; }
+  .ph .adlg b{ display:block; font-size:11px; margin-bottom:8px; } .ph .adlg .r{ display:flex; gap:8px; align-items:center; } .ph .adlg img{ width:30px; height:30px; border-radius:50%; }
+  .ph .adlg .bt{ display:flex; justify-content:flex-end; gap:12px; margin-top:12px; color:#1a73e8; font-weight:600; } .ph .adlg .bt span{ padding:3px 6px; border-radius:6px; }
+  .ph .dim{ position:absolute; inset:0; background:rgba(0,0,0,.25); }
+  .ph .add .hd b{ white-space:nowrap; font-size:9px; }
+  @media (max-width:420px){ .sv-step{ grid-template-columns:minmax(0,1fr) 135px; gap:10px; } .sv-step > .ph{ zoom:.8; } }
   .cover h1{ font-size:42px; line-height:1; margin:16px 0 8px; }
   .cover h1 em{ font-style:italic; color:var(--cream); }
   .cover .when{ font-size:15px; color:var(--sky); }
@@ -400,7 +456,8 @@
   <header class="cover"><div class="wrap">
     <div class="top">
       <button class="host-btn" type="button" id="hostBtn" aria-label="Contact Jennifer Schumacher"><span class="av" id="hostAv">JS</span><span><span class="brand">JENNIFER SCHUMACHER</span><small>Your host · tap to contact</small></span></button>
-      <button class="me-btn" type="button" id="meBtn"><span class="av" id="meAv"></span><span>My profile</span></button>
+      <div class="top-r"><button class="save-btn" type="button" id="saveBtn" aria-label="Save the app to your phone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 8v6M9.5 11.5 12 14l2.5-2.5"/></svg><span>Save app</span></button>
+      <button class="me-btn" type="button" id="meBtn"><span class="av" id="meAv"></span><span>My profile</span></button></div>
     </div>
     <h1 id="appTitle">Vision Board Crew <em>2027</em></h1>
     <div class="when" id="appWhen">Friday &amp; Saturday, January 8–9, 2027</div>
@@ -471,6 +528,17 @@
   <footer>Jennifer Schumacher · Schumacher Living</footer>
 </div>
 
+<!-- Save the app to your phone -->
+<div class="sheet-wrap" id="saveSheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="saveTitle">
+    <div class="sheet-head"><h2 id="saveTitle">Save the app</h2><button class="x" type="button" id="saveClose">Close</button></div>
+    <p class="sec-sub" style="margin:-6px 0 16px">Put the Vision Board Crew app on your home screen. One tap opens <b>your</b> personal app, just like any other app. No app store, nothing to download.</p>
+    <div class="sv-done" id="svDone" hidden>✓ You’re all set. You opened this from your home screen.</div>
+    <div class="sv-tabs" role="tablist"><button type="button" role="tab" data-sv="ios">iPhone</button><button type="button" role="tab" data-sv="android">Android</button></div>
+    <div class="sv-warn" id="svWarn" hidden></div>
+    <div id="svSteps"></div>
+  </div>
+</div>
 <!-- My profile -->
 <div class="sheet-wrap" id="sheet" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
@@ -871,6 +939,60 @@
     $('pfMsg').textContent = ''; $('pfMsg').className = 'msg'; $('sheet').hidden = false;
   }
   function closeSheet(){ $('sheet').hidden = true; }
+
+  // ---- "Save the app" guide: picks iPhone or Android from the phone, with illustrated steps ----
+  var SV_ICON = '/images/vbc-2027-v1-180.png';
+  function svDevice(){ var u = navigator.userAgent || ''; if (/iPhone|iPad|iPod/.test(u) || (/Macintosh/.test(u) && navigator.maxTouchPoints > 1)) return 'ios'; if (/Android/.test(u)) return 'android'; return 'ios'; }
+  function svInApp(){ var u = navigator.userAgent || ''; return /FBAN|FBAV|Instagram|GSA\/|Line\/|LinkedInApp|Snapchat/.test(u) ? 'app' : (/CriOS|FxiOS|EdgiOS/.test(u) ? 'chrome' : ''); }
+  function svSaved(){ return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true; }
+  function svPage(){ return '<div class="pg"><i class="n"></i><i></i><i class="s"></i><i></i><i class="s"></i></div>'; }
+  var SV = {
+    ios: [
+      { t:'Open your app link in <b>Safari</b> (the compass icon), then tap the <b>•••</b> button next to the address bar at the bottom.',
+        s:'On an older iPhone, tap the <b>Share</b> button <span aria-hidden="true">⬆︎</span> at the bottom of Safari and skip to step 3.',
+        ph:'<div class="ph"><div class="sc">' + svPage() + '<div class="ibar"><span class="b">‹</span><span class="url">schumacherliving.com</span><span class="b hl">•••</span></div></div></div>' },
+      { t:'Tap <b>Share</b>.',
+        ph:'<div class="ph"><div class="sc">' + svPage() + '<div class="dim"></div><div class="menu"><div class="hl"><span>Share</span><span>⬆︎</span></div><div><span>Add to Bookmarks</span></div><div><span>Copy</span></div><div><span>Find on Page</span></div></div><div class="ibar"><span class="b">‹</span><span class="url">schumacherliving.com</span><span class="b">•••</span></div></div></div>' },
+      { t:'Scroll down and tap <b>Add to Home Screen</b>.', s:'If you don’t see it, tap <b>View More</b> first.',
+        ph:'<div class="ph"><div class="sc">' + svPage() + '<div class="dim"></div><div class="shs"><div class="grp"><div><span>Copy</span><span>⧉</span></div><div><span>Add to Reading List</span><span>◎</span></div><div class="hl"><span>Add to Home Screen</span><span>⊞</span></div><div><span>Add Bookmark</span><span>☆</span></div></div></div></div></div>' },
+      { t:'Leave <b>Open as Web App</b> on, then tap <b>Add</b> in the top right.',
+        ph:'<div class="ph"><div class="sc"><div class="add"><div class="hd"><span>Cancel</span><b>Add to Home Screen</b><span class="go hl">Add</span></div><div class="card2"><img src="' + SV_ICON + '" alt=""><span class="nm">VBC 2027</span></div><div class="tg"><span>Open as Web App</span><i></i></div></div></div></div>' },
+      { t:'Done! Look for the <b>VBC 2027</b> icon on your home screen. Tap it any time to open your app.',
+        ph:'<div class="ph"><div class="sc"><div class="home"><i></i><i></i><i></i><i></i><i></i><i></i><span class="me"><img class="hl" src="' + SV_ICON + '" alt="">VBC 2027</span><i></i><i></i><i></i><i></i><i></i></div></div></div>' }
+    ],
+    android: [
+      { t:'Open your app link in <b>Chrome</b>, then tap the <b>⋮</b> menu in the top right.',
+        ph:'<div class="ph and"><div class="sc"><div class="cbar"><span class="b">⌂</span><span class="url">schumacherliving.com</span><span class="b hl">⋮</span></div><div class="pg" style="top:42px">' + svPage().slice(16, -6) + '</div></div></div>' },
+      { t:'Tap <b>Add to home screen</b>.', s:'Some phones say <b>Install app</b> instead. Either one works.',
+        ph:'<div class="ph and"><div class="sc"><div class="cbar"><span class="b">⌂</span><span class="url">schumacherliving.com</span><span class="b">⋮</span></div><div class="dim"></div><div class="amenu"><div>New tab</div><div>History</div><div>Bookmarks</div><div>Share…</div><div class="hl">Add to home screen</div><div>Settings</div></div></div></div>' },
+      { t:'Tap <b>Add</b> (or <b>Install</b>).', s:'If it asks again, tap <b>Add</b> or drag the icon where you want it.',
+        ph:'<div class="ph and"><div class="sc"><div class="cbar"><span class="b">⌂</span><span class="url">schumacherliving.com</span><span class="b">⋮</span></div><div class="dim"></div><div class="adlg"><b>Add to home screen</b><div class="r"><img src="' + SV_ICON + '" alt=""><span>VBC 2027</span></div><div class="bt"><span style="color:#5f6368">Cancel</span><span class="hl">Add</span></div></div></div></div>' },
+      { t:'Done! Look for the <b>VBC 2027</b> icon on your home screen. Tap it any time to open your app.',
+        ph:'<div class="ph and"><div class="sc"><div class="home"><i></i><i></i><i></i><i></i><i></i><i></i><span class="me"><img class="hl" src="' + SV_ICON + '" alt="">VBC 2027</span><i></i><i></i><i></i><i></i><i></i></div></div></div>' }
+    ]
+  };
+  function svShow(dev){
+    document.querySelectorAll('[data-sv]').forEach(function(b){ b.setAttribute('aria-selected', String(b.dataset.sv === dev)); });
+    $('svSteps').innerHTML = SV[dev].map(function(st, i){
+      return '<div class="sv-step"><div><span class="n">' + (i + 1) + '</span><p>' + st.t + (st.s ? '<small>' + st.s + '</small>' : '') + '</p></div>' + st.ph + '</div>';
+    }).join('') + '<p class="sv-tip">Your app link is personal to you, so the icon always opens <b>your</b> app. Please don’t share it. Got a new phone? Open the link from your email again and repeat these steps.</p>';
+    var ia = svInApp(), w = $('svWarn'), mine = dev === svDevice();
+    if (mine && ia){
+      w.innerHTML = '<b>' + (dev === 'ios' ? 'Open this in Safari first' : 'Open this in Chrome first') + '</b>' +
+        (ia === 'chrome' ? 'On iPhone, only Safari can add apps to your home screen.' : 'You opened this inside another app (like Instagram or your email app), which can’t save it.') +
+        ' Copy your link, open ' + (dev === 'ios' ? 'Safari' : 'Chrome') + ', paste it in the address bar, then follow the steps below.<br><button class="btn" type="button" id="svCopy" style="min-height:38px">Copy my app link</button>';
+      w.hidden = false;
+    } else w.hidden = true;
+  }
+  function svOpen(){ $('svDone').hidden = !svSaved(); svShow(svDevice()); $('saveSheet').hidden = false; document.body.style.overflow = 'hidden'; }
+  function svClose(){ $('saveSheet').hidden = true; document.body.style.overflow = ''; }
+  $('saveBtn').addEventListener('click', svOpen);
+  $('saveClose').addEventListener('click', svClose);
+  $('saveSheet').addEventListener('click', function(e){
+    if (e.target.id === 'saveSheet') return svClose();
+    var t = e.target.closest('[data-sv]'); if (t) return svShow(t.dataset.sv);
+    if (e.target.id === 'svCopy'){ var u = location.href.replace(/[?&]preview=1/, ''); (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(function(){ toast('Link copied. Now open ' + (svDevice() === 'ios' ? 'Safari' : 'Chrome') + ' and paste it.'); }, function(){ prompt('Copy your app link:', u); }); }
+  });
   $('meBtn').addEventListener('click', openSheet);
   $('nudgeBtn').addEventListener('click', function(){ openSheet(); $('pfOptin').checked = true; });
   $('sheetClose').addEventListener('click', closeSheet);
