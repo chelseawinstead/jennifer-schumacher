@@ -99,6 +99,7 @@
   .sv-warn button{ margin-top:8px; }
   .sv-done{ background:#e6f0ea; color:var(--ok); padding:12px 14px; font-size:15px; margin-bottom:14px; }
   .sv-step{ display:grid; grid-template-columns:minmax(0,1fr) 168px; gap:14px; align-items:center; padding:14px 0; border-top:1px solid var(--line); }
+  .sv-step.wide{ grid-template-columns:1fr; gap:10px; } .sv-shot{ display:block; width:100%; max-width:420px; border-radius:14px; border:1px solid var(--line); background:#f2f2f2; }
   .sv-step:first-child{ border-top:0; }
   .sv-step .n{ display:inline-flex; width:26px; height:26px; border-radius:50%; background:var(--navy); color:#fff; font-size:13px; align-items:center; justify-content:center; margin-bottom:6px; }
   .sv-step p{ margin:0; font-size:15px; line-height:1.45; } .sv-step p small{ display:block; color:var(--muted); font-size:13px; margin-top:4px; }
@@ -952,14 +953,16 @@
   function svPage(){ return '<div class="pg"><i class="n"></i><i></i><i class="s"></i><i></i><i class="s"></i></div>'; }
   var SV = {
     ios: [
-      { t:'Go to the <b>Safari</b> app <span class="saf-i" aria-hidden="true"></span> on your iPhone.', s:'Use Safari, not Chrome or the Instagram/email browser. Only Safari can add it to your home screen.',
+      { t:'Go to the <b>Safari</b> app <span class="saf-i" aria-hidden="true"></span> on your iPhone.', s:'Use Safari, not Chrome or the Instagram or email browser. Only Safari can add it to your home screen.',
         ph:'<div class="ph"><div class="sc"><div class="home"><i></i><i></i><i></i><i></i><i></i>' + '<span class="me"><span class="saf hl"></span>Safari</span>' + '<i></i><i></i><i></i><i></i><i></i><i></i></div></div></div>' },
-      { t:'Go to your app link.', s:'Paste the link from your email or text into the address bar.',
-        ph:'<div class="ph"><div class="sc">' + svPage() + '<div class="ibar"><span class="b">‹</span><span class="url hl">schumacherliving.com</span><span class="b">☰</span></div>' + '</div></div>' },
-      { t:'Tap <b>☰</b>, then tap <b>Share</b>.', s:'If your Tabs layout is Bottom or Top, tap the Share button <span aria-hidden="true">⬆︎</span> instead.',
-        ph:'<div class="ph"><div class="sc">' + svPage() + '<div class="dim"></div><div class="menu"><div class="hl"><span>Share</span><span>⬆︎</span></div><div><span>Add to Bookmarks</span></div><div><span>Copy</span></div><div><span>Find on Page</span></div></div>' + '<div class="ibar"><span class="b">‹</span><span class="url">schumacherliving.com</span><span class="b hl">☰</span></div>' + '</div></div>' },
-      { t:'Scroll down the list of options, then tap <b>Add to Home Screen</b>.', s:'Don’t see it? Scroll to the bottom of the list, tap <b>Edit Actions</b>, then tap <span class="sv-plus">+</span> <b>Add to Home Screen</b>.',
-        ph:'<div class="ph"><div class="sc">' + svPage() + '<div class="dim"></div><div class="shs"><div class="grp"><div><span>Add to Reading List</span><span>◎</span></div><div class="hl"><span>Add to Home Screen</span><span>⊞</span></div><div><span>Add Bookmark</span><span>☆</span></div><div><span style="color:#007aff">Edit Actions…</span><span></span></div></div></div></div></div>' },
+      { t:'Open your app link in Safari, then tap the three dots <b>•••</b> at the bottom right.', s:'They’re to the right of the address bar.',
+        ph:'<img class="sv-shot" src="/images/vbc-save/ios-dots.jpg" alt="Safari address bar with the three dots button highlighted" loading="lazy">', wide:true },
+      { t:'Tap <b>Share</b>.',
+        ph:'<img class="sv-shot" src="/images/vbc-save/ios-share.jpg" alt="Safari menu with Share highlighted" loading="lazy">', wide:true },
+      { t:'Tap <b>View More</b>.', s:'It’s the down arrow at the end of the bottom row.',
+        ph:'<img class="sv-shot" src="/images/vbc-save/ios-viewmore.jpg" alt="Share sheet with View More highlighted" loading="lazy">', wide:true },
+      { t:'Scroll down and tap <b>Add to Home Screen</b>.',
+        ph:'<img class="sv-shot" src="/images/vbc-save/ios-add.jpg" alt="List of actions with Add to Home Screen highlighted" loading="lazy">', wide:true },
       { t:'Turn on <b>Open as Web App</b>.', s:'The switch should be green.',
         ph:'<div class="ph"><div class="sc"><div class="add"><div class="hd"><span>Cancel</span><b>Add to Home Screen</b><span class="go">Add</span></div><div class="card2"><img src="' + SV_ICON + '" alt=""><span class="nm">VBC 2027</span></div><div class="tg hl"><span>Open as Web App</span><i></i></div></div></div></div>' },
       { t:'Tap <b>Add</b>.',
@@ -981,7 +984,7 @@
   function svShow(dev){
     document.querySelectorAll('[data-sv]').forEach(function(b){ b.setAttribute('aria-selected', String(b.dataset.sv === dev)); });
     $('svSteps').innerHTML = SV[dev].map(function(st, i){
-      return '<div class="sv-step"><div><span class="n">' + (i + 1) + '</span><p>' + st.t + (st.s ? '<small>' + st.s + '</small>' : '') + '</p></div>' + st.ph + '</div>';
+      return '<div class="sv-step' + (st.wide ? ' wide' : '') + '"><div><span class="n">' + (i + 1) + '</span><p>' + st.t + (st.s ? '<small>' + st.s + '</small>' : '') + '</p></div>' + st.ph + '</div>';
     }).join('') + '<p class="sv-tip">Your app link is personal to you, so the icon always opens <b>your</b> app. Please don’t share it. Got a new phone? Open the link from your email again and repeat these steps.</p>';
     var ia = svInApp(), w = $('svWarn'), mine = dev === svDevice();
     if (mine && ia){
