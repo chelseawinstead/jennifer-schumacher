@@ -14,17 +14,34 @@ figures:
   lot: 8,125 sf
   garage: '3'
 hero:
-  src: /content/images/Screenshot 2026-10-26 at 11.31.12 AM.png
+  src: /content/images/1-web-or-mls-Front yard2.jpg
 cardart:
   card: ''
   card_home: ''
   kicker: ''
   card_kicker: ''
 film: ''
-body: NA - REPLACE PHOTOS
+body: |-
+  If you have been dreaming of a quieter pace in Queen Creek, this is it. Located behind the gates of the Cielo Noche community, this home offers the privacy, peace, and beautiful mountain views that make this area so special. Inside, an open-concept layout is made for everyday living and easy entertaining. 
+
+  The spacious kitchen features upgraded stainless steel appliances, a butler's pantry, and a walk-in pantry. The expansive primary suite is on the main floor, so the home lives like a single story, with an en-suite bath featuring a double vanity, walk-in shower, and soaking tub. Upstairs, a versatile loft gives you a second living area, perfect for kids, guests, or movie nights. 
+
+  Multi-slide glass doors open to a private backyard oasis with a heated pool, travertine decking, covered patio, pergola, and lush landscaping, made for sunset views and quiet evenings at home. And when you want to get out, Queen Creek Marketplace is close by for shopping, dining, and entertainment.
+
+  Contact Jennifer for full details and a private showing.
 gallery:
-  - src: /content/images/Screenshot 2026-10-26 at 11.31.12 AM.png
-    caption: ''
+  - src: /content/images/3-web-or-mls-DRONE10.jpg
+    caption: Front Exterior
+  - src: /content/images/12-web-or-mls-Great Room4.jpg
+    caption: Kitchen
+  - src: /content/images/24-web-or-mls-Great Room14.jpg
+    caption: Living Room
+  - src: /content/images/34-web-or-mls-Primary Bedroom2.jpg
+    caption: Primary Bedroom
+  - src: /content/images/36-web-or-mls-Primary Bedroom4.jpg
+    caption: Primary Bathroom
+  - src: /content/images/70-web-or-mls-TWILIGHT1.jpg
+    caption: Backyard
 seo:
   slug: ''
   title: ''
