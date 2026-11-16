@@ -45,6 +45,10 @@
   .host-btn .av{ width:44px; height:44px; border:2px solid rgba(255,255,255,.7); font-size:16px; }
   .host-btn .brand{ font-size:12px; letter-spacing:.18em; line-height:1.55; display:block; }
   .host-btn small{ display:block; font-size:11px; letter-spacing:.08em; color:var(--sky); opacity:.85; margin-top:2px; }
+  #personSheet, #hostSheet{ z-index:24; }
+  .host-sheet .ps-sub{ font-size:14px; color:var(--muted); margin-top:4px; line-height:1.4; }
+  .host-sheet .ps-crew{ display:block; width:100%; margin-top:10px; background:none; border:0; color:var(--navy); font-size:14px; text-decoration:underline; text-underline-offset:3px; padding:8px; }
+  .host-sheet .ps-none{ font-size:14px; color:var(--muted); margin:4px 0 6px; }
   .host-sheet .hs-top{ display:flex; gap:16px; align-items:center; margin-bottom:18px; }
   .host-sheet .hs-top .av{ width:96px; height:96px; font-size:34px; }
   .host-sheet .hs-top h2{ font-size:28px; line-height:1.1; }
@@ -263,6 +267,7 @@
   .post{ background:var(--paper); border:1px solid var(--line); padding:14px; margin-bottom:12px; }
   .post-head{ display:grid; grid-template-columns:40px minmax(0,1fr) auto; gap:10px; align-items:center; }
   .post-head b{ font-weight:500; display:block; line-height:1.25; }
+  .post [data-person], .reply [data-person]{ cursor:pointer; } .post-head b[data-person]:hover, .reply .who[data-person]:hover{ text-decoration:underline; text-underline-offset:2px; }
   .post-head .meta{ font-size:12px; color:var(--warm); line-height:1.3; }
   .post-del{ background:none; border:0; color:var(--warm); font-size:13px; padding:6px; }
   .post-body{ margin-top:10px; font-size:15px; line-height:1.5; white-space:pre-wrap; overflow-wrap:anywhere; }
@@ -584,6 +589,12 @@
   <div class="sheet host-sheet" role="dialog" aria-modal="true" aria-labelledby="hostName">
     <div class="sheet-head"><span style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--warm)">Your host</span><button class="x" type="button" id="hostClose">Close</button></div>
     <div id="hostBody"></div>
+  </div>
+</div>
+<div class="sheet-wrap" id="personSheet" hidden>
+  <div class="sheet host-sheet" role="dialog" aria-modal="true" aria-labelledby="psName">
+    <div class="sheet-head"><span style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--warm)">The Crew</span><button class="x" type="button" id="psClose">Close</button></div>
+    <div id="psBody"></div>
   </div>
 </div>
 <div class="sheet-wrap" id="tagSheet" hidden>
@@ -1007,7 +1018,7 @@
   $('nudgeBtn').addEventListener('click', function(){ openSheet(); $('pfOptin').checked = true; });
   $('sheetClose').addEventListener('click', closeSheet);
   $('sheet').addEventListener('click', function(e){ if (e.target.id === 'sheet') closeSheet(); });
-  document.addEventListener('keydown', function(e){ if (e.key !== 'Escape') return; if (!$('sheet').hidden) closeSheet(); $('hostSheet').hidden = true; $('mapsSheet').hidden = true; $('lightbox').hidden = true; if (!$('threadSheet').hidden) closeThread(); closePick(); });
+  document.addEventListener('keydown', function(e){ if (e.key !== 'Escape') return; if (!$('sheet').hidden) closeSheet(); $('hostSheet').hidden = true; $('personSheet').hidden = true; $('mapsSheet').hidden = true; $('lightbox').hidden = true; if (!$('threadSheet').hidden) closeThread(); closePick(); });
   $('pfFile').addEventListener('change', function(){
     var f = this.files && this.files[0]; this.value = ''; if (!f) return;
     var img = new Image(), url = URL.createObjectURL(f);
@@ -1075,6 +1086,8 @@
       return '<button type="button" class="rx' + (r.mine ? ' mine' : '') + '" data-rx="' + esc(p.id) + '" data-emoji="' + esc(r.emoji) + '" title="' + esc((r.names||[]).join(', ')) + '">' + r.emoji + (r.count > 1 ? ' <b>' + r.count + '</b>' : '') + '</button>';
     }).join('') + '<button type="button" class="rx-add" data-rxopen="' + esc(p.id) + '" aria-label="Add a reaction">' + IC.smile + '</button>';
   }
+  function canOpen(a){ if (!a || !a.id) return false; var all = ((data && data.hosts) || []).concat((data && data.crew) || []); return all.some(function(x){ return x.id === a.id && !x.me; }); }
+  function pAttr(a){ return canOpen(a) ? ' data-person="' + esc(a.id) + '" role="button" tabindex="0" title="View profile"' : ''; }
   function postHtml(p, inThread){
     var a = p.author || {};
     var replies = '';
@@ -1083,16 +1096,16 @@
       replies = '<button type="button" class="reply-btn" data-thread="' + esc(p.id) + '">' + (faces ? '<span class="faces">' + faces + '</span>' : IC.reply) +
         (p.reply_count ? p.reply_count + (p.reply_count === 1 ? ' reply' : ' replies') : 'Reply') + '</button>';
     }
-    return '<article class="post" data-post="' + esc(p.id) + '"><div class="post-head"><span class="av">' + avatar({ photo_url:a.photo, name:a.name }) + '</span>' +
-      '<div><b>' + esc(a.name) + (a.host ? '<span class="host-tag">' + (a.role === 'cohost' ? 'Cohost' : a.role === 'team' ? 'Team' : 'Host') + '</span>' : '') + '</b><span class="meta">' + esc([a.company, ago(p.created_at)].filter(Boolean).join(' · ')) + '</span></div>' +
+    return '<article class="post" data-post="' + esc(p.id) + '"><div class="post-head"><span class="av"' + pAttr(a) + '>' + avatar({ photo_url:a.photo, name:a.name }) + '</span>' +
+      '<div><b' + pAttr(a) + '>' + esc(a.name) + (a.host ? '<span class="host-tag">' + (a.role === 'cohost' ? 'Cohost' : a.role === 'team' ? 'Team' : 'Host') + '</span>' : '') + '</b><span class="meta">' + esc([a.company, ago(p.created_at)].filter(Boolean).join(' · ')) + '</span></div>' +
       (p.mine ? '<button type="button" class="post-del" data-del="' + esc(p.id) + '">Delete</button>' : '<span></span>') + '</div>' +
       (p.body ? '<div class="post-body">' + chatText(p.body) + '</div>' : '') + photosHtml(p.photos) +
       '<div class="rx-row">' + rxHtml(p) + replies + '</div></article>';
   }
   function replyHtml(p){
     var a = p.author || {};
-    return '<div class="reply' + (p.mine ? ' mine' : '') + '" data-post="' + esc(p.id) + '"><span class="av">' + avatar({ photo_url:a.photo, name:a.name }) + '</span><div>' +
-      '<div class="bubble">' + (p.mine ? '' : '<div class="who">' + esc(a.name) + (a.host ? '<span class="host-tag">' + (a.role === 'cohost' ? 'Cohost' : a.role === 'team' ? 'Team' : 'Host') + '</span>' : '') + '</div>') + (p.body ? '<div class="post-body">' + chatText(p.body) + '</div>' : '') + photosHtml(p.photos) + '</div>' +
+    return '<div class="reply' + (p.mine ? ' mine' : '') + '" data-post="' + esc(p.id) + '"><span class="av"' + (p.mine ? '' : pAttr(a)) + '>' + avatar({ photo_url:a.photo, name:a.name }) + '</span><div>' +
+      '<div class="bubble">' + (p.mine ? '' : '<div class="who"' + pAttr(a) + '>' + esc(a.name) + (a.host ? '<span class="host-tag">' + (a.role === 'cohost' ? 'Cohost' : a.role === 'team' ? 'Team' : 'Host') + '</span>' : '') + '</div>') + (p.body ? '<div class="post-body">' + chatText(p.body) + '</div>' : '') + photosHtml(p.photos) + '</div>' +
       '<div class="sub-row"><span>' + ago(p.created_at) + '</span>' + rxHtml(p) + (p.mine ? '<button type="button" class="post-del" data-del="' + esc(p.id) + '">Delete</button>' : '') + '</div></div></div>';
   }
   function renderFeed(){
@@ -1280,8 +1293,10 @@
     if ((t = e.target.closest('[data-light]'))){ $('lightImg').src = t.dataset.light; $('lightbox').hidden = false; return; }
     if ((t = e.target.closest('[data-person]'))){
       if (t.dataset.person === EVERYONE) return;
+      if (((data && data.hosts) || []).some(function(h){ return h.id === t.dataset.person; })){ openHost(); return; }
+      if (openPerson(t.dataset.person)) return;
       closeThread();
-      if (((data && data.hosts) || []).some(function(h){ return h.id === t.dataset.person; })){ openHost(); return; } $('crewSearch').value = ''; $('crewState').value = ''; openId = t.dataset.person; showTab('crew'); renderCrew();
+      $('crewSearch').value = ''; $('crewState').value = ''; openId = t.dataset.person; showTab('crew'); renderCrew();
       var el = document.querySelector('.person[data-id="' + t.dataset.person + '"]'); if (el) el.scrollIntoView({ block:'center' });
       else toast('They’re not in the Crew list');
       return;
@@ -1444,6 +1459,33 @@
   $('crewState').addEventListener('change', renderCrew);
 
   // ---- host card ----
+  function openPerson(id){
+    var p = ((data && data.crew) || []).filter(function(x){ return x.id === id; })[0];
+    if (!p) return false;
+    var tel = digits(p.phone), realTel = tel && /[1-9]/.test(tel), a = '', soc = '';
+    if (realTel) a += '<a class="solid" href="sms:' + esc(tel) + '">' + ICON.text + 'Text</a><a href="tel:' + esc(tel) + '">' + ICON.call + 'Call</a>';
+    if (p.email) a += '<a href="mailto:' + esc(p.email) + '"' + (realTel ? '' : ' class="half"') + '>' + ICON.mail + 'Email</a>';
+    function ic(href, icon, label){ return '<a href="' + esc(href) + '" target="_blank" rel="noopener" aria-label="' + label + '" title="' + label + '">' + icon + '</a>'; }
+    if (p.instagram) soc += ic(igUrl(p.instagram), ICON.ig, 'Instagram');
+    if (p.facebook) soc += ic(fbUrl(p.facebook), ICON.fb, 'Facebook');
+    var place = [p.city, stateCode(p.state)].filter(Boolean).join(', ');
+    var tag = p.role ? '<span class="host-tag">' + (p.role === 'host' ? 'Host' : p.role === 'team' ? 'Team' : 'Cohost') + '</span>' : '';
+    $('psBody').innerHTML = '<div class="hs-top"><span class="av">' + avatar(p) + '</span><div><h2 id="psName">' + esc(p.name) + tag + '</h2>' +
+      (p.company ? '<p class="ps-sub">' + esc(p.company) + '</p>' : '') + (place ? '<p class="ps-sub">' + esc(place) + '</p>' : '') + '</div></div>' +
+      (a ? '<div class="hs-acts">' + a + '</div>' : '') + (soc ? '<div class="hs-soc">' + soc + '</div>' : '') +
+      (!a && !soc ? '<p class="ps-none">They haven\u2019t shared contact details yet.</p>' : '') +
+      '<a class="hs-save" href="' + API + '?action=vcard&r=' + encodeURIComponent(R) + '&p=' + encodeURIComponent(p.id) + '">' + ICON.save + 'Save contact</a>' +
+      '<button type="button" class="ps-crew" data-pscrew="' + esc(p.id) + '">Add a private note in The Crew \u203a</button>';
+    $('personSheet').hidden = false;
+    return true;
+  }
+  $('psClose').addEventListener('click', function(){ $('personSheet').hidden = true; });
+  $('personSheet').addEventListener('click', function(e){
+    if (e.target.id === 'personSheet') { $('personSheet').hidden = true; return; }
+    var c = e.target.closest('[data-pscrew]'); if (!c) return;
+    $('personSheet').hidden = true; closeThread(); $('crewSearch').value = ''; $('crewState').value = ''; openId = c.dataset.pscrew; showTab('crew'); renderCrew();
+    var el = document.querySelector('.person[data-id="' + c.dataset.pscrew + '"]'); if (el) el.scrollIntoView({ block:'center' });
+  });
   function openHost(){
     var h = (data.guide && data.guide.host) || {}, tel = digits(h.phone), a = '';
     var name = h.name || 'Jennifer Schumacher';
@@ -1470,7 +1512,7 @@
   // Keep the app current: check for Jennifer's updates every 20 seconds and when the guest comes back to the app.
   // Waits while someone is typing or has a panel open, so nothing gets wiped mid-edit.
   function busy(){
-    return !$('sheet').hidden || !$('hostSheet').hidden || !$('addrSheet').hidden || !$('ciSheet').hidden || !$('mapsSheet').hidden || !$('threadSheet').hidden || !$('lightbox').hidden ||
+    return !$('sheet').hidden || !$('hostSheet').hidden || !$('personSheet').hidden || !$('addrSheet').hidden || !$('ciSheet').hidden || !$('mapsSheet').hidden || !$('threadSheet').hidden || !$('lightbox').hidden ||
       composers.some(function(c){ return c.dirty(); }) ||
       (document.activeElement && document.activeElement.matches('textarea,input,select')) ||
       Object.keys(noteTimers).some(function(k){ return noteTimers[k]; });
