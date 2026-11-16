@@ -63,7 +63,7 @@ function render(p: Party, g: Target, o: { heading: string; body: string; subject
   const v: Record<string, string> = { first_name: g.first_name, last_name: g.last_name, party_link: link };
   const fill = (s: string) => String(s || "").replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m));
   const subject = fill(o.subject), heading = fill(o.heading), body = fill(o.body);
-  const serif = "Marcellus,Georgia,'Times New Roman',serif";
+  const serif = "'Cormorant Garamond',Georgia,'Times New Roman',serif";
   const sans = "'Helvetica Neue',Helvetica,Arial,sans-serif";
   const LINK = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
   const linkify = (h: string) => h.replace(LINK, (_m, t, u) => `<a href="${u}" style="color:#111111;text-decoration:underline">${t}</a>`);
@@ -83,9 +83,9 @@ function render(p: Party, g: Target, o: { heading: string; body: string; subject
   const html = `<!doctype html><html><body style="margin:0;padding:0;background:#f6f5f2">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f5f2"><tr><td align="center" style="padding:32px 16px">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff">
-      <tr><td style="background:#0b0b0b;padding:28px 36px">
+      <tr><td style="background:#0b0b0b;padding:28px 36px;border-bottom:4px solid #ff2e97">
         <div style="font:12px ${sans};letter-spacing:.3em;color:#b9b9b9;text-transform:uppercase">You're invited</div>
-        <div style="font:32px ${serif};color:#ffffff;letter-spacing:.02em;margin-top:6px">${esc(p.title)}</div>
+        <div style="font:italic 500 36px ${serif};color:#ff2e97;margin-top:6px">${esc(p.title)}</div>
       </td></tr>
       <tr><td style="padding:36px 36px 16px">
         ${heading ? `<h1 style="margin:0 0 20px;font:400 32px/1.15 ${serif};color:#14181d">${esc(heading)}</h1>` : ""}
