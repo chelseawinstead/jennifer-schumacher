@@ -794,6 +794,7 @@
   ];
   function inTab(r, t){ return t==='all' || (t==='closed' ? (r.status==='expired'||r.status==='cancelled') : r.status===t); }
 
+  var shown = [];
   function render(){
     var s = data.settings, allRegs = data.registrations, L = track === 'local';
     var regs = allRegs.filter(function(r){ return (r.track || 'paid') === track; });
@@ -833,6 +834,7 @@
     });
     // waitlist shows in the order people joined; everything else newest first
     list.sort(function(a,b){ return (a.status==='waitlist' && b.status==='waitlist') ? a.created_at.localeCompare(b.created_at) : b.created_at.localeCompare(a.created_at); });
+    shown = list; $('csvBtn').textContent = 'Download spreadsheet (' + list.length + ')';
     var waitOrder = regs.filter(function(r){ return r.status==='waitlist'; }).sort(function(a,b){ return a.created_at.localeCompare(b.created_at); }).map(function(r){ return r.id; });
 
     if (!list.length){
@@ -894,6 +896,7 @@
     var q = query.toLowerCase();
     var list = regs.filter(function(r){ return inTab(r, filter); }).filter(function(r){ return !q || [r.code, r.first_name+' '+r.last_name, r.company||'', r.email, r.phone, (r.phone||'').replace(/\D/g,'')].join(' ').toLowerCase().indexOf(q) > -1; });
     list.sort(function(a,b){ return (a.status==='waitlist' && b.status==='waitlist') ? a.created_at.localeCompare(b.created_at) : b.created_at.localeCompare(a.created_at); });
+    shown = list; $('csvBtn').textContent = 'Download spreadsheet (' + list.length + ')';
     var waitOrder = regs.filter(function(r){ return r.status==='waitlist'; }).sort(function(a,b){ return a.created_at.localeCompare(b.created_at); }).map(function(r){ return r.id; });
     if (!list.length){ $('rows').innerHTML = '<tr><td colspan="7" class="empty">' + (regs.length ? 'No one matches this view.' : 'No local guests yet. Share the sign-up page and they’ll appear here as people sign up.') + '</td></tr>'; $('updated').textContent = 'Updated ' + az(new Date().toISOString(), { hour:'numeric', minute:'2-digit' }) + ' AZ'; return; }
     var KL = { local_confirm:'Confirmation + app link', local_waitlist:'Waitlist email', local_offer:'Spot-offer email', custom:'Custom email' };
@@ -1878,12 +1881,13 @@
   $('logoutBtn').addEventListener('click', function(){ pw=''; try{ sessionStorage.removeItem('vbTeamPw'); }catch(e){} location.reload(); });
   $('csvBtn').addEventListener('click', function(){
     var cols = ['code','track','status','first_name','last_name','company','email','phone','street','street2','city','state','zip','amount','created_at','hold_expires_at','paid_at','confirmation_sent_at','notes'];
-    var lines = [cols.join(',')].concat(data.registrations.map(function(r){
+    var lines = [cols.join(',')].concat(shown.map(function(r){
       return cols.map(function(c){ var v = r[c]==null ? '' : String(r[c]); return /[",\n]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; }).join(',');
     }));
     var a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([lines.join('\n')], { type:'text/csv' }));
-    a.download = 'vision-board-2027-guests.csv'; document.body.appendChild(a); a.click(); a.remove();
+    var tabName = ($('tabs').querySelector('[aria-pressed="true"]') || {}).firstChild; tabName = tabName ? String(tabName.textContent).trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') : 'all';
+    a.download = 'vision-board-2027-' + track + '-guests-' + tabName + (query ? '-search' : '') + '.csv'; document.body.appendChild(a); a.click(); a.remove();
   });
 
   // ---- top navigation: each section fills the page ----
